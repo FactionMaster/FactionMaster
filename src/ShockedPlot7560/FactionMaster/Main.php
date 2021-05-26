@@ -14,9 +14,12 @@ use ShockedPlot7560\FactionMaster\Database\Database;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
+use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ManageFactionMain;
+use ShockedPlot7560\FactionMaster\Route\MainPanel;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Task\DatabaseSynchronisation;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Main extends PluginBase implements Listener{
 
@@ -63,8 +66,7 @@ class Main extends PluginBase implements Listener{
     }
 
     public function JoinEvent(PlayerJoinEvent $event) {
-        $route = RouterFactory::get("main");
-        $route($event->getPlayer());
+        Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $event->getPlayer());
     }
 
 }

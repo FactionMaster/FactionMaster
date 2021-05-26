@@ -2,11 +2,10 @@
 
 namespace ShockedPlot7560\FactionMaster\Route\Members;
 
-use InvalidArgumentException;
 use jojoe77777\FormAPI\SimpleForm;
+use jojoe77777\FormAPI\FormAPI;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
+use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
 use ShockedPlot7560\FactionMaster\Route\Members\Invitations\MemberDemandList;
@@ -21,7 +20,17 @@ class ManageMainMembers implements Route {
 
     const SLUG = "manageMainMembers";
 
-    /** @var \jojoe77777\FormAPI\FormAPI */
+    public $PermissionNeed = [
+        Ids::PERMISSION_SEND_MEMBER_INVITATION, 
+        Ids::PERMISSION_KICK_MEMBER, 
+        Ids::PERMISSION_CHANGE_MEMBER_RANK,
+        Ids::PERMISSION_ACCEPT_MEMBER_DEMAND,
+        Ids::PERMISSION_REFUSE_MEMBER_DEMAND,
+        Ids::PERMISSION_DELETE_PENDING_MEMBER_INVITATION
+    ];
+    public $backMenu;
+
+    /** @var FormAPI */
     private $FormUI;
     /** @var array */
     private $buttons;
@@ -33,17 +42,14 @@ class ManageMainMembers implements Route {
 
     public function __construct()
     {
-        $Main = Main::getInstance();
-        $this->FormUI = $Main->FormUI;
+        $this->FormUI = Main::getInstance()->FormUI;
+        $this->backMenu = RouterFactory::get(MainPanel::SLUG);
     }
 
-    public function __invoke(Player $player, ?array $params = null)
-    {
-        $permissions = MainAPI::getMemberPermission($player->getName());
-        $UserEntity = MainAPI::getUser($player->getName());
-        
+    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
+    {        
         $this->buttons = [];
-        if ((array_key_exists(Ids::PERMISSION_SEND_MEMBER_INVITATION, $permissions) && $permissions[Ids::PERMISSION_SEND_MEMBER_INVITATION]) || $UserEntity->rank == Ids::OWNER_ID) $this->buttons[] = "Send an invitation";
+        if ((isset($UserPermissions[Ids::PERMISSION_SEND_MEMBER_INVITATION]) && $UserPermissions[Ids::PERMISSION_SEND_MEMBER_INVITATION]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = "Send an invitation";
         $this->buttons[] = "Invitation pending";
         $this->buttons[] = "Request pending";
         $this->buttons[] = "Manage members";
@@ -57,11 +63,12 @@ class ManageMainMembers implements Route {
 
     public function call(): callable
     {
-        return function (Player $player, $data) {
+        $backMenu = $this->backMenu;
+        return function (Player $player, $data) use ($backMenu) {
             if ($data === null) return;
             switch ($data) {
                 case count($this->buttons) - 1:
-                    Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $player);
+                    Utils::processMenu($backMenu, $player);
                     break;
                 case count($this->buttons) - 2:
                     Utils::processMenu(RouterFactory::get(ManageMembersList::SLUG), $player);

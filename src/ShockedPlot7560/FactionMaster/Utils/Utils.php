@@ -4,6 +4,7 @@ namespace ShockedPlot7560\FactionMaster\Utils;
 
 use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
+use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Route\Route;
 
 class Utils {
@@ -15,8 +16,20 @@ class Utils {
         return $Form;
     }
 
+    /**
+     * Used to process the Route given for the player
+     */
     public static function processMenu(Route $route, Player $Player, ?array $params = null) {
-        $route($Player, $params);
+        $UserEntity = MainAPI::getUser($Player->getName());
+        $UserPermissions = MainAPI::getMemberPermission($Player->getName());
+        if ($UserEntity->rank !== Ids::OWNER_ID) {
+            foreach ($route->PermissionNeed as $Permission) {
+                if (isset($UserPermissions[$Permission]) && !$UserPermissions[$Permission]) {
+                    self::processMenu($route->backMenu, $Player, $params);
+                }
+            }
+        }
+        $route($Player, $UserEntity, $UserPermissions, $params);
     }
 
     public static function replaceParams(string $string, array $data): string {

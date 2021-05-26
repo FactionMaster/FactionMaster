@@ -4,6 +4,7 @@ namespace ShockedPlot7560\FactionMaster\Route\Members;
 
 use InvalidArgumentException;
 use jojoe77777\FormAPI\SimpleForm;
+use jojoe77777\FormAPI\FormAPI;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
@@ -19,7 +20,10 @@ class ManageMember implements Route {
     
     const SLUG = "manageMember";
 
-    /** @var \jojoe77777\FormAPI\FormAPI */
+    public $PermissionNeed = [Ids::PERMISSION_CHANGE_MEMBER_RANK, Ids::PERMISSION_KICK_MEMBER];
+    public $backMenu;
+
+    /** @var FormAPI */
     private $FormUI;
     /** @var array */
     private $buttons;
@@ -33,36 +37,34 @@ class ManageMember implements Route {
 
     public function __construct()
     {
-        $Main = Main::getInstance();
-        $this->FormUI = $Main->FormUI;
+        $this->FormUI = Main::getInstance()->FormUI;
+        $this->backMenu = RouterFactory::get(ManageMembersList::SLUG);
     }
 
-    public function __invoke(Player $player, ?array $params = null)
+    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
-        $permissions = MainAPI::getMemberPermission($player->getName());
-        $UserEntity = MainAPI::getUser($player->getName());
-        
-        if (!isset($params[0])) throw new InvalidArgumentException("Need the target player instance");
+        if (!isset($params[0]) || !$params[0] instanceof UserEntity) throw new InvalidArgumentException("Need the target player instance");
         $this->victim = $params[0];
 
         $this->buttons = [];
-        if ((array_key_exists(Ids::PERMISSION_CHANGE_MEMBER_RANK, $permissions) && $permissions[Ids::PERMISSION_CHANGE_MEMBER_RANK]) || $UserEntity->rank == Ids::OWNER_ID) $this->buttons[] = "Change the rank";
-        if ((array_key_exists(Ids::PERMISSION_KICK_MEMBER, $permissions) && $permissions[Ids::PERMISSION_KICK_MEMBER]) ||$UserEntity->rank == Ids::OWNER_ID) $this->buttons[] = "§4Kick out";
-        if ($UserEntity->rank == Ids::OWNER_ID) $this->buttons[] = "§cTransfer the property";
+        if ((isset($UserPermissions[Ids::PERMISSION_CHANGE_MEMBER_RANK]) && $UserPermissions[Ids::PERMISSION_CHANGE_MEMBER_RANK]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = "Change the rank";
+        if ((isset($UserPermissions[Ids::PERMISSION_KICK_MEMBER]) && $UserPermissions[Ids::PERMISSION_KICK_MEMBER]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = "§4Kick out";
+        if ($User->rank == Ids::OWNER_ID) $this->buttons[] = "§cTransfer the property";
         $this->buttons[] = "§4Back";
 
-        $menu = $this->manageMember($this->victim);
+        $menu = $this->manageMember();
         $menu->sendToPlayer($player);
     }
 
     public function call(): callable
     {
         $victim = $this->victim;
-        return function (Player $player, $data) use ($victim) {
+        $backMenu = $this->backMenu;
+        return function (Player $player, $data) use ($victim, $backMenu) {
             if ($data === null) return;
             switch ($this->buttons[$data]) {
                 case "§4Back":
-                    Utils::processMenu(RouterFactory::get(ManageMembersList::SLUG), $player);
+                    Utils::processMenu($backMenu, $player);
                     break;
                 case "§cTransfer the property":
                     Utils::processMenu(RouterFactory::get(ConfirmationMenu::SLUG), $player, [
@@ -82,16 +84,16 @@ class ManageMember implements Route {
                     Utils::processMenu(RouterFactory::get(MemberChangeRank::SLUG), $player, [ $victim ]);
                     break;
                 default:
-                    return;
+                    Utils::processMenu($this->backMenu, $player);
                     break;
             }
         };
     }
 
-    private function manageMember(UserEntity $user) : SimpleForm {
+    private function manageMember() : SimpleForm {
         $menu = $this->FormUI->createSimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
-        $menu->setTitle("Manage " . $user->name);
+        $menu->setTitle("Manage " . $this->victim->name);
         return $menu;
     }
 
@@ -104,7 +106,7 @@ class ManageMember implements Route {
                 if (!MainAPI::changeRank($newOwner, Ids::OWNER_ID)) $message = "§4An error has occured";
                 Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [$message]);
             }else{
-                Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [ ]);
+                Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player);
             }
         };
     }
@@ -116,7 +118,7 @@ class ManageMember implements Route {
             if ($data) {
                 $message = '§2You have successfully kick ' . $targetName;
                 if (!MainAPI::removeMember($Faction->name, $targetName)) $message = "§4An error has occured"; 
-                Utils::processMenu(RouterFactory::get(ManageMembersList::SLUG), $Player, [$message]);
+                Utils::processMenu($this->backMenu, $Player, [$message]);
             }else{
                 Utils::processMenu(RouterFactory::get(self::SLUG), $Player);
             }

@@ -3,22 +3,33 @@
 namespace ShockedPlot7560\FactionMaster\Route\Members\Invitations;
 
 use jojoe77777\FormAPI\SimpleForm;
+use jojoe77777\FormAPI\FormAPI;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\Members\ManageMainMembers;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
+use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class MemberDemandList implements Route {
 
     const SLUG = "memberDemandList";
 
-    /** @var \jojoe77777\FormAPI\FormAPI */
+    public $PermissionNeed = [
+        Ids::PERMISSION_ACCEPT_MEMBER_DEMAND,
+        Ids::PERMISSION_REFUSE_MEMBER_DEMAND
+    ];
+    public $backMenu;
+
+    /** @var FormAPI */
     private $FormUI;
     /** @var array */
     private $buttons;
+    /** @var InvitationEntity[] */
+    private $Invitations;
 
     public function getSlug(): string
     {
@@ -27,17 +38,17 @@ class MemberDemandList implements Route {
 
     public function __construct()
     {
-        $Main = Main::getInstance();
-        $this->FormUI = $Main->FormUI;
+        $this->FormUI = Main::getInstance()->FormUI;
+        $this->backMenu = RouterFactory::get(ManageMainMembers::SLUG);
     }
 
-    public function __invoke(Player $player, ?array $params = null)
+    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
         $message = "";
         $Faction = MainAPI::getFactionOfPlayer($player->getName());
         $this->Invitations = MainAPI::getInvitationsByReceiver($Faction->name, "member");
         $this->buttons = [];
-        foreach ($this->Invitations as $key => $Invitation) {
+        foreach ($this->Invitations as $Invitation) {
             $this->buttons[] = $Invitation->sender;
         }
         $this->buttons[] = "§4Back";
@@ -49,10 +60,11 @@ class MemberDemandList implements Route {
 
     public function call(): callable
     {
-        return function (Player $player, $data) {
+        $backMenu = $this->backMenu;
+        return function (Player $player, $data) use ($backMenu) {
             if ($data === null) return;
             if ($data == count($this->buttons) - 1) {
-                Utils::processMenu(RouterFactory::get(ManageMainMembers::SLUG), $player);
+                Utils::processMenu($backMenu, $player);
                 return;
             }
             if (isset($this->buttons[$data])) {

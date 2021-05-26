@@ -4,7 +4,7 @@ namespace ShockedPlot7560\FactionMaster\Route\Members;
 
 use InvalidArgumentException;
 use jojoe77777\FormAPI\CustomForm;
-use jojoe77777\FormAPI\SimpleForm;
+use jojoe77777\FormAPI\FormAPI;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
@@ -18,10 +18,11 @@ class MemberChangeRank implements Route {
     
     const SLUG = "memberChangeRank";
 
-    /** @var \jojoe77777\FormAPI\FormAPI */
+    public $PermissionNeed = [Ids::PERMISSION_CHANGE_MEMBER_RANK];
+    public $backMenu;
+
+    /** @var FormAPI */
     private $FormUI;
-    /** @var array */
-    private $buttons;
     /** @var array */
     private $sliderData = [
         Ids::RECRUIT_ID => "Recruit",
@@ -38,33 +39,34 @@ class MemberChangeRank implements Route {
 
     public function __construct()
     {
-        $Main = Main::getInstance();
-        $this->FormUI = $Main->FormUI;
+        $this->backMenu = RouterFactory::get(ManageMember::SLUG);
+        $this->FormUI = Main::getInstance()->FormUI;
     }
 
-    public function __invoke(Player $player, ?array $params = null)
+    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
         if (!isset($params[0])) throw new InvalidArgumentException("Need the target player instance");
         $this->victim = $params[0];
 
-        $menu = $this->manageMember($this->victim);
+        $menu = $this->changeRankMenu($this->victim);
         $menu->sendToPlayer($player); 
     }
 
     public function call(): callable
     {
-        return function (Player $player, $data)  {
+        $backMenu = $this->backMenu;
+        return function (Player $player, $data) use ($backMenu) {
             if ($data === null) return;
             MainAPI::changeRank($this->victim->name, $data[0]);
             $this->victim->rank = $data[0];
-            Utils::processMenu(RouterFactory::get(ManageMember::SLUG), $player, [ $this->victim ]);
+            Utils::processMenu($backMenu, $player, [ $this->victim ]);
         };
     }
 
-    private function manageMember(UserEntity $user) : CustomForm {
+    private function changeRankMenu(UserEntity $Victim) : CustomForm {
         $menu = $this->FormUI->createCustomForm($this->call());
-        $menu->addStepSlider("Choose the rank", $this->sliderData, $user->rank);
-        $menu->setTitle("Change the role " . $user->name);
+        $menu->addStepSlider("Choose the rank", $this->sliderData, $Victim->rank);
+        $menu->setTitle("Change the role " . $Victim->name);
         return $menu;
     }
 }

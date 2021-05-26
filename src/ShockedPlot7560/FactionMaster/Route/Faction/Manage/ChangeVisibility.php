@@ -3,8 +3,11 @@
 namespace ShockedPlot7560\FactionMaster\Route\Faction\Manage;
 
 use jojoe77777\FormAPI\CustomForm;
+use jojoe77777\FormAPI\FormAPI;
 use pocketmine\Player;
+use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
@@ -15,17 +18,20 @@ class ChangeVisibility implements Route {
 
     const SLUG = "changeVisibility";
 
-    /** @var \jojoe77777\FormAPI\FormAPI */
+    public $PermissionNeed = [
+        Ids::PERMISSION_CHANGE_FACTION_VISIBILITY
+    ];
+    public $backMenu;
+
+    /** @var FormAPI */
     private $FormUI;
-    /** @var array */
-    private $buttons;
     /** @var array */
     private $sliderData = [
         Ids::PUBLIC_VISIBILITY => "Public",
         Ids::PRIVATE_VISIBILITY => "Private",
         Ids::INVITATION_VISIBILITY => "Invitation"
     ];
-    /** @var \ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity */
+    /** @var FactionEntity */
     private $Faction;
 
     public function getSlug(): string
@@ -36,9 +42,10 @@ class ChangeVisibility implements Route {
     public function __construct()
     {
         $this->FormUI = Main::getInstance()->FormUI;
+        $this->backMenu = RouterFactory::get(ManageFactionMain::SLUG);
     }
 
-    public function __invoke(Player $player, ?array $params = null)
+    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
         $this->Faction = MainAPI::getFactionOfPlayer($player->getName());
         
@@ -48,12 +55,13 @@ class ChangeVisibility implements Route {
 
     public function call(): callable
     {
-        return function (Player $player, $data)  {
+        $backMenu = $this->backMenu;
+        return function (Player $player, $data) use ($backMenu) {
             if ($data === null) return;
             if (MainAPI::changeVisibility($this->Faction->name, $data[0])) {
-                Utils::processMenu(RouterFactory::get(ManageFactionMain::SLUG), $player, ['§2Successfully modified visibility ! ']);
+                Utils::processMenu($backMenu,  $player, ['§2Successfully modified visibility ! ']);
             }else{
-                Utils::processMenu(RouterFactory::get(ManageFactionMain::SLUG), $player, [' §c>> §4An error has occured']);
+                Utils::processMenu($backMenu, $player, [' §c>> §4An error has occured']);
             }
         };
     }

@@ -3,8 +3,9 @@
 namespace ShockedPlot7560\FactionMaster\Route\Faction\Manage;
 
 use jojoe77777\FormAPI\SimpleForm;
+use jojoe77777\FormAPI\FormAPI;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
 use ShockedPlot7560\FactionMaster\Route\Route;
@@ -15,14 +16,16 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 class ChangePermissionMain implements Route {
 
     const SLUG = "changePermissionMain";
-    const CHOOSE_ROLE_PERMISSION_PANEL_NAME = "Choose the rank";
 
-    /** @var \jojoe77777\FormAPI\FormAPI */
+    public $PermissionNeed = [
+        Ids::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS
+    ];
+    public $backMenu;
+
+    /** @var FormAPI */
     private $FormUI;
     /** @var array */
     private $buttons;
-    /** @var \ShockedPlot7560\FactionMaster\Main */
-    private $Main;
 
     public function getSlug(): string
     {
@@ -31,15 +34,11 @@ class ChangePermissionMain implements Route {
 
     public function __construct()
     {
-        $Main = Main::getInstance();
-        $this->FormUI = $Main->FormUI;
+        $this->FormUI = Main::getInstance()->FormUI;
+        $this->backMenu = RouterFactory::get(MainPanel::SLUG);
     }
 
-    /**
-     * @param Player $player
-     * @param array|null $params Give to first item the message to print if wanted
-     */
-    public function __invoke(Player $player, ?array $params = null)
+    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
         $message = "";
         if (isset($params[0]) && \is_string($params[0])) $message = $params[0];
@@ -54,7 +53,8 @@ class ChangePermissionMain implements Route {
     }
 
     public function call() : callable{
-        return function (Player $Player, $data) {
+        $backMenu = $this->backMenu;
+        return function (Player $Player, $data) use ($backMenu) {
             if ($data === null) return;
             switch ($this->buttons[$data]) {
                 case "Recruit":
@@ -66,8 +66,8 @@ class ChangePermissionMain implements Route {
                 case "Co-owner":
                     Utils::processMenu(RouterFactory::get(RankPermissionManage::SLUG), $Player, [Ids::COOWNER_ID]);
                     break;
-                default:
-                    Utils::processMenu(RouterFactory::get(ManageFactionMain::SLUG), $Player);
+                case "§4Back";
+                    Utils::processMenu($backMenu, $Player);
                     break;
             }
         };
@@ -76,7 +76,7 @@ class ChangePermissionMain implements Route {
     private function changePermissionMenu(string $message = "") : SimpleForm {
         $menu = $this->FormUI->createSimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
-        $menu->setTitle(self::CHOOSE_ROLE_PERMISSION_PANEL_NAME);
+        $menu->setTitle("Select a role to manage");
         if ($message !== "") $menu->setContent($message);
         return $menu;
     }

@@ -4,7 +4,7 @@ namespace ShockedPlot7560\FactionMaster\Route\Faction\Manage;
 
 use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\Alliance\AllianceMainMenu;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
@@ -16,6 +16,19 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 class ManageFactionMain implements Route {
 
     const SLUG = "manageMainFaction";
+
+    public $PermissionNeed = [
+        Ids::PERMISSION_CHANGE_FACTION_DESCRIPTION,
+        Ids::PERMISSION_CHANGE_FACTION_MESSAGE,
+        Ids::PERMISSION_CHANGE_FACTION_VISIBILITY,
+        Ids::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS,
+        Ids::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
+        Ids::PERMISSION_REFUSE_ALLIANCE_DEMAND,
+        Ids::PERMISSION_SEND_ALLIANCE_INVITATION,
+        Ids::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION,
+        Ids::PERMISSION_BREAK_ALLIANCE
+    ];
+    public $backMenu;
 
     /** @var \jojoe77777\FormAPI\FormAPI */
     private $FormUI;
@@ -30,23 +43,21 @@ class ManageFactionMain implements Route {
     public function __construct()
     {
         $this->FormUI = Main::getInstance()->FormUI;
+        $this->backMenu = RouterFactory::get(MainPanel::SLUG);
     }
 
-    public function __invoke(Player $player, ?array $params = null)
+    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
-        $permissions = MainAPI::getMemberPermission($player->getName());
-        $UserEntity = MainAPI::getUser($player->getName());
-        
         $this->buttons = [];
-        if ((array_key_exists(Ids::PERMISSION_CHANGE_FACTION_DESCRIPTION, $permissions) && $permissions[Ids::PERMISSION_CHANGE_FACTION_DESCRIPTION]) || $UserEntity->rank == Ids::OWNER_ID) $this->buttons[] = "Change description";
-        if ((array_key_exists(Ids::PERMISSION_CHANGE_FACTION_MESSAGE, $permissions) && $permissions[Ids::PERMISSION_CHANGE_FACTION_MESSAGE]) || $UserEntity->rank == Ids::OWNER_ID) $this->buttons[] = "Change message";
-        if ((array_key_exists(Ids::PERMISSION_CHANGE_FACTION_VISIBILITY, $permissions) && $permissions[Ids::PERMISSION_CHANGE_FACTION_VISIBILITY]) || $UserEntity->rank == Ids::OWNER_ID) $this->buttons[] = "Change visibility";
-        if ((array_key_exists(Ids::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS, $permissions) && $permissions[Ids::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS]) || $UserEntity->rank == Ids::OWNER_ID) $this->buttons[] = "Change permissions";
-        if ((isset($permissions[Ids::PERMISSION_ACCEPT_ALLIANCE_DEMAND]) && $permissions[Ids::PERMISSION_ACCEPT_ALLIANCE_DEMAND]) || 
-            (isset($permissions[Ids::PERMISSION_REFUSE_ALLIANCE_DEMAND]) && $permissions[Ids::PERMISSION_REFUSE_ALLIANCE_DEMAND]) || 
-            (isset($permissions[Ids::PERMISSION_SEND_ALLIANCE_INVITATION]) && $permissions[Ids::PERMISSION_SEND_ALLIANCE_INVITATION]) || 
-            (isset($permissions[Ids::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION]) && $permissions[Ids::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION]) || 
-            $UserEntity->rank == Ids::OWNER_ID) $this->buttons[] = "Manage alliance";
+        if ((isset($UserPermissions[Ids::PERMISSION_CHANGE_FACTION_DESCRIPTION]) && $UserPermissions[Ids::PERMISSION_CHANGE_FACTION_DESCRIPTION]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = "Change description";
+        if ((isset($UserPermissions[Ids::PERMISSION_CHANGE_FACTION_MESSAGE]) && $UserPermissions[Ids::PERMISSION_CHANGE_FACTION_MESSAGE]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = "Change message";
+        if ((isset($UserPermissions[Ids::PERMISSION_CHANGE_FACTION_VISIBILITY]) && $UserPermissions[Ids::PERMISSION_CHANGE_FACTION_VISIBILITY]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = "Change visibility";
+        if ((isset($UserPermissions[Ids::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS]) && $UserPermissions[Ids::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = "Change permissions";
+        if ((isset($UserPermissions[Ids::PERMISSION_ACCEPT_ALLIANCE_DEMAND]) && $UserPermissions[Ids::PERMISSION_ACCEPT_ALLIANCE_DEMAND]) || 
+            (isset($UserPermissions[Ids::PERMISSION_REFUSE_ALLIANCE_DEMAND]) && $UserPermissions[Ids::PERMISSION_REFUSE_ALLIANCE_DEMAND]) || 
+            (isset($UserPermissions[Ids::PERMISSION_SEND_ALLIANCE_INVITATION]) && $UserPermissions[Ids::PERMISSION_SEND_ALLIANCE_INVITATION]) || 
+            (isset($UserPermissions[Ids::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION]) && $UserPermissions[Ids::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION]) || 
+            $User->rank == Ids::OWNER_ID) $this->buttons[] = "Manage alliance";
         $this->buttons[] = "§4Back";
 
         $message = "";
@@ -57,11 +68,12 @@ class ManageFactionMain implements Route {
 
     public function call(): callable
     {
-        return function (Player $player, $data) {
+        $backMenu = $this->backMenu;
+        return function (Player $player, $data) use ($backMenu) {
             if ($data === null) return;
             switch ($this->buttons[$data]) {
                 case $this->buttons[\count($this->buttons) - 1]:
-                    Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $player);
+                    Utils::processMenu($backMenu, $player);
                     break;
                 case "Manage alliance":
                     Utils::processMenu(RouterFactory::get(AllianceMainMenu::SLUG), $player);

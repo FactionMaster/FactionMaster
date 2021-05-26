@@ -3,25 +3,29 @@
 namespace ShockedPlot7560\FactionMaster\Route\Faction\Manage;
 
 use jojoe77777\FormAPI\CustomForm;
+use jojoe77777\FormAPI\FormAPI;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
+use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
+use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeDescription implements Route {
 
     const SLUG = "changeDescription";
 
-    /** @var \jojoe77777\FormAPI\FormAPI */
+    public $PermissionNeed = [
+        Ids::PERMISSION_CHANGE_FACTION_DESCRIPTION
+    ];
+    public $backMenu;
+
+    /** @var FormAPI */
     private $FormUI;
-    /** @var array */
-    private $buttons;
-    /** @var \ShockedPlot7560\FactionMaster\Main */
-    private $Main;
-    /** @var \ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity */
+    /** @var FactionEntity */
     private $Faction;
 
     public function getSlug(): string
@@ -32,13 +36,14 @@ class ChangeDescription implements Route {
     public function __construct()
     {
         $this->FormUI = Main::getInstance()->FormUI;
+        $this->backMenu = RouterFactory::get(ManageFactionMain::SLUG);
     }
 
     /**
      * @param Player $player
      * @param array|null $params Give to first item the message to print if wanted
      */
-    public function __invoke(Player $player, ?array $params = null)
+    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
         $message = "";
         if (isset($params[0]) && \is_string($params[0])) $message = $params[0];
@@ -49,11 +54,12 @@ class ChangeDescription implements Route {
     }
 
     public function call() : callable{
-        return function (Player $Player, $data) {
+        $backMenu = $this->backMenu;
+        return function (Player $Player, $data) use ($backMenu) {
             if ($data === null) return;
             if (isset($data[1]) && \is_string($data[1])) {
                 if (MainAPI::changeDescription($this->Faction->name, $data[1])) {
-                    Utils::processMenu(RouterFactory::get(ManageFactionMain::SLUG), $Player, ['§2Description successfully edited !']);
+                    Utils::processMenu($backMenu, $Player, ['§2Description successfully edited !']);
                     return;
                 }
             }

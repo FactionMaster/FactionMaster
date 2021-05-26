@@ -6,16 +6,18 @@ use InvalidArgumentException;
 use jojoe77777\FormAPI\FormAPI;
 use jojoe77777\FormAPI\ModalForm;
 use pocketmine\Player;
+use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Main;
 
 class ConfirmationMenu implements Route {
 
     const SLUG = "confirmationMenu";
-    
-    /** @var \jojoe77777\FormAPI\FormAPI */
-    private $FormUI;
 
-    private $params;
+    public $PermissionNeed = [];
+    public $backMenu;
+    
+    /** @var FormAPI */
+    private $FormUI;
 
     public function getSlug(): string
     {
@@ -24,8 +26,7 @@ class ConfirmationMenu implements Route {
 
     public function __construct()
     {
-        $Main = Main::getInstance();
-        $this->FormUI = $Main->FormUI;
+        $this->FormUI = Main::getInstance()->FormUI;
     }
 
     /**
@@ -34,25 +35,29 @@ class ConfirmationMenu implements Route {
      *      Give to first item of the list, a callable to call when the confirmation are send
      *      At the second, the title
      *      At the third, the content
+     *      (Optionnal) at the fourth, array with for the first item -> message for positive answer and second the negative
      */
-    public function __invoke(Player $player, ?array $params = null)
+    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
-        $this->params = $params;
-        $menu = $this->confirmationMenu($params[1], $params[2]);
+        if (!isset($params[0]) || !$params[0] instanceof Route) throw new InvalidArgumentException("First item must be implements the Route interface");
+
+        $this->backMenu = $params[0];
+
+        $menu = $this->confirmationMenu($params);
         $menu->sendToPlayer($player);
     }
 
     public function call(): callable
     {
-        return $this->params[0];
+        return $this->backMenu;
     }
 
-    private function confirmationMenu(string $title, string $content) : ModalForm {
+    private function confirmationMenu(array $params) : ModalForm {
         $menu = $this->FormUI->createModalForm($this->call());
-        $menu->setTitle($title);
-        $menu->setContent($content);
-        $menu->setButton1("§2Yes");
-        $menu->setButton2("§4No");
+        $menu->setTitle($params[1]);
+        $menu->setContent($params[2]);
+        $menu->setButton1(isset($params[3]) ? $params[3] : "§2Yes");
+        $menu->setButton2(isset($params[4]) ? $params[4] : "§4No");
         return $menu;
     }
 

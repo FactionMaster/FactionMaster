@@ -3,13 +3,12 @@
 namespace ShockedPlot7560\FactionMaster\Route;
 
 use jojoe77777\FormAPI\SimpleForm;
+use jojoe77777\FormAPI\FormAPI;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
 use ShockedPlot7560\FactionMaster\Main;
-use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ChangePermissionMain;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ManageFactionMain;
 use ShockedPlot7560\FactionMaster\Route\Members\ManageMainMembers;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
@@ -19,18 +18,24 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 class MainPanel implements Route {
 
     const SLUG = "main";
-    const NO_FACTION_PANEL_NAME = "Main menu";
-    const WITH_FACTION_PANEL_NAME = "Main menu - {{factionName}}";
 
     const NO_FACTION_TYPE = 0;
     const FACTION_TYPE = 1;
 
-    /** @var \jojoe77777\FormAPI\FormAPI */
+    public $PermissionNeed = [];
+    public $backMenu;
+
+    /** @var FormAPI */
     private $FormUI;
     /** @var array */
     private $buttons;
-    
+    /** @var UserEntity */
     private $UserEntity;
+    /** @var array */
+    private $UserPermissions;
+    /** @var FactionEntity */
+    private $Faction;
+    /** @var int */
     private $menuType;
 
     public function getSlug(): string
@@ -40,15 +45,18 @@ class MainPanel implements Route {
 
     public function __construct()
     {
-        $Main = Main::getInstance();
-        $this->FormUI = $Main->FormUI;
+        $this->FormUI = Main::getInstance()->FormUI;
     }
 
-    public function __invoke(Player $player, ?array $params = null)
-    {
-        $this->UserEntity = MainAPI::getUser($player->getName());
+    /**
+     * @param array|null $params Give to first item the message to print if wanted
+     */
+    public function __invoke(Player $Player, UserEntity $User, array $UserPermissions, ?array $params = null){
+        $this->UserEntity = $User;
+        $this->UserPermissions = $UserPermissions;
         $message = '';
-        if (!$this->UserEntity instanceof UserEntity || $this->UserEntity->faction === null) {
+        
+        if (!$this->UserEntity->faction === null) {
             $this->buttons = [
                 "Join a faction",
                 "Create a faction",
@@ -59,12 +67,13 @@ class MainPanel implements Route {
             if (isset($params[0])) $message = $params[0];
             $menu = $this->noFactionMenu($message);
         }else{
-            $this->generateButton($player);
+            $this->generateButton($Player);
             $this->menuType = self::FACTION_TYPE;
             if (isset($params[0])) $message = $params[0];
-            $menu = $this->factionMenu(MainAPI::getFaction($this->UserEntity->faction), $message);
+            $this->Faction = MainAPI::getFaction($this->UserEntity->faction);
+            $menu = $this->factionMenu($message);
         }
-        $menu->sendToPlayer($player);
+        $menu->sendToPlayer($Player);
     }
 
     public function call() : callable{
@@ -109,17 +118,16 @@ class MainPanel implements Route {
                         case "factionsTop":
                             break;
                         case "leavingButton":
-                            $Faction = MainAPI::getFactionOfPlayer($Player->getName());
                             if ($this->UserEntity->rank == Ids::OWNER_ID) {
                                 $data = [
-                                    $this->callConfirmDelete($Faction),
-                                    "Delete " . $Faction->name . " confirmation",
+                                    $this->callConfirmDelete(),
+                                    "Delete " . $this->Faction->name . " confirmation",
                                     "§fAre you sure you want to delete this faction? This action is irreversible"
                                 ];
                             }else{
                                 $data = [
-                                    $this->callConfirmLeave($Faction),
-                                    "Leave " . $Faction->name . " confirmation",
+                                    $this->callConfirmLeave(),
+                                    "Leave " . $this->Faction->name . " confirmation",
                                     "§fAre you sure you want to leave this faction? This action is irreversible"
                                 ];
                             }
@@ -144,20 +152,21 @@ class MainPanel implements Route {
     private function noFactionMenu(string $message = "") : SimpleForm {
         $menu = $this->FormUI->createSimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
-        $menu->setTitle(self::NO_FACTION_PANEL_NAME);
+        $menu->setTitle("Main menu");
         if ($message !== "") $menu->setContent($message);
         return $menu;
     }
 
-    private function factionMenu(FactionEntity $Faction, string $message = "") : SimpleForm {
+    private function factionMenu(string $message = "") : SimpleForm {
         $menu = $this->FormUI->createSimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
-        $menu->setTitle(Utils::replaceParams(self::WITH_FACTION_PANEL_NAME, ["factionName" => $Faction->name]));
+        $menu->setTitle(Utils::replaceParams("Main menu - {{factionName}}", ["factionName" => $this->Faction->name]));
         if ($message !== "") $menu->setContent($message);
         return $menu;
     }
 
-    private function callConfirmLeave(FactionEntity $Faction) : callable {
+    private function callConfirmLeave() : callable {
+        $Faction = $this->Faction;
         return function (Player $Player, $data) use ($Faction) {
             if ($data === null) return;
             if ($data) {
@@ -170,7 +179,8 @@ class MainPanel implements Route {
         };
     }
 
-    private function callConfirmDelete(FactionEntity $Faction) : callable {
+    private function callConfirmDelete() : callable {
+        $Faction = $this->Faction;
         return function (Player $Player, $data) use ($Faction) {
             if ($data === null) return;
             if ($data) {
@@ -184,7 +194,7 @@ class MainPanel implements Route {
     }
 
     private function generateButton(Player $player) {
-        $permissions = MainAPI::getMemberPermission($player->getName());
+        $permissions = $this->UserPermissions;
         $manageFaction = false;
         $manageMembers = false;
         $leavingButton = "§cLeave the faction";

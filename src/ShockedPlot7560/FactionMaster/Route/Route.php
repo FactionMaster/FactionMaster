@@ -3,6 +3,7 @@
 namespace ShockedPlot7560\FactionMaster\Route;
 
 use pocketmine\Player;
+use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 
 interface Route {
 
@@ -12,7 +13,7 @@ interface Route {
      */
     public function getSlug() : string;
     
-    public function __invoke(Player $player, ?array $params = null);
+    public function __invoke(Player $Player, UserEntity $User, array $UserPermissions, ?array $params = null);
 
     /**
      * Function use in the __invoke function when the panel are called

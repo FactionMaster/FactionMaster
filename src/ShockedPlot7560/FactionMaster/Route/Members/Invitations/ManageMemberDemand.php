@@ -4,14 +4,13 @@ namespace ShockedPlot7560\FactionMaster\Route\Members\Invitations;
 
 use InvalidArgumentException;
 use jojoe77777\FormAPI\SimpleForm;
+use jojoe77777\FormAPI\FormAPI;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
-use ShockedPlot7560\FactionMaster\Route\Members\Invitations\MemberInvitationList;
 use ShockedPlot7560\FactionMaster\Route\Members\ManageMainMembers;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
@@ -22,12 +21,19 @@ class ManageMemberDemand implements Route {
     
     const SLUG = "manageMemberDemand";
 
-    /** @var \jojoe77777\FormAPI\FormAPI */
+    public $PermissionNeed = [
+        Ids::PERMISSION_ACCEPT_MEMBER_DEMAND,
+        Ids::PERMISSION_REFUSE_MEMBER_DEMAND
+    ];
+    public $backMenu;
+
+    /** @var FormAPI */
     private $FormUI;
     /** @var array */
     private $buttons;
-    /** @var UserEntity */
-    private $victim;
+    /** @var InvitationEntity */
+    private $invitation;
+
 
     public function getSlug(): string
     {
@@ -36,35 +42,33 @@ class ManageMemberDemand implements Route {
 
     public function __construct()
     {
-        $Main = Main::getInstance();
-        $this->FormUI = $Main->FormUI;
+        $this->FormUI = Main::getInstance()->FormUI;
+        $this->backMenu = RouterFactory::get(MemberDemandList::SLUG);
     }
 
-    public function __invoke(Player $player, ?array $params = null)
+    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
-        $permissions = MainAPI::getMemberPermission($player->getName());
-        $UserEntity = MainAPI::getUser($player->getName());
-        
-        if (!isset($params[0]) || !$params[0] instanceof InvitationEntity) throw new InvalidArgumentException("Need the target player instance");
+        if (!isset($params[0]) || !$params[0] instanceof InvitationEntity) throw new InvalidArgumentException("Need the invitation instance");
         $this->invitation = $params[0];
 
         $this->buttons = [];
-        if ((array_key_exists(Ids::PERMISSION_ACCEPT_MEMBER_DEMAND, $permissions) && $permissions[Ids::PERMISSION_ACCEPT_MEMBER_DEMAND]) || $UserEntity->rank == Ids::OWNER_ID) $this->buttons[] = "Accept the demand";
-        if ((array_key_exists(Ids::PERMISSION_REFUSE_MEMBER_DEMAND, $permissions) && $permissions[Ids::PERMISSION_REFUSE_MEMBER_DEMAND]) || $UserEntity->rank == Ids::OWNER_ID) $this->buttons[] = "Refuse the demand";
+        if ((isset($UserPermissions[Ids::PERMISSION_ACCEPT_MEMBER_DEMAND]) && $UserPermissions[Ids::PERMISSION_ACCEPT_MEMBER_DEMAND]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = "Accept the demand";
+        if ((isset($UserPermissions[Ids::PERMISSION_REFUSE_MEMBER_DEMAND]) && $UserPermissions[Ids::PERMISSION_REFUSE_MEMBER_DEMAND]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = "Refuse the demand";
         $this->buttons[] = "§4Back";
 
-        $menu = $this->manageMember($this->invitation);
+        $menu = $this->manageInvitationMenu();
         $menu->sendToPlayer($player);
     }
 
     public function call(): callable
     {
         $invitation = $this->invitation;
-        return function (Player $player, $data) use ($invitation) {
+        $backMenu = $this->backMenu;
+        return function (Player $player, $data) use ($invitation, $backMenu) {
             if ($data === null) return;
             switch ($this->buttons[$data]) {
                 case "§4Back":
-                    Utils::processMenu(RouterFactory::get(MemberDemandList::SLUG), $player);
+                    Utils::processMenu($backMenu, $player);
                     break;
                 case "Refuse the demand":
                     Utils::processMenu(RouterFactory::get(ConfirmationMenu::SLUG), $player, [
@@ -87,13 +91,13 @@ class ManageMemberDemand implements Route {
         };
     }
 
-    private function manageMember(InvitationEntity $invitation) : SimpleForm {
+    private function manageInvitationMenu() : SimpleForm {
         $menu = $this->FormUI->createSimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
         if (count($this->buttons) == 1) {
             $menu->setContent(" §c>> §4You can't do anything");
         }
-        $menu->setTitle("Manage " . $invitation->sender . " demand");
+        $menu->setTitle("Manage " . $this->invitation->sender . " demand");
         return $menu;
     }
 

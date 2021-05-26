@@ -11,19 +11,20 @@ use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\Members\ManageMainMembers;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
+use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class NewMemberInvitation implements Route {
 
     const SLUG = "memberInvitationCreate";
-    const CREATE_INVITATION_PANEL_NAME = "Send a new invitation";
+
+    public $PermissionNeed = [
+        Ids::PERMISSION_SEND_MEMBER_INVITATION
+    ];
+    public $backMenu;
 
     /** @var \jojoe77777\FormAPI\FormAPI */
     private $FormUI;
-    /** @var array */
-    private $buttons;
-    /** @var \ShockedPlot7560\FactionMaster\Main */
-    private $Main;
 
     public function getSlug(): string
     {
@@ -32,15 +33,15 @@ class NewMemberInvitation implements Route {
 
     public function __construct()
     {
-        $Main = Main::getInstance();
-        $this->FormUI = $Main->FormUI;
+        $this->FormUI = Main::getInstance()->FormUI;
+        $this->backMenu = RouterFactory::get(ManageMainMembers::SLUG);
     }
 
     /**
      * @param Player $player
      * @param array|null $params Give to first item the message to print if wanted
      */
-    public function __invoke(Player $player, ?array $params = null)
+    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
         $this->Faction = MainAPI::getFactionOfPlayer($player->getName());
 
@@ -51,7 +52,8 @@ class NewMemberInvitation implements Route {
     }
 
     public function call() : callable{
-        return function (Player $Player, $data) {
+        $backMenu = $this->backMenu;
+        return function (Player $Player, $data) use ($backMenu) {
             if ($data === null) return;
             $UserRequest = MainAPI::getUser($data[1]);
 
@@ -60,7 +62,7 @@ class NewMemberInvitation implements Route {
                     if (!MainAPI::getFactionOfPlayer($data[1]) instanceof FactionEntity) {
                         if (!MainAPI::areInInvitation($this->Faction->name, $data[1], "member")) {
                             if (MainAPI::makeInvitation($this->Faction->name, $data[1], "member")) {
-                                Utils::processMenu(RouterFactory::get(ManageMainMembers::SLUG), $Player, ['§2Sent invitation to ' . $data[1] . " successfuly" ] );
+                                Utils::processMenu($backMenu, $Player, ['§2Sent invitation to ' . $data[1] . " successfuly" ] );
                             }else{
                                 $menu = $this->createInvitationMenu(" §c>> §4An error has occured");
                                 $menu->sendToPlayer($Player);
@@ -78,14 +80,14 @@ class NewMemberInvitation implements Route {
                     $menu->sendToPlayer($Player);
                 } 
             }else{
-                Utils::processMenu(RouterFactory::get(ManageMainMembers::SLUG), $Player);
+                Utils::processMenu($backMenu, $Player);
             }
         };
     }
 
     private function createInvitationMenu(string $message = "") : CustomForm {
         $menu = $this->FormUI->createCustomForm($this->call());
-        $menu->setTitle(self::CREATE_INVITATION_PANEL_NAME);
+        $menu->setTitle("Send a new invitation");
         $menu->addLabel($message . " \nTo go back, submit nothing");
         $menu->addInput("Name of the player : ");
         return $menu;
