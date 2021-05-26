@@ -55,7 +55,7 @@ class ManageMembersList implements Route {
         if ((count($Faction->members) - 1) == 0) $message .= "\n \n§4No editable members to display";
         
         $menu = $this->manageMembersListMenu($message);
-        $menu->sendToPlayer($player);
+        $player->sendForm($menu);
     }
 
     public function call(): callable
@@ -75,7 +75,7 @@ class ManageMembersList implements Route {
     }
 
     private function manageMembersListMenu(string $message = "") : SimpleForm {
-        $menu = $this->FormUI->createSimpleForm($this->call());
+        $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
         $menu->setTitle("Manage members - list");
         if ($message !== "") $menu->setContent($message);

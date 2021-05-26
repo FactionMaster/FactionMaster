@@ -73,7 +73,7 @@ class MainPanel implements Route {
             $this->Faction = MainAPI::getFaction($this->UserEntity->faction);
             $menu = $this->factionMenu($message);
         }
-        $menu->sendToPlayer($Player);
+        $Player->sendForm($menu);
     }
 
     public function call() : callable{
@@ -150,7 +150,7 @@ class MainPanel implements Route {
     }
 
     private function noFactionMenu(string $message = "") : SimpleForm {
-        $menu = $this->FormUI->createSimpleForm($this->call());
+        $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
         $menu->setTitle("Main menu");
         if ($message !== "") $menu->setContent($message);
@@ -158,7 +158,7 @@ class MainPanel implements Route {
     }
 
     private function factionMenu(string $message = "") : SimpleForm {
-        $menu = $this->FormUI->createSimpleForm($this->call());
+        $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
         $menu->setTitle(Utils::replaceParams("Main menu - {{factionName}}", ["factionName" => $this->Faction->name]));
         if ($message !== "") $menu->setContent($message);

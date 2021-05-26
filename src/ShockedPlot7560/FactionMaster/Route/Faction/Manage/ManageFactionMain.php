@@ -63,7 +63,7 @@ class ManageFactionMain implements Route {
         $message = "";
         if (isset($params[0])) $message = $params[0];
         $menu = $this->manageMainMembersMenu($message);
-        $menu->sendToPlayer($player);
+        $player->sendForm($menu);
     }
 
     public function call(): callable
@@ -98,7 +98,7 @@ class ManageFactionMain implements Route {
     }
 
     private function manageMainMembersMenu(string $message = "") : SimpleForm {
-        $menu = $this->FormUI->createSimpleForm($this->call());
+        $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
         $menu->setTitle("Manage faction");
         if ($message !== "") $menu->setContent($message);

@@ -50,7 +50,7 @@ class ChangeMessage implements Route {
 
         $this->Faction = MainAPI::getFactionOfPlayer($player->getName());
         $menu = $this->changeMessageMenu($message);
-        $menu->sendToPlayer($player);
+        $player->sendForm($menu);
     }
 
     public function call() : callable{
@@ -64,12 +64,12 @@ class ChangeMessage implements Route {
                 }
             }
             $menu = $this->changeMessageMenu(" §c>> §4An error has occured");
-            $menu->sendToPlayer($Player);
+            $Player->sendForm($menu);
         };
     }
 
     private function changeMessageMenu(string $message = "") : CustomForm {
-        $menu = $this->FormUI->createCustomForm($this->call());
+        $menu = new CustomForm($this->call());
         $menu->setTitle("Change the faction message");
         $menu->addLabel($message, $this->Faction->messageFaction);
         $menu->addInput("Enter your message below : ");

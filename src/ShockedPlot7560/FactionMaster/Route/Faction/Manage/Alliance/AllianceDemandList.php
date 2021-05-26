@@ -58,7 +58,7 @@ class AllianceDemandList implements Route {
         if (isset($params[0])) $message = $params[0];
         if (count($this->Invitations) == 0) $message .= "\n \n§4No pending demand";
         $menu = $this->allianceDemandList($message);
-        $menu->sendToPlayer($player);
+        $player->sendForm($menu);;
     }
 
     public function call(): callable
@@ -78,7 +78,7 @@ class AllianceDemandList implements Route {
     }
 
     private function allianceDemandList(string $message = "") : SimpleForm {
-        $menu = $this->FormUI->createSimpleForm($this->call());
+        $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
         $menu->setTitle("Demand list");
         if ($message !== "") $menu->setContent($message);

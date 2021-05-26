@@ -41,7 +41,7 @@ class CreateFactionPanel implements Route {
         $message = "";
         if (isset($params[0]) && \is_string($params[0])) $message = $params[0];
         $menu = $this->createFactionMenu($message);
-        $menu->sendToPlayer($player);
+        $player->sendForm($menu);;
     }
 
     public function call() : callable{
@@ -55,17 +55,17 @@ class CreateFactionPanel implements Route {
                     Utils::processMenu($backRoute, $Player, ['§2Successfully created faction !']);
                 }else{
                     $menu = $this->createFactionMenu(" §c>> §4An error has occured");
-                    $menu->sendToPlayer($Player);
+                    $Player->sendForm($menu);
                 }
             }else{
                 $menu = $this->createFactionMenu(" §c>> §4This name is already used");
-                $menu->sendToPlayer($Player);
+                $Player->sendForm($menu);
             } 
         };
     }
 
     private function createFactionMenu(string $message = "") : CustomForm {
-        $menu = $this->FormUI->createCustomForm($this->call());
+        $menu = new CustomForm($this->call());
         $menu->setTitle("Create a faction");
         $menu->addLabel($message);
         $menu->addInput("Name of your faction : ");

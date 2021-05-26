@@ -53,7 +53,7 @@ class ManageAlliance implements Route {
         $this->buttons[] = "§4Back";
 
         $menu = $this->manageAlliance();
-        $menu->sendToPlayer($player);
+        $player->sendForm($menu);;
     }
 
     public function call(): callable
@@ -81,7 +81,7 @@ class ManageAlliance implements Route {
     }
 
     private function manageAlliance() : SimpleForm {
-        $menu = $this->FormUI->createSimpleForm($this->call());
+        $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
         $menu->setTitle("Manage " . $this->alliance->name);
         return $menu;

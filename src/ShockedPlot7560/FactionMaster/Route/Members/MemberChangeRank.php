@@ -49,7 +49,7 @@ class MemberChangeRank implements Route {
         $this->victim = $params[0];
 
         $menu = $this->changeRankMenu($this->victim);
-        $menu->sendToPlayer($player); 
+        $player->sendForm($menu);
     }
 
     public function call(): callable
@@ -64,7 +64,7 @@ class MemberChangeRank implements Route {
     }
 
     private function changeRankMenu(UserEntity $Victim) : CustomForm {
-        $menu = $this->FormUI->createCustomForm($this->call());
+        $menu = new CustomForm($this->call());
         $menu->addStepSlider("Choose the rank", $this->sliderData, $Victim->rank);
         $menu->setTitle("Change the role " . $Victim->name);
         return $menu;

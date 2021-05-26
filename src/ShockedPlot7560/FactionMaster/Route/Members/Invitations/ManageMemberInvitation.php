@@ -55,7 +55,7 @@ class ManageMemberInvitation implements Route {
         $this->buttons[] = "§4Back";
 
         $menu = $this->manageMember();
-        $menu->sendToPlayer($player);
+        $player->sendForm($menu);
     }
 
     public function call(): callable
@@ -83,7 +83,7 @@ class ManageMemberInvitation implements Route {
     }
 
     private function manageMember() : SimpleForm {
-        $menu = $this->FormUI->createSimpleForm($this->call());
+        $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
         if (count($this->buttons) == 1) {
             $menu->setContent(" §c>> §4You can't do anything");

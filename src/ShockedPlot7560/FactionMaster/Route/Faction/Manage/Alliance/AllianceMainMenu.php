@@ -70,7 +70,7 @@ class AllianceMainMenu implements Route {
             $this->UserEntity->rank == Ids::OWNER_ID) $this->buttons[] = "Demand pending";
         $this->buttons[] = "§4Back";
         $menu = $this->allianceMainMenu($message);
-        $menu->sendToPlayer($player);
+        $player->sendForm($menu);;
     }
 
     public function call() : callable{
@@ -128,7 +128,7 @@ class AllianceMainMenu implements Route {
     }
 
     private function allianceMainMenu(string $message = "") : SimpleForm {
-        $menu = $this->FormUI->createSimpleForm($this->call());
+        $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
         $menu->setTitle("Alliance main menu");
         if ($message !== "") $menu->setContent($message);

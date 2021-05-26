@@ -44,7 +44,7 @@ class ConfirmationMenu implements Route {
         $this->backMenu = $params[0];
 
         $menu = $this->confirmationMenu($params);
-        $menu->sendToPlayer($player);
+        $player->sendForm($menu);
     }
 
     public function call(): callable
@@ -53,7 +53,7 @@ class ConfirmationMenu implements Route {
     }
 
     private function confirmationMenu(array $params) : ModalForm {
-        $menu = $this->FormUI->createModalForm($this->call());
+        $menu = new ModalForm($this->call());
         $menu->setTitle($params[1]);
         $menu->setContent($params[2]);
         $menu->setButton1(isset($params[3]) ? $params[3] : "§2Yes");

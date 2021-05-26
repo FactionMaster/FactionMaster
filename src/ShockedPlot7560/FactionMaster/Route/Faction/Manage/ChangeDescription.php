@@ -50,7 +50,7 @@ class ChangeDescription implements Route {
 
         $this->Faction = MainAPI::getFactionOfPlayer($player->getName());
         $menu = $this->changeDescriptionMenu($message);
-        $menu->sendToPlayer($player);
+        $player->sendForm($menu);
     }
 
     public function call() : callable{
@@ -64,12 +64,12 @@ class ChangeDescription implements Route {
                 }
             }
             $menu = $this->changeDescriptionMenu(" §c>> §4An error has occured");
-            $menu->sendToPlayer($Player);
+            $Player->sendForm($menu);;
         };
     }
 
     private function changeDescriptionMenu(string $message = "") : CustomForm {
-        $menu = $this->FormUI->createCustomForm($this->call());
+        $menu = new CustomForm($this->call());
         $menu->setTitle("Change the faction description");
         $menu->addLabel($message, $this->Faction->messageFaction);
         $menu->addInput("Enter your description below : ");

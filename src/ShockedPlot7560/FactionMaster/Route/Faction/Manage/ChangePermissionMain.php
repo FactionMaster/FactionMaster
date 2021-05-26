@@ -49,7 +49,7 @@ class ChangePermissionMain implements Route {
             "§4Back"
         ];
         $menu = $this->changePermissionMenu($message);
-        $menu->sendToPlayer($player);
+        $player->sendForm($menu);
     }
 
     public function call() : callable{
@@ -74,7 +74,7 @@ class ChangePermissionMain implements Route {
     }
 
     private function changePermissionMenu(string $message = "") : SimpleForm {
-        $menu = $this->FormUI->createSimpleForm($this->call());
+        $menu =new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
         $menu->setTitle("Select a role to manage");
         if ($message !== "") $menu->setContent($message);

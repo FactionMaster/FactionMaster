@@ -48,7 +48,7 @@ class NewMemberInvitation implements Route {
         $message = "";
         if (isset($params[0]) && \is_string($params[0])) $message = $params[0];
         $menu = $this->createInvitationMenu($message);
-        $menu->sendToPlayer($player);
+        $player->sendForm($menu);
     }
 
     public function call() : callable{
@@ -65,19 +65,19 @@ class NewMemberInvitation implements Route {
                                 Utils::processMenu($backMenu, $Player, ['§2Sent invitation to ' . $data[1] . " successfuly" ] );
                             }else{
                                 $menu = $this->createInvitationMenu(" §c>> §4An error has occured");
-                                $menu->sendToPlayer($Player);
+                                $Player->sendForm($menu);;
                             }
                         }else{
                             $menu = $this->createInvitationMenu(" §c>> §4You have already pending an invitation to this player");
-                            $menu->sendToPlayer($Player);
+                            $Player->sendForm($menu);;
                         }
                     }else{
                         $menu = $this->createInvitationMenu(" §c>> §4This player have already a faction");
-                        $menu->sendToPlayer($Player);
+                        $Player->sendForm($menu);;
                     }
                 }else{
                     $menu = $this->createInvitationMenu(" §c>> §4This user don't exist");
-                    $menu->sendToPlayer($Player);
+                    $Player->sendForm($menu);;
                 } 
             }else{
                 Utils::processMenu($backMenu, $Player);
@@ -86,7 +86,7 @@ class NewMemberInvitation implements Route {
     }
 
     private function createInvitationMenu(string $message = "") : CustomForm {
-        $menu = $this->FormUI->createCustomForm($this->call());
+        $menu = new CustomForm($this->call());
         $menu->setTitle("Send a new invitation");
         $menu->addLabel($message . " \nTo go back, submit nothing");
         $menu->addInput("Name of the player : ");

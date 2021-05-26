@@ -50,7 +50,7 @@ class ChangeVisibility implements Route {
         $this->Faction = MainAPI::getFactionOfPlayer($player->getName());
         
         $menu = $this->changeVisibility();
-        $menu->sendToPlayer($player); 
+        $player->sendForm($menu);
     }
 
     public function call(): callable
@@ -67,7 +67,7 @@ class ChangeVisibility implements Route {
     }
 
     private function changeVisibility() : CustomForm {
-        $menu = $this->FormUI->createCustomForm($this->call());
+        $menu = new CustomForm($this->call());
         $menu->addStepSlider("Choose the visibility", $this->sliderData, $this->Faction->visibility);
         $menu->setTitle("Change the visibility ");
         return $menu;

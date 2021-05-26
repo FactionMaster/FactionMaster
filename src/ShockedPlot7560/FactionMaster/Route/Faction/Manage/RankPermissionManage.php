@@ -70,7 +70,7 @@ class RankPermissionManage implements Route {
             }
         }
         $menu = $this->createPermissionMenu();
-        $menu->sendToPlayer($player);
+        $player->sendForm($menu);
     }
 
     public function call() : callable{
@@ -89,7 +89,7 @@ class RankPermissionManage implements Route {
     }
 
     private function createPermissionMenu(string $message = "") : CustomForm {
-        $menu = $this->FormUI->createCustomForm($this->call());
+        $menu = new CustomForm($this->call());
         $menu->setTitle("Manage permission");
         foreach ($this->permissionsData as $value) {
             $menu->addToggle($value['text'], $this->permissionsFaction[$value["id"]] ?? false);

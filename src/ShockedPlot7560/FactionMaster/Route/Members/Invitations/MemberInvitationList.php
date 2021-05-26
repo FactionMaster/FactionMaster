@@ -54,7 +54,7 @@ class MemberInvitationList implements Route {
         if (isset($params[0])) $message = $params[0];
         if (count($this->Invitations) == 0) $message .= "\n \n§4No pending invitations";
         $menu = $this->memberInvitationList($message);
-        $menu->sendToPlayer($player);
+        $player->sendForm($menu);
     }
 
     public function call(): callable
@@ -74,7 +74,7 @@ class MemberInvitationList implements Route {
     }
 
     private function memberInvitationList(string $message = "") : SimpleForm {
-        $menu = $this->FormUI->createSimpleForm($this->call());
+        $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
         $menu->setTitle("Invitations list");
         if ($message !== "") $menu->setContent($message);
