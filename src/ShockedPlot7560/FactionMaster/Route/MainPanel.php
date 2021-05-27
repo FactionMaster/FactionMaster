@@ -55,8 +55,8 @@ class MainPanel implements Route {
         $this->UserEntity = $User;
         $this->UserPermissions = $UserPermissions;
         $message = '';
-        
-        if (!$this->UserEntity->faction === null) {
+
+        if ($this->UserEntity->faction === null) {
             $this->buttons = [
                 "Join a faction",
                 "Create a faction",
@@ -83,7 +83,7 @@ class MainPanel implements Route {
                 case self::NO_FACTION_TYPE:
                     switch ($data) {
                         case 0:
-                            //TODO: Invitation panel
+                            Utils::processMenu(RouterFactory::get(ManageInvitationMain::SLUG), $Player);
                             break;
                         case 1:
                             Utils::processMenu(RouterFactory::get(CreateFactionPanel::SLUG), $Player);
@@ -198,7 +198,6 @@ class MainPanel implements Route {
         $manageFaction = false;
         $manageMembers = false;
         $leavingButton = "§cLeave the faction";
-
         if (
                 (isset($permissions[Ids::PERMISSION_ACCEPT_MEMBER_DEMAND]) && $permissions[Ids::PERMISSION_ACCEPT_MEMBER_DEMAND]) ||
                 (isset($permissions[Ids::PERMISSION_CHANGE_MEMBER_RANK]) && $permissions[Ids::PERMISSION_CHANGE_MEMBER_RANK]) ||
@@ -207,6 +206,18 @@ class MainPanel implements Route {
                 (isset($permissions[Ids::PERMISSION_REFUSE_MEMBER_DEMAND]) && $permissions[Ids::PERMISSION_REFUSE_MEMBER_DEMAND]) ||
                 (isset($permissions[Ids::PERMISSION_SEND_MEMBER_INVITATION]) && $permissions[Ids::PERMISSION_SEND_MEMBER_INVITATION])
         ) $manageMembers = true;
+
+        if (
+                (isset($permissions[Ids::PERMISSION_ACCEPT_ALLIANCE_DEMAND]) && $permissions[Ids::PERMISSION_ACCEPT_ALLIANCE_DEMAND]) ||
+                (isset($permissions[Ids::PERMISSION_REFUSE_ALLIANCE_DEMAND]) && $permissions[Ids::PERMISSION_REFUSE_ALLIANCE_DEMAND]) ||
+                (isset($permissions[Ids::PERMISSION_BREAK_ALLIANCE]) && $permissions[Ids::PERMISSION_BREAK_ALLIANCE]) ||
+                (isset($permissions[Ids::PERMISSION_CHANGE_FACTION_DESCRIPTION]) && $permissions[Ids::PERMISSION_CHANGE_FACTION_DESCRIPTION]) ||
+                (isset($permissions[Ids::PERMISSION_CHANGE_FACTION_MESSAGE]) && $permissions[Ids::PERMISSION_CHANGE_FACTION_MESSAGE]) ||
+                (isset($permissions[Ids::PERMISSION_CHANGE_FACTION_VISIBILITY]) && $permissions[Ids::PERMISSION_CHANGE_FACTION_VISIBILITY]) ||
+                (isset($permissions[Ids::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION]) && $permissions[Ids::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION]) ||
+                (isset($permissions[Ids::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS]) && $permissions[Ids::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS]) ||
+                (isset($permissions[Ids::PERMISSION_SEND_ALLIANCE_INVITATION]) && $permissions[Ids::PERMISSION_SEND_ALLIANCE_INVITATION])
+        ) $manageFaction = true;
 
         if ($this->UserEntity->rank == Ids::OWNER_ID) {
             $manageMembers = true;

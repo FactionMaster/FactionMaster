@@ -17,7 +17,13 @@ use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ChangePermissionMain;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ChangeVisibility;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ManageFactionMain;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\RankPermissionManage;
+use ShockedPlot7560\FactionMaster\Route\Invitations\DemandList;
+use ShockedPlot7560\FactionMaster\Route\Invitations\InvitationList;
+use ShockedPlot7560\FactionMaster\Route\Invitations\ManageDemand;
+use ShockedPlot7560\FactionMaster\Route\Invitations\ManageInvitation;
+use ShockedPlot7560\FactionMaster\Route\Invitations\NewInvitation;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
+use ShockedPlot7560\FactionMaster\Route\ManageInvitationMain;
 use ShockedPlot7560\FactionMaster\Route\Members\Invitations\ManageMemberDemand;
 use ShockedPlot7560\FactionMaster\Route\Members\Invitations\MemberInvitationList;
 use ShockedPlot7560\FactionMaster\Route\Members\Invitations\NewMemberInvitation;
@@ -64,6 +70,13 @@ class RouterFactory {
         self::registerRoute(new ManageAllianceInvitation());
         self::registerRoute(new NewAllianceInvitation());
         self::registerRoute(new ManageAlliance());
+        
+        self::registerRoute(new ManageInvitationMain());
+        self::registerRoute(new NewInvitation());
+        self::registerRoute(new ManageInvitation());
+        self::registerRoute(new ManageDemand());
+        self::registerRoute(new InvitationList());
+        self::registerRoute(new DemandList());
     }
 
     /**
