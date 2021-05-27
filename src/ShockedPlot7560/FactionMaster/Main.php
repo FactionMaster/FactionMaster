@@ -2,6 +2,7 @@
 
 namespace ShockedPlot7560\FactionMaster;
 
+use CortexPE\Commando\PacketHooker;
 use Exception;
 use PDO;
 use pocketmine\event\Listener;
@@ -10,6 +11,7 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\utils\UUID;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Command\FactionCommand;
 use ShockedPlot7560\FactionMaster\Database\Database;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
@@ -42,6 +44,8 @@ class Main extends PluginBase implements Listener{
         self::$logger = $this->getLogger();
         Utils::printLogo(self::$logger);
         
+        if(!PacketHooker::isRegistered()) PacketHooker::register($this);
+        
         $this->loadConfig();
         $this->Database = new Database($this);
 
@@ -52,6 +56,8 @@ class Main extends PluginBase implements Listener{
             self::$logger->alert("FactionMaster need FormAPI to work, please install them and reload server");
             $this->getServer()->getPluginManager()->disablePlugin($this);
         }
+        
+        $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", "FactionMaster command", ["f", "fac"]));
 
         self::$instance = $this;
 
