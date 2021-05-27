@@ -23,10 +23,14 @@ class Utils {
     public static function processMenu(Route $route, Player $Player, ?array $params = null) {
         $UserEntity = MainAPI::getUser($Player->getName());
         $UserPermissions = MainAPI::getMemberPermission($Player->getName());
-        if ($UserEntity->rank !== Ids::OWNER_ID) {
+        if ($UserPermissions === null) {
+            $UserPermissions = [];
+        }
+        if ($UserEntity->rank !== Ids::OWNER_ID && isset($route->PermissionNeed)) {
             foreach ($route->PermissionNeed as $Permission) {
-                if (isset($UserPermissions[$Permission]) && !$UserPermissions[$Permission]) {
-                    self::processMenu($route->backMenu, $Player, $params);
+                if (isset($UserPermissions[$Permission]) && $UserPermissions[$Permission]) {
+                    $route($Player, $UserEntity, $UserPermissions, $params);
+                    return;
                 }
             }
         }

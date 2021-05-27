@@ -61,6 +61,10 @@ class MainAPI {
      */
     public static function removeFaction(string $factionName) : bool {
         try {
+            $Faction = self::getFaction($factionName);
+            foreach ($Faction->ally as $Alliance) {
+                if (!self::removeAlly($factionName, $Alliance)) return false;
+            }
             $query = self::$PDO->prepare("DELETE FROM " . FactionTable::SLUG . " WHERE name = :name");
             if (!$query->execute([ 'name' => $factionName ])) return false;
 
@@ -114,7 +118,7 @@ class MainAPI {
      * @param int $rankId (Default to member) If a special rank is wanted
      * @return boolean False on failure
      */
-    public static function addMember(string $factionName, string $playerName, int $rankId = Ids::MEMBER_ID) : bool {
+    public static function addMember(string $factionName, string $playerName, int $rankId = Ids::RECRUIT_ID) : bool {
         $Faction = self::getFaction($factionName);
         if (!$Faction instanceof FactionEntity) return false;
         $Faction->members[$playerName] = $rankId;
@@ -272,7 +276,7 @@ class MainAPI {
      */
     public static function sameFaction(string $playerName1, string $playerName2) : bool {
         $player1 = self::getFactionOfPlayer($playerName1);
-        $player2 = self::getFactionOfPlayer($playerName1);
+        $player2 = self::getFactionOfPlayer($playerName2);
         return ($player1 === $player2) && ($player1 !== null);
     }
 

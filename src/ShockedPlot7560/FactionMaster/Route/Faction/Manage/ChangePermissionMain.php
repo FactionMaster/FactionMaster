@@ -42,12 +42,11 @@ class ChangePermissionMain implements Route {
     {
         $message = "";
         if (isset($params[0]) && \is_string($params[0])) $message = $params[0];
-        $this->buttons = [
-            "Recruit",
-            "Member",
-            "Co-owner",
-            "§4Back"
-        ];
+        $this->buttons = [];
+        if ($User->rank > Ids::RECRUIT_ID) $this->buttons[] = 'Recruit';
+        if ($User->rank > Ids::MEMBER_ID) $this->buttons[] = 'Member';
+        if ($User->rank > Ids::COOWNER_ID) $this->buttons[] = 'Co-owner';
+        $this->buttons[] = "§4Back";
         $menu = $this->changePermissionMenu($message);
         $player->sendForm($menu);
     }
@@ -77,6 +76,7 @@ class ChangePermissionMain implements Route {
         $menu =new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
         $menu->setTitle("Select a role to manage");
+        if (count($this->buttons) == 1) $message .= " \n §4No rank to manage";
         if ($message !== "") $menu->setContent($message);
         return $menu;
     }

@@ -39,7 +39,7 @@ class ConfirmationMenu implements Route {
      */
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
-        if (!isset($params[0]) || !$params[0] instanceof Route) throw new InvalidArgumentException("First item must be implements the Route interface");
+        if (!isset($params[0])) throw new InvalidArgumentException("First item must be set");
 
         $this->backMenu = $params[0];
 

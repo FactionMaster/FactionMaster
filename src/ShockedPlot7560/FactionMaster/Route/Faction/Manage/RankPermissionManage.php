@@ -77,8 +77,10 @@ class RankPermissionManage implements Route {
         $backMenu = $this->backMenu;
         return function (Player $Player, $data) use ($backMenu) {
             if ($data === null) return;
-            foreach ($data as $key => $permissionsSet) {
-                $this->Faction->permissions[$this->rank][$this->permissionsData[$key]['id']] = $permissionsSet;
+            $i =0;
+            foreach ($this->permissionsData as $key => $permissionDa) {
+                $this->Faction->permissions[$this->rank][$permissionDa['id']] = $data[$i];
+                $i++;
             }
             if (MainAPI::updatePermissionFaction($this->Faction->name, $this->Faction->permissions)){
                 Utils::processMenu($backMenu, $Player, ['§2Permission update successfuly !']);
