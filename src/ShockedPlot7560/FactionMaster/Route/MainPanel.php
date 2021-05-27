@@ -10,6 +10,7 @@ use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ManageFactionMain;
+use ShockedPlot7560\FactionMaster\Route\Faction\ViewFactionMembers;
 use ShockedPlot7560\FactionMaster\Route\Members\ManageMainMembers;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
@@ -89,7 +90,7 @@ class MainPanel implements Route {
                             Utils::processMenu(RouterFactory::get(CreateFactionPanel::SLUG), $Player);
                             break;
                         case 2:
-                            //TODO: Topfactions panel
+                            Utils::processMenu(RouterFactory::get(TopFactionPanel::SLUG), $Player);
                             break;
                         default:
                             return;
@@ -106,6 +107,7 @@ class MainPanel implements Route {
                         case "bankView":
                             break;
                         case "factionMembers":
+                            Utils::processMenu(RouterFactory::get(ViewFactionMembers::SLUG), $Player);
                             break;
                         case "factionHome":
                             break;
@@ -116,6 +118,7 @@ class MainPanel implements Route {
                             Utils::processMenu(RouterFactory::get(ManageFactionMain::SLUG), $Player);
                             break;
                         case "factionsTop":
+                            Utils::processMenu(RouterFactory::get(TopFactionPanel::SLUG), $Player);
                             break;
                         case "leavingButton":
                             if ($this->UserEntity->rank == Ids::OWNER_ID) {

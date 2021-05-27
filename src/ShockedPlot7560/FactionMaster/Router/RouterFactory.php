@@ -17,6 +17,7 @@ use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ChangePermissionMain;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ChangeVisibility;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ManageFactionMain;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\RankPermissionManage;
+use ShockedPlot7560\FactionMaster\Route\Faction\ViewFactionMembers;
 use ShockedPlot7560\FactionMaster\Route\Invitations\DemandList;
 use ShockedPlot7560\FactionMaster\Route\Invitations\InvitationList;
 use ShockedPlot7560\FactionMaster\Route\Invitations\ManageDemand;
@@ -34,6 +35,7 @@ use ShockedPlot7560\FactionMaster\Route\Members\ManageMember;
 use ShockedPlot7560\FactionMaster\Route\Members\ManageMembersList;
 use ShockedPlot7560\FactionMaster\Route\Members\MemberChangeRank;
 use ShockedPlot7560\FactionMaster\Route\Route;
+use ShockedPlot7560\FactionMaster\Route\TopFactionPanel;
 
 class RouterFactory {
 
@@ -45,6 +47,8 @@ class RouterFactory {
         self::registerRoute(new MainPanel());
         self::registerRoute(new CreateFactionPanel());
         self::registerRoute(new ConfirmationMenu());
+        self::registerRoute(new TopFactionPanel());
+        self::registerRoute(new ViewFactionMembers());
 
         self::registerRoute(new ManageMainMembers());
         self::registerRoute(new ManageMembersList());
