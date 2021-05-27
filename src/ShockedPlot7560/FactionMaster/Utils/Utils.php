@@ -4,6 +4,7 @@ namespace ShockedPlot7560\FactionMaster\Utils;
 
 use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
+use pocketmine\plugin\PluginLogger;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Route\Route;
 
@@ -85,5 +86,16 @@ class Utils {
                 "id" => Ids::PERMISSION_CHANGE_FACTION_VISIBILITY
             ]
         ];
+    }
+
+    public static function printLogo(PluginLogger $logger) {
+        $text = "\n      
+         ______           __  _                __  ___           __\n           
+        / ____/___ ______/ /_(_)___  ____     /  |/  /___ ______/ /____  _____\n
+       / /_  / __ `/ ___/ __/ / __ \/ __ \   / /|_/ / __ `/ ___/ __/ _ \/ ___/\n
+      / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /  \n  
+     /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/  \n   
+                                                                              ";
+        $logger->info($text);
     }
 }

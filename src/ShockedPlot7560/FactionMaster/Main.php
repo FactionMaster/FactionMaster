@@ -14,6 +14,9 @@ use ShockedPlot7560\FactionMaster\Database\Database;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
+use ShockedPlot7560\FactionMaster\Event\EntityDamageByEntity;
+use ShockedPlot7560\FactionMaster\Event\PlayerDeath;
+use ShockedPlot7560\FactionMaster\Event\PlayerLogin;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ManageFactionMain;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
@@ -37,11 +40,12 @@ class Main extends PluginBase implements Listener{
     public function onEnable()
     {
         self::$logger = $this->getLogger();
+        Utils::printLogo(self::$logger);
         
         $this->loadConfig();
         $this->Database = new Database($this);
 
-        $this->getServer()->getPluginManager()->registerEvents($this, $this);
+        $this->loadEvents();
 
         $this->FormUI = $this->getServer()->getPluginManager()->getPlugin("FormAPI");
         if ($this->FormUI === null) {
@@ -65,8 +69,12 @@ class Main extends PluginBase implements Listener{
         return self::$instance;
     }
 
-    public function JoinEvent(PlayerJoinEvent $event) {
-        Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $event->getPlayer());
+    private function loadEvents() : void {
+        $Events = [
+            new PlayerLogin($this), new PlayerDeath($this), new EntityDamageByEntity($this)
+        ];
+        foreach ($Events as $Event) {
+            $this->getServer()->getPluginManager()->registerEvents($Event, $this);
+        }
     }
-
 }

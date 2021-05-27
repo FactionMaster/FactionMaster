@@ -271,7 +271,9 @@ class MainAPI {
      * @return boolean
      */
     public static function sameFaction(string $playerName1, string $playerName2) : bool {
-        return self::getFactionOfPlayer($playerName1) === self::getFactionOfPlayer($playerName2);
+        $player1 = self::getFactionOfPlayer($playerName1);
+        $player2 = self::getFactionOfPlayer($playerName1);
+        return ($player1 === $player2) && ($player1 !== null);
     }
 
     /**
@@ -311,7 +313,8 @@ class MainAPI {
             $query->execute([ 'name' => $factionName1 ]);
             $result = $query->fetch();
             if ($result === false) return false;
-            $result = \unserialize(\base64_decode($result));
+            $result = \unserialize(\base64_decode($result['ally']));
+            if (\is_bool($result)) return false;
             return \in_array($factionName2, $result);
         } catch (\PDOException $Exception) {
             return false;
@@ -599,6 +602,17 @@ class MainAPI {
             ]);
         } catch (\PDOException $Exception) {
             \var_dump($Exception->getMessage());
+            return false;
+        }
+    }
+
+    public static function addUser(string $playerName) : bool {
+        try {
+            $query = self::$PDO->prepare("INSERT INTO " . UserTable::TABLE_NAME . " (name) VALUE (:user)");
+            return $query->execute([
+                'user' => $playerName
+            ]);
+        } catch (\PDOException $Exception) {
             return false;
         }
     }
