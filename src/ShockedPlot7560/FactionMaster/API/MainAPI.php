@@ -5,9 +5,13 @@ namespace ShockedPlot7560\FactionMaster\API;
 use Exception;
 use InvalidArgumentException;
 use PDO;
+use pocketmine\level\format\Chunk;
+use pocketmine\Player;
+use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Database\Table\ClaimTable;
 use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
 use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
@@ -23,9 +27,24 @@ class MainAPI {
     public static $users = [];
     /** @var \PDO */
     private static $PDO;
+    /** @var array[] */
+    public static $claim;
 
     public static function init(PDO $PDO) {
         self::$PDO = $PDO;
+        self::initClaim();
+        \var_dump(self::$claim);
+    }
+
+    private static function initClaim() {
+        self::$claim = [];
+        foreach (MainAPI::getAllClaim() as $Claim) {
+            if (!isset(self::$claim[$Claim->faction])) {
+                self::$claim[$Claim->faction] = [$Claim->getToString()];
+            }else{
+                self::$claim[$Claim->faction][] = $Claim->getToString();
+            }
+        }
     }
 
     /**
@@ -634,5 +653,123 @@ class MainAPI {
         } catch (\PDOException $Exception) {
             return [];
         }
+    }
+
+    /**
+     * Return all the claim register
+     * @return ClaimEntity[]
+     */
+    public static function getAllClaim() : array {
+        $claims = self::$claim;
+        if ($claims === []) {
+            try {
+                $query = self::$PDO->prepare("SELECT * FROM " . ClaimTable::TABLE_NAME);
+                $query->execute();
+                $query->setFetchMode(PDO::FETCH_CLASS, ClaimEntity::class);
+                return $query->fetchAll();
+            } catch (\PDOException $Exception) {
+                return [];
+            }
+        }else{
+            return $claims;
+        }
+    }
+
+    /**
+     * @param Player $player 
+     * @param string $factionName
+     * @return bool False on failure
+     */
+    public static function addClaim(Player $player, string $factionName) : bool {
+        $Chunk = $player->getLevel()->getChunkAtPosition($player);
+        $X = $Chunk->getX();
+        $Z = $Chunk->getZ();
+        $World = $player->getLevel()->getName();
+        try {
+            $query = self::$PDO->prepare("INSERT INTO " . ClaimTable::TABLE_NAME . " (x, z, world, faction) VALUE (:x, :z, :world, :faction)");
+            if (!$query->execute([
+                "x" => $X,
+                "z" => $Z,
+                "world" => $World,
+                "faction" => $factionName
+            ])) return false;
+            self::$claim[$factionName][] = Utils::claimToString($X, $Z, $World);
+            return true;
+        } catch (\PDOException $Exception) {
+            return false;
+        }
+    }
+
+    /**
+     * @param string $World
+     * @param int $X
+     * @param int $Z
+     * @return bool
+     */
+    public static function isClaim(string $World, int $X, int $Z) : bool{
+        $stringClaim = Utils::claimToString($X, $Z, $World);
+        foreach (self::$claim as $Faction => $FactionClaim) {
+            foreach ($FactionClaim as $Claim) {
+                if ($stringClaim === $Claim) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param string $World
+     * @param int $X
+     * @param int $Z
+     * @return string|null Null if the chunk isn't claim
+     */
+    public static function getFactionClaim(string $World, int $X, int $Z) : ?string {
+        $stringClaim = Utils::claimToString($X, $Z, $World);
+        foreach (self::$claim as $Faction => $FactionClaim) {
+            foreach ($FactionClaim as $Claim) {
+                if ($stringClaim === $Claim) {
+                    return $Faction;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param Player $player 
+     * @param string $factionName
+     * @return bool False on failure
+     */
+    public static function removeClaim(Player $player, string $factionName) : bool {
+        $Chunk = $player->getLevel()->getChunkAtPosition($player);
+        $X = $Chunk->getX();
+        $Z = $Chunk->getZ();
+        $World = $player->getLevel()->getName();
+        try {
+            $query = self::$PDO->prepare("DELETE FROM " . ClaimTable::TABLE_NAME . " WHERE x = :x AND z = :z AND world = :world AND faction = :faction");
+            if (!$query->execute([
+                "x" => $X,
+                "z" => $Z,
+                "world" => $World,
+                "faction" => $factionName
+            ])) return false;
+            foreach (self::$claim[$factionName] as $key => $Claim) {
+                if ($Claim === Utils::claimToString($X, $Z, $World)) {
+                    unset(self::$claim[$factionName][$key]);
+                }
+            }
+            return true;
+        } catch (\PDOException $Exception) {
+            return false;
+        }
+    }
+
+    /**
+     * @param string $factionName
+     * @return string[]
+     */
+    public static function getClaimsFaction(string $factionName) : array {
+        return self::$claim[$factionName] ?? [];
     }
 }

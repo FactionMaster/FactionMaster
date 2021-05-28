@@ -6,24 +6,18 @@ use CortexPE\Commando\PacketHooker;
 use Exception;
 use PDO;
 use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
-use pocketmine\utils\UUID;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Command\FactionCommand;
 use ShockedPlot7560\FactionMaster\Database\Database;
-use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
-use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
+use ShockedPlot7560\FactionMaster\Event\BlockBreak;
+use ShockedPlot7560\FactionMaster\Event\BlockPlace;
 use ShockedPlot7560\FactionMaster\Event\EntityDamageByEntity;
+use ShockedPlot7560\FactionMaster\Event\Interact;
 use ShockedPlot7560\FactionMaster\Event\PlayerDeath;
 use ShockedPlot7560\FactionMaster\Event\PlayerLogin;
-use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ManageFactionMain;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Task\DatabaseSynchronisation;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Main extends PluginBase implements Listener{
@@ -77,10 +71,16 @@ class Main extends PluginBase implements Listener{
 
     private function loadEvents() : void {
         $Events = [
-            new PlayerLogin($this), new PlayerDeath($this), new EntityDamageByEntity($this)
+            new PlayerLogin($this), 
+            new PlayerDeath($this), 
+            new EntityDamageByEntity($this),
+            new BlockBreak($this),
+            new Interact($this),
+            new BlockPlace($this)
         ];
         foreach ($Events as $Event) {
             $this->getServer()->getPluginManager()->registerEvents($Event, $this);
         }
     }
+
 }

@@ -88,6 +88,12 @@ class Utils {
             ],[
                 "text" => "Change the faction visibility",
                 "id" => Ids::PERMISSION_CHANGE_FACTION_VISIBILITY
+            ],[
+                "text" => "Use the command /f claim, to claim a chunk",
+                "id" => Ids::PERMISSION_ADD_CLAIM
+            ],[
+                "text" => "Use the command /f unclaim, to unclaim a chunk",
+                "id" => Ids::PERMISSION_REMOVE_CLAIM
             ]
         ];
     }
@@ -101,5 +107,9 @@ class Utils {
      /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/  \n   
                                                                               ";
         $logger->info($text);
+    }
+
+    public static function claimToString($X, $Z, $World) {
+        return $X . "|" . $Z . "|" . $World;
     }
 }
