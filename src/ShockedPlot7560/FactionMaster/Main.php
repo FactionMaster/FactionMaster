@@ -25,16 +25,18 @@ class Main extends PluginBase implements Listener{
     /** @var \pocketmine\plugin\PluginLogger */
     public static $logger;
     /** @var \ShockedPlot7560\FactionMaster\Main */
-    public static $instance;
+    private static $instance;
     /** @var \pocketmine\utils\Config */
     public $config;
     /** @var \ShockedPlot7560\FactionMaster\Database\Database */
     public $Database;
     /** @var \pocketmine\plugin\Plugin */
     public $FormUI;
+    /** @var  */
 
     public function onEnable()
     {
+        self::$instance = $this;
         self::$logger = $this->getLogger();
         Utils::printLogo(self::$logger);
         
@@ -53,16 +55,25 @@ class Main extends PluginBase implements Listener{
         
         $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", "FactionMaster command", ["f", "fac"]));
 
-        self::$instance = $this;
-
         RouterFactory::init();
+
     }
 
     private function loadConfig() : void {
         @mkdir($this->getDataFolder());
-        $this->saveResource('config.yml');
+        @mkdir($this->getDataFolder() . "Translation/");
+
         $this->saveDefaultConfig();
+        $this->saveResource('config.yml');
+        $this->saveResource('translation.yml');
+
         $this->config = new Config($this->getDataFolder() . "config.yml");
+        $this->translation = new Config($this->getDataFolder() . "translation.yml");
+
+        foreach ($this->translation->get("languages") as $key => $language) {
+            $this->saveResource("Translation/$language.yml");
+        }
+
     }
 
     public static function getInstance() : self {

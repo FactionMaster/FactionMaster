@@ -33,6 +33,8 @@ class MainAPI {
     public static $claim;
     /** @var array[] */
     public static $home;
+    /** @var string[] */
+    public static $languages;
 
     public static function init(PDO $PDO) {
         self::$PDO = $PDO;

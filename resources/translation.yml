@@ -1,0 +1,7 @@
+default-language: FR
+
+languages:
+  "FR": "fr_FR"
+
+languages-name:
+  "FR": "Français"

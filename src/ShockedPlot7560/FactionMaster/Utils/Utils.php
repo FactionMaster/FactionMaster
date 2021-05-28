@@ -5,7 +5,9 @@ namespace ShockedPlot7560\FactionMaster\Utils;
 use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use pocketmine\plugin\PluginLogger;
+use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\Route;
 
 class Utils {
@@ -133,5 +135,29 @@ class Utils {
             "z" => $Z,
             "world" => $World
           ];
+    }
+
+    /**
+     * @param string $key
+     */
+    public static function getConfig(string $key) {
+        $Config = new Config(Main::getInstance()->getDataFolder() . "config.yml", Config::YAML);
+        return $Config->get($key);
+    }
+    
+    /**
+     * @param string $key
+     */
+    public static function getConfigLang(string $key) {
+        $Config = new Config(Main::getInstance()->getDataFolder() . "translation.yml", Config::YAML);
+        return $Config->get($key);
+    }
+
+    public static function getText(string $playerName, string $slug, array $args = []) : string {
+        $Playerlang = MainAPI::$languages[$playerName] ?? self::getConfigLang("default-language");
+        $FileName = self::getConfigLang("languages")[$Playerlang];
+        $Config = new Config(Main::getInstance()->getDataFolder() . "Translation/$FileName.yml", Config::YAML);
+        $Text = self::replaceParams($Config->get($slug), $args);
+        return $Text;
     }
 }

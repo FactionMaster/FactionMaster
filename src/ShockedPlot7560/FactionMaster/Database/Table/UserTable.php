@@ -3,6 +3,7 @@
 namespace ShockedPlot7560\FactionMaster\Database\Table;
 
 use PDO;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class UserTable implements TableInterface {
 
@@ -22,6 +23,7 @@ class UserTable implements TableInterface {
             `name` VARCHAR(22) NOT NULL, 
             `faction` VARCHAR(255) DEFAULT NULL,
             `rank` INT(11) DEFAULT NULL,
+            `language` VARCHAR(255) NOT NULL DEFAULT '". Utils::getConfigLang("default-language") ."',
             PRIMARY KEY (`name`), 
             UNIQUE (`name`)
         ) ENGINE = MyISAM");

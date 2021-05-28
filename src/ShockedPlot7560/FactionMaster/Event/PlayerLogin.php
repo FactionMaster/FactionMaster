@@ -22,11 +22,15 @@ class PlayerLogin implements Listener {
 
     public function onJoin(PlayerLoginEvent $event) {
         $playerName = $event->getPlayer()->getName();
-        if (!MainAPI::userIsRegister($playerName)) {
+        $UserEntity = MainAPI::getUser($playerName);
+        if ($UserEntity === null) {
+            MainAPI::$languages[$playerName] = Utils::getConfigLang("default-language");
             if (!MainAPI::addUser($playerName)) {
                 $event->setKickMessage("§6An error was occured in your data saving\nPlease contact an administrator");
                 $event->setCancelled(true);
             }
+        }else{
+            MainAPI::$languages[$playerName] = $UserEntity->language;
         }
         return;
     }

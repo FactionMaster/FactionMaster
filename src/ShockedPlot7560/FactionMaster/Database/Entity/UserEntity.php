@@ -10,11 +10,7 @@ class UserEntity {
     public $faction;
     /** @var int */
     public $rank;
-
-    public function __construct(?string $name = null, ?int $rankId = null)
-    {
-        if ($name !== null) $this->name = $name;
-        if ($rankId !== null) $this->rankId = $rankId;
-    }
+    /** @var string */
+    public $language;
 
 }
