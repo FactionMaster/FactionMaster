@@ -46,12 +46,13 @@ class ManageInvitation implements Route {
 
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
+        $this->UserEntity = $User;
         if (!isset($params[0]) || !$params[0] instanceof InvitationEntity) throw new InvalidArgumentException("Need the invitation instance");
         $this->invitation = $params[0];
 
         $this->buttons = [];
-        $this->buttons[] = "§cDelete the invitation";
-        $this->buttons[] = "§4Back";
+        $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_DELETE_INVITATION");
+        $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_BACK");
 
         $menu = $this->manageMember();
         $player->sendForm($menu);
@@ -64,14 +65,14 @@ class ManageInvitation implements Route {
         return function (Player $player, $data) use ($invitation, $backMenu) {
             if ($data === null) return;
             switch ($this->buttons[$data]) {
-                case "§4Back":
+                case Utils::getText($this->UserEntity->name, "BUTTON_BACK"):
                     Utils::processMenu($backMenu, $player);
                     break;
-                case "§cDelete the invitation":
+                case Utils::getText($this->UserEntity->name, "BUTTON_DELETE_INVITATION"):
                     Utils::processMenu(RouterFactory::get(ConfirmationMenu::SLUG), $player, [
                         $this->callDelete($invitation->sender, $invitation->receiver),
-                        "Delete invitation confirmation",
-                        "§fAre you sure you want to delete this invitation ?"
+                        Utils::getText($this->UserEntity->name, "CONFIRMATION_TITLE_DELETE_INVITATION"),
+                        Utils::getText($this->UserEntity->name, "CONFIRMATION_CONTENT_DELETE_INVITATION")
                     ]);
                     break;
                 default:
@@ -85,9 +86,9 @@ class ManageInvitation implements Route {
         $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
         if (count($this->buttons) == 1) {
-            $menu->setContent(" §c>> §4You can't do anything");
+            $menu->setContent(Utils::getText($this->UserEntity->name, "NO_ACTION_POSSIBLE"));
         }
-        $menu->setTitle("Manage " . $this->invitation->receiver . " invitation");
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "INVITATION_TITLE", ['name' => $this->invitation->receiver]));
         return $menu;
     }
 
@@ -97,8 +98,8 @@ class ManageInvitation implements Route {
         return function (Player $Player, $data) use ($factionName, $playerName, $invitation, $backMenu) {
             if ($data === null) return;
             if ($data) {
-                $message = '§2You have successfully delete the invitation of ' . $playerName;
-                if (!MainAPI::removeInvitation($factionName, $playerName, "member")) $message = "§4An error has occured"; 
+                $message = Utils::getText($this->UserEntity->name, "SUCCESS_DELETE_INVITATION", ['name' => $playerName]);
+                if (!MainAPI::removeInvitation($factionName, $playerName, "member")) $message = Utils::getText($this->UserEntity->name, "ERROR"); 
                 Utils::processMenu($backMenu, $Player, [$message]);
             }else{
                 Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [$invitation]);

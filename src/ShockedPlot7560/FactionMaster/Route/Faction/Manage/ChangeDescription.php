@@ -45,6 +45,7 @@ class ChangeDescription implements Route {
      */
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
+        $this->UserEntity = $User;
         $message = "";
         if (isset($params[0]) && \is_string($params[0])) $message = $params[0];
 
@@ -59,20 +60,20 @@ class ChangeDescription implements Route {
             if ($data === null) return;
             if (isset($data[1]) && \is_string($data[1])) {
                 if (MainAPI::changeDescription($this->Faction->name, $data[1])) {
-                    Utils::processMenu($backMenu, $Player, ['§2Description successfully edited !']);
+                    Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_DESCRIPTION_UPDATE")]);
                     return;
                 }
             }
-            $menu = $this->changeDescriptionMenu(" §c>> §4An error has occured");
+            $menu = $this->changeDescriptionMenu(Utils::getText($this->UserEntity->name, "ERROR"));
             $Player->sendForm($menu);;
         };
     }
 
     private function changeDescriptionMenu(string $message = "") : CustomForm {
         $menu = new CustomForm($this->call());
-        $menu->setTitle("Change the faction description");
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "CHANGE_DESCRIPTION_TITLE"));
         $menu->addLabel($message, $this->Faction->messageFaction);
-        $menu->addInput("Enter your description below : ");
+        $menu->addInput(Utils::getText($this->UserEntity->name, "CHANGE_DESCRIPTION_INPUT_CONTENT"));
         return $menu;
     }
 }

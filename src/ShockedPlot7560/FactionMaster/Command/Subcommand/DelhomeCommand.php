@@ -8,6 +8,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class DelhomeCommand extends BaseSubCommand {
 
@@ -25,24 +26,24 @@ class DelhomeCommand extends BaseSubCommand {
         $permissions = MainAPI::getMemberPermission($sender->getName());
         $UserEntity = MainAPI::getUser($sender->getName());
         if ($permissions === null) {
-            $sender->sendMessage(" §c>> §4You need to be in a faction to use that");
+            $sender->sendMessage(Utils::getText($sender->getName(), "NEED_FACTION"));
             return;
         }
         if ((isset($permissions[Ids::PERMISSION_DELETE_FACTION_HOME]) && $permissions[Ids::PERMISSION_DELETE_FACTION_HOME]) || $UserEntity->rank == Ids::OWNER_ID) {
             if (MainAPI::getFactionHome($UserEntity->faction, $args["name"])) {
                 if (MainAPI::removeHome($UserEntity->faction, $args['name'])) {
-                    $sender->sendMessage(" §a>> §2Home successfully deleted !");
+                    $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_DELETE"));
                     return;
                 }else{
-                    $sender->sendMessage(" §c>> §4An error has occured");
+                    $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
                     return;
                 }
             }else{
-                $sender->sendMessage(" §c>> §4This home don't exist");
+                $sender->sendMessage(Utils::getText($sender->getName(), "HOME_DONT_EXIST"));
                 return;
             }
         }else{
-            $sender->sendMessage(" §c>> §4You don't have the permission to use these command");
+            $sender->sendMessage(Utils::getText($sender->getName(), "DONT_PERMISSION"));
             return;
         }
     }

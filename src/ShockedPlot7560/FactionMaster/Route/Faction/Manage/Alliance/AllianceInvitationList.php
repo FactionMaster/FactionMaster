@@ -42,6 +42,7 @@ class AllianceInvitationList implements Route {
 
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
+        $this->UserEntity = $User;
         $message = "";
         $Faction = MainAPI::getFactionOfPlayer($player->getName());
         $this->Invitations = MainAPI::getInvitationsBySender($Faction->name, "alliance");
@@ -49,9 +50,9 @@ class AllianceInvitationList implements Route {
         foreach ($this->Invitations as $Invitation) {
             $this->buttons[] = $Invitation->receiver;
         }
-        $this->buttons[] = "§4Back";
+        $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_BACK");
         if (isset($params[0])) $message = $params[0];
-        if (count($this->Invitations) == 0) $message .= "\n \n§4No pending invitations";
+        if (count($this->Invitations) == 0) $message .= Utils::getText($this->UserEntity->name, "NO_PENDING_INVITATION");
         $menu = $this->allianceInvitationList($message);
         $player->sendForm($menu);;
     }
@@ -75,7 +76,7 @@ class AllianceInvitationList implements Route {
     private function allianceInvitationList(string $message = "") : SimpleForm {
         $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
-        $menu->setTitle("Invitations list");
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "INVITATION_LIST_TITLE"));
         if ($message !== "") $menu->setContent($message);
         return $menu;
     }

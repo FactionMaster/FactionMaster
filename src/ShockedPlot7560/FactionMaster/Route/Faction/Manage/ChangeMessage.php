@@ -45,6 +45,7 @@ class ChangeMessage implements Route {
      */
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
+        $this->UserEntity = $User;
         $message = "";
         if (isset($params[0]) && \is_string($params[0])) $message = $params[0];
 
@@ -59,20 +60,20 @@ class ChangeMessage implements Route {
             if ($data === null) return;
             if (isset($data[1]) && \is_string($data[1])) {
                 if (MainAPI::changeMessage($this->Faction->name, $data[1])) {
-                    Utils::processMenu($backMenu, $Player, ['§2Message successfully edited !']);
+                    Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_MESSAGE_UPDATE")]);
                     return;
                 }
             }
-            $menu = $this->changeMessageMenu(" §c>> §4An error has occured");
+            $menu = $this->changeMessageMenu(Utils::getText($this->UserEntity->name, "ERROR"));
             $Player->sendForm($menu);
         };
     }
 
     private function changeMessageMenu(string $message = "") : CustomForm {
         $menu = new CustomForm($this->call());
-        $menu->setTitle("Change the faction message");
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "CHANGE_MESSAGE_TITLE"));
         $menu->addLabel($message, $this->Faction->messageFaction);
-        $menu->addInput("Enter your message below : ");
+        $menu->addInput(Utils::getText($this->UserEntity->name, "CHANGE_MESSAGE_INPUT_CONTENT"));
         return $menu;
     }
 }

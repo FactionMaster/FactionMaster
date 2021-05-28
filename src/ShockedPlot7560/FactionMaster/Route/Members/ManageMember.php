@@ -43,14 +43,15 @@ class ManageMember implements Route {
 
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
+        $this->UserEntity = $User;
         if (!isset($params[0]) || !$params[0] instanceof UserEntity) throw new InvalidArgumentException("Need the target player instance");
         $this->victim = $params[0];
 
         $this->buttons = [];
-        if ((isset($UserPermissions[Ids::PERMISSION_CHANGE_MEMBER_RANK]) && $UserPermissions[Ids::PERMISSION_CHANGE_MEMBER_RANK]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = "Change the rank";
-        if ((isset($UserPermissions[Ids::PERMISSION_KICK_MEMBER]) && $UserPermissions[Ids::PERMISSION_KICK_MEMBER]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = "§4Kick out";
-        if ($User->rank == Ids::OWNER_ID) $this->buttons[] = "§cTransfer the property";
-        $this->buttons[] = "§4Back";
+        if ((isset($UserPermissions[Ids::PERMISSION_CHANGE_MEMBER_RANK]) && $UserPermissions[Ids::PERMISSION_CHANGE_MEMBER_RANK]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_CHANGE_RANK");
+        if ((isset($UserPermissions[Ids::PERMISSION_KICK_MEMBER]) && $UserPermissions[Ids::PERMISSION_KICK_MEMBER]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_KICK_OUT");
+        if ($User->rank == Ids::OWNER_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_TRANSFER_PROPERTY");
+        $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_BACK");
 
         $menu = $this->manageMember();
         $player->sendForm($menu);
@@ -63,24 +64,24 @@ class ManageMember implements Route {
         return function (Player $player, $data) use ($victim, $backMenu) {
             if ($data === null) return;
             switch ($this->buttons[$data]) {
-                case "§4Back":
+                case Utils::getText($this->UserEntity->name, "BUTTON_BACK"):
                     Utils::processMenu($backMenu, $player);
                     break;
-                case "§cTransfer the property":
+                case Utils::getText($this->UserEntity->name, "BUTTON_TRANSFER_PROPERTY"):
                     Utils::processMenu(RouterFactory::get(ConfirmationMenu::SLUG), $player, [
                         $this->callTransferProperty($player->getName(), $victim->name),
-                        "Transfer property confirmation",
-                        "§fAre you sure you want to transfer the own of this faction? This action is irreversible and will set you has a coowner"
+                        Utils::getText($this->UserEntity->name, "CONFIRMATION_TITLE_TRANSFER_PROPERTY"),
+                        Utils::getText($this->UserEntity->name, "CONFIRMATION_CONTENT_TRANSFER_PROPERTY")
                     ]);
                     break;
-                case "§4Kick out":
+                case Utils::getText($this->UserEntity->name, "BUTTON_KICK_OUT"):
                     Utils::processMenu(RouterFactory::get(ConfirmationMenu::SLUG), $player, [
                         $this->callKick($victim->name),
-                        "Kick out confirmation",
-                        "§fAre you sure you want to kick out of this faction? This action is irreversible"
+                        Utils::getText($this->UserEntity->name, "CONFIRMATION_TITLE_KICK_OUT"),
+                        Utils::getText($this->UserEntity->name, "CONFIRMATION_CONTENT_KICK_OUT")
                     ]);
                     break;
-                case "Change the rank":
+                case Utils::getText($this->UserEntity->name, "BUTTON_CHANGE_RANK"):
                     Utils::processMenu(RouterFactory::get(MemberChangeRank::SLUG), $player, [ $victim ]);
                     break;
                 default:
@@ -93,7 +94,7 @@ class ManageMember implements Route {
     private function manageMember() : SimpleForm {
         $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
-        $menu->setTitle("Manage " . $this->victim->name);
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "MANAGE_MEMBER_PANEL_TITLE", ['playerName' => $this->victim->name]));
         return $menu;
     }
 
@@ -101,9 +102,9 @@ class ManageMember implements Route {
         return function (Player $Player, $data) use ($oldOwner, $newOwner) {
             if ($data === null) return;
             if ($data) {
-                $message = '§2You have successfully give the property to ' . $newOwner;
-                if (!MainAPI::changeRank($oldOwner, Ids::COOWNER_ID)) $message = "§4An error has occured"; 
-                if (!MainAPI::changeRank($newOwner, Ids::OWNER_ID)) $message = "§4An error has occured";
+                $message = Utils::getText($this->UserEntity->name, "SUCCESS_TRANSFER_PROPERTY", ['playerName' => $newOwner]);
+                if (!MainAPI::changeRank($oldOwner, Ids::COOWNER_ID)) $message = Utils::getText($this->UserEntity->name, "ERROR"); 
+                if (!MainAPI::changeRank($newOwner, Ids::OWNER_ID)) $message = Utils::getText($this->UserEntity->name, "ERROR");
                 Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [$message]);
             }else{
                 Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player);
@@ -116,8 +117,8 @@ class ManageMember implements Route {
             $Faction = MainAPI::getFactionOfPlayer($Player->getName());
             if ($data === null) return;
             if ($data) {
-                $message = '§2You have successfully kick ' . $targetName;
-                if (!MainAPI::removeMember($Faction->name, $targetName)) $message = "§4An error has occured"; 
+                $message = Utils::getText($this->UserEntity->name, "SUCCESS_KICK_OUT", ['playerName' => $targetName]);
+                if (!MainAPI::removeMember($Faction->name, $targetName)) $message = Utils::getText($this->UserEntity->name, "ERROR"); 
                 Utils::processMenu($this->backMenu, $Player, [$message]);
             }else{
                 Utils::processMenu(RouterFactory::get(self::SLUG), $Player);

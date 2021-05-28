@@ -21,15 +21,15 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 class FactionCommand extends BaseCommand{
 
     protected function prepare(): void {
-        $this->registerSubCommand(new FactionCreateCommand("create", "Open the faction creation menu"));
-        $this->registerSubCommand(new FactionTopCommand("top", "Open the faction leaderboards menu"));
-        $this->registerSubCommand(new FactionManageCommand("manage", "Open the faction control menu"));
-        $this->registerSubCommand(new ClaimCommand("claim", "Claim the chunk"));
-        $this->registerSubCommand(new UnclaimCommand("unclaim", "Unclaim the chunk"));
-        $this->registerSubCommand(new SethomeCommand("sethome", "Add a home to your location"));
-        $this->registerSubCommand(new DelhomeCommand("delhome", "Remove the given home"));
-        $this->registerSubCommand(new HomeTpCommand("tp", "Tp you to the given home"));
-        $this->registerSubCommand(new HomeCommand("home", "Open the faction homes menu"));
+        $this->registerSubCommand(new FactionCreateCommand("create", Utils::getText("", "COMMAND_CREATE_DESCRIPTION")));
+        $this->registerSubCommand(new FactionTopCommand("top", Utils::getText("", "COMMAND_TOP_DESCRIPTION")));
+        $this->registerSubCommand(new FactionManageCommand("manage", Utils::getText("", "COMMAND_MANAGE_DESCRIPTION")));
+        $this->registerSubCommand(new ClaimCommand("claim", Utils::getText("", "COMMAND_CLAIM_DESCRIPTION")));
+        $this->registerSubCommand(new UnclaimCommand("unclaim", Utils::getText("", "COMMAND_UNCLAIM_DESCRIPTION")));
+        $this->registerSubCommand(new SethomeCommand("sethome", Utils::getText("", "COMMAND_SETHOME_DESCRIPTION")));
+        $this->registerSubCommand(new DelhomeCommand("delhome", Utils::getText("", "COMMAND_DELHOME_DESCRIPTION")));
+        $this->registerSubCommand(new HomeTpCommand("tp", Utils::getText("", "COMMAND_TP_DESCRIPTION")));
+        $this->registerSubCommand(new HomeCommand("home", Utils::getText("", "COMMAND_HOME_DESCRIPTION")));
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args) : void {

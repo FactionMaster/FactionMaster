@@ -54,9 +54,10 @@ class RankPermissionManage implements Route {
      */
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
+        $this->UserEntity = $User;
         if (!isset($params[0]) || !\is_int($params[0])) throw new InvalidArgumentException("Please give the rank id in the first item of the \$params");
         $this->rank = $params[0];
-        $this->permissionsData = Utils::getPermissionData();
+        $this->permissionsData = Utils::getPermissionData($User->name);
         $this->permissionsUser = $UserPermissions;
         $this->Faction = MainAPI::getFactionOfPlayer($player->getName());
         $this->permissionsFaction = $this->Faction->permissions[$this->rank];
@@ -83,16 +84,16 @@ class RankPermissionManage implements Route {
                 $i++;
             }
             if (MainAPI::updatePermissionFaction($this->Faction->name, $this->Faction->permissions)){
-                Utils::processMenu($backMenu, $Player, ['§2Permission update successfuly !']);
+                Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_PERMISSION_UPDATE")]);
             }else{
-                Utils::processMenu($backMenu, $Player, [' §c>> §4An error has occured']);
+                Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "ERROR")]);
             }
         };
     }
 
     private function createPermissionMenu(string $message = "") : CustomForm {
         $menu = new CustomForm($this->call());
-        $menu->setTitle("Manage permission");
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "MANAGE_PERMISSIONS_MAIN_TITLE"));
         foreach ($this->permissionsData as $value) {
             $menu->addToggle($value['text'], $this->permissionsFaction[$value["id"]] ?? false);
         }

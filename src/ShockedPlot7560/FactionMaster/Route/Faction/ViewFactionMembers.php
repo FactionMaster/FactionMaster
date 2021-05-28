@@ -39,6 +39,7 @@ class ViewFactionMembers implements Route {
 
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
+        $this->UserEntity = $User;
         $message = "";
         $Faction = MainAPI::getFactionOfPlayer($player->getName());
         $UserEntity = $User;
@@ -48,24 +49,24 @@ class ViewFactionMembers implements Route {
             $text = $key . "\n";
             switch ($Member) {
                 case Ids::RECRUIT_ID:
-                    $text .= "§7Recruit";
+                    $text .= "§7" . Utils::getText($this->UserEntity->name, "RECRUIT_RANK_NAME");
                     break;
                 case Ids::MEMBER_ID:
-                    $text .= "§7Member";
+                    $text .= "§7" . Utils::getText($this->UserEntity->name, "MEMBER_RANK_NAME");
                     break;
                 case Ids::COOWNER_ID:
-                    $text .= "§7Co-owner";
+                    $text .= "§7" . Utils::getText($this->UserEntity->name, "COOWNER_RANK_NAME");
                     break;
                 case Ids::OWNER_ID:
-                    $text .= "§7Owner";
+                    $text .= "§7" . Utils::getText($this->UserEntity->name, "OWNER_RANK_NAME");
                     break;
             }
             $this->buttons[] = $text;
         }
-        $this->buttons[] = "§4Back";
+        $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_BACK");
 
         if (isset($params[0])) $message = $params[0];
-        if (count($Faction->members) == 0) $message .= "\n \n§4No members to display";
+        if (count($Faction->members) == 0) $message .= Utils::getText($this->UserEntity->name, "NO_MEMBERS");
         
         $menu = $this->membersListMenu($message);
         $player->sendForm($menu);
@@ -88,7 +89,7 @@ class ViewFactionMembers implements Route {
     private function membersListMenu(string $message = "") : SimpleForm {
         $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
-        $menu->setTitle("Members list");
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "MEMBERS_LIST_TITLE"));
         if ($message !== "") $menu->setContent($message);
         return $menu;
     }

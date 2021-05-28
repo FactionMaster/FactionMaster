@@ -8,6 +8,7 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class UnclaimCommand extends BaseSubCommand {
 
@@ -24,20 +25,20 @@ class UnclaimCommand extends BaseSubCommand {
         $factionClaim = MainAPI::getFactionClaim($World, $X, $Z);
         $UserEntity = MainAPI::getUser($sender->getName());
         if ($factionClaim === null) {
-            $sender->sendMessage(" §c>> §4This chunk isn't claim");
+            $sender->sendMessage(Utils::getText($sender->getName(), "NOT_CLAIMED"));
             return;
         }elseif ($factionClaim === $UserEntity->faction) {
             $permissions = MainAPI::getMemberPermission($sender->getName());
             if ((isset($permissions[Ids::PERMISSION_REMOVE_CLAIM]) && $permissions[Ids::PERMISSION_REMOVE_CLAIM]) || $UserEntity->rank == Ids::OWNER_ID) {
                 if (MainAPI::removeClaim($sender->getPlayer(), $UserEntity->faction)) {
-                    $sender->sendMessage(" §a>> §2Chunk successfully unclaimed !");
+                    $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_UNCLAIM"));
                     return;
                 }else{
-                    $sender->sendMessage(" §c>> §4An error has occured");
+                    $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
                     return;
                 }
             }else{
-                $sender->sendMessage(" §c>> §4You don't have the permission to use these command");
+                $sender->sendMessage(Utils::getText($sender->getName(), "DONT_PERMISSION"));
                 return;
             }
         }

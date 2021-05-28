@@ -26,11 +26,7 @@ class ChangeVisibility implements Route {
     /** @var FormAPI */
     private $FormUI;
     /** @var array */
-    private $sliderData = [
-        Ids::PUBLIC_VISIBILITY => "Public",
-        Ids::PRIVATE_VISIBILITY => "Private",
-        Ids::INVITATION_VISIBILITY => "Invitation"
-    ];
+    private $sliderData;
     /** @var FactionEntity */
     private $Faction;
 
@@ -47,6 +43,12 @@ class ChangeVisibility implements Route {
 
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
+        $this->UserEntity = $User;
+        $this->sliderData = [
+            Ids::PUBLIC_VISIBILITY => Utils::getText($this->UserEntity->name, "PUBLIC_VISIBILITY_NAME"),
+            Ids::PRIVATE_VISIBILITY => Utils::getText($this->UserEntity->name, "PRIVATE_VISIBILITY_NAME"),
+            Ids::INVITATION_VISIBILITY => Utils::getText($this->UserEntity->name, "INVITATION_VISIBILITY_NAME")
+        ];
         $this->Faction = MainAPI::getFactionOfPlayer($player->getName());
         
         $menu = $this->changeVisibility();
@@ -59,17 +61,18 @@ class ChangeVisibility implements Route {
         return function (Player $player, $data) use ($backMenu) {
             if ($data === null) return;
             if (MainAPI::changeVisibility($this->Faction->name, $data[0])) {
-                Utils::processMenu($backMenu,  $player, ['§2Successfully modified visibility ! ']);
+                Utils::processMenu($backMenu,  $player, [Utils::getText($this->UserEntity->name, "SUCCESS_VISIBILITY_UPDATE")]);
             }else{
-                Utils::processMenu($backMenu, $player, [' §c>> §4An error has occured']);
+                Utils::processMenu($backMenu, $player, [Utils::getText($this->UserEntity->name, "ERROR")]);
             }
         };
     }
 
     private function changeVisibility() : CustomForm {
         $menu = new CustomForm($this->call());
-        $menu->addStepSlider("Choose the visibility", $this->sliderData, $this->Faction->visibility);
-        $menu->setTitle("Change the visibility ");
+        $menu->addStepSlider(Utils::getText($this->UserEntity->name, "CHANGE_VISIBILITY_STEP"), $this->sliderData, $this->Faction->visibility);
+        $menu->addLabel(Utils::getText($this->UserEntity->name, "CHANGE_VISIBILITY_EXPLICATION"));
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "CHANGE_VISIBILITY_TITLE"));
         return $menu;
     }
 }

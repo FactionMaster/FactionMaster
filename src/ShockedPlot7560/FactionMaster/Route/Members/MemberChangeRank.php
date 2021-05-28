@@ -24,11 +24,7 @@ class MemberChangeRank implements Route {
     /** @var FormAPI */
     private $FormUI;
     /** @var array */
-    private $sliderData = [
-        Ids::RECRUIT_ID => "Recruit",
-        Ids::MEMBER_ID => "Member",
-        Ids::COOWNER_ID => "Co-owner"
-    ];
+    private $sliderData;
     /** @var UserEntity */
     private $victim;
 
@@ -45,6 +41,12 @@ class MemberChangeRank implements Route {
 
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
+        $this->UserEntity = $User;
+        $this->sliderData = [
+            Ids::RECRUIT_ID => Utils::getText($player->name, "RECRUIT_RANK_NAME"),
+            Ids::MEMBER_ID => Utils::getText($player->name, "MEMBER_RANK_NAME"),
+            Ids::COOWNER_ID => Utils::getText($player->name, "COOWNER_RANK_NAME")
+        ];
         if (!isset($params[0])) throw new InvalidArgumentException("Need the target player instance");
         $this->victim = $params[0];
 
@@ -65,8 +67,8 @@ class MemberChangeRank implements Route {
 
     private function changeRankMenu(UserEntity $Victim) : CustomForm {
         $menu = new CustomForm($this->call());
-        $menu->addStepSlider("Choose the rank", $this->sliderData, $Victim->rank);
-        $menu->setTitle("Change the role " . $Victim->name);
+        $menu->addStepSlider(Utils::getText($this->UserEntity->name, "MEMBER_CHANGE_RANK_PANEL_STEP"), $this->sliderData, $Victim->rank);
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "MEMBER_CHANGE_RANK_PANEL_TITLE", ['playerName' => $Victim->name]));
         return $menu;
     }
 }

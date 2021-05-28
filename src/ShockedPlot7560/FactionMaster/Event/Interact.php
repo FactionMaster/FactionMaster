@@ -18,6 +18,7 @@ use pocketmine\math\Vector3;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Interact implements Listener {
 
@@ -43,7 +44,7 @@ class Interact implements Listener {
                     $factionPlayer = MainAPI::getFactionOfPlayer($event->getPlayer()->getName());
                     if (!$factionPlayer instanceof FactionEntity || ($factionPlayer instanceof FactionEntity && $faction !== $factionPlayer->name)) {
                         $event->setCancelled(true);
-                        $event->getPlayer()->sendMessage(" §c>> §4You can't use/interact with that in ennemie claim");
+                        $event->getPlayer()->sendMessage(Utils::getText($Player->getName(), "CANT_INTERACT_CLAIM"));
                         return;
                     }
                 }

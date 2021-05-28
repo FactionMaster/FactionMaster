@@ -59,16 +59,16 @@ class AllianceMainMenu implements Route {
             $this->buttons[] = MainAPI::getFaction($Alliance)->name;
         }
         if (count($this->FactionEntity->ally) == 0) {
-           $message = "§4You don't have an ally yet";
+           $message = Utils::getText($this->UserEntity->name, "NO_ALLY");
         }
         if ((isset($UserPermissions[Ids::PERMISSION_SEND_ALLIANCE_INVITATION]) && $UserPermissions[Ids::PERMISSION_SEND_ALLIANCE_INVITATION]) || 
-            $this->UserEntity->rank == Ids::OWNER_ID) $this->buttons[] = "Send an invitation";
+            $this->UserEntity->rank == Ids::OWNER_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_SEND_INVITATION");
         if ((isset($UserPermissions[Ids::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION]) && $UserPermissions[Ids::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION]) || 
-            $this->UserEntity->rank == Ids::OWNER_ID) $this->buttons[] = "Invitation pending";
+            $this->UserEntity->rank == Ids::OWNER_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_INVITATION_PENDING");
         if ((isset($UserPermissions[Ids::PERMISSION_ACCEPT_ALLIANCE_DEMAND]) && $UserPermissions[Ids::PERMISSION_ACCEPT_ALLIANCE_DEMAND]) || 
             (isset($permisUserPermissionssions[Ids::PERMISSION_REFUSE_ALLIANCE_DEMAND]) && $UserPermissions[Ids::PERMISSION_REFUSE_ALLIANCE_DEMAND]) || 
-            $this->UserEntity->rank == Ids::OWNER_ID) $this->buttons[] = "Demand pending";
-        $this->buttons[] = "§4Back";
+            $this->UserEntity->rank == Ids::OWNER_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_REQUEST_PENDING");
+        $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_BACK");
         $menu = $this->allianceMainMenu($message);
         $player->sendForm($menu);;
     }
@@ -130,7 +130,7 @@ class AllianceMainMenu implements Route {
     private function allianceMainMenu(string $message = "") : SimpleForm {
         $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
-        $menu->setTitle("Alliance main menu");
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "MANAGE_ALLIANCE_MAIN_TITLE"));
         if ($message !== "") $menu->setContent($message);
         return $menu;
     }

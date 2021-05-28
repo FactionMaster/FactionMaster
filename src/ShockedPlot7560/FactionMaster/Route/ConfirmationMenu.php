@@ -8,6 +8,7 @@ use jojoe77777\FormAPI\ModalForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ConfirmationMenu implements Route {
 
@@ -39,6 +40,7 @@ class ConfirmationMenu implements Route {
      */
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
+        $this->UserEntity = $User;
         if (!isset($params[0])) throw new InvalidArgumentException("First item must be set");
 
         $this->backMenu = $params[0];
@@ -56,8 +58,8 @@ class ConfirmationMenu implements Route {
         $menu = new ModalForm($this->call());
         $menu->setTitle($params[1]);
         $menu->setContent($params[2]);
-        $menu->setButton1(isset($params[3]) ? $params[3] : "§2Yes");
-        $menu->setButton2(isset($params[4]) ? $params[4] : "§4No");
+        $menu->setButton1(isset($params[3]) ? $params[3] : Utils::getText($this->UserEntity->name, "BUTTON_MODAL_YES"));
+        $menu->setButton2(isset($params[4]) ? $params[4] : Utils::getText($this->UserEntity->name, "BUTTON_MODAL_NO"));
         return $menu;
     }
 

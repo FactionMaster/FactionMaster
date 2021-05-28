@@ -59,10 +59,10 @@ class MainPanel implements Route {
 
         if ($this->UserEntity->faction === null) {
             $this->buttons = [
-                "Join a faction",
-                "Create a faction",
-                "Top factions",
-                "§4Quit"
+                Utils::getText($Player->getName(), "BUTTON_JOIN_FACTION"),
+                Utils::getText($Player->getName(), "BUTTON_CREATE_FACTION"),
+                Utils::getText($Player->getName(), "BUTTON_TOP_FACTION"),
+                Utils::getText($Player->getName(), "BUTTON_QUIT")
             ];
             $this->menuType = self::NO_FACTION_TYPE;
             if (isset($params[0])) $message = $params[0];
@@ -125,14 +125,14 @@ class MainPanel implements Route {
                             if ($this->UserEntity->rank == Ids::OWNER_ID) {
                                 $data = [
                                     $this->callConfirmDelete(),
-                                    "Delete " . $this->Faction->name . " confirmation",
-                                    "§fAre you sure you want to delete this faction? This action is irreversible"
+                                    Utils::getText($this->UserEntity->name, "CONFIRMATION_TITLE_DELETE_FACTION", ['factionName' => $this->Faction->name]),
+                                    Utils::getText($this->UserEntity->name, "CONFIRMATION_CONTENT_DELETE_FACTION")
                                 ];
                             }else{
                                 $data = [
                                     $this->callConfirmLeave(),
-                                    "Leave " . $this->Faction->name . " confirmation",
-                                    "§fAre you sure you want to leave this faction? This action is irreversible"
+                                    Utils::getText($this->UserEntity->name, "CONFIRMATION_TITLE_LEAVE_FACTION", ['factionName' => $this->Faction->name]),
+                                    Utils::getText($this->UserEntity->name, "CONFIRMATION_CONTENT_LEAVE_FACTION")
                                 ];
                             }
                             Utils::processMenu(
@@ -156,7 +156,7 @@ class MainPanel implements Route {
     private function noFactionMenu(string $message = "") : SimpleForm {
         $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
-        $menu->setTitle("Main menu");
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "MAIN_PANEL_TITLE_NO_FACTION"));
         if ($message !== "") $menu->setContent($message);
         return $menu;
     }
@@ -164,7 +164,7 @@ class MainPanel implements Route {
     private function factionMenu(string $message = "") : SimpleForm {
         $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
-        $menu->setTitle(Utils::replaceParams("Main menu - {{factionName}}", ["factionName" => $this->Faction->name]));
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "MAIN_PANEL_TITLE_HAVE_FACTION", ["factionName" => $this->Faction->name]));
         if ($message !== "") $menu->setContent($message);
         return $menu;
     }
@@ -174,8 +174,8 @@ class MainPanel implements Route {
         return function (Player $Player, $data) use ($Faction) {
             if ($data === null) return;
             if ($data) {
-                $message = '§2You have successfully left the faction';
-                if (!MainAPI::removeMember($Faction->name, $Player->getName())) $message = "§4An error has occured";
+                $message = Utils::getText($this->UserEntity->name, "SUCCESS_LEAVE_FACTION");
+                if (!MainAPI::removeMember($Faction->name, $Player->getName())) $message = Utils::getText($this->UserEntity->name, "ERROR");
                 Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [$message]);
             }else{
                 Utils::processMenu(RouterFactory::get(self::SLUG), $Player);
@@ -188,8 +188,8 @@ class MainPanel implements Route {
         return function (Player $Player, $data) use ($Faction) {
             if ($data === null) return;
             if ($data) {
-                $message = '§2You have successfully delete the faction';
-                if (!MainAPI::removeFaction($Faction->name)) $message = "§4An error has occured";
+                $message = Utils::getText($this->UserEntity->name, "SUCCESS_DELETE_FACTION");
+                if (!MainAPI::removeFaction($Faction->name)) $message = Utils::getText($this->UserEntity->name, "ERROR");
                 Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [$message]);
             }else{
                 Utils::processMenu(RouterFactory::get(self::SLUG), $Player);
@@ -201,7 +201,7 @@ class MainPanel implements Route {
         $permissions = $this->UserPermissions;
         $manageFaction = false;
         $manageMembers = false;
-        $leavingButton = "§cLeave the faction";
+        $leavingButton = Utils::getText($this->UserEntity->name, "BUTTON_LEAVE_FACTION");
         if (
                 (isset($permissions[Ids::PERMISSION_ACCEPT_MEMBER_DEMAND]) && $permissions[Ids::PERMISSION_ACCEPT_MEMBER_DEMAND]) ||
                 (isset($permissions[Ids::PERMISSION_CHANGE_MEMBER_RANK]) && $permissions[Ids::PERMISSION_CHANGE_MEMBER_RANK]) ||
@@ -226,34 +226,30 @@ class MainPanel implements Route {
         if ($this->UserEntity->rank == Ids::OWNER_ID) {
             $manageMembers = true;
             $manageFaction = true;
-            $leavingButton = "§cDelete the faction";
+            $leavingButton = Utils::getText($this->UserEntity->name, "BUTTON_DELETE_FACTION");
         }
 
             //TODO: Manage faction permissions
         $this->buttonsData = [
                 [
-                    'slug' => "bankView",
-                    'text' => "View bank",
-                    'access' => true
-                ],[
                     'slug' => "factionMembers",
-                    'text' => "View faction members",
+                    'text' => Utils::getText($this->UserEntity->name, "BUTTON_VIEW_FACTION_MEMBERS"),
                     'access' => true
                 ],[
                     'slug' => "factionHome",
-                    'text' => "View faction home",
+                    'text' => Utils::getText($this->UserEntity->name, "BUTTON_VIEW_FACTION_HOME"),
                     'access' => true
                 ],[
                     'slug' => "manageMembers",
-                    'text' => "Manage members",
+                    'text' => Utils::getText($this->UserEntity->name, "BUTTON_MANAGE_MEMBERS"),
                     'access' => $manageMembers
                 ],[
                     'slug' => "manageFaction",
-                    'text' => "Manage faction",
+                    'text' => Utils::getText($this->UserEntity->name, "BUTTON_MANAGE_FACTION"),
                     'access' => $manageFaction
                 ],[
                     'slug' => "factionsTop",
-                    'text' => "Top factions",
+                    'text' => Utils::getText($this->UserEntity->name, "BUTTON_TOP_FACTION"),
                     'access' => true
                 ],[
                     'slug' => "leavingButton",
@@ -261,7 +257,7 @@ class MainPanel implements Route {
                     'access' => true
                 ],[
                     'slug' => "quit",
-                    'text' => "§4Quit",
+                    'text' => Utils::getText($this->UserEntity->name, "BUTTON_QUIT"),
                     'access' => true
                 ]
         ];

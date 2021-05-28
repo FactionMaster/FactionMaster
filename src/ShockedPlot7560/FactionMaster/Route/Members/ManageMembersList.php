@@ -40,19 +40,19 @@ class ManageMembersList implements Route {
     {
         $message = "";
         $Faction = MainAPI::getFactionOfPlayer($player->getName());
-        $UserEntity = $User;
+        $this->UserEntity = $User;
 
         $this->buttons = [];
         foreach ($Faction->members as $key => $Member) {
             if ($key === $player->getName()) continue;
-            if ($Member < $UserEntity->rank) {
+            if ($Member < $this->UserEntity->rank) {
                 $this->buttons[] = $key;
             }
         }
         $this->buttons[] = "§4Back";
 
         if (isset($params[0])) $message = $params[0];
-        if ((count($Faction->members) - 1) == 0) $message .= "\n \n§4No editable members to display";
+        if ((count($Faction->members) - 1) == 0) $message .= Utils::getText($this->UserEntity->name, "NO_MEMBERS");
         
         $menu = $this->manageMembersListMenu($message);
         $player->sendForm($menu);
@@ -77,7 +77,7 @@ class ManageMembersList implements Route {
     private function manageMembersListMenu(string $message = "") : SimpleForm {
         $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
-        $menu->setTitle("Manage members - list");
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "MANAGE_MEMBERS_LIST_PANEL_TITLE"));
         if ($message !== "") $menu->setContent($message);
         return $menu;
     }

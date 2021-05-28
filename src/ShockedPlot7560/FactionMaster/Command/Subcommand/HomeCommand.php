@@ -23,7 +23,7 @@ class HomeCommand extends BaseSubCommand {
         if ((isset($permissions[Ids::PERMISSION_TP_FACTION_HOME]) && $permissions[Ids::PERMISSION_TP_FACTION_HOME]) || $UserEntity->rank == Ids::OWNER_ID) {
             Utils::processMenu(RouterFactory::get(HomeListPanel::SLUG), $sender->getPlayer());
         }else{
-            $sender->sendMessage(" §c>> §4You don't have the permission to use that");
+            $sender->sendMessage(Utils::getText($sender->getName(), "DONT_PERMISSION"));
         }
     }
 

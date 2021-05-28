@@ -43,7 +43,7 @@ class HomeListPanel implements Route {
     {
         $message = "";
         $Faction = MainAPI::getFactionOfPlayer($player->getName());
-        $UserEntity = $User;
+        $this->UserEntity = $User;
 
         $this->buttons = [];
         $this->Homes = MainAPI::getFactionHomes($Faction->name);
@@ -52,13 +52,18 @@ class HomeListPanel implements Route {
         foreach ($this->Homes as $Name => $Home) {
             $Home['name'] = $Name;
             $this->Homes[$i] = $Home;
-            $this->buttons[] = $Name . "\nx:" . $Home['x'] . " | y:" . $Home['y'] ." | z:" . $Home['z'];
+            $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_LISTING_HOME", [
+                'name' => $Name,
+                'x' => $Home['x'],
+                'y' => $Home['y'],
+                'z' => $Home['z']
+            ]);
             $i++;
         }
-        $this->buttons[] = "§4Back";
+        $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_BACK");
 
         if (isset($params[0])) $message = $params[0];
-        if (count($Faction->members) == 0) $message .= "\n \n§4No home was set";
+        if (count($Faction->members) == 0) $message .= Utils::getText($this->UserEntity->name, "NO_HOME_SET");
         
         $menu = $this->manageMembersListMenu($message);
         $player->sendForm($menu);
@@ -76,7 +81,7 @@ class HomeListPanel implements Route {
             if (isset($this->Homes[$data])) {
                 $Home = $this->Homes[$data];
                 $player->teleport(new Vector3($Home["x"], $Home["y"], $Home['z']));
-                $player->sendMessage(" §a>> §2You have been teleport to the home");
+                $player->sendMessage(Utils::getText($this->UserEntity->name, "SUCCESS_TELEPORT_HOME"));
             }
             return;
         };
@@ -85,8 +90,10 @@ class HomeListPanel implements Route {
     private function manageMembersListMenu(string $message = "") : SimpleForm {
         $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
-        $menu->setTitle("Home list");
-        if ($message !== "") $menu->setContent("§7Click on the home that you want to teleport\n §r" . $message);
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "HOME_FACTION_PANEL_TITLE"));
+        $content = Utils::getText($this->UserEntity->name, "HOME_FACTION_PANEL_CONTENT");
+        if ($message !== "") $content .= ("\n§r" . $message);
+        $menu->setContent($content);
         return $menu;
     }
 

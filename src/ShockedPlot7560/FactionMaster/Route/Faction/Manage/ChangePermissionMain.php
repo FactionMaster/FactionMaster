@@ -40,13 +40,14 @@ class ChangePermissionMain implements Route {
 
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
+        $this->UserEntity = $User;
         $message = "";
         if (isset($params[0]) && \is_string($params[0])) $message = $params[0];
         $this->buttons = [];
-        if ($User->rank > Ids::RECRUIT_ID) $this->buttons[] = 'Recruit';
-        if ($User->rank > Ids::MEMBER_ID) $this->buttons[] = 'Member';
-        if ($User->rank > Ids::COOWNER_ID) $this->buttons[] = 'Co-owner';
-        $this->buttons[] = "§4Back";
+        if ($User->rank > Ids::RECRUIT_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "RECRUIT_RANK_NAME");
+        if ($User->rank > Ids::MEMBER_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "MEMBER_RANK_NAME");
+        if ($User->rank > Ids::COOWNER_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "COOWNER_RANK_NAME");
+        $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_BACK");
         $menu = $this->changePermissionMenu($message);
         $player->sendForm($menu);
     }
@@ -56,16 +57,16 @@ class ChangePermissionMain implements Route {
         return function (Player $Player, $data) use ($backMenu) {
             if ($data === null) return;
             switch ($this->buttons[$data]) {
-                case "Recruit":
+                case Utils::getText($this->UserEntity->name, "RECRUIT_RANK_NAME"):
                     Utils::processMenu(RouterFactory::get(RankPermissionManage::SLUG), $Player, [Ids::RECRUIT_ID]);
                     break;
-                case "Member":
+                case Utils::getText($this->UserEntity->name, "MEMBER_RANK_NAME"):
                     Utils::processMenu(RouterFactory::get(RankPermissionManage::SLUG), $Player, [Ids::MEMBER_ID]);
                     break;
-                case "Co-owner":
+                case Utils::getText($this->UserEntity->name, "COOWNER_RANK_NAME"):
                     Utils::processMenu(RouterFactory::get(RankPermissionManage::SLUG), $Player, [Ids::COOWNER_ID]);
                     break;
-                case "§4Back";
+                case Utils::getText($this->UserEntity->name, "BUTTON_BACK");
                     Utils::processMenu($backMenu, $Player);
                     break;
             }
@@ -75,8 +76,8 @@ class ChangePermissionMain implements Route {
     private function changePermissionMenu(string $message = "") : SimpleForm {
         $menu =new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
-        $menu->setTitle("Select a role to manage");
-        if (count($this->buttons) == 1) $message .= " \n §4No rank to manage";
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "CHANGE_PERMISSION_TITLE"));
+        if (count($this->buttons) == 1) $message .= Utils::getText($this->UserEntity->name, "NO_RANK");
         if ($message !== "") $menu->setContent($message);
         return $menu;
     }

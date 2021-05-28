@@ -2,12 +2,10 @@
 
 namespace ShockedPlot7560\FactionMaster\Route;
 
-use jojoe77777\FormAPI\CustomForm;
 use jojoe77777\FormAPI\FormAPI;
 use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
@@ -39,6 +37,7 @@ class TopFactionPanel implements Route {
      */
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
+        $this->UserEntity = $User;
         $menu = $this->topFactionMenu();
         $player->sendForm($menu);;
     }
@@ -53,12 +52,16 @@ class TopFactionPanel implements Route {
 
     private function topFactionMenu() : SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu->setTitle("Top Faction");
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "TOP_FACTION_TITLE"));
         $content = '';
         foreach (MainAPI::getTopFaction() as $key => $Faction) {
-            $content .= "§r §6> §7[§e".($key+1)."§7]§f " . $Faction->name . "  §o§7Level " . $Faction->level . " \n";
+            $content .= Utils::getText($this->UserEntity->name, "TOP_FACTION_LINE", [
+                'rank' => ($key + 1),
+                'factionName' => $Faction->name,
+                'level' => $Faction->level
+            ]);
         }
-        $menu->addButton("§4Back");
+        $menu->addButton(Utils::getText($this->UserEntity->name, "BUTTON_BACK"));
         $menu->setContent($content);
         return $menu;
     }

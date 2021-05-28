@@ -46,64 +46,64 @@ class Utils {
         return $string;
     }
 
-    public static function getPermissionData() : array {
+    public static function getPermissionData(string $playerName) : array {
         return [
             [
-                "text" => "Promote/Demote members",
+                "text" => self::getText($playerName, "PERMISSION_CHANGE_MEMBER_RANK"),
                 "id" => Ids::PERMISSION_CHANGE_MEMBER_RANK
             ],[
-                "text" => "Kick members",
+                "text" => self::getText($playerName, "PERMISSION_KICK_MEMBER"),
                 "id" => Ids::PERMISSION_KICK_MEMBER
             ],[
-                "text" => "Accept member demand",
+                "text" => self::getText($playerName, "PERMISSION_ACCEPT_MEMBER_DEMAND"),
                 "id" => Ids::PERMISSION_ACCEPT_MEMBER_DEMAND
             ],[
-                "text" => "Refuse member demand",
+                "text" => self::getText($playerName, "PERMISSION_REFUSE_MEMBER_DEMAND"),
                 "id" => Ids::PERMISSION_REFUSE_MEMBER_DEMAND
             ],[
-                "text" => "Send member's invitation",
+                "text" => self::getText($playerName, "PERMISSION_SEND_MEMBER_INVITATION"),
                 "id" => Ids::PERMISSION_SEND_MEMBER_INVITATION
             ],[
-                "text" => "Delete pending member's invitation",
+                "text" => self::getText($playerName, "PERMISSION_DELETE_PENDING_MEMBER_INVITATION"),
                 "id" => Ids::PERMISSION_DELETE_PENDING_MEMBER_INVITATION
             ],[
-                "text" => "Accept alliance demand",
+                "text" => self::getText($playerName, "PERMISSION_ACCEPT_ALLIANCE_DEMAND"),
                 "id" => Ids::PERMISSION_ACCEPT_ALLIANCE_DEMAND
             ],[
-                "text" => "Refuse alliance demand",
+                "text" => self::getText($playerName, "PERMISSION_REFUSE_ALLIANCE_DEMAND"),
                 "id" => Ids::PERMISSION_REFUSE_ALLIANCE_DEMAND
             ],[
-                "text" => "Send alliance's invitation",
+                "text" => self::getText($playerName, "PERMISSION_SEND_ALLIANCE_INVITATION"),
                 "id" => Ids::PERMISSION_SEND_ALLIANCE_INVITATION
             ],[
-                "text" => "Delete pending alliance's invitation",
+                "text" => self::getText($playerName, "PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION"),
                 "id" => Ids::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION
             ],[
-                "text" => "Manage lower rank permissions",
+                "text" => self::getText($playerName, "PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS"),
                 "id" => Ids::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS
             ],[
-                "text" => "Change the faction message",
+                "text" => self::getText($playerName, "PERMISSION_CHANGE_FACTION_MESSAGE"),
                 "id" => Ids::PERMISSION_CHANGE_FACTION_MESSAGE
             ],[
-                "text" => "Change the faction description",
+                "text" => self::getText($playerName, "PERMISSION_CHANGE_FACTION_DESCRIPTION"),
                 "id" => Ids::PERMISSION_CHANGE_FACTION_DESCRIPTION
             ],[
-                "text" => "Change the faction visibility",
+                "text" => self::getText($playerName, "PERMISSION_CHANGE_FACTION_VISIBILITY"),
                 "id" => Ids::PERMISSION_CHANGE_FACTION_VISIBILITY
             ],[
-                "text" => "Use the command /f claim, to claim a chunk",
+                "text" => self::getText($playerName, "PERMISSION_ADD_CLAIM"),
                 "id" => Ids::PERMISSION_ADD_CLAIM
             ],[
-                "text" => "Use the command /f unclaim, to unclaim a chunk",
+                "text" => self::getText($playerName, "PERMISSION_REMOVE_CLAIM"),
                 "id" => Ids::PERMISSION_REMOVE_CLAIM
             ],[
-                "text" => "Use the command /f home, and can tp to the home",
+                "text" => self::getText($playerName, "PERMISSION_CHANGE_MEMBER_RANK"),
                 "id" => Ids::PERMISSION_TP_FACTION_HOME
             ],[
-                "text" => "Use the command /f sethome, to set a home",
+                "text" => self::getText($playerName, "PERMISSION_ADD_FACTION_HOME"),
                 "id" => Ids::PERMISSION_ADD_FACTION_HOME
             ],[
-                "text" => "Use the command /f delhome, to delete a home",
+                "text" => self::getText($playerName, "PERMISSION_DELETE_FACTION_HOME"),
                 "id" => Ids::PERMISSION_DELETE_FACTION_HOME
             ]
         ];

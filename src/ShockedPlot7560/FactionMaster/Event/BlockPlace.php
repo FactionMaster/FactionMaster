@@ -8,6 +8,7 @@ use pocketmine\math\Vector3;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class BlockPlace implements Listener {
 
@@ -27,7 +28,7 @@ class BlockPlace implements Listener {
             $factionPlayer = MainAPI::getFactionOfPlayer($event->getPlayer()->getName());
             if (!$factionPlayer instanceof FactionEntity || ($factionPlayer instanceof FactionEntity && $faction !== $factionPlayer->name)) {
                 $event->setCancelled(true);
-                $event->getPlayer()->sendMessage(" §c>> §4You can't place on ennemie claim");
+                $event->getPlayer()->sendMessage(Utils::getText($event->getPlayer()->getName(), "CANT_PLACE_CLAIM"));
                 return;
             }
         }

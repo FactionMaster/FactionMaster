@@ -21,7 +21,7 @@ class FactionManageCommand extends BaseSubCommand {
         if ($UserEntity->faction !== null) {
             Utils::processMenu(RouterFactory::get(ManageFactionMain::SLUG), $sender->getPlayer());
         }else{
-            $sender->sendMessage(" §c>> §4You need to be in a faction to use that");
+            $sender->sendMessage(Utils::getText($sender->getName(), "NEED_FACTION"));
         }
     }
 

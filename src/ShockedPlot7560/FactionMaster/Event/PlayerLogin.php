@@ -26,7 +26,7 @@ class PlayerLogin implements Listener {
         if ($UserEntity === null) {
             MainAPI::$languages[$playerName] = Utils::getConfigLang("default-language");
             if (!MainAPI::addUser($playerName)) {
-                $event->setKickMessage("§6An error was occured in your data saving\nPlease contact an administrator");
+                $event->setKickMessage(Utils::getText($event->getPlayer()->getName(), "ERROR_DATA_SAVING"));
                 $event->setCancelled(true);
             }
         }else{

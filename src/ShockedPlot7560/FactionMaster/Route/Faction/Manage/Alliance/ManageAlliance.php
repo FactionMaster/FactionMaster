@@ -45,12 +45,13 @@ class ManageAlliance implements Route {
 
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
+        $this->UserEntity = $User;
         if (!isset($params[0]) || !$params[0] instanceof FactionEntity) throw new InvalidArgumentException("Need the target faction instance");
         $this->alliance = $params[0];
 
         $this->buttons = [];
-        if ((isset($UserPermissions[Ids::PERMISSION_BREAK_ALLIANCE]) && $UserPermissions[Ids::PERMISSION_BREAK_ALLIANCE]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = "§4Break alliance";
-        $this->buttons[] = "§4Back";
+        if ((isset($UserPermissions[Ids::PERMISSION_BREAK_ALLIANCE]) && $UserPermissions[Ids::PERMISSION_BREAK_ALLIANCE]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_BREAK_ALLIANCE");
+        $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_BACK");
 
         $menu = $this->manageAlliance();
         $player->sendForm($menu);;
@@ -63,14 +64,14 @@ class ManageAlliance implements Route {
         return function (Player $player, $data) use ($alliance, $backMenu) {
             if ($data === null) return;
             switch ($this->buttons[$data]) {
-                case "§4Back":
+                case Utils::getText($this->UserEntity->name, "BUTTON_BACK"):
                     Utils::processMenu($backMenu, $player);
                     break;
-                case "§4Break alliance":
+                case Utils::getText($this->UserEntity->name, "BUTTON_BREAK_ALLIANCE"):
                     Utils::processMenu(RouterFactory::get(ConfirmationMenu::SLUG), $player, [
                         $this->callKick($alliance->name),
-                        "Break alliance confirmation",
-                        "§fAre you sure you want to break the alliance with this faction ? This action is irreversible"
+                        Utils::getText($this->UserEntity->name, "CONFIRMATION_TITLE_BREAK_ALLIANCE"),
+                        Utils::getText($this->UserEntity->name, "CONFIRMATION_CONTENT_BREAK_ALLIANCE")
                     ]);
                     break;
                 default:
@@ -83,7 +84,7 @@ class ManageAlliance implements Route {
     private function manageAlliance() : SimpleForm {
         $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
-        $menu->setTitle("Manage " . $this->alliance->name);
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "MANAGE_ALLIANCE_TITLE", ['name' => $this->alliance->name]));
         return $menu;
     }
 
@@ -93,8 +94,8 @@ class ManageAlliance implements Route {
             $Faction = MainAPI::getFactionOfPlayer($Player->getName());
             if ($data === null) return;
             if ($data) {
-                $message = '§2You have successfully break with ' . $targetName;
-                if (!MainAPI::removeAlly($Faction->name, $targetName)) $message = "§4An error has occured"; 
+                $message = Utils::getText($this->UserEntity->name, "SUCCESS_BREAK_ALLIANCE", ['name' => $targetName]);
+                if (!MainAPI::removeAlly($Faction->name, $targetName)) $message = Utils::getText($this->UserEntity->name, "ERROR"); 
                 Utils::processMenu($backMenu, $Player, [$message]);
             }else{
                 Utils::processMenu(RouterFactory::get(self::SLUG), $Player);

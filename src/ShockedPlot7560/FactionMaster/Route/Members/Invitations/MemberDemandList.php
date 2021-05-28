@@ -44,6 +44,7 @@ class MemberDemandList implements Route {
 
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
+        $this->UserEntity = $User;
         $message = "";
         $Faction = MainAPI::getFactionOfPlayer($player->getName());
         $this->Invitations = MainAPI::getInvitationsByReceiver($Faction->name, "member");
@@ -51,9 +52,9 @@ class MemberDemandList implements Route {
         foreach ($this->Invitations as $Invitation) {
             $this->buttons[] = $Invitation->sender;
         }
-        $this->buttons[] = "§4Back";
+        $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_BACK");
         if (isset($params[0])) $message = $params[0];
-        if (count($this->Invitations) == 0) $message .= "\n \n§4No pending demand";
+        if (count($this->Invitations) == 0) $message .= Utils::getText($this->UserEntity->name, "NO_PENDING_REQUEST");
         $menu = $this->memberDemandList($message);
         $player->sendForm($menu);
     }
@@ -77,7 +78,7 @@ class MemberDemandList implements Route {
     private function memberDemandList(string $message = "") : SimpleForm {
         $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
-        $menu->setTitle("Demand list");
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "MANAGE_MEMBERS_REQUEST_LIST_TITLE"));
         if ($message !== "") $menu->setContent($message);
         return $menu;
     }

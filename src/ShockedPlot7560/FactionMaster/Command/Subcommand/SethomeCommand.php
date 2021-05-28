@@ -8,6 +8,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class SethomeCommand extends BaseSubCommand {
 
@@ -25,25 +26,25 @@ class SethomeCommand extends BaseSubCommand {
         $permissions = MainAPI::getMemberPermission($sender->getName());
         $UserEntity = MainAPI::getUser($sender->getName());
         if ($permissions === null) {
-            $sender->sendMessage(" §c>> §4You need to be in a faction to use that");
+            $sender->sendMessage(Utils::getText($sender->getName(), "NEED_FACTION"));
             return;
         }
         if ((isset($permissions[Ids::PERMISSION_ADD_FACTION_HOME]) && $permissions[Ids::PERMISSION_ADD_FACTION_HOME]) || $UserEntity->rank == Ids::OWNER_ID) {
             $Player = $sender->getPlayer();
             if (!MainAPI::getFactionHome($UserEntity->faction, $args["name"])) {
                 if (MainAPI::addHome($Player, $UserEntity->faction, $args['name'])) {
-                    $sender->sendMessage(" §a>> §2Home successfully created !");
+                    $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_CREATE"));
                     return;
                 }else{
-                    $sender->sendMessage(" §c>> §4An error has occured");
+                    $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
                     return;
                 }
             }else{
-                $sender->sendMessage(" §c>> §4You have already set a home with this name");
+                $sender->sendMessage(Utils::getText($sender->getName(), "ALREADY_HOME_NAME"));
                 return;
             }
         }else{
-            $sender->sendMessage(" §c>> §4You don't have the permission to use these command");
+            $sender->sendMessage(Utils::getText($sender->getName(), "DONT_PERMISSION"));
             return;
         }
     }

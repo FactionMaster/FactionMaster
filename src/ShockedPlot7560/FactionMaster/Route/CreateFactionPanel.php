@@ -38,6 +38,7 @@ class CreateFactionPanel implements Route {
      */
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
+        $this->UserEntity = $User;
         $message = "";
         if (isset($params[0]) && \is_string($params[0])) $message = $params[0];
         $menu = $this->createFactionMenu($message);
@@ -49,26 +50,30 @@ class CreateFactionPanel implements Route {
         return function (Player $Player, $data) use ($backRoute) {
             if ($data === null) return;
             $FactionRequest = MainAPI::getFaction($data[1]);
-
-            if (!$FactionRequest instanceof FactionEntity) {
-                if (MainAPI::addFaction($data[1], $Player->getName())) {
-                    Utils::processMenu($backRoute, $Player, ['§2Successfully created faction !']);
+            if ($data[1] !== "") {
+                if (!$FactionRequest instanceof FactionEntity) {
+                    if (MainAPI::addFaction($data[1], $Player->getName())) {
+                        Utils::processMenu($backRoute, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_CREATE_FACTION")]);
+                    }else{
+                        $menu = $this->createFactionMenu(Utils::getText($this->UserEntity->name, "ERROR"));
+                        $Player->sendForm($menu);
+                    }
                 }else{
-                    $menu = $this->createFactionMenu(" §c>> §4An error has occured");
+                    $menu = $this->createFactionMenu(Utils::getText($this->UserEntity->name, "FACTION_NAME_ALREADY_EXIST"));
                     $Player->sendForm($menu);
-                }
+                } 
             }else{
-                $menu = $this->createFactionMenu(" §c>> §4This name is already used");
-                $Player->sendForm($menu);
-            } 
+                Utils::processMenu($backRoute, $Player);
+
+            }
         };
     }
 
     private function createFactionMenu(string $message = "") : CustomForm {
         $menu = new CustomForm($this->call());
-        $menu->setTitle("Create a faction");
-        $menu->addLabel($message);
-        $menu->addInput("Name of your faction : ");
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "CREATE_FACTION_PANEL_TITLE"));
+        $menu->addLabel(Utils::getText($this->UserEntity->name, "CREATE_FACTION_PANEL_CONTENT") . "\n".$message);
+        $menu->addInput(Utils::getText($this->UserEntity->name, "CREATE_FACTION_PANEL_INPUT_CONTENT"));
         return $menu;
     }
 }

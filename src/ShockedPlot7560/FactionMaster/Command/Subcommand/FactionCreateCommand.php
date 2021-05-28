@@ -21,7 +21,7 @@ class FactionCreateCommand extends BaseSubCommand {
         if ($UserEntity->faction === null) {
             Utils::processMenu(RouterFactory::get(CreateFactionPanel::SLUG), $sender->getPlayer());
         }else{
-            $sender->sendMessage(" §c>> §4You have already a faction");
+            $sender->sendMessage(Utils::getText($sender->getName(), "ALREADY_IN_FACTION"));
         }
     }
 

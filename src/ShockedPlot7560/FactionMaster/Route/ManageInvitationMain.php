@@ -9,16 +9,10 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\Invitations\DemandList;
 use ShockedPlot7560\FactionMaster\Route\Invitations\InvitationList;
-use ShockedPlot7560\FactionMaster\Route\Invitations\ManageDemand;
-use ShockedPlot7560\FactionMaster\Route\Invitations\ManageInvitation;
 use ShockedPlot7560\FactionMaster\Route\Invitations\NewInvitation;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
-use ShockedPlot7560\FactionMaster\Route\Members\Invitations\MemberDemandList;
-use ShockedPlot7560\FactionMaster\Route\Members\Invitations\MemberInvitationList;
-use ShockedPlot7560\FactionMaster\Route\Members\Invitations\NewMemberInvitation;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageInvitationMain implements Route {
@@ -46,11 +40,12 @@ class ManageInvitationMain implements Route {
 
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {        
+        $this->UserEntity = $User;
         $this->buttons = [];
-        $this->buttons[] = "Send an invitation";
-        $this->buttons[] = "Invitation pending";
-        $this->buttons[] = "Request pending";
-        $this->buttons[] = "§4Back";
+        $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_SEND_INVITATION");
+        $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_INVITATION_PENDING");
+        $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_REQUEST_PENDING");
+        $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_BACK");
 
         $message = "";
         if (isset($params[0])) $message = $params[0];
@@ -86,7 +81,7 @@ class ManageInvitationMain implements Route {
     private function manageMainMenu(string $message = "") : SimpleForm {
         $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
-        $menu->setTitle("Manage Invitations - Main");
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "JOIN_FACTION_PANEL"));
         if ($message !== "") $menu->setContent($message);
         return $menu;
     }

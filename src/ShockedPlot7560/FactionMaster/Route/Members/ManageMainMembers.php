@@ -48,12 +48,13 @@ class ManageMainMembers implements Route {
 
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {        
+        $this->UserEntity = $User;
         $this->buttons = [];
-        if ((isset($UserPermissions[Ids::PERMISSION_SEND_MEMBER_INVITATION]) && $UserPermissions[Ids::PERMISSION_SEND_MEMBER_INVITATION]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = "Send an invitation";
-        $this->buttons[] = "Invitation pending";
-        $this->buttons[] = "Request pending";
-        $this->buttons[] = "Manage members";
-        $this->buttons[] = "§4Back";
+        if ((isset($UserPermissions[Ids::PERMISSION_SEND_MEMBER_INVITATION]) && $UserPermissions[Ids::PERMISSION_SEND_MEMBER_INVITATION]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_SEND_INVITATION");
+        $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_INVITATION_PENDING");
+        $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_REQUEST_PENDING");
+        $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_MANAGE_MEMBERS");
+        $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_BACK");
 
         $message = "";
         if (isset($params[0])) $message = $params[0];
@@ -92,7 +93,7 @@ class ManageMainMembers implements Route {
     private function manageMainMembersMenu(string $message = "") : SimpleForm {
         $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
-        $menu->setTitle("Manage members - Main");
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "MANAGE_MEMBERS_MAIN_PANEL_TITLE"));
         if ($message !== "") $menu->setContent($message);
         return $menu;
     }

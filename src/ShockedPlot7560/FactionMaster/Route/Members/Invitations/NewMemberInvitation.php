@@ -43,6 +43,7 @@ class NewMemberInvitation implements Route {
      */
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
+        $this->UserEntity = $User;
         $this->Faction = MainAPI::getFactionOfPlayer($player->getName());
 
         $message = "";
@@ -62,21 +63,21 @@ class NewMemberInvitation implements Route {
                     if (!MainAPI::getFactionOfPlayer($data[1]) instanceof FactionEntity) {
                         if (!MainAPI::areInInvitation($this->Faction->name, $data[1], "member")) {
                             if (MainAPI::makeInvitation($this->Faction->name, $data[1], "member")) {
-                                Utils::processMenu($backMenu, $Player, ['§2Sent invitation to ' . $data[1] . " successfuly" ] );
+                                Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_SEND_INVITATION", ['name' => $data[1]])] );
                             }else{
-                                $menu = $this->createInvitationMenu(" §c>> §4An error has occured");
+                                $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "ERROR"));
                                 $Player->sendForm($menu);;
                             }
                         }else{
-                            $menu = $this->createInvitationMenu(" §c>> §4You have already pending an invitation to this player");
+                            $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "ALREADY_PENDING_INVITATION"));
                             $Player->sendForm($menu);;
                         }
                     }else{
-                        $menu = $this->createInvitationMenu(" §c>> §4This player have already a faction");
+                        $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "PLAYER_HAVE_ALREADY_FACTION"));
                         $Player->sendForm($menu);;
                     }
                 }else{
-                    $menu = $this->createInvitationMenu(" §c>> §4This user don't exist");
+                    $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "USER_DONT_EXIST"));
                     $Player->sendForm($menu);;
                 } 
             }else{
@@ -87,9 +88,9 @@ class NewMemberInvitation implements Route {
 
     private function createInvitationMenu(string $message = "") : CustomForm {
         $menu = new CustomForm($this->call());
-        $menu->setTitle("Send a new invitation");
-        $menu->addLabel($message . " \nTo go back, submit nothing");
-        $menu->addInput("Name of the player : ");
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "SEND_INVITATION_PANEL_TITLE"));
+        $menu->addLabel(Utils::getText($this->UserEntity->name, "SEND_INVITATION_PANEL_CONTENT") . "\n" . $message);
+        $menu->addInput(Utils::getText($this->UserEntity->name, "SEND_INVITATION_PANEL_INPUT_CONTENT"));
         return $menu;
     }
 }
