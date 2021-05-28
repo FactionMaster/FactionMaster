@@ -9,10 +9,12 @@ use pocketmine\level\format\Chunk;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
+use ShockedPlot7560\FactionMaster\Database\Entity\HomeEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Database\Table\ClaimTable;
 use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
+use ShockedPlot7560\FactionMaster\Database\Table\HomeTable;
 use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\Main;
@@ -29,11 +31,13 @@ class MainAPI {
     private static $PDO;
     /** @var array[] */
     public static $claim;
+    /** @var array[] */
+    public static $home;
 
     public static function init(PDO $PDO) {
         self::$PDO = $PDO;
         self::initClaim();
-        \var_dump(self::$claim);
+        self::initHome();
     }
 
     private static function initClaim() {
@@ -43,6 +47,17 @@ class MainAPI {
                 self::$claim[$Claim->faction] = [$Claim->getToString()];
             }else{
                 self::$claim[$Claim->faction][] = $Claim->getToString();
+            }
+        }
+    }
+
+    private static function initHome() {
+        self::$home = [];
+        foreach (MainAPI::getAllHome() as $Home) {
+            if (!isset(self::$home[$Home->faction])) {
+                self::$home[$Home->faction] = [$Home->name => $Home->getToArray()];
+            }else{
+                self::$home[$Home->faction][$Home->name] = $Home->getToArray();
             }
         }
     }
@@ -771,5 +786,84 @@ class MainAPI {
      */
     public static function getClaimsFaction(string $factionName) : array {
         return self::$claim[$factionName] ?? [];
+    }
+
+    /**
+     * Return all the home register
+     * @return HomeEntity[]
+     */
+    public static function getAllHome() : array {
+        $homes = self::$home;
+        if ($homes === []) {
+            try {
+                $query = self::$PDO->prepare("SELECT * FROM " . HomeTable::TABLE_NAME);
+                $query->execute();
+                $query->setFetchMode(PDO::FETCH_CLASS, HomeEntity::class);
+                return $query->fetchAll();
+            } catch (\PDOException $Exception) {
+                return [];
+            }
+        }else{
+            return $homes;
+        }
+    }
+
+    /**
+     * @param string $factionName
+     * @return array[] an array of HomeEntity convert with getToArray() function
+     */
+    public static function getFactionHomes(string $factionName) : array {
+        return self::$home[$factionName] ?? [];
+    }
+
+    /**
+     * @param string $factionName
+     * @param string $name
+     * @return (int|string)[]|null return null if the home don't exist
+     */
+    public static function getFactionHome(string $factionName, string $name) : ?array {
+        return self::$home[$factionName][$name] ?? null;
+    }
+
+    /**
+     * @param Player $player 
+     * @param string $factionName
+     * @return bool False on failure
+     */
+    public static function removeHome(string $factionName, string $name) : bool {
+        try {
+            $query = self::$PDO->prepare("DELETE FROM " . HomeTable::TABLE_NAME . " WHERE faction = :faction AND name = :name");
+            if (!$query->execute([
+                "faction" => $factionName,
+                "name" => $name
+            ])) return false;
+            unset(self::$home[$factionName][$name]);
+            return true;
+        } catch (\Throwable $Exception) {
+            return false;
+        }
+    }
+
+    /**
+     * @param Player $player 
+     * @param string $factionName
+     * @return bool False on failure
+     */
+    public static function addHome(Player $player, string $factionName, string $name) : bool {
+        try {
+            $query = self::$PDO->prepare("INSERT INTO " . HomeTable::TABLE_NAME . " (x, y, z, world, faction, name) VALUE (:x, :y, :z, :world, :faction, :name)");
+            if (!$query->execute([
+                "x" => floor($player->getX()),
+                "z" => floor($player->getZ()),
+                "y" => floor($player->getY()),
+                "world" => $player->getLevel()->getName(),
+                "faction" => $factionName,
+                "name" => $name
+            ])) return false;
+            self::$home[$factionName][$name] = Utils::homeToArray($player->getX(), $player->getY(), $player->getZ(), $player->getLevel()->getName());
+            return true;
+        } catch (\PDOException $Exception) {
+            return false;
+        }
     }
 }

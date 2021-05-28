@@ -110,6 +110,7 @@ class MainPanel implements Route {
                             Utils::processMenu(RouterFactory::get(ViewFactionMembers::SLUG), $Player);
                             break;
                         case "factionHome":
+                            Utils::processMenu(RouterFactory::get(HomeListPanel::SLUG), $Player);
                             break;
                         case "manageMembers":
                             Utils::processMenu(RouterFactory::get(ManageMainMembers::SLUG), $Player);

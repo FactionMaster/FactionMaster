@@ -94,6 +94,15 @@ class Utils {
             ],[
                 "text" => "Use the command /f unclaim, to unclaim a chunk",
                 "id" => Ids::PERMISSION_REMOVE_CLAIM
+            ],[
+                "text" => "Use the command /f home, and can tp to the home",
+                "id" => Ids::PERMISSION_TP_FACTION_HOME
+            ],[
+                "text" => "Use the command /f sethome, to set a home",
+                "id" => Ids::PERMISSION_ADD_FACTION_HOME
+            ],[
+                "text" => "Use the command /f delhome, to delete a home",
+                "id" => Ids::PERMISSION_DELETE_FACTION_HOME
             ]
         ];
     }
@@ -111,5 +120,18 @@ class Utils {
 
     public static function claimToString($X, $Z, $World) {
         return $X . "|" . $Z . "|" . $World;
+    }
+
+    public static function homeToString($X, $Y, $Z, $World) {
+        return $X . "|" . $Y . "|" . $Z . "|" . $World;
+    }
+
+    public static function homeToArray($X, $Y, $Z, $World) {
+        return [
+            "x" => $X,
+            "y" => $Y,
+            "z" => $Z,
+            "world" => $World
+          ];
     }
 }

@@ -6,6 +6,7 @@ use PDO;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Table\ClaimTable;
 use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
+use ShockedPlot7560\FactionMaster\Database\Table\HomeTable;
 use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
 use ShockedPlot7560\FactionMaster\Database\Table\TableInterface;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
@@ -42,7 +43,8 @@ class Database {
             new FactionTable($this->getPDO()),
             new UserTable($this->getPDO()),
             new InvitationTable($this->getPDO()),
-            new ClaimTable($this->getPDO())
+            new ClaimTable($this->getPDO()),
+            new HomeTable($this->getPDO())
         ];
         foreach ($tables as $key => $table) {
             $table = $table->init();
