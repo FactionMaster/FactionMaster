@@ -130,8 +130,8 @@ PUBLIC_VISIBILITY_NAME: "Publique"
 PRIVATE_VISIBILITY_NAME: "Privée"
 INVITATION_VISIBILITY_NAME: "Sur invitation"
 
-CANT_BREAK_CLAIM: " §c>> §4Tu ne peut pas poser de block dans un claim ennemi"
-CANT_PLACE_CLAIM: " §c>> §4Tu ne peut pas casser de block dans un claim ennemi"
+CANT_PLACE_CLAIM: " §c>> §4Tu ne peut pas poser de block dans un claim ennemi"
+CANT_BREAK_CLAIM: " §c>> §4Tu ne peut pas casser de block dans un claim ennemi"
 CANT_INTERACT_CLAIM: " §c>> §4Tu ne peut pas intéragir avec ça dans un claim ennemi"
 
 ERROR_DATA_SAVING: "§6Une erreur est survenue dans la sauvegarde de vos donnée\nVeuillez contacter un administrateur"

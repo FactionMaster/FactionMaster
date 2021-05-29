@@ -216,15 +216,17 @@ class MainAPI {
         $XPneedLevel = 1000*pow(1.09, $level);
         $newXP = $Faction->xp + $xp;
         if ($newXP > $XPneedLevel) {
-            $xp = $XPneedLevel;
+            $xp = $newXP - $XPneedLevel;
+            $level++;
         }else{
             $xp = $newXP;
         }
 
         try {
-            $query = self::$PDO->prepare("UPDATE " .UserTable::TABLE_NAME . " SET xp = :xp WHERE name = :name");
+            $query = self::$PDO->prepare("UPDATE " .UserTable::TABLE_NAME . " SET xp = :xp, level = :level WHERE name = :name");
             return $query->execute([ 
                 'xp' => $xp,
+                'level' => $level,
                 'name' => $factionName
             ]);
         } catch (\PDOException $Exception) {
