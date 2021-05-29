@@ -21,7 +21,7 @@ class Database {
     private $tables;
 
     public function __construct(Main $Main) {
-        $databaseConfig = $Main->config->get("database");
+        $databaseConfig = $Main->config->get("MYSQL_database");
         $db = new PDO(
             "mysql:host=" . $databaseConfig['host'] . ";dbname=" . $databaseConfig['name'], 
             $databaseConfig['user'], 

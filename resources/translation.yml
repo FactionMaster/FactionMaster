@@ -2,8 +2,6 @@ default-language: FR
 
 languages:
   "FR": "fr_FR"
-  "EN": "en_EN"
 
 languages-name:
   "FR": "Français"
-  "EN": "English"

@@ -10,8 +10,10 @@ use ShockedPlot7560\FactionMaster\Command\Subcommand\DelhomeCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\FactionCreateCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\FactionManageCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\FactionTopCommand;
+use ShockedPlot7560\FactionMaster\Command\Subcommand\HelpCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\HomeCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\HomeTpCommand;
+use ShockedPlot7560\FactionMaster\Command\Subcommand\InfoCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\MapCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\SethomeCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\UnclaimCommand;
@@ -31,7 +33,9 @@ class FactionCommand extends BaseCommand{
         $this->registerSubCommand(new DelhomeCommand("delhome", Utils::getText("", "COMMAND_DELHOME_DESCRIPTION")));
         $this->registerSubCommand(new HomeTpCommand("tp", Utils::getText("", "COMMAND_TP_DESCRIPTION")));
         $this->registerSubCommand(new HomeCommand("home", Utils::getText("", "COMMAND_HOME_DESCRIPTION")));
-        $this->registerSubCommand(new MapCommand("map", Utils::getText("", "COMMAND_HOME_DESCRIPTION")));
+        $this->registerSubCommand(new MapCommand("map", Utils::getText("", "COMMAND_MAP_DESCRIPTION")));
+        $this->registerSubCommand(new HelpCommand("help", Utils::getText("", "COMMAND_HELP_DESCRIPTION")));
+        $this->registerSubCommand(new InfoCommand("info", Utils::getText("", "COMMAND_HELP_DESCRIPTION")));
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args) : void {
