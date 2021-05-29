@@ -62,6 +62,7 @@ class MainPanel implements Route {
                 Utils::getText($Player->getName(), "BUTTON_JOIN_FACTION"),
                 Utils::getText($Player->getName(), "BUTTON_CREATE_FACTION"),
                 Utils::getText($Player->getName(), "BUTTON_TOP_FACTION"),
+                Utils::getText($Player->getName(), "BUTTON_CHANGE_LANGUAGE"),
                 Utils::getText($Player->getName(), "BUTTON_QUIT")
             ];
             $this->menuType = self::NO_FACTION_TYPE;
@@ -92,6 +93,9 @@ class MainPanel implements Route {
                         case 2:
                             Utils::processMenu(RouterFactory::get(TopFactionPanel::SLUG), $Player);
                             break;
+                        case 3:
+                            Utils::processMenu(RouterFactory::get(LanguagePanel::SLUG), $Player);
+                            break;
                         default:
                             return;
                             break;
@@ -120,6 +124,9 @@ class MainPanel implements Route {
                             break;
                         case "factionsTop":
                             Utils::processMenu(RouterFactory::get(TopFactionPanel::SLUG), $Player);
+                            break;
+                        case "changeLanguage":
+                            Utils::processMenu(RouterFactory::get(LanguagePanel::SLUG), $Player);
                             break;
                         case "leavingButton":
                             if ($this->UserEntity->rank == Ids::OWNER_ID) {
@@ -250,6 +257,10 @@ class MainPanel implements Route {
                 ],[
                     'slug' => "factionsTop",
                     'text' => Utils::getText($this->UserEntity->name, "BUTTON_TOP_FACTION"),
+                    'access' => true
+                ],[
+                    'slug' => "changeLanguage",
+                    'text' => Utils::getText($this->UserEntity->name, "BUTTON_CHANGE_LANGUAGE"),
                     'access' => true
                 ],[
                     'slug' => "leavingButton",

@@ -14,11 +14,11 @@ use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class HomeListPanel implements Route {
+class LanguagePanel implements Route {
 
-    const SLUG = "homeListPanel";
+    const SLUG = "languagePanel";
 
-    public $PermissionNeed = [Ids::PERMISSION_TP_FACTION_HOME];
+    public $PermissionNeed = [];
     public $backMenu;
 
     /** @var FormAPI */
@@ -42,29 +42,22 @@ class HomeListPanel implements Route {
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
         $message = "";
-        $Faction = MainAPI::getFactionOfPlayer($player->getName());
         $this->UserEntity = $User;
+        $this->UserLang = MainAPI::getPlayerLang($player->getName());
+        $this->Languages = Utils::getConfigLang("languages-name");
 
         $this->buttons = [];
-        $this->Homes = MainAPI::getFactionHomes($Faction->name);
         $i = 0;
-        foreach ($this->Homes as $Name => $Home) {
-            $Home['name'] = $Name;
-            $this->Homes[$i] = $Home;
-            $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_LISTING_HOME", [
-                'name' => $Name,
-                'x' => $Home['x'],
-                'y' => $Home['y'],
-                'z' => $Home['z']
-            ]);
-            $i++;
+        foreach ($this->Languages as $Name => $Langue) {
+            if ($Name === $this->UserLang) {
+                $this->buttons[] = $Langue . "\n" . Utils::getText($User->name, "CURRENT_LANG");
+            }else{
+                $this->buttons[] = $Langue;
+            }
         }
         $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_BACK");
 
-        if (isset($params[0])) $message = $params[0];
-        if (count($Faction->members) == 0) $message .= Utils::getText($this->UserEntity->name, "NO_HOME_SET");
-        
-        $menu = $this->manageMembersListMenu($message);
+        $menu = $this->languagesMenu();
         $player->sendForm($menu);
     }
 
@@ -77,22 +70,25 @@ class HomeListPanel implements Route {
                 Utils::processMenu($backMenu, $player);
                 return;
             }
-            if (isset($this->Homes[$data])) {
-                $Home = $this->Homes[$data];
-                $player->teleport(new Vector3($Home["x"], $Home["y"], $Home['z']));
-                $player->sendMessage(Utils::getText($this->UserEntity->name, "SUCCESS_TELEPORT_HOME"));
+            $i = 0;
+            foreach ($this->Languages as $key => $value) {
+                if ($value === $this->buttons[$data]) {
+                    $Lang = $key;
+                }
+                $i++;
+            }
+            if (isset($Lang)) {
+                MainAPI::changeLanguage($player->getName(), $Lang);
+                Utils::processMenu($backMenu, $player);
             }
             return;
         };
     }
 
-    private function manageMembersListMenu(string $message = "") : SimpleForm {
+    private function languagesMenu() : SimpleForm {
         $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "HOME_FACTION_PANEL_TITLE"));
-        $content = Utils::getText($this->UserEntity->name, "HOME_FACTION_PANEL_CONTENT");
-        if ($message !== "") $content .= ("\n§r" . $message);
-        $menu->setContent($content);
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "CHANGE_LANGUAGE_TITLE"));
         return $menu;
     }
 

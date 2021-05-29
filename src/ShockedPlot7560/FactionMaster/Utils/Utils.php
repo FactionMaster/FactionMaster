@@ -154,7 +154,7 @@ class Utils {
     }
 
     public static function getText(string $playerName, string $slug, array $args = []) : string {
-        $Playerlang = MainAPI::$languages[$playerName] ?? self::getConfigLang("default-language");
+        $Playerlang = MainAPI::getPlayerLang($playerName);
         $FileName = self::getConfigLang("languages")[$Playerlang];
         $Config = new Config(Main::getInstance()->getDataFolder() . "Translation/$FileName.yml", Config::YAML);
         $Text = self::replaceParams($Config->get($slug), $args);

@@ -24,6 +24,7 @@ use ShockedPlot7560\FactionMaster\Route\Invitations\InvitationList;
 use ShockedPlot7560\FactionMaster\Route\Invitations\ManageDemand;
 use ShockedPlot7560\FactionMaster\Route\Invitations\ManageInvitation;
 use ShockedPlot7560\FactionMaster\Route\Invitations\NewInvitation;
+use ShockedPlot7560\FactionMaster\Route\LanguagePanel;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
 use ShockedPlot7560\FactionMaster\Route\ManageInvitationMain;
 use ShockedPlot7560\FactionMaster\Route\Members\Invitations\ManageMemberDemand;
@@ -51,6 +52,7 @@ class RouterFactory {
         self::registerRoute(new TopFactionPanel());
         self::registerRoute(new ViewFactionMembers());
         self::registerRoute(new HomeListPanel());
+        self::registerRoute(new LanguagePanel());
 
         self::registerRoute(new ManageMainMembers());
         self::registerRoute(new ManageMembersList());

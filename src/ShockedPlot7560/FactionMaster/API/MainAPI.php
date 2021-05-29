@@ -480,7 +480,6 @@ class MainAPI {
                 'name' => $factionName
             ]);
         } catch (\PDOException $Exception) {
-            \var_dump($Exception->getMessage());
             return false;
         }
     }
@@ -641,7 +640,6 @@ class MainAPI {
                 'name' => $factionName
             ]);
         } catch (\PDOException $Exception) {
-            \var_dump($Exception->getMessage());
             return false;
         }
     }
@@ -863,6 +861,33 @@ class MainAPI {
                 "name" => $name
             ])) return false;
             self::$home[$factionName][$name] = Utils::homeToArray($player->getX(), $player->getY(), $player->getZ(), $player->getLevel()->getName());
+            return true;
+        } catch (\PDOException $Exception) {
+            return false;
+        }
+    }
+
+    /**
+     * @param string $playerName
+     * @return string
+     */
+    public static function getPlayerLang(string $playerName) : string {
+        return self::$languages[$playerName] ?? Utils::getConfigLang("default-language");
+    }
+
+    /**
+     * @param string $playerName
+     * @param string $slug
+     * @return bool False on failure
+     */
+    public static function changeLanguage(string $playerName, string $slug) : bool {
+        try {
+            $query = self::$PDO->prepare("UPDATE " . UserTable::TABLE_NAME . " SET language = :lang WHERE name = :name");
+            if (!$query->execute([
+                'lang' => $slug,
+                'name' => $playerName
+            ])) return false;
+            self::$languages[$playerName] = $slug;
             return true;
         } catch (\PDOException $Exception) {
             return false;
