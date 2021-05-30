@@ -6,5 +6,6 @@ interface RewardType {
 
     const MONEY = "money";
     const POWER = "power";
+    const MEMBER_LIMIT = "memberLimit";
 
 }

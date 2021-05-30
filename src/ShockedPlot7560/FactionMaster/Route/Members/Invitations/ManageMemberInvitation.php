@@ -47,6 +47,7 @@ class ManageMemberInvitation implements Route {
 
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
+        $this->UserEntity = $User;
         if (!isset($params[0]) || !$params[0] instanceof InvitationEntity) throw new InvalidArgumentException("Need the invitation instance");
         $this->invitation = $params[0];
 

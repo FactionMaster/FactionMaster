@@ -56,9 +56,15 @@ class NewMemberInvitation implements Route {
         $backMenu = $this->backMenu;
         return function (Player $Player, $data) use ($backMenu) {
             if ($data === null) return;
-            $UserRequest = MainAPI::getUser($data[1]);
-
+            
             if ($data[1] !== "") {
+                $UserRequest = MainAPI::getUser($data[1]);
+                $FactionPlayer = MainAPI::getFactionOfPlayer($Player->getName());
+                if (count($FactionPlayer->members) >= $FactionPlayer->max_player) {
+                    $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "MAX_PLAYER_REACH"));
+                    $Player->sendForm($menu);;
+                    return;
+                }
                 if ($UserRequest instanceof UserEntity) {
                     if (!MainAPI::getFactionOfPlayer($data[1]) instanceof FactionEntity) {
                         if (!MainAPI::areInInvitation($this->Faction->name, $data[1], "member")) {

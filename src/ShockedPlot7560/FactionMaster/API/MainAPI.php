@@ -5,6 +5,7 @@ namespace ShockedPlot7560\FactionMaster\API;
 use Exception;
 use InvalidArgumentException;
 use PDO;
+use PDOException;
 use pocketmine\level\format\Chunk;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
@@ -898,6 +899,11 @@ class MainAPI {
         }
     }
 
+    /**
+     * @param string $factionName
+     * @param int $money Give negative integer to substract
+     * @return bool False on failure
+     */
     public static function updateMoney(string $factionName, int $money) : bool {
         try {
             $query = self::$PDO->prepare("UPDATE " .FactionTable::TABLE_NAME . " SET money = money + :money WHERE name = :name");
@@ -910,6 +916,10 @@ class MainAPI {
         }
     }
 
+    /**
+     * @param int $level
+     * @return null|RewardInterface Null if reward don't exist or if it's maximum level
+     */
     public static function getLevelReward(int $level) : ?RewardInterface {
         $Data = self::getLevelRewardData($level);
         $Reward = RewardFactory::get($Data['type']);
@@ -917,7 +927,29 @@ class MainAPI {
         return $Reward;
     }
 
+    /**
+     * @param int $level
+     * @return array The data containt in level.yml
+     */
     public static function getLevelRewardData(int $level) : array {
         return Main::getInstance()->levelConfig->__get($level-2);
+    }
+
+    /**
+     * @param string $factionName
+     * @param string $option The name of the column to update
+     * @param int $value
+     * @return bool False on failure
+     */
+    public static function updateFactionOption(string $factionName, string $option, int $value) : bool {
+        try {
+            $query = self::$PDO->prepare("UPDATE " . FactionTable::TABLE_NAME . " SET " . $option . " = " . $option . " + :option WHERE name = :name");
+            return $query->execute([
+                'option' => $value,
+                'name' => $factionName
+            ]);
+        } catch (PDOException $Exception) {
+            return false;
+        }
     }
 }

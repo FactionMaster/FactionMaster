@@ -57,22 +57,28 @@ class NewInvitation implements Route {
 
             if ($data[1] !== "") {
                 if ($FactionRequest instanceof FactionEntity) {
-                    if (!MainAPI::getFactionOfPlayer($Player->getName()) instanceof FactionEntity) {
-                        if (!MainAPI::areInInvitation($Player->getName(), $data[1], "member")) {
-                            if (MainAPI::makeInvitation($Player->getName(), $data[1], "member")) {
-                                Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_SEND_INVITATION", ['name' => $data[1]])] );
+                    if (count($FactionRequest->members) < $FactionRequest->max_player) {
+                        if (!MainAPI::getFactionOfPlayer($Player->getName()) instanceof FactionEntity) {
+                            if (!MainAPI::areInInvitation($Player->getName(), $data[1], "member")) {
+                                if (MainAPI::makeInvitation($Player->getName(), $data[1], "member")) {
+                                    Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_SEND_INVITATION", ['name' => $data[1]])] );
+                                }else{
+                                    $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "ERROR"));
+                                    $Player->sendForm($menu);;
+                                }
                             }else{
-                                $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "ERROR"));
+                                $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "ALREADY_PENDING_INVITATION"));
                                 $Player->sendForm($menu);;
                             }
                         }else{
-                            $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "ALREADY_PENDING_INVITATION"));
+                            $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "ALREADY_IN_THIS_FACTION"));
                             $Player->sendForm($menu);;
                         }
                     }else{
-                        $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "ALREADY_IN_THIS_FACTION"));
-                        $Player->sendForm($menu);;
+                        $message = Utils::getText($this->UserEntity->name, "MAX_PLAYER_REACH");
+                        Utils::processMenu($backMenu, $Player, [$message] );
                     }
+                    
                 }else{
                     $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "FACTION_DONT_EXIST"));
                     $Player->sendForm($menu);;

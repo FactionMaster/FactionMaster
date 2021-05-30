@@ -121,10 +121,16 @@ class ManageMemberDemand implements Route {
         return function (Player $Player, $data) use ($factionName, $playerName, $invitation) {
             if ($data === null) return;
             if ($data) {
-                $message = Utils::getText($this->UserEntity->name, "SUCCESS_ACCEPT_REQUEST", ['name' => $playerName]);
-                if (!MainAPI::addMember($factionName, $playerName)) $message = Utils::getText($this->UserEntity->name, "ERROR"); 
-                if (!MainAPI::removeInvitation($playerName, $factionName, "member")) $message = Utils::getText($this->UserEntity->name, "ERROR"); 
-                Utils::processMenu(RouterFactory::get(ManageMainMembers::SLUG), $Player, [$message]);
+                $Faction = MainAPI::getFaction($factionName);
+                if (count($Faction->members) < $Faction->max_player) {
+                    $message = Utils::getText($this->UserEntity->name, "SUCCESS_ACCEPT_REQUEST", ['name' => $playerName]);
+                    if (!MainAPI::addMember($factionName, $playerName)) $message = Utils::getText($this->UserEntity->name, "ERROR"); 
+                    if (!MainAPI::removeInvitation($playerName, $factionName, "member")) $message = Utils::getText($this->UserEntity->name, "ERROR"); 
+                    Utils::processMenu(RouterFactory::get(ManageMainMembers::SLUG), $Player, [$message]);
+                }else{
+                    $message = Utils::getText($this->UserEntity->name, "MAX_PLAYER_REACH");
+                    Utils::processMenu(RouterFactory::get(ManageMainMembers::SLUG), $Player, [$message]);
+                }
             }else{
                 Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [$invitation]);
             }

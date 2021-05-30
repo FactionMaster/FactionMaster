@@ -10,6 +10,7 @@ class RewardFactory {
 
         self::registerReward(new Money());
         self::registerReward(new Power());
+        self::registerReward(new MemberLimit());
         
     }
 
