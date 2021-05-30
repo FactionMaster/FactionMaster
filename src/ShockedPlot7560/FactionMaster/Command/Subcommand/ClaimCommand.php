@@ -31,11 +31,17 @@ class ClaimCommand extends BaseSubCommand {
 
             $FactionClaim = MainAPI::getFactionClaim($World, $X, $Z);
             if ($FactionClaim === null) {
-                if (MainAPI::addClaim($sender->getPlayer(), $UserEntity->faction)) {
-                    $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_CLAIM"));
-                    return;
+                $FactionPlayer = MainAPI::getFactionOfPlayer($sender->getName());
+                if (count(MainAPI::getClaimsFaction($UserEntity->faction)) < $FactionPlayer->max_claim) {
+                    if (MainAPI::addClaim($sender->getPlayer(), $UserEntity->faction)) {
+                        $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_CLAIM"));
+                        return;
+                    }else{
+                        $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
+                        return;
+                    }
                 }else{
-                    $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
+                    $sender->sendMessage(Utils::getText($sender->getName(), "MAX_CLAIM_REACH"));
                     return;
                 }
             }else{

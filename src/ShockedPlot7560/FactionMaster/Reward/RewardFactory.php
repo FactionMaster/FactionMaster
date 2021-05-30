@@ -11,6 +11,8 @@ class RewardFactory {
         self::registerReward(new Money());
         self::registerReward(new Power());
         self::registerReward(new MemberLimit());
+        self::registerReward(new HomeLimit());
+        self::registerReward(new ClaimLimit());
         
     }
 

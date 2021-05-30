@@ -32,11 +32,17 @@ class SethomeCommand extends BaseSubCommand {
         if ((isset($permissions[Ids::PERMISSION_ADD_FACTION_HOME]) && $permissions[Ids::PERMISSION_ADD_FACTION_HOME]) || $UserEntity->rank == Ids::OWNER_ID) {
             $Player = $sender->getPlayer();
             if (!MainAPI::getFactionHome($UserEntity->faction, $args["name"])) {
-                if (MainAPI::addHome($Player, $UserEntity->faction, $args['name'])) {
-                    $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_CREATE"));
-                    return;
+                $Faction = MainAPI::getFaction($UserEntity->faction);
+                if (count(MainAPI::getFactionHomes($UserEntity->faction)) < $Faction->max_home) {
+                    if (MainAPI::addHome($Player, $UserEntity->faction, $args['name'])) {
+                        $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_CREATE"));
+                        return;
+                    }else{
+                        $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
+                        return;
+                    }
                 }else{
-                    $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
+                    $sender->sendMessage(Utils::getText($sender->getName(), "MAX_HOME_REACH"));
                     return;
                 }
             }else{
