@@ -15,6 +15,7 @@ use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ChangeDescription;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ChangeMessage;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ChangePermissionMain;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ChangeVisibility;
+use ShockedPlot7560\FactionMaster\Route\Faction\Manage\LevelUp;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ManageFactionMain;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\RankPermissionManage;
 use ShockedPlot7560\FactionMaster\Route\Faction\ViewFactionMembers;
@@ -70,6 +71,7 @@ class RouterFactory {
         self::registerRoute(new ChangeMessage());
         self::registerRoute(new ChangeDescription());
         self::registerRoute(new ChangeVisibility());
+        self::registerRoute(new LevelUp());
         
         self::registerRoute(new AllianceMainMenu());
         self::registerRoute(new AllianceInvitationList());

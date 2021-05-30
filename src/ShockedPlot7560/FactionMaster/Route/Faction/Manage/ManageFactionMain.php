@@ -26,6 +26,7 @@ class ManageFactionMain implements Route {
         Ids::PERMISSION_REFUSE_ALLIANCE_DEMAND,
         Ids::PERMISSION_SEND_ALLIANCE_INVITATION,
         Ids::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION,
+        Ids::PERMISSION_LEVEL_UP,
         Ids::PERMISSION_BREAK_ALLIANCE
     ];
     public $backMenu;
@@ -53,6 +54,7 @@ class ManageFactionMain implements Route {
         if ((isset($UserPermissions[Ids::PERMISSION_CHANGE_FACTION_DESCRIPTION]) && $UserPermissions[Ids::PERMISSION_CHANGE_FACTION_DESCRIPTION]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_CHANGE_DESCRIPTION");
         if ((isset($UserPermissions[Ids::PERMISSION_CHANGE_FACTION_MESSAGE]) && $UserPermissions[Ids::PERMISSION_CHANGE_FACTION_MESSAGE]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_CHANGE_MESSAGE");
         if ((isset($UserPermissions[Ids::PERMISSION_CHANGE_FACTION_VISIBILITY]) && $UserPermissions[Ids::PERMISSION_CHANGE_FACTION_VISIBILITY]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_CHANGE_VISIBILITY");
+        if ((isset($UserPermissions[Ids::PERMISSION_LEVEL_UP]) && $UserPermissions[Ids::PERMISSION_LEVEL_UP]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_LEVEL_UP");
         if ((isset($UserPermissions[Ids::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS]) && $UserPermissions[Ids::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_CHANGE_PERMISSION");
         if ((isset($UserPermissions[Ids::PERMISSION_ACCEPT_ALLIANCE_DEMAND]) && $UserPermissions[Ids::PERMISSION_ACCEPT_ALLIANCE_DEMAND]) || 
             (isset($UserPermissions[Ids::PERMISSION_REFUSE_ALLIANCE_DEMAND]) && $UserPermissions[Ids::PERMISSION_REFUSE_ALLIANCE_DEMAND]) || 
@@ -90,6 +92,9 @@ class ManageFactionMain implements Route {
                     break;
                 case Utils::getText($this->UserEntity->name, "BUTTON_CHANGE_PERMISSION"):
                     Utils::processMenu(RouterFactory::get(ChangePermissionMain::SLUG), $player);
+                    break;
+                case Utils::getText($this->UserEntity->name, "BUTTON_LEVEL_UP"):
+                    Utils::processMenu(RouterFactory::get(LevelUp::SLUG), $player);
                     break;
                 default:
                     return;

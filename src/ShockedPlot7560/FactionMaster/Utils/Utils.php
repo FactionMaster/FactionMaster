@@ -105,6 +105,9 @@ class Utils {
             ],[
                 "text" => self::getText($playerName, "PERMISSION_DELETE_FACTION_HOME"),
                 "id" => Ids::PERMISSION_DELETE_FACTION_HOME
+            ],[
+                "text" => self::getText($playerName, "PERMISSION_LEVEL_UP"),
+                "id" => Ids::PERMISSION_LEVEL_UP
             ]
         ];
     }

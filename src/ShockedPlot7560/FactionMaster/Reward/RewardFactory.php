@@ -9,6 +9,7 @@ class RewardFactory {
     public static function init() {
 
         self::registerReward(new Money());
+        self::registerReward(new Power());
         
     }
 
