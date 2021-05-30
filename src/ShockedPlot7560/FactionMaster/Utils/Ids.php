@@ -43,6 +43,9 @@ interface Ids {
     const PRIVATE_VISIBILITY = 1;
     const INVITATION_VISIBILITY = 2;
 
+    const BANK_HISTORY_ADD_MODE = 0;
+    const BANK_HISTORY_REMOVE_MODE = 1;
+
     const PERMISSION_CHANGE_MEMBER_RANK = 0;
     const PERMISSION_KICK_MEMBER = 1;
     const PERMISSION_ACCEPT_MEMBER_DEMAND = 2;
@@ -64,5 +67,7 @@ interface Ids {
     const PERMISSION_ADD_CLAIM = 18;
     const PERMISSION_REMOVE_CLAIM = 19;
     const PERMISSION_LEVEL_UP = 20;
+    const PERMISSION_SEE_BANK_HISTORY = 21;
+    const PERMISSION_BANK_DEPOSIT = 22;
 
 }

@@ -36,11 +36,13 @@ use InvalidArgumentException;
 use PDO;
 use PDOException;
 use pocketmine\Player;
+use ShockedPlot7560\FactionMaster\Database\Entity\BankHistoryEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\HomeEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Database\Table\BankHistoryTable;
 use ShockedPlot7560\FactionMaster\Database\Table\ClaimTable;
 use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
 use ShockedPlot7560\FactionMaster\Database\Table\HomeTable;
@@ -910,12 +912,24 @@ class MainAPI {
      * @param int $money Give negative integer to substract
      * @return bool False on failure
      */
-    public static function updateMoney(string $factionName, int $money) : bool {
+    public static function updateMoney(string $factionName, int $money, string $reason = "No reason") : bool {
         try {
             $query = self::$PDO->prepare("UPDATE " .FactionTable::TABLE_NAME . " SET money = money + :money WHERE name = :name");
-            return $query->execute([ 
+            if (!$query->execute([ 
                 'money' => $money,
                 'name' => $factionName
+            ])) return false;
+            if ($money < 0) {
+                $type = Ids::BANK_HISTORY_REMOVE_MODE;
+            }else{
+                $type = Ids::BANK_HISTORY_ADD_MODE;
+            }
+            $query = self::$PDO->prepare("INSERT INTO " . BankHistoryTable::TABLE_NAME . " (faction, entity, amount, type) VALUE (:faction, :player, :amount, :type)");
+            return $query->execute([
+                'faction' => $factionName,
+                'player' => $reason,
+                'amount' => $money, 
+                'type' => $type
             ]);
         } catch (\PDOException $Exception) {
             return false;
@@ -956,6 +970,23 @@ class MainAPI {
             ]);
         } catch (PDOException $Exception) {
             return false;
+        }
+    }
+
+    /**
+     * @param string $faction
+     * @return BankHistoryEntity[]
+     */
+    public static function getBankHistory(string $faction) : array {
+        try {
+            $query = self::$PDO->prepare("SELECT * FROM " .BankHistoryTable::TABLE_NAME . " WHERE faction = :faction ORDER BY date DESC");
+            if (!$query->execute([
+                'faction' => $faction
+            ])) return [];
+            $query->setFetchMode(PDO::FETCH_CLASS, BankHistoryEntity::class);
+            return $query->fetchAll();
+        } catch (PDOException $Exception) {
+            return [];
         }
     }
 }

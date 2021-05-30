@@ -30,31 +30,33 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\Reward;
+namespace ShockedPlot7560\FactionMaster\Database\Table;
 
-use ShockedPlot7560\FactionMaster\API\MainAPI;
+use PDO;
 
-class Money extends Reward implements RewardInterface {
+class BankHistoryTable implements TableInterface {
 
-    public function __construct(int $value = 0)
-    {
-        $this->value = $value;
-        $this->nameSlug = "REWARD_MONEY_NAME";
-        $this->type = RewardType::MONEY;
+    /** @var \PDO */
+    private $PDO;
+
+    const TABLE_NAME = "bank_history";
+    const SLUG = "bank_history";
+
+    public function init(): self {
+        $this->PDO->query("CREATE TABLE IF NOT EXISTS `". self::TABLE_NAME ."` ( 
+            `id` INT(11) NOT NULL AUTO_INCREMENT , 
+            `faction` VARCHAR(255) NOT NULL , 
+            `entity` VARCHAR(255) NOT NULL, 
+            `amount` INT(11) NOT NULL,
+            `type` INT(1) NOT NULL,
+            `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (`id`)
+        ) ENGINE = MyISAM");
+        return $this;
     }
 
-    public function executeGet(string $factionName, ?int $value = null) : bool {
-        if ($value !== null) $this->setValue($value);
-        return MainAPI::updateMoney($factionName, $this->value, "Level");
-    }
-
-    public function executeCost(string $factionName, ?int $value = null) {
-        if ($value !== null) $this->setValue($value);
-        $Faction = MainAPI::getFaction($factionName);
-        if (($Faction->money - $this->getValue()) < 0) {
-            return "NO_ENOUGH_MONEY";
-        }
-        return ($result = MainAPI::updateMoney($factionName, $this->value * -1, "Level")) === false ? "ERROR" : $result;
+    public function __construct(PDO $PDO) {
+        $this->PDO = $PDO;
     }
 
 }

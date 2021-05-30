@@ -39,6 +39,7 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Route\Faction\BankMain;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ManageFactionMain;
 use ShockedPlot7560\FactionMaster\Route\Faction\ViewFactionMembers;
 use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMainMembers;
@@ -140,6 +141,9 @@ class MainPanel implements Route {
                             break;
                         case "factionHome":
                             Utils::processMenu(RouterFactory::get(HomeListPanel::SLUG), $Player);
+                            break;
+                        case "bank":
+                            Utils::processMenu(RouterFactory::get(BankMain::SLUG), $Player);
                             break;
                         case "manageMembers":
                             Utils::processMenu(RouterFactory::get(ManageMainMembers::SLUG), $Player);
@@ -270,6 +274,10 @@ class MainPanel implements Route {
                 ],[
                     'slug' => "factionHome",
                     'text' => Utils::getText($this->UserEntity->name, "BUTTON_VIEW_FACTION_HOME"),
+                    'access' => true
+                ],[
+                    'slug' => "bank",
+                    'text' => Utils::getText($this->UserEntity->name, "BUTTON_VIEW_BANK"),
                     'access' => true
                 ],[
                     'slug' => "manageMembers",

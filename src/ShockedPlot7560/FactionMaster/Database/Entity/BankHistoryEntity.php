@@ -30,31 +30,21 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\Reward;
+namespace ShockedPlot7560\FactionMaster\Database\Entity;
 
-use ShockedPlot7560\FactionMaster\API\MainAPI;
+class BankHistoryEntity {
 
-class Money extends Reward implements RewardInterface {
-
-    public function __construct(int $value = 0)
-    {
-        $this->value = $value;
-        $this->nameSlug = "REWARD_MONEY_NAME";
-        $this->type = RewardType::MONEY;
-    }
-
-    public function executeGet(string $factionName, ?int $value = null) : bool {
-        if ($value !== null) $this->setValue($value);
-        return MainAPI::updateMoney($factionName, $this->value, "Level");
-    }
-
-    public function executeCost(string $factionName, ?int $value = null) {
-        if ($value !== null) $this->setValue($value);
-        $Faction = MainAPI::getFaction($factionName);
-        if (($Faction->money - $this->getValue()) < 0) {
-            return "NO_ENOUGH_MONEY";
-        }
-        return ($result = MainAPI::updateMoney($factionName, $this->value * -1, "Level")) === false ? "ERROR" : $result;
-    }
+    /** @var int */
+    public $id;
+    /** @var string */
+    public $faction;
+    /** @var string */
+    public $entity;
+    /** @var int */
+    public $type;
+    /** @var string */
+    public $date;
+    /** @var int */
+    public $amount;
 
 }

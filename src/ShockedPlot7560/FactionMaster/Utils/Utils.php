@@ -138,6 +138,12 @@ class Utils {
             ],[
                 "text" => self::getText($playerName, "PERMISSION_LEVEL_UP"),
                 "id" => Ids::PERMISSION_LEVEL_UP
+            ],[
+                "text" => self::getText($playerName, "PERMISSION_BANK_DEPOSIT"),
+                "id" => Ids::PERMISSION_BANK_DEPOSIT
+            ],[
+                "text" => self::getText($playerName, "PERMISSION_SEE_BANK_HISTORY"),
+                "id" => Ids::PERMISSION_SEE_BANK_HISTORY
             ]
         ];
     }
