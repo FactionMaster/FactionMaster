@@ -17,6 +17,9 @@ use ShockedPlot7560\FactionMaster\Event\EntityDamageByEntity;
 use ShockedPlot7560\FactionMaster\Event\Interact;
 use ShockedPlot7560\FactionMaster\Event\PlayerDeath;
 use ShockedPlot7560\FactionMaster\Event\PlayerLogin;
+use ShockedPlot7560\FactionMaster\Reward\Money;
+use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
+use ShockedPlot7560\FactionMaster\Reward\RewardType;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -32,7 +35,8 @@ class Main extends PluginBase implements Listener{
     public $Database;
     /** @var \pocketmine\plugin\Plugin */
     public $FormUI;
-    /** @var  */
+    /** @var Config */
+    public $levelConfig;
 
     public function onEnable()
     {
@@ -56,6 +60,7 @@ class Main extends PluginBase implements Listener{
         $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", "FactionMaster command", ["f", "fac"]));
 
         RouterFactory::init();
+        RewardFactory::init();
 
     }
 
@@ -66,8 +71,10 @@ class Main extends PluginBase implements Listener{
         $this->saveDefaultConfig();
         $this->saveResource('config.yml');
         $this->saveResource('translation.yml');
+        $this->saveResource('level.yml');
 
         $this->config = new Config($this->getDataFolder() . "config.yml");
+        $this->levelConfig = new Config($this->getDataFolder() . "level.yml");
         $this->translation = new Config($this->getDataFolder() . "translation.yml");
 
         foreach ($this->translation->get("languages") as $key => $language) {

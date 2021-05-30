@@ -18,6 +18,8 @@ use ShockedPlot7560\FactionMaster\Database\Table\HomeTable;
 use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
+use ShockedPlot7560\FactionMaster\Reward\RewardInterface;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -223,7 +225,7 @@ class MainAPI {
         }
 
         try {
-            $query = self::$PDO->prepare("UPDATE " .UserTable::TABLE_NAME . " SET xp = :xp, level = :level WHERE name = :name");
+            $query = self::$PDO->prepare("UPDATE " .FactionTable::TABLE_NAME . " SET xp = :xp, level = :level WHERE name = :name");
             return $query->execute([ 
                 'xp' => $xp,
                 'level' => $level,
@@ -894,5 +896,28 @@ class MainAPI {
         } catch (\PDOException $Exception) {
             return false;
         }
+    }
+
+    public static function updateMoney(string $factionName, int $money) : bool {
+        try {
+            $query = self::$PDO->prepare("UPDATE " .FactionTable::TABLE_NAME . " SET money = money + :money WHERE name = :name");
+            return $query->execute([ 
+                'money' => $money,
+                'name' => $factionName
+            ]);
+        } catch (\PDOException $Exception) {
+            return false;
+        }
+    }
+
+    public static function getLevelReward(int $level) : ?RewardInterface {
+        $Data = self::getLevelRewardData($level);
+        $Reward = RewardFactory::get($Data['type']);
+        if ($Reward !== null) $Reward->setValue($Data['value']);
+        return $Reward;
+    }
+
+    public static function getLevelRewardData(int $level) : array {
+        return Main::getInstance()->levelConfig->__get($level-2);
     }
 }

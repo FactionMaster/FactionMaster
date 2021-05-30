@@ -160,4 +160,8 @@ class Utils {
         $Text = self::replaceParams($Config->get($slug), $args);
         return $Text;
     }
+
+    public static function getXpLevel(int $level) : int {
+        return 1000*pow(1.09, $level);
+    }
 }

@@ -33,5 +33,6 @@ interface Ids {
     const PERMISSION_BREAK_ALLIANCE = 17;
     const PERMISSION_ADD_CLAIM = 18;
     const PERMISSION_REMOVE_CLAIM = 19;
+    const PERMISSION_LEVEL_UP = 20;
 
 }
