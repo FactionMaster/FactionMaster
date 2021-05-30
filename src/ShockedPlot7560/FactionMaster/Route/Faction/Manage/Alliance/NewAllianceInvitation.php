@@ -56,15 +56,26 @@ class NewAllianceInvitation implements Route {
 
             if ($data[1] !== "") {
                 if ($FactionRequest instanceof FactionEntity) {
-                    if (!MainAPI::areInInvitation($this->Faction->name, $data[1], "alliance")) {
-                        if (MainAPI::makeInvitation($this->Faction->name, $data[1], "alliance")) {
-                            Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_SEND_INVITATION", ['name' => $data[1]])] );
+                    $FactionPlayer = MainAPI::getFactionOfPlayer($Player->getName());
+                    if (count($FactionPlayer->ally) < $FactionPlayer->max_ally) {
+                        if (count($FactionRequest->ally) < $FactionRequest->max_ally) {
+                            if (!MainAPI::areInInvitation($this->Faction->name, $data[1], "alliance")) {
+                                if (MainAPI::makeInvitation($this->Faction->name, $data[1], "alliance")) {
+                                    Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_SEND_INVITATION", ['name' => $data[1]])] );
+                                }else{
+                                    $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "ERROR"));
+                                    $Player->sendForm($menu);
+                                }
+                            }else{
+                                $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "ALREADY_PENDING_INVITATION"));
+                                $Player->sendForm($menu);
+                            }
                         }else{
-                            $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "ERROR"));
+                            $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "MAX_ALLY_REACH_OTHER"));
                             $Player->sendForm($menu);
                         }
                     }else{
-                        $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "ALREADY_PENDING_INVITATION"));
+                        $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "MAX_ALLY_REACH"));
                         $Player->sendForm($menu);
                     }
                 }else{

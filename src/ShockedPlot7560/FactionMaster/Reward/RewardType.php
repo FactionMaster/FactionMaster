@@ -9,5 +9,6 @@ interface RewardType {
     const MEMBER_LIMIT = "memberLimit";
     const HOME_LIMIT = "homeLimit";
     const CLAIM_LIMIT = "claimLimit";
+    const ALLY_LIMIT = "allyLimit";
 
 }

@@ -13,6 +13,7 @@ class RewardFactory {
         self::registerReward(new MemberLimit());
         self::registerReward(new HomeLimit());
         self::registerReward(new ClaimLimit());
+        self::registerReward(new AllyLimit());
         
     }
 

@@ -138,6 +138,8 @@ MAX_PLAYER_REACH_FOR_PLAYER: " §c>> §4Cette faction a déjà atteint son nombr
 MAX_PLAYER_REACH_FOR_FACTION: " §c>> §4Vous avez atteint déjà atteint le nombre maximal de joueur dans la faction"
 MAX_HOME_REACH: " §c>> §4Vous avez atteint la limite de home disponible"
 MAX_CLAIM_REACH: " §c>> §4Vous avez atteint la limite de claim disponible sur ce serveur"
+MAX_ALLY_REACH: " §c>> §4Vous avez atteint la limite d'alliance"
+MAX_ALLY_REACH_OTHER: " §c>> §4La faction demandé a déjà atteint sa limite d'alliance"
 
 RECRUIT_RANK_NAME: "Recrue"
 MEMBER_RANK_NAME: "Membre"
@@ -220,3 +222,4 @@ REWARD_POWER_NAME: "Puissance de faction"
 REWARD_MEMBER_LIMIT_NAME: "Limite de membre"
 REWARD_HOME_LIMIT_NAME: "Limite de home"
 REWARD_CLAIM_LIMIT_NAME: "Limite de claim"
+REWARD_ALLY_LIMIT_NAME: "Limite d'alliance"

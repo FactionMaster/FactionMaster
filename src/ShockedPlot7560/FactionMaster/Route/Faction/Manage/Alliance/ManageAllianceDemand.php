@@ -121,10 +121,22 @@ class ManageAllianceDemand implements Route {
         return function (Player $Player, $data) use ($factionName, $allianceName, $invitation, $backMenu) {
             if ($data === null) return;
             if ($data) {
-                $message = Utils::getText($this->UserEntity->name, "SUCCESS_ACCEPT_REQUEST", ['name' => $allianceName]);
-                if (!MainAPI::setAlly($factionName, $allianceName)) $message = Utils::getText($this->UserEntity->name, "ERROR"); 
-                if (!MainAPI::removeInvitation($allianceName, $factionName, "alliance")) $message = Utils::getText($this->UserEntity->name, "ERROR"); 
-                Utils::processMenu($backMenu, $Player, [$message]);
+                $FactionPlayer = MainAPI::getFaction($factionName);
+                if (count($FactionPlayer->ally) < $FactionPlayer->max_ally) {
+                    $FactionRequest = MainAPI::getFaction($allianceName);
+                    if (count($FactionRequest->ally) < $FactionRequest->max_ally) {
+                        $message = Utils::getText($this->UserEntity->name, "SUCCESS_ACCEPT_REQUEST", ['name' => $allianceName]);
+                        if (!MainAPI::setAlly($factionName, $allianceName)) $message = Utils::getText($this->UserEntity->name, "ERROR"); 
+                        if (!MainAPI::removeInvitation($allianceName, $factionName, "alliance")) $message = Utils::getText($this->UserEntity->name, "ERROR"); 
+                        Utils::processMenu($backMenu, $Player, [$message]);
+                    }else{
+                        $message = Utils::getText($this->UserEntity->name, "MAX_ALLY_REACH_OTHER");
+                        Utils::processMenu($backMenu, $Player, [$message]);
+                    }
+                }else{
+                    $message = Utils::getText($this->UserEntity->name, "MAX_ALLY_REACH");
+                    Utils::processMenu($backMenu, $Player, [$message]);
+                }
             }else{
                 Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [$invitation]);
             }

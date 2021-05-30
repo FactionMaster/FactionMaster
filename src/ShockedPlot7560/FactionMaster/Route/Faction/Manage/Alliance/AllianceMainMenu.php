@@ -54,12 +54,13 @@ class AllianceMainMenu implements Route {
         $this->permissions = $UserPermissions;
 
         $message = '';
+        if (isset($params[0])) $message = $params[0] . "\n";
         $this->buttons = [];
         foreach ($this->FactionEntity->ally as $Alliance) {
             $this->buttons[] = MainAPI::getFaction($Alliance)->name;
         }
         if (count($this->FactionEntity->ally) == 0) {
-           $message = Utils::getText($this->UserEntity->name, "NO_ALLY");
+           $message .= Utils::getText($this->UserEntity->name, "NO_ALLY");
         }
         if ((isset($UserPermissions[Ids::PERMISSION_SEND_ALLIANCE_INVITATION]) && $UserPermissions[Ids::PERMISSION_SEND_ALLIANCE_INVITATION]) || 
             $this->UserEntity->rank == Ids::OWNER_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_SEND_INVITATION");
