@@ -3,11 +3,9 @@
 namespace ShockedPlot7560\FactionMaster\Route\Faction\Manage;
 
 use jojoe77777\FormAPI\SimpleForm;
-use jojoe77777\FormAPI\FormAPI;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ManageFactionMain;
@@ -26,8 +24,6 @@ class LevelUp implements Route {
     ];
     public $backMenu;
 
-    /** @var FormAPI */
-    private $FormUI;
     /** @var array */
     private $buttons;
     /** @var FactionEntity */
@@ -46,7 +42,6 @@ class LevelUp implements Route {
 
     public function __construct()
     {
-        $this->FormUI = Main::getInstance()->FormUI;
         $this->backMenu = RouterFactory::get(ManageFactionMain::SLUG);
     }
 

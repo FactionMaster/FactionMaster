@@ -9,10 +9,8 @@ use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\ManageInvitationMain;
-use ShockedPlot7560\FactionMaster\Route\Members\ManageMainMembers;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class NewInvitation implements Route {
@@ -22,9 +20,6 @@ class NewInvitation implements Route {
     public $PermissionNeed = [];
     public $backMenu;
 
-    /** @var \jojoe77777\FormAPI\FormAPI */
-    private $FormUI;
-
     public function getSlug(): string
     {
         return self::SLUG;
@@ -32,7 +27,6 @@ class NewInvitation implements Route {
 
     public function __construct()
     {
-        $this->FormUI = Main::getInstance()->FormUI;
         $this->backMenu = RouterFactory::get(ManageInvitationMain::SLUG);
     }
 

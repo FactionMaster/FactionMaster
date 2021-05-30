@@ -3,7 +3,6 @@
 namespace ShockedPlot7560\FactionMaster\Route;
 
 use InvalidArgumentException;
-use jojoe77777\FormAPI\FormAPI;
 use jojoe77777\FormAPI\ModalForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
@@ -16,9 +15,6 @@ class ConfirmationMenu implements Route {
 
     public $PermissionNeed = [];
     public $backMenu;
-    
-    /** @var FormAPI */
-    private $FormUI;
 
     public function getSlug(): string
     {
@@ -27,7 +23,6 @@ class ConfirmationMenu implements Route {
 
     public function __construct()
     {
-        $this->FormUI = Main::getInstance()->FormUI;
     }
 
     /**

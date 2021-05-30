@@ -3,12 +3,10 @@
 namespace ShockedPlot7560\FactionMaster\Route\Faction\Manage;
 
 use jojoe77777\FormAPI\CustomForm;
-use jojoe77777\FormAPI\FormAPI;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
@@ -23,8 +21,6 @@ class ChangeVisibility implements Route {
     ];
     public $backMenu;
 
-    /** @var FormAPI */
-    private $FormUI;
     /** @var array */
     private $sliderData;
     /** @var FactionEntity */
@@ -37,7 +33,6 @@ class ChangeVisibility implements Route {
 
     public function __construct()
     {
-        $this->FormUI = Main::getInstance()->FormUI;
         $this->backMenu = RouterFactory::get(ManageFactionMain::SLUG);
     }
 

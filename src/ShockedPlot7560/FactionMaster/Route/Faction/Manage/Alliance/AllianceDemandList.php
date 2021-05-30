@@ -3,15 +3,12 @@
 namespace ShockedPlot7560\FactionMaster\Route\Faction\Manage\Alliance;
 
 use jojoe77777\FormAPI\SimpleForm;
-use jojoe77777\FormAPI\FormAPI;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\Alliance\AllianceMainMenu;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\Alliance\ManageAllianceDemand;
-use ShockedPlot7560\FactionMaster\Route\Members\ManageMainMembers;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
@@ -27,8 +24,6 @@ class AllianceDemandList implements Route {
     ];
     public $backMenu;
 
-    /** @var FormAPI */
-    private $FormUI;
     /** @var array */
     private $buttons;
     /** @var InvitationEntity[] */
@@ -41,7 +36,6 @@ class AllianceDemandList implements Route {
 
     public function __construct()
     {
-        $this->FormUI = Main::getInstance()->FormUI;
         $this->backMenu = RouterFactory::get(AllianceMainMenu::SLUG);
     }
 

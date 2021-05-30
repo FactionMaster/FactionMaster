@@ -1,14 +1,12 @@
 <?php 
 
-namespace ShockedPlot7560\FactionMaster\Route\Members;
+namespace ShockedPlot7560\FactionMaster\Route\Faction\Members;
 
 use InvalidArgumentException;
 use jojoe77777\FormAPI\CustomForm;
-use jojoe77777\FormAPI\FormAPI;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
@@ -21,8 +19,6 @@ class MemberChangeRank implements Route {
     public $PermissionNeed = [Ids::PERMISSION_CHANGE_MEMBER_RANK];
     public $backMenu;
 
-    /** @var FormAPI */
-    private $FormUI;
     /** @var array */
     private $sliderData;
     /** @var UserEntity */
@@ -36,7 +32,6 @@ class MemberChangeRank implements Route {
     public function __construct()
     {
         $this->backMenu = RouterFactory::get(ManageMember::SLUG);
-        $this->FormUI = Main::getInstance()->FormUI;
     }
 
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)

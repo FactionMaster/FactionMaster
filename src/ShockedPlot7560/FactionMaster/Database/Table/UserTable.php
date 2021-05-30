@@ -13,10 +13,6 @@ class UserTable implements TableInterface {
     const TABLE_NAME = "user";
     const SLUG = "user";
 
-    /**
-     * Initialize the database by creating the table if needed
-     * @return UserTable
-     */
     public function init() : self
     {
         $this->PDO->query("CREATE TABLE IF NOT EXISTS `". self::TABLE_NAME ."` ( 

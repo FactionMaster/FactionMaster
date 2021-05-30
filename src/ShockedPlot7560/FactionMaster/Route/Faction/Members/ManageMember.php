@@ -1,14 +1,12 @@
 <?php 
 
-namespace ShockedPlot7560\FactionMaster\Route\Members;
+namespace ShockedPlot7560\FactionMaster\Route\Faction\Members;
 
 use InvalidArgumentException;
 use jojoe77777\FormAPI\SimpleForm;
-use jojoe77777\FormAPI\FormAPI;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
 use ShockedPlot7560\FactionMaster\Route\Route;
@@ -23,8 +21,6 @@ class ManageMember implements Route {
     public $PermissionNeed = [Ids::PERMISSION_CHANGE_MEMBER_RANK, Ids::PERMISSION_KICK_MEMBER];
     public $backMenu;
 
-    /** @var FormAPI */
-    private $FormUI;
     /** @var array */
     private $buttons;
     /** @var UserEntity */
@@ -37,7 +33,6 @@ class ManageMember implements Route {
 
     public function __construct()
     {
-        $this->FormUI = Main::getInstance()->FormUI;
         $this->backMenu = RouterFactory::get(ManageMembersList::SLUG);
     }
 

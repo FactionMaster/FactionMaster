@@ -5,7 +5,6 @@ namespace ShockedPlot7560\FactionMaster\Route\Faction\Manage;
 use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\Alliance\AllianceMainMenu;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
 use ShockedPlot7560\FactionMaster\Route\Route;
@@ -31,8 +30,6 @@ class ManageFactionMain implements Route {
     ];
     public $backMenu;
 
-    /** @var \jojoe77777\FormAPI\FormAPI */
-    private $FormUI;
     /** @var array */
     private $buttons;
 
@@ -43,7 +40,6 @@ class ManageFactionMain implements Route {
 
     public function __construct()
     {
-        $this->FormUI = Main::getInstance()->FormUI;
         $this->backMenu = RouterFactory::get(MainPanel::SLUG);
     }
 

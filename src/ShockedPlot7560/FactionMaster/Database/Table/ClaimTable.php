@@ -2,17 +2,8 @@
 
 namespace ShockedPlot7560\FactionMaster\Database\Table;
 
-use InvalidArgumentException;
 use PDO;
-use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
-use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 
-/**
- * Class use to communicate with the claim table 
- * @param \PDO $PDO The PDO instance initialize in Database class
- */
 class ClaimTable implements TableInterface {
 
     /** @var \PDO */

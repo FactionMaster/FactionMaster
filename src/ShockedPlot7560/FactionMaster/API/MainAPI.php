@@ -2,11 +2,9 @@
 
 namespace ShockedPlot7560\FactionMaster\API;
 
-use Exception;
 use InvalidArgumentException;
 use PDO;
 use PDOException;
-use pocketmine\level\format\Chunk;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
@@ -68,8 +66,7 @@ class MainAPI {
     }
 
     /**
-     * Get the Faction's instance from the $args given
-     * @param string $factionName The name of the search faction
+     * @param string $factionName 
      * @return null|FactionEntity Return null if faction not found
      */
     public static function getFaction(string $factionName) : ?FactionEntity {
@@ -85,8 +82,7 @@ class MainAPI {
     }
 
     /**
-     * Test if the faction's given are registered
-     * @param string The name of the search faction
+     * @param string 
      * @return boolean
      */
     public static function isFactionRegistered(string $factionName) : bool {
@@ -94,8 +90,7 @@ class MainAPI {
     }
 
     /**
-     * Remove a registered faction
-     * @param string $args The name of the target faction
+     * @param string $args
      * @return boolean False on failure
      */
     public static function removeFaction(string $factionName) : bool {
@@ -115,9 +110,8 @@ class MainAPI {
     }
 
     /**
-     * Can be used to add or update a faction
-     * @param string $factionName The name of target faction
-     * @param string $ownerName The name of the owner
+     * @param string $factionName 
+     * @param string $ownerName
      * @return false|FactionEntity False on failure
      */
     public static function addFaction(string $factionName, string $ownerName) {
@@ -138,10 +132,8 @@ class MainAPI {
     }
 
     /**
-     * Return the members list of the faction
-     * @param int|string The id / name or instance of the target faction
+     * @param string $factionName
      * @return UserEntity[]
-     * @throws \InvalidArgumentException
      */
     public static function getMembers(string $factionName) : array {
         $Faction = self::getFaction($factionName);
@@ -152,9 +144,9 @@ class MainAPI {
     /**
      * Add a member to the target faction
      * **It will not check if the player are already in a faction !**
-     * @param string $factionName The name of the faction
-     * @param string $playerName The name of the player
-     * @param int $rankId (Default to member) If a special rank is wanted
+     * @param string $factionName
+     * @param string $playerName
+     * @param int $rankId 
      * @return boolean False on failure
      */
     public static function addMember(string $factionName, string $playerName, int $rankId = Ids::RECRUIT_ID) : bool {
@@ -180,9 +172,8 @@ class MainAPI {
     }
 
     /**
-     * Remove the specified member of the target faction
-     * @param string $factionName The name of the faction
-     * @param string $playerName The player's name to remove
+     * @param string $factionName 
+     * @param string $playerName
      * @return boolean False on failure
      */
     public static function removeMember(string $factionName, string $playerName) : bool {
@@ -207,8 +198,8 @@ class MainAPI {
 
     /**
      * Add a quantity of XP to the faction, *If the total xp of the level are exceeded, it will be set to this limit*
-     * @param string $factionName The name of the faction
-     * @param int $xp The amount of xp to add
+     * @param string $factionName 
+     * @param int $xp
      * @return boolean False on failure
      */
     public static function addXP(string $factionName, int $xp) : bool {
@@ -239,7 +230,7 @@ class MainAPI {
 
     /**
      * Change the faction level and reset xp to 0
-     * @param string $factionName Name of the faction
+     * @param string $factionName
      * @param int $level Number level to change
      * @return boolean
      */
@@ -256,8 +247,7 @@ class MainAPI {
     }
 
     /**
-     * Change the power of a faction
-     * @param string $factionName The name of the faction
+     * @param string $factionName 
      * @param int $power The power to change, it allow negative integer to substract
      * @return boolean False on failure
      */
@@ -279,8 +269,7 @@ class MainAPI {
     }
 
     /**
-     * Return the faction's instance of the target player
-     * @param string $playerName The target player
+     * @param string $playerName 
      * @return FactionEntity|null Null if the player has no faction or player not found
      */
     public static function getFactionOfPlayer(string $playerName) : ?FactionEntity {
@@ -298,8 +287,7 @@ class MainAPI {
     }
 
     /**
-     * Test if the player are in a faction
-     * @param string $playerName Name of the player
+     * @param string $playerName
      * @return boolean False if the player have no faction
      */
     public static function isInFaction(string $playerName) : bool {
@@ -310,7 +298,6 @@ class MainAPI {
     }
 
     /**
-     * Test if the two players are in the same faction
      * @param string $playerName1 The name of the first player *The order does not matter*
      * @param string $playerName2 The name of the second player *The order does not matter*
      * @return boolean
@@ -322,8 +309,7 @@ class MainAPI {
     }
 
     /**
-     * Return the UserEntity
-     * @param string $playerName The name of the player
+     * @param string $playerName
      * @return UserEntity|null Null if the user are not found
      */
     public static function getUser(string $playerName) : ?UserEntity {
@@ -335,8 +321,7 @@ class MainAPI {
     }
 
     /**
-     * Check if the user are already register in the database
-     * @param string $playerName Name of the player
+     * @param string $playerName
      * @return boolean
      */
     public static function userIsRegister(string $playerName) : bool {
@@ -347,7 +332,6 @@ class MainAPI {
     }
 
     /**
-     * Check if the two faction are ally
      * @param string $factionName1
      * @param string $factionName2
      * @return boolean
@@ -367,7 +351,6 @@ class MainAPI {
     }
 
     /**
-     * Set two faction ally
      * @param string $factionName1
      * @param string $factionName2
      * @return boolean
@@ -399,7 +382,6 @@ class MainAPI {
     }
 
     /**
-     * Remove an alliance between two faction
      * @param string $faction1
      * @param string $faction2
      * @return boolean False on failure
@@ -425,8 +407,7 @@ class MainAPI {
     }
 
     /**
-     * Change a user rank in his faction
-     * @param string $playerName Name of the user
+     * @param string $playerName 
      * @param int $rank The id of the rank define in Ids interface
      * @return boolean
      */
@@ -455,7 +436,7 @@ class MainAPI {
 
     /**
      * Use to change the faction's visibility : Public / private / invitation
-     * @param string $factionName Name of the faction
+     * @param string $factionName 
      * @param int $visibilityType The type define in Ids interface
      * @return boolean False on failure
      */
@@ -472,9 +453,8 @@ class MainAPI {
     }
 
     /**
-     * Use to change the faction's message
-     * @param string $factionName Name of the faction
-     * @param int $message The message to change
+     * @param string $factionName
+     * @param int $message 
      * @return boolean False on failure
      */
     public static function changeMessage(string $factionName, string $message) : bool{
@@ -490,9 +470,8 @@ class MainAPI {
     }
 
     /**
-     * Use to change the faction's message
-     * @param string $factionName Name of the faction
-     * @param int $description The description to change
+     * @param string $factionName
+     * @param int $description
      * @return boolean False on failure
      */
     public static function changeDescription(string $factionName, string $description) : bool{
@@ -548,7 +527,6 @@ class MainAPI {
     }
 
     /**
-     * Test if the two entity are in invitation with the given type
      * @param string $sender
      * @param string $receiver
      * @param string $type
@@ -570,7 +548,6 @@ class MainAPI {
     }
 
     /**
-     * Remove the corresponding invitation
      * @param string $sender
      * @param string $receiver
      * @param string $type
@@ -590,7 +567,6 @@ class MainAPI {
     }
 
     /**
-     * Return all the invitation send by an entity with the given type
      * @param string $sender
      * @param string $type
      * @return InvitationEntity[]
@@ -610,7 +586,6 @@ class MainAPI {
     }
 
     /**
-     * Return all the invitation receive by an entity with the given type
      * @param string $receiver
      * @param string $type
      * @return InvitationEntity[]
@@ -630,7 +605,6 @@ class MainAPI {
     }
 
     /**
-     * Use to change the faction's permissions
      * @param string $factionName
      * @param array $permissions The permissions in this format : [[1 => true],[],[],[]]
      *                          where each index of sub array are a permission's ids define in Ids interface
@@ -649,6 +623,10 @@ class MainAPI {
         }
     }
 
+    /**
+     * @param string $playerName
+     * @return bool False on failure
+     */
     public static function addUser(string $playerName) : bool {
         try {
             $query = self::$PDO->prepare("INSERT INTO " . UserTable::TABLE_NAME . " (name) VALUE (:user)");
@@ -661,7 +639,6 @@ class MainAPI {
     }
 
     /**
-     * Return the topFaction
      * @return FactionEntity[]
      */
     public static function getTopFaction() : array {
@@ -676,7 +653,6 @@ class MainAPI {
     }
 
     /**
-     * Return all the claim register
      * @return ClaimEntity[]
      */
     public static function getAllClaim() : array {

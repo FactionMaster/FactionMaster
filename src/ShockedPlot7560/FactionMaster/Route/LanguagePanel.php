@@ -3,15 +3,12 @@
 namespace ShockedPlot7560\FactionMaster\Route;
 
 use jojoe77777\FormAPI\SimpleForm;
-use jojoe77777\FormAPI\FormAPI;
-use pocketmine\math\Vector3;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class LanguagePanel implements Route {
@@ -21,12 +18,8 @@ class LanguagePanel implements Route {
     public $PermissionNeed = [];
     public $backMenu;
 
-    /** @var FormAPI */
-    private $FormUI;
     /** @var array */
     private $buttons;
-    /** @var array[] */
-    private $Homes;
 
     public function getSlug(): string
     {
@@ -35,13 +28,11 @@ class LanguagePanel implements Route {
 
     public function __construct()
     {
-        $this->FormUI = Main::getInstance()->FormUI;
         $this->backMenu = RouterFactory::get(MainPanel::SLUG);
     }
 
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
-        $message = "";
         $this->UserEntity = $User;
         $this->UserLang = MainAPI::getPlayerLang($player->getName());
         $this->Languages = Utils::getConfigLang("languages-name");

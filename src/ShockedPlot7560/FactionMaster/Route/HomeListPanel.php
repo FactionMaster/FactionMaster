@@ -3,7 +3,6 @@
 namespace ShockedPlot7560\FactionMaster\Route;
 
 use jojoe77777\FormAPI\SimpleForm;
-use jojoe77777\FormAPI\FormAPI;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
@@ -21,8 +20,6 @@ class HomeListPanel implements Route {
     public $PermissionNeed = [Ids::PERMISSION_TP_FACTION_HOME];
     public $backMenu;
 
-    /** @var FormAPI */
-    private $FormUI;
     /** @var array */
     private $buttons;
     /** @var array[] */
@@ -35,7 +32,6 @@ class HomeListPanel implements Route {
 
     public function __construct()
     {
-        $this->FormUI = Main::getInstance()->FormUI;
         $this->backMenu = RouterFactory::get(MainPanel::SLUG);
     }
 

@@ -12,10 +12,6 @@ class InvitationTable implements TableInterface {
     const TABLE_NAME = "invitation";
     const SLUG = "invitation";
 
-    /**
-     * Initialize the database by creating the table if needed
-     * @return InvitationTable
-     */
     public function init() : self
     {
         $this->PDO->query("CREATE TABLE IF NOT EXISTS `". self::TABLE_NAME ."` ( 

@@ -18,9 +18,6 @@ class TopFactionPanel implements Route {
     public $PermissionNeed = [];
     public $backMenu;
 
-    /** @var FormAPI */
-    private $FormUI;
-
     public function getSlug(): string
     {
         return self::SLUG;
@@ -28,7 +25,6 @@ class TopFactionPanel implements Route {
 
     public function __construct()
     {
-        $this->FormUI = Main::getInstance()->FormUI;
         $this->backMenu = RouterFactory::get(MainPanel::SLUG);
     }
 

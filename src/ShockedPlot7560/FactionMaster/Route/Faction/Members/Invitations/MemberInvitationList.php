@@ -1,31 +1,26 @@
 <?php
 
-namespace ShockedPlot7560\FactionMaster\Route\Members\Invitations;
+namespace ShockedPlot7560\FactionMaster\Route\Faction\Members\Invitations;
 
 use jojoe77777\FormAPI\SimpleForm;
-use jojoe77777\FormAPI\FormAPI;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Main;
-use ShockedPlot7560\FactionMaster\Route\Members\ManageMainMembers;
+use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMainMembers;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class MemberDemandList implements Route {
+class MemberInvitationList implements Route {
 
-    const SLUG = "memberDemandList";
+    const SLUG = "memberInvitationList";
 
     public $PermissionNeed = [
-        Ids::PERMISSION_ACCEPT_MEMBER_DEMAND,
-        Ids::PERMISSION_REFUSE_MEMBER_DEMAND
+        Ids::PERMISSION_DELETE_PENDING_MEMBER_INVITATION
     ];
     public $backMenu;
 
-    /** @var FormAPI */
-    private $FormUI;
     /** @var array */
     private $buttons;
     /** @var InvitationEntity[] */
@@ -38,7 +33,6 @@ class MemberDemandList implements Route {
 
     public function __construct()
     {
-        $this->FormUI = Main::getInstance()->FormUI;
         $this->backMenu = RouterFactory::get(ManageMainMembers::SLUG);
     }
 
@@ -47,15 +41,15 @@ class MemberDemandList implements Route {
         $this->UserEntity = $User;
         $message = "";
         $Faction = MainAPI::getFactionOfPlayer($player->getName());
-        $this->Invitations = MainAPI::getInvitationsByReceiver($Faction->name, "member");
+        $this->Invitations = MainAPI::getInvitationsBySender($Faction->name, "member");
         $this->buttons = [];
         foreach ($this->Invitations as $Invitation) {
-            $this->buttons[] = $Invitation->sender;
+            $this->buttons[] = $Invitation->receiver;
         }
         $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_BACK");
         if (isset($params[0])) $message = $params[0];
-        if (count($this->Invitations) == 0) $message .= Utils::getText($this->UserEntity->name, "NO_PENDING_REQUEST");
-        $menu = $this->memberDemandList($message);
+        if (count($this->Invitations) == 0) $message .= Utils::getText($this->UserEntity->name, "NO_PENDING_INVITATION");
+        $menu = $this->memberInvitationList($message);
         $player->sendForm($menu);
     }
 
@@ -69,16 +63,16 @@ class MemberDemandList implements Route {
                 return;
             }
             if (isset($this->buttons[$data])) {
-                Utils::processMenu(RouterFactory::get(ManageMemberDemand::SLUG), $player, [$this->Invitations[$data]]);
+                Utils::processMenu(RouterFactory::get(ManageMemberInvitation::SLUG), $player, [$this->Invitations[$data]]);
             }
             return;
         };
     }
 
-    private function memberDemandList(string $message = "") : SimpleForm {
+    private function memberInvitationList(string $message = "") : SimpleForm {
         $menu = new SimpleForm($this->call());
         $menu = Utils::generateButton($menu, $this->buttons);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "MANAGE_MEMBERS_REQUEST_LIST_TITLE"));
+        $menu->setTitle(Utils::getText($this->UserEntity->name, "MANAGE_MEMBERS_INVITATION_LIST_TITLE"));
         if ($message !== "") $menu->setContent($message);
         return $menu;
     }

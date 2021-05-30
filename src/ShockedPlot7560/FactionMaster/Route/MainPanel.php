@@ -11,7 +11,7 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ManageFactionMain;
 use ShockedPlot7560\FactionMaster\Route\Faction\ViewFactionMembers;
-use ShockedPlot7560\FactionMaster\Route\Members\ManageMainMembers;
+use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMainMembers;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -26,8 +26,6 @@ class MainPanel implements Route {
     public $PermissionNeed = [];
     public $backMenu;
 
-    /** @var FormAPI */
-    private $FormUI;
     /** @var array */
     private $buttons;
     /** @var UserEntity */
@@ -44,10 +42,7 @@ class MainPanel implements Route {
         return self::SLUG;
     }
 
-    public function __construct()
-    {
-        $this->FormUI = Main::getInstance()->FormUI;
-    }
+    public function __construct() {}
 
     /**
      * @param array|null $params Give to first item the message to print if wanted

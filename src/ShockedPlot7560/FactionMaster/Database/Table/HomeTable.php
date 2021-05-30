@@ -4,10 +4,6 @@ namespace ShockedPlot7560\FactionMaster\Database\Table;
 
 use PDO;
 
-/**
- * Class use to communicate with the home table 
- * @param \PDO $PDO The PDO instance initialize in Database class
- */
 class HomeTable implements TableInterface {
 
     /** @var \PDO */

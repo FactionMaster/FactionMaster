@@ -3,7 +3,6 @@
 namespace ShockedPlot7560\FactionMaster\Route;
 
 use jojoe77777\FormAPI\CustomForm;
-use jojoe77777\FormAPI\FormAPI;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
@@ -19,9 +18,6 @@ class CreateFactionPanel implements Route {
     public $PermissionNeed = [];
     public $backMenu;
 
-    /** @var FormAPI */
-    private $FormUI;
-
     public function getSlug(): string
     {
         return self::SLUG;
@@ -29,7 +25,6 @@ class CreateFactionPanel implements Route {
 
     public function __construct()
     {
-        $this->FormUI = Main::getInstance()->FormUI;
         $this->backMenu = RouterFactory::get(MainPanel::SLUG);
     }
 

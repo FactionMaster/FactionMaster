@@ -1,14 +1,13 @@
 <?php
 
-namespace ShockedPlot7560\FactionMaster\Route\Members\Invitations;
+namespace ShockedPlot7560\FactionMaster\Route\Faction\Members\Invitations;
 
 use jojoe77777\FormAPI\CustomForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Main;
-use ShockedPlot7560\FactionMaster\Route\Members\ManageMainMembers;
+use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMainMembers;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
@@ -23,9 +22,6 @@ class NewMemberInvitation implements Route {
     ];
     public $backMenu;
 
-    /** @var \jojoe77777\FormAPI\FormAPI */
-    private $FormUI;
-
     public function getSlug(): string
     {
         return self::SLUG;
@@ -33,7 +29,6 @@ class NewMemberInvitation implements Route {
 
     public function __construct()
     {
-        $this->FormUI = Main::getInstance()->FormUI;
         $this->backMenu = RouterFactory::get(ManageMainMembers::SLUG);
     }
 
