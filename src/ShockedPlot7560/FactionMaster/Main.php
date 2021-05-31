@@ -40,6 +40,8 @@ use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Button\Button;
+use ShockedPlot7560\FactionMaster\Button\ButtonFactory;
 use ShockedPlot7560\FactionMaster\Command\FactionCommand;
 use ShockedPlot7560\FactionMaster\Database\Database;
 use ShockedPlot7560\FactionMaster\Event\BlockBreak;
@@ -107,6 +109,7 @@ class Main extends PluginBase implements Listener{
 
         RouterFactory::init();
         RewardFactory::init();
+        ButtonFactory::init();
 
     }
 
