@@ -45,6 +45,9 @@ use ShockedPlot7560\FactionMaster\Main;
 
 class Database {
 
+    const MYSQL_PROVIDER = "MYSQL";
+    const SQLITE_PROVIDER  = "SQLITE";
+
     /** @var \PDO */
     private $PDO;
 
@@ -52,12 +55,29 @@ class Database {
     private $tables;
 
     public function __construct(Main $Main) {
-        $databaseConfig = $Main->config->get("MYSQL_database");
-        $db = new PDO(
-            "mysql:host=" . $databaseConfig['host'] . ";dbname=" . $databaseConfig['name'], 
-            $databaseConfig['user'], 
-            $databaseConfig['pass']
-        );
+        $PROVIDER = $Main->config->get('PROVIDER');
+        switch ($PROVIDER) {
+            case self::MYSQL_PROVIDER:
+                $databaseConfig = $Main->config->get("MYSQL_database");
+                $db = new PDO(
+                    "mysql:host=" . $databaseConfig['host'] . ";dbname=" . $databaseConfig['name'], 
+                    $databaseConfig['user'], 
+                    $databaseConfig['pass']
+                );
+                break;
+            
+            case self::SQLITE_PROVIDER:
+                $databaseConfig = $Main->config->get("SQLITE_database");
+                $db = new PDO("sqlite:".$databaseConfig['name'].".sqlite");
+                break;
+                break;
+            default:
+                $Main::$logger->alert("Please give a valid PROVIDER in config.yml, use only : " . self::MYSQL_PROVIDER . " or " . self::SQLITE_PROVIDER);
+                $Main->getServer()->getPluginManager()->disablePlugin($Main);
+                return;
+                break;
+        }
+        
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->PDO = $db;
 

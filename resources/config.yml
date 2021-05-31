@@ -1,7 +1,10 @@
 ---
+PROVIDER: "SQLITE"
 MYSQL_database:
   host: "localhost"
   name: "FactionMaster"
   user: "root"
   pass: ""
+SQLITE_database: 
+  name: "FactionMaster"
 ...

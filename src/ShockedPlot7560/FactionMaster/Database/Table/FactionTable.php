@@ -33,6 +33,8 @@
 namespace ShockedPlot7560\FactionMaster\Database\Table;
 
 use PDO;
+use ShockedPlot7560\FactionMaster\Database\Database;
+use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 
 class FactionTable implements TableInterface {
@@ -44,8 +46,9 @@ class FactionTable implements TableInterface {
     const SLUG = "faction";
 
     public function init(): self {
+        $auto_increment = Main::getInstance()->config->get("PROVIDER") === Database::MYSQL_PROVIDER ? "AUTO_INCREMENT" : "AUTOINCREMENT";
         $this->PDO->query("CREATE TABLE IF NOT EXISTS `". self::TABLE_NAME ."` ( 
-            `id` INT(11) NOT NULL AUTO_INCREMENT, 
+            `id` INTEGER NOT NULL PRIMARY KEY $auto_increment, 
             `name` VARCHAR(22) NOT NULL, 
             `members` VARCHAR(255) NOT NULL DEFAULT '". \base64_encode(\serialize([]))."',
             `visibility` INT(11) DEFAULT " . Ids::PRIVATE_VISIBILITY . ",
@@ -61,10 +64,8 @@ class FactionTable implements TableInterface {
             `power` INT(11) NOT NULL DEFAULT 0,
             `money` INT(16) NOT NULL DEFAULT 0,
             `permissions` TEXT,
-            `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (`id`), 
-            UNIQUE (`name`)
-        ) ENGINE = MyISAM");
+            `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )");
         return $this;
     }
 

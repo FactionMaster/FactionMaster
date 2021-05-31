@@ -148,7 +148,7 @@ class MainAPI {
      */
     public static function addFaction(string $factionName, string $ownerName) {
         try {
-            $query = self::$PDO->prepare("INSERT INTO " . FactionTable::SLUG . " (name, members, ally, permissions) VALUE (:name, :members, :ally, :permissions)");
+            $query = self::$PDO->prepare("INSERT INTO " . FactionTable::SLUG . " (name, members, ally, permissions) VALUES (:name, :members, :ally, :permissions)");
             $query->execute([
                 'name' => $factionName,
                 'members' => \base64_encode(\serialize([
@@ -345,11 +345,17 @@ class MainAPI {
      * @return UserEntity|null Null if the user are not found
      */
     public static function getUser(string $playerName) : ?UserEntity {
-        $query = self::$PDO->prepare("SELECT * FROM " . UserTable::TABLE_NAME . " WHERE name = :name");
-        $query->execute([ 'name' => $playerName ]);
-        $query->setFetchMode(PDO::FETCH_CLASS, UserEntity::class);
-        $result = $query->fetch();
-        return $result === false ? null : $result;
+        try {
+            $query = self::$PDO->prepare("SELECT * FROM " . UserTable::TABLE_NAME . " WHERE name = :name");
+            $query->execute([ 'name' => $playerName ]);
+            $query->setFetchMode(PDO::FETCH_CLASS, UserEntity::class);
+            $result = $query->fetch();
+            return $result === false ? null : $result;
+        } catch (\Throwable $th) {
+            var_dump($th->getMessage());
+            return null;
+        }
+        
     }
 
     /**
@@ -547,7 +553,7 @@ class MainAPI {
      */
     public static function makeInvitation(string $sender, string $receiver, string $type) : bool {
         try {
-            $query = self::$PDO->prepare("INSERT INTO " .InvitationTable::TABLE_NAME . " (sender, receiver, type) VALUE (:sender, :receiver, :type)");
+            $query = self::$PDO->prepare("INSERT INTO " .InvitationTable::TABLE_NAME . " (sender, receiver, type) VALUES (:sender, :receiver, :type)");
             return $query->execute([
                 'sender' => $sender,
                 'receiver' => $receiver,
@@ -661,11 +667,12 @@ class MainAPI {
      */
     public static function addUser(string $playerName) : bool {
         try {
-            $query = self::$PDO->prepare("INSERT INTO " . UserTable::TABLE_NAME . " (name) VALUE (:user)");
+            $query = self::$PDO->prepare("INSERT INTO " . UserTable::TABLE_NAME . " (`name`) VALUES (:user)");
             return $query->execute([
                 'user' => $playerName
             ]);
         } catch (\PDOException $Exception) {
+            var_dump($Exception->getMessage());
             return false;
         }
     }
@@ -714,7 +721,7 @@ class MainAPI {
         $Z = $Chunk->getZ();
         $World = $player->getLevel()->getName();
         try {
-            $query = self::$PDO->prepare("INSERT INTO " . ClaimTable::TABLE_NAME . " (x, z, world, faction) VALUE (:x, :z, :world, :faction)");
+            $query = self::$PDO->prepare("INSERT INTO " . ClaimTable::TABLE_NAME . " (x, z, world, faction) VALUES (:x, :z, :world, :faction)");
             if (!$query->execute([
                 "x" => $X,
                 "z" => $Z,
@@ -864,7 +871,7 @@ class MainAPI {
      */
     public static function addHome(Player $player, string $factionName, string $name) : bool {
         try {
-            $query = self::$PDO->prepare("INSERT INTO " . HomeTable::TABLE_NAME . " (x, y, z, world, faction, name) VALUE (:x, :y, :z, :world, :faction, :name)");
+            $query = self::$PDO->prepare("INSERT INTO " . HomeTable::TABLE_NAME . " (x, y, z, world, faction, name) VALUES (:x, :y, :z, :world, :faction, :name)");
             if (!$query->execute([
                 "x" => floor($player->getX()),
                 "z" => floor($player->getZ()),
@@ -924,7 +931,7 @@ class MainAPI {
             }else{
                 $type = Ids::BANK_HISTORY_ADD_MODE;
             }
-            $query = self::$PDO->prepare("INSERT INTO " . BankHistoryTable::TABLE_NAME . " (faction, entity, amount, type) VALUE (:faction, :player, :amount, :type)");
+            $query = self::$PDO->prepare("INSERT INTO " . BankHistoryTable::TABLE_NAME . " (faction, entity, amount, type) VALUES (:faction, :player, :amount, :type)");
             return $query->execute([
                 'faction' => $factionName,
                 'player' => $reason,

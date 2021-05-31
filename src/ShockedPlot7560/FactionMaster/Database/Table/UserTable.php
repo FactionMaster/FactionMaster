@@ -50,9 +50,8 @@ class UserTable implements TableInterface {
             `faction` VARCHAR(255) DEFAULT NULL,
             `rank` INT(11) DEFAULT NULL,
             `language` VARCHAR(255) NOT NULL DEFAULT '". Utils::getConfigLang("default-language") ."',
-            PRIMARY KEY (`name`), 
-            UNIQUE (`name`)
-        ) ENGINE = MyISAM");
+            PRIMARY KEY (`name`)
+        )");
         return $this;
     }
 
