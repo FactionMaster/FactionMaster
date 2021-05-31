@@ -36,6 +36,7 @@ use jojoe77777\FormAPI\CustomForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\Faction\BankMain;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
@@ -77,8 +78,19 @@ class BankDeposit implements Route {
             if ($data === null) return;
             if ($data[1] !== "") {
                 if (\is_integer(intval($data[1])) && intval($data[1]) > 1) {
-                    if (MainAPI::updateMoney(MainAPI::getFactionOfPlayer($Player->getName())->name, intval($data[1]), $Player->getName())) {
-                        Utils::processMenu($backRoute, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_BANK_DEPOSIT")]);
+                    $money = Main::getInstance()->EconomyAPI->myMoney($Player);
+                    if (!\is_bool($money)) {
+                        if (($money - $data[1]) >= 0) {
+                            if (MainAPI::updateMoney(MainAPI::getFactionOfPlayer($Player->getName())->name, intval($data[1]), $Player->getName())) {
+                                Utils::processMenu($backRoute, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_BANK_DEPOSIT")]);
+                            }else{
+                                $menu = $this->bankDeposit(Utils::getText($this->UserEntity->name, "ERROR"));
+                                $Player->sendForm($menu);
+                            }
+                        }else{
+                            $menu = $this->bankDeposit(Utils::getText($this->UserEntity->name, "NO_ENOUGH_MONEY_PLAYER"));
+                            $Player->sendForm($menu);
+                        }
                     }else{
                         $menu = $this->bankDeposit(Utils::getText($this->UserEntity->name, "ERROR"));
                         $Player->sendForm($menu);

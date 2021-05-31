@@ -34,6 +34,7 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use jojoe77777\FormAPI\SimpleForm;
 use jojoe77777\FormAPI\FormAPI;
+use onebone\economyapi\EconomyAPI;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
@@ -143,7 +144,11 @@ class MainPanel implements Route {
                             Utils::processMenu(RouterFactory::get(HomeListPanel::SLUG), $Player);
                             break;
                         case "bank":
-                            Utils::processMenu(RouterFactory::get(BankMain::SLUG), $Player);
+                            if (Main::getInstance()->EconomyAPI instanceof EconomyAPI) {
+                                Utils::processMenu(RouterFactory::get(BankMain::SLUG), $Player);
+                            }else{
+                                return;
+                            }
                             break;
                         case "manageMembers":
                             Utils::processMenu(RouterFactory::get(ManageMainMembers::SLUG), $Player);
@@ -278,7 +283,7 @@ class MainPanel implements Route {
                 ],[
                     'slug' => "bank",
                     'text' => Utils::getText($this->UserEntity->name, "BUTTON_VIEW_BANK"),
-                    'access' => true
+                    'access' => Main::getInstance()->EconomyAPI instanceof EconomyAPI
                 ],[
                     'slug' => "manageMembers",
                     'text' => Utils::getText($this->UserEntity->name, "BUTTON_MANAGE_MEMBERS"),

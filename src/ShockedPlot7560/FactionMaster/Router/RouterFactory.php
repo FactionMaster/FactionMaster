@@ -32,6 +32,8 @@
 
 namespace ShockedPlot7560\FactionMaster\Router;
 
+use onebone\economyapi\EconomyAPI;
+use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\CreateFactionPanel;
 use ShockedPlot7560\FactionMaster\Route\Faction\BankDeposit;
@@ -79,6 +81,7 @@ class RouterFactory {
     private static $list;
 
     public static function init() : void {
+        $Main = Main::getInstance();
 
         self::registerRoute(new MainPanel());
         self::registerRoute(new CreateFactionPanel());
@@ -88,9 +91,11 @@ class RouterFactory {
         self::registerRoute(new HomeListPanel());
         self::registerRoute(new LanguagePanel());
 
-        self::registerRoute(new BankMain());
-        self::registerRoute(new BankDeposit());
-        self::registerRoute(new BankHistory());
+        if ($Main->EconomyAPI instanceof EconomyAPI) {
+            self::registerRoute(new BankMain());
+            self::registerRoute(new BankDeposit());
+            self::registerRoute(new BankHistory());
+        }
 
         self::registerRoute(new ManageMainMembers());
         self::registerRoute(new ManageMembersList());

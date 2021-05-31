@@ -110,6 +110,7 @@ CONFIRMATION_TITLE_LEVEL_UP: "Confirmation monter de niveau"
 CONFIRMATION_CONTENT_LEVEL_UP: "§9Voulez vous monter de niveaux ?\nCoût : {{cost}} \n§7§oLes coût indiqué au-dessus seront retiré de votre possession une fois le bouton '§2Oui§7' cliqué"
 
 CURRENT_LANG: "§2Actuel"
+NO_ENOUGH_MONEY_PLAYER: "Vous n'avez pas assez d'argent"
 NO_DATA_TO_DISPLAY: "§4Aucune donnée à afficher"
 NO_ENOUGH_MONEY: "§4Vous n'avez pas assez d'argent dans la banque de faction"
 NO_ALLY: "\n§4Vous n'avez pas encore d'allié"

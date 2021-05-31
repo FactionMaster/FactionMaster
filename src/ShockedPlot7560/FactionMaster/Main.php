@@ -34,6 +34,7 @@ namespace ShockedPlot7560\FactionMaster;
 
 use CortexPE\Commando\PacketHooker;
 use Exception;
+use onebone\economyapi\EconomyAPI;
 use PDO;
 use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
@@ -65,6 +66,8 @@ class Main extends PluginBase implements Listener{
     public $Database;
     /** @var \pocketmine\plugin\Plugin */
     public $FormUI;
+    /** @var null|\onebone\economyapi\EconomyAPI */
+    public $EconomyAPI;
     /** @var Config */
     public $levelConfig;
 
@@ -85,6 +88,17 @@ class Main extends PluginBase implements Listener{
         if ($this->FormUI === null) {
             self::$logger->alert("FactionMaster need FormAPI to work, please install them and reload server");
             $this->getServer()->getPluginManager()->disablePlugin($this);
+        }
+        $EconomyAPI = $this->getServer()->getPluginManager()->getPlugin("EconomyAPI");
+        if ($EconomyAPI === null) {
+            self::$logger->warning("All system using EcnomyAPI have been disabled, to active them, install a valid version of EconomyAPI");
+            self::$logger->warning("It include : ");
+            self::$logger->warning("   - Bank system ");
+            self::$logger->warning("   - Reward name : 'money' ");
+            self::$logger->warning("It haven't deleted the money data of faction");
+            $this->EconomyAPI = null;
+        }else{
+            $this->EconomyAPI = EconomyAPI::getInstance();
         }
         
         $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", "FactionMaster command", ["f", "fac"]));
