@@ -1,7 +1,8 @@
 ---
 #First item correspond of the reward to level1 to level 2
 #In type field, allow :
-# money / power
+# money / power / allyLimit / claimLimit / homeLimit / memberLimit
+# to make your own reward, please read the documentation
 - type: money 
   value: 2000 #quantity
   cost:

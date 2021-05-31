@@ -54,17 +54,20 @@ class PlayerDeath implements Listener {
     public function onDeath(PlayerDeathEvent $event) {
         $Entity = $event->getEntity();
         $cause = $Entity->getLastDamageCause();
+        $config = Main::getInstance()->config;
 
         if ($cause instanceof EntityDamageByEntityEvent) {
             $Damager = $cause->getDamager();
             if ($Damager instanceof Player) {
                 $victimInventoryArmor = $Entity->getPlayer()->getArmorInventory();
 
-                if ($victimInventoryArmor->getHelmet()->getId() == ItemIds::AIR
-                    && $victimInventoryArmor->getChestplate()->getId() == ItemIds::AIR
-                    && $victimInventoryArmor->getLeggings()->getId() == ItemIds::AIR
-                    && $victimInventoryArmor->getBoots()->getId() == ItemIds::AIR) return;
-
+                if (!$config->get('allow-no-stuff')) {
+                    if ($victimInventoryArmor->getHelmet()->getId() == ItemIds::AIR
+                        && $victimInventoryArmor->getChestplate()->getId() == ItemIds::AIR
+                        && $victimInventoryArmor->getLeggings()->getId() == ItemIds::AIR
+                        && $victimInventoryArmor->getBoots()->getId() == ItemIds::AIR) return;
+                }
+                
                 $DamagerName = $Damager->getPlayer()->getName();
                 $VictimName = $Entity->getPlayer()->getName();
 
@@ -72,13 +75,13 @@ class PlayerDeath implements Listener {
                 $DamagerFaction = MainAPI::getFactionOfPlayer($DamagerName);
                 if ($DamagerFaction instanceof FactionEntity) {
                     if ($VictimFaction instanceof FactionEntity) {
-                        $PowerDamager = 5;
-                        $PowerVictim = -5;
+                        $PowerDamager = $config->get("power-win-per-kill") * $config->get("faction-multiplicator");
+                        $PowerVictim = $config->get('power-loose-per-kill') * -1 * $config->get("faction-multiplicator");
                     }else{
-                        $PowerDamager = 2;
+                        $PowerDamager = $config->get("power-win-per-kill");
                     }
                 }elseif ($VictimFaction instanceof FactionEntity) {
-                    $PowerVictim = -2;
+                    $PowerVictim = $config->get("power-loose-per-death") * -1;
                 }
                 if (isset($PowerDamager) && $DamagerFaction instanceof FactionEntity) MainAPI::changePower($DamagerFaction->name, $PowerDamager);
                 if (isset($PowerVictim) && $VictimFaction instanceof FactionEntity) MainAPI::changePower($VictimFaction->name, $PowerVictim);

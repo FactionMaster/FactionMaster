@@ -36,6 +36,8 @@ use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -62,12 +64,34 @@ class ClaimCommand extends BaseSubCommand {
             $FactionClaim = MainAPI::getFactionClaim($World, $X, $Z);
             if ($FactionClaim === null) {
                 $FactionPlayer = MainAPI::getFactionOfPlayer($sender->getName());
-                if (count(MainAPI::getClaimsFaction($UserEntity->faction)) < $FactionPlayer->max_claim) {
-                    if (MainAPI::addClaim($sender->getPlayer(), $UserEntity->faction)) {
-                        $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_CLAIM"));
-                        return;
+                $Claims = MainAPI::getClaimsFaction($UserEntity->faction);
+                if (count($Claims) < $FactionPlayer->max_claim) {
+                    $claimCost = Main::getInstance()->config->get("claim-cost");
+                    $ItemCost = RewardFactory::get($claimCost['type']);
+                    switch (Main::getInstance()->config->get("claim-provider")) {
+                        case 'flat':
+                            $ItemCost->setValue($claimCost["value"]);
+                            break;
+                        case 'addition':
+                            $ItemCost->setValue($claimCost["value"] * (\count($Claims) + 1));
+                            break;
+                        case 'multiplicative':
+                            $ItemCost->setValue($claimCost["value"] * (Main::getInstance()->config->get('multiplication-factor')**count($Claims)));
+                            break;
+                        case 'decrease':
+                            $ItemCost->setValue($claimCost["value"] - (Main::getInstance()->config->get('decrease-factor') * count($Claims)));
+                            break;
+                    }
+                    if (($result = $ItemCost->executeCost($FactionPlayer->name))) {
+                        if (MainAPI::addClaim($sender->getPlayer(), $UserEntity->faction)) {
+                            $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_CLAIM"));
+                            return;
+                        }else{
+                            $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
+                            return;
+                        }
                     }else{
-                        $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
+                        $sender->sendMessage(Utils::getText($sender->getName(), $result));
                         return;
                     }
                 }else{

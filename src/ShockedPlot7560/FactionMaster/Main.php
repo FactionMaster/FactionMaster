@@ -89,17 +89,19 @@ class Main extends PluginBase implements Listener{
             self::$logger->alert("FactionMaster need FormAPI to work, please install them and reload server");
             $this->getServer()->getPluginManager()->disablePlugin($this);
         }
-        $EconomyAPI = $this->getServer()->getPluginManager()->getPlugin("EconomyAPI");
-        if ($EconomyAPI === null) {
-            self::$logger->warning("All system using EcnomyAPI have been disabled, to active them, install a valid version of EconomyAPI");
-            self::$logger->warning("It include : ");
-            self::$logger->warning("   - Bank system ");
-            self::$logger->warning("   - Reward name : 'money' ");
-            self::$logger->warning("It haven't deleted the money data of faction");
-            $this->EconomyAPI = null;
-        }else{
-            $this->EconomyAPI = EconomyAPI::getInstance();
-        }
+        if ($this->config->get("economy-system")) {
+            $EconomyAPI = $this->getServer()->getPluginManager()->getPlugin("EconomyAPI");
+            if ($EconomyAPI === null) {
+                self::$logger->warning("All system using EcnomyAPI have been disabled, to active them, install a valid version of EconomyAPI");
+                self::$logger->warning("It include : ");
+                self::$logger->warning("   - Bank system ");
+                self::$logger->warning("   - Reward name : 'money' ");
+                self::$logger->warning("It haven't deleted the money data of faction");
+                $this->EconomyAPI = null;
+            }else{
+                $this->EconomyAPI = EconomyAPI::getInstance();
+            }
+        }        
         
         $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", "FactionMaster command", ["f", "fac"]));
 

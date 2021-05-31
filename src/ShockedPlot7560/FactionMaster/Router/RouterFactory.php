@@ -94,7 +94,9 @@ class RouterFactory {
         if ($Main->EconomyAPI instanceof EconomyAPI) {
             self::registerRoute(new BankMain());
             self::registerRoute(new BankDeposit());
-            self::registerRoute(new BankHistory());
+            if ($Main->config->get("bank-log")) {
+                self::registerRoute(new BankHistory());
+            }
         }
 
         self::registerRoute(new ManageMainMembers());

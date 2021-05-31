@@ -36,6 +36,7 @@ use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
@@ -70,7 +71,9 @@ class BankMain implements Route {
 
         $this->buttons = [];
         if ((isset($UserPermissions[Ids::PERMISSION_BANK_DEPOSIT]) && $UserPermissions[Ids::PERMISSION_BANK_DEPOSIT]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_BANK_DEPOSIT");
-        if ((isset($UserPermissions[Ids::PERMISSION_SEE_BANK_HISTORY]) && $UserPermissions[Ids::PERMISSION_SEE_BANK_HISTORY]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_BANK_HISTORY");
+        if (Main::getInstance()->config->get("bank-log")) {
+            if ((isset($UserPermissions[Ids::PERMISSION_SEE_BANK_HISTORY]) && $UserPermissions[Ids::PERMISSION_SEE_BANK_HISTORY]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_BANK_HISTORY");
+        }
         $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_BACK");
 
         if (isset($params[0])) $message = $params[0];

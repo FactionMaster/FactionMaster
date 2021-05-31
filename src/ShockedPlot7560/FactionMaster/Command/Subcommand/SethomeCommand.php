@@ -37,6 +37,7 @@ use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -64,11 +65,16 @@ class SethomeCommand extends BaseSubCommand {
             if (!MainAPI::getFactionHome($UserEntity->faction, $args["name"])) {
                 $Faction = MainAPI::getFaction($UserEntity->faction);
                 if (count(MainAPI::getFactionHomes($UserEntity->faction)) < $Faction->max_home) {
-                    if (MainAPI::addHome($Player, $UserEntity->faction, $args['name'])) {
-                        $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_CREATE"));
-                        return;
+                    if (!Main::getInstance()->config->get("allow-home-ennemy-claim")) {
+                        if (MainAPI::addHome($Player, $UserEntity->faction, $args['name'])) {
+                            $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_CREATE"));
+                            return;
+                        }else{
+                            $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
+                            return;
+                        }
                     }else{
-                        $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
+                        $sender->sendMessage(Utils::getText($sender->getName(), "CANT_SETHOME_ENNEMY_CLAIM"));
                         return;
                     }
                 }else{

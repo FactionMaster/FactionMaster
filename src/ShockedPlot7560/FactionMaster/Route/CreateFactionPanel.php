@@ -77,10 +77,16 @@ class CreateFactionPanel implements Route {
             $FactionRequest = MainAPI::getFaction($data[1]);
             if ($data[1] !== "") {
                 if (!$FactionRequest instanceof FactionEntity) {
-                    if (MainAPI::addFaction($data[1], $Player->getName())) {
-                        Utils::processMenu($backRoute, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_CREATE_FACTION")]);
+                    if (\strlen($data[1]) >= Main::getInstance()->config->get("min-faction-name-length")
+                        && \strlen($data[1]) <= Main::getInstance()->config->get("max-faction-name-length")) {
+                        if (MainAPI::addFaction($data[1], $Player->getName())) {
+                            Utils::processMenu($backRoute, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_CREATE_FACTION")]);
+                        }else{
+                            $menu = $this->createFactionMenu(Utils::getText($this->UserEntity->name, "ERROR"));
+                            $Player->sendForm($menu);
+                        }
                     }else{
-                        $menu = $this->createFactionMenu(Utils::getText($this->UserEntity->name, "ERROR"));
+                        $menu = $this->createFactionMenu(Utils::getText($this->UserEntity->name, "MAX_MIN_REACH_NAME"));
                         $Player->sendForm($menu);
                     }
                 }else{

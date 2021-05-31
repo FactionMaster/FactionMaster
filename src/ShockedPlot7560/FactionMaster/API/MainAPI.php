@@ -926,18 +926,22 @@ class MainAPI {
                 'money' => $money,
                 'name' => $factionName
             ])) return false;
-            if ($money < 0) {
-                $type = Ids::BANK_HISTORY_REMOVE_MODE;
+            if (Main::getInstance()->config->get("bank-log")) {
+                if ($money < 0) {
+                    $type = Ids::BANK_HISTORY_REMOVE_MODE;
+                }else{
+                    $type = Ids::BANK_HISTORY_ADD_MODE;
+                }
+                $query = self::$PDO->prepare("INSERT INTO " . BankHistoryTable::TABLE_NAME . " (faction, entity, amount, type) VALUES (:faction, :player, :amount, :type)");
+                return $query->execute([
+                    'faction' => $factionName,
+                    'player' => $reason,
+                    'amount' => $money, 
+                    'type' => $type
+                ]);
             }else{
-                $type = Ids::BANK_HISTORY_ADD_MODE;
+                return true;
             }
-            $query = self::$PDO->prepare("INSERT INTO " . BankHistoryTable::TABLE_NAME . " (faction, entity, amount, type) VALUES (:faction, :player, :amount, :type)");
-            return $query->execute([
-                'faction' => $factionName,
-                'player' => $reason,
-                'amount' => $money, 
-                'type' => $type
-            ]);
         } catch (\PDOException $Exception) {
             return false;
         }

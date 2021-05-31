@@ -139,6 +139,7 @@ SUCCESS_BREAK_ALLIANCE: " §a>> §2Tu a rompu l'alliance avec {{name}} avec succ
 SUCCESS_LEVEL_UP: "§2Vous avez monté de niveau avec succès !"
 SUCCESS_BANK_DEPOSIT: "§2Vous avez déposé de l'argent avec succès !"
 
+CANT_SETHOME_ENNEMY_CLAIM: " §c>> §4Tu ne peux pas sethome dans un claim ennemi"
 ALREADY_PENDING_INVITATION: " §c>> §4Tu as déjà envoyé une invitation"
 FACTION_NAME_ALREADY_EXIST: " §c>> §4Ce nom de faction est déjà utilisé"
 USER_DONT_EXIST: " §>> §4Ce joueur n'existe pas ou n'est pas enregistré"
@@ -153,6 +154,7 @@ MAX_HOME_REACH: " §c>> §4Vous avez atteint la limite de home disponible"
 MAX_CLAIM_REACH: " §c>> §4Vous avez atteint la limite de claim disponible sur ce serveur"
 MAX_ALLY_REACH: " §c>> §4Vous avez atteint la limite d'alliance"
 MAX_ALLY_REACH_OTHER: " §c>> §4La faction demandé a déjà atteint sa limite d'alliance"
+MAX_MIN_REACH_NAME: " §c>> §4Vous devez entrer un nom de faction entre {{min}} et {{max}}"
 
 RECRUIT_RANK_NAME: "Recrue"
 MEMBER_RANK_NAME: "Membre"
