@@ -30,50 +30,31 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\Route;
+namespace ShockedPlot7560\FactionMaster\Button\Collection;
 
-use jojoe77777\FormAPI\SimpleForm;
-use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Button\Collection\LanguageCollection;
+use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
+use ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\ChangeLanguage;
+use ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\FactionsTop;
+use ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\NoFaction\CreateFaction;
+use ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\NoFaction\JoinFaction;
+use ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\Quit;
+use ShockedPlot7560\FactionMaster\Button\Buttons\ViewHomes\Back;
+use ShockedPlot7560\FactionMaster\Button\Buttons\ViewHomes\Home;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\Route;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class LanguagePanel implements Route {
+class ViewHomesCollection extends ButtonCollection {
 
-    const SLUG = "languagePanel";
+    const SLUG = "viewHomes";
 
-    public $PermissionNeed = [];
-    
-    /** @var UserEntity */
-    private $UserEntity;
-
-    public function getSlug(): string
+    public function __construct(UserEntity $User)
     {
-        return self::SLUG;
-    }
-
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
-    {
-        $this->UserEntity = $User;
-        $menu = $this->languagesMenu();
-        $player->sendForm($menu);
-    }
-
-    public function call(): callable
-    {
-        return function (Player $Player, $data) {
-            if ($data === null) return;
-            (new LanguageCollection())->process($data, $Player);
-            return;
-        };
-    }
-
-    private function languagesMenu() : SimpleForm {
-        $menu = new SimpleForm($this->call());
-        $menu = (new LanguageCollection())->generateButtons($menu, $this->UserEntity->name);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "CHANGE_LANGUAGE_TITLE"));
-        return $menu;
+        parent::__construct(self::SLUG);
+        $Homes = MainAPI::getFactionHomes($User->faction);
+        foreach ($Homes as $Name => $Home) {
+            $this->register(new Home($Name, $Home));
+        }
+        $this->register(new Back());
     }
 
 }

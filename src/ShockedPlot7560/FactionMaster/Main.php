@@ -33,15 +33,10 @@
 namespace ShockedPlot7560\FactionMaster;
 
 use CortexPE\Commando\PacketHooker;
-use Exception;
 use onebone\economyapi\EconomyAPI;
-use PDO;
 use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
-use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\Button\Button;
-use ShockedPlot7560\FactionMaster\Button\ButtonFactory;
 use ShockedPlot7560\FactionMaster\Command\FactionCommand;
 use ShockedPlot7560\FactionMaster\Database\Database;
 use ShockedPlot7560\FactionMaster\Event\BlockBreak;
@@ -50,9 +45,7 @@ use ShockedPlot7560\FactionMaster\Event\EntityDamageByEntity;
 use ShockedPlot7560\FactionMaster\Event\Interact;
 use ShockedPlot7560\FactionMaster\Event\PlayerDeath;
 use ShockedPlot7560\FactionMaster\Event\PlayerLogin;
-use ShockedPlot7560\FactionMaster\Reward\Money;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
-use ShockedPlot7560\FactionMaster\Reward\RewardType;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -109,7 +102,6 @@ class Main extends PluginBase implements Listener{
 
         RouterFactory::init();
         RewardFactory::init();
-        ButtonFactory::init();
 
     }
 

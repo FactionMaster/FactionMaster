@@ -30,50 +30,38 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\Route;
+namespace ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\Faction;
 
-use jojoe77777\FormAPI\SimpleForm;
-use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Button\Collection\LanguageCollection;
-use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\Route;
+use ShockedPlot7560\FactionMaster\Button\Button;
+use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ManageFactionMain;
+use ShockedPlot7560\FactionMaster\Router\RouterFactory;
+use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class LanguagePanel implements Route {
+class ManageFaction extends Button {
 
-    const SLUG = "languagePanel";
-
-    public $PermissionNeed = [];
-    
-    /** @var UserEntity */
-    private $UserEntity;
-
-    public function getSlug(): string
+    public function __construct()
     {
-        return self::SLUG;
-    }
-
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
-    {
-        $this->UserEntity = $User;
-        $menu = $this->languagesMenu();
-        $player->sendForm($menu);
-    }
-
-    public function call(): callable
-    {
-        return function (Player $Player, $data) {
-            if ($data === null) return;
-            (new LanguageCollection())->process($data, $Player);
-            return;
-        };
-    }
-
-    private function languagesMenu() : SimpleForm {
-        $menu = new SimpleForm($this->call());
-        $menu = (new LanguageCollection())->generateButtons($menu, $this->UserEntity->name);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "CHANGE_LANGUAGE_TITLE"));
-        return $menu;
+        parent::__construct(
+            "manageFaction", 
+            function($Player) {
+                return Utils::getText($Player, "BUTTON_MANAGE_FACTION");
+            },
+            function($Player) {
+                Utils::processMenu(RouterFactory::get(ManageFactionMain::SLUG), $Player);
+            }, 
+            [
+                Ids::PERMISSION_BREAK_ALLIANCE,
+                Ids::PERMISSION_SEND_ALLIANCE_INVITATION,
+                Ids::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
+                Ids::PERMISSION_REFUSE_ALLIANCE_DEMAND,
+                Ids::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION,
+                Ids::PERMISSION_CHANGE_FACTION_DESCRIPTION,
+                Ids::PERMISSION_CHANGE_FACTION_MESSAGE,
+                Ids::PERMISSION_CHANGE_FACTION_VISIBILITY,
+                Ids::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS
+            ]
+        );
     }
 
 }

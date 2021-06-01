@@ -33,13 +33,11 @@
 namespace ShockedPlot7560\FactionMaster\Route;
 
 use jojoe77777\FormAPI\SimpleForm;
-use pocketmine\math\Vector3;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Button\Collection\ViewHomesCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\Route;
-use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -48,47 +46,23 @@ class HomeListPanel implements Route {
     const SLUG = "homeListPanel";
 
     public $PermissionNeed = [Ids::PERMISSION_TP_FACTION_HOME];
-    public $backMenu;
 
-    /** @var array */
-    private $buttons;
-    /** @var array[] */
-    private $Homes;
+    /** @var UserEntity */
+    private $UserEntity;
 
     public function getSlug(): string
     {
         return self::SLUG;
     }
 
-    public function __construct()
-    {
-        $this->backMenu = RouterFactory::get(MainPanel::SLUG);
-    }
-
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
         $message = "";
-        $Faction = MainAPI::getFactionOfPlayer($player->getName());
+        $Homes = MainAPI::getFactionHomes($User->faction);
         $this->UserEntity = $User;
-
-        $this->buttons = [];
-        $this->Homes = MainAPI::getFactionHomes($Faction->name);
-        $i = 0;
-        foreach ($this->Homes as $Name => $Home) {
-            $Home['name'] = $Name;
-            $this->Homes[$i] = $Home;
-            $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_LISTING_HOME", [
-                'name' => $Name,
-                'x' => $Home['x'],
-                'y' => $Home['y'],
-                'z' => $Home['z']
-            ]);
-            $i++;
-        }
-        $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_BACK");
-
+        
         if (isset($params[0])) $message = $params[0];
-        if (count($Faction->members) == 0) $message .= Utils::getText($this->UserEntity->name, "NO_HOME_SET");
+        if (count($Homes) == 0) $message .= Utils::getText($User->name, "NO_HOME_SET");
         
         $menu = $this->manageMembersListMenu($message);
         $player->sendForm($menu);
@@ -96,25 +70,17 @@ class HomeListPanel implements Route {
 
     public function call(): callable
     {
-        $backMenu = $this->backMenu;
-        return function (Player $player, $data) use ($backMenu) {
+        $UserEntity = $this->UserEntity;
+        return function (Player $Player, $data) use ($UserEntity) {
             if ($data === null) return;
-            if ($data == count($this->buttons) - 1) {
-                Utils::processMenu($backMenu, $player);
-                return;
-            }
-            if (isset($this->Homes[$data])) {
-                $Home = $this->Homes[$data];
-                $player->teleport(new Vector3($Home["x"], $Home["y"], $Home['z']));
-                $player->sendMessage(Utils::getText($this->UserEntity->name, "SUCCESS_TELEPORT_HOME"));
-            }
+            (new ViewHomesCollection($UserEntity))->process($data, $Player);
             return;
         };
     }
 
     private function manageMembersListMenu(string $message = "") : SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = Utils::generateButton($menu, $this->buttons);
+        $menu = (new ViewHomesCollection($this->UserEntity))->generateButtons($menu, $this->UserEntity->name);
         $menu->setTitle(Utils::getText($this->UserEntity->name, "HOME_FACTION_PANEL_TITLE"));
         $content = Utils::getText($this->UserEntity->name, "HOME_FACTION_PANEL_CONTENT");
         if ($message !== "") $content .= ("\n§r" . $message);

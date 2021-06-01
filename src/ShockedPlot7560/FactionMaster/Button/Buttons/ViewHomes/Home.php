@@ -30,50 +30,35 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\Route;
+namespace ShockedPlot7560\FactionMaster\Button\Buttons\ViewHomes;
 
-use jojoe77777\FormAPI\SimpleForm;
+use pocketmine\math\Vector3;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Button\Collection\LanguageCollection;
-use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\Route;
+use ShockedPlot7560\FactionMaster\Button\Button;
+use ShockedPlot7560\FactionMaster\Route\MainPanel;
+use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class LanguagePanel implements Route {
+class Home extends Button {
 
-    const SLUG = "languagePanel";
-
-    public $PermissionNeed = [];
-    
-    /** @var UserEntity */
-    private $UserEntity;
-
-    public function getSlug(): string
+    public function __construct(string $Name, array $Home)
     {
-        return self::SLUG;
-    }
-
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
-    {
-        $this->UserEntity = $User;
-        $menu = $this->languagesMenu();
-        $player->sendForm($menu);
-    }
-
-    public function call(): callable
-    {
-        return function (Player $Player, $data) {
-            if ($data === null) return;
-            (new LanguageCollection())->process($data, $Player);
-            return;
-        };
-    }
-
-    private function languagesMenu() : SimpleForm {
-        $menu = new SimpleForm($this->call());
-        $menu = (new LanguageCollection())->generateButtons($menu, $this->UserEntity->name);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "CHANGE_LANGUAGE_TITLE"));
-        return $menu;
+        parent::__construct(
+            "back", 
+            function(string $Player) use ($Name, $Home) {
+                return Utils::getText($Player, "BUTTON_LISTING_HOME", [
+                    'name' => $Name,
+                    'x' => $Home['x'],
+                    'y' => $Home['y'],
+                    'z' => $Home['z']
+                ]);
+            },  
+            function(Player $Player) use ($Home) {
+                $Player->teleport(new Vector3($Home["x"], $Home["y"], $Home['z']));
+                $Player->sendMessage(Utils::getText($Player->getName(), "SUCCESS_TELEPORT_HOME"));
+                Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player);
+            }
+        );
     }
 
 }
