@@ -40,9 +40,15 @@ class ButtonCollection {
     /** @var \ShockedPlot7560\FactionMaster\Button\Button[] */
     protected $ButtonsList;
     protected $slug;
+    /** @var callable[] */
+    protected $processFunction;
 
     public function __construct(string $slug) {
         $this->slug = $slug;
+    }
+
+    public function registerCallable(string $slug, callable $callable) {
+        $this->processFunction[$slug] = $callable;
     }
 
     public function register(Button $Button, ?int $index = null, bool $override = false) {
@@ -65,15 +71,19 @@ class ButtonCollection {
     }
 
     public function generateButtons(SimpleForm $Form, string $playerName) : SimpleForm {
-        foreach ($this->ButtonsList as $Button) {
+        foreach ($this->ButtonsList as $key => $Button) {
             if ($Button->hasAccess($playerName)) {
                 $Form->addButton($Button->getContent($playerName));
+            }else{
+                unset($this->ButtonsList[$key]);
             }
         }
+        $this->ButtonsList = \array_values($this->ButtonsList);
         return $Form;
     }
 
     public function process(int $keyButtonPress, Player $Player){
+        var_dump($this->ButtonsList);
         $this->ButtonsList[$keyButtonPress]->call($Player);
     }
 
