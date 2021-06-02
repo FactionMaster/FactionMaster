@@ -30,36 +30,38 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\Button\Collection;
+namespace ShockedPlot7560\FactionMaster\Button\Collection\JoinFaction;
 
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
+use ShockedPlot7560\FactionMaster\Button\Buttons\AcceptMemberRequest;
 use ShockedPlot7560\FactionMaster\Button\Buttons\Back;
-use ShockedPlot7560\FactionMaster\Button\Buttons\LanguagePanel\Langue;
+use ShockedPlot7560\FactionMaster\Button\Buttons\DeleteRequest;
+use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
+use ShockedPlot7560\FactionMaster\Route\Invitations\DemandList;
+use ShockedPlot7560\FactionMaster\Route\Invitations\ManageDemand;
 
-class LanguageCollection extends ButtonCollection {
+class JoinRequestCollection extends ButtonCollection {
 
-    const SLUG = "language";
+    const SLUG = "joinRequest";
 
     public function __construct()
     {
         parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function() {
-            foreach (Utils::getConfigLang("languages-name") as $Name => $Langue) {
-                $this->register(new Langue($Langue));
-            }
-            $this->register(new Back(MainPanel::SLUG));
+        $this->registerCallable(self::SLUG, function (InvitationEntity $Request) {
+            $this->register(new AcceptMemberRequest($Request));
+            $this->register(new DeleteRequest($Request, DemandList::SLUG, ManageDemand::SLUG));
+            $this->register(new Back(DemandList::SLUG));
         });
     }
 
-    public function init(Player $Player, UserEntity $User) : self {
+    public function init(Player $Player, UserEntity $User, InvitationEntity $Request) : self {
         $this->ButtonsList = [];
         foreach ($this->processFunction as $Callable) {
-            call_user_func($Callable, $Player, $User);
+            call_user_func($Callable, $Request, $Player, $User);
         }
         return $this;
     }
+
 }

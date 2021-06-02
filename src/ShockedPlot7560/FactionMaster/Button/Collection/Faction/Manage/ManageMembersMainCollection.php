@@ -30,27 +30,34 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\Button\Collection;
+namespace ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage;
 
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
 use ShockedPlot7560\FactionMaster\Button\Buttons\Back;
-use ShockedPlot7560\FactionMaster\Button\Buttons\LanguagePanel\Langue;
+use ShockedPlot7560\FactionMaster\Button\Buttons\Faction\ManageMembersMain;
+use ShockedPlot7560\FactionMaster\Button\Buttons\InvitationPending;
+use ShockedPlot7560\FactionMaster\Button\Buttons\RequestPending;
+use ShockedPlot7560\FactionMaster\Button\Buttons\SendInvitation;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Route\Faction\Members\Invitations\MemberDemandList;
+use ShockedPlot7560\FactionMaster\Route\Faction\Members\Invitations\MemberInvitationList;
+use ShockedPlot7560\FactionMaster\Route\Faction\Members\Invitations\NewMemberInvitation;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
+use ShockedPlot7560\FactionMaster\Utils\Ids;
 
-class LanguageCollection extends ButtonCollection {
+class ManageMembersMainCollection extends ButtonCollection {
 
-    const SLUG = "language";
+    const SLUG = "manageMembersMain";
 
     public function __construct()
     {
         parent::__construct(self::SLUG);
         $this->registerCallable(self::SLUG, function() {
-            foreach (Utils::getConfigLang("languages-name") as $Name => $Langue) {
-                $this->register(new Langue($Langue));
-            }
+            $this->register(new SendInvitation(NewMemberInvitation::SLUG, [Ids::PERMISSION_SEND_MEMBER_INVITATION]));
+            $this->register(new InvitationPending(MemberInvitationList::SLUG, [Ids::PERMISSION_DELETE_PENDING_MEMBER_INVITATION]));
+            $this->register(new RequestPending(MemberDemandList::SLUG, [Ids::PERMISSION_ACCEPT_MEMBER_DEMAND, Ids::PERMISSION_REFUSE_MEMBER_DEMAND]));
+            $this->register(new ManageMembersMain());
             $this->register(new Back(MainPanel::SLUG));
         });
     }

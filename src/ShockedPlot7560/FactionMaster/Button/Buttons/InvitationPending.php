@@ -30,26 +30,26 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\Button\Buttons\ViewHomes;
+namespace ShockedPlot7560\FactionMaster\Button\Buttons;
 
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\Button;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class Back extends Button {
+class InvitationPending extends Button {
 
-    public function __construct()
+    public function __construct(string $PanelSlug, array $permissions)
     {
         parent::__construct(
-            "back", 
+            "invitationPending", 
             function(string $Player) {
-                return Utils::getText($Player, "BUTTON_BACK");
+                return Utils::getText($Player, "BUTTON_INVITATION_PENDING");
             },  
-            function(Player $Player) {
-                Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player);
-            }
+            function(Player $Player) use ($PanelSlug) {
+                Utils::processMenu(RouterFactory::get($PanelSlug), $Player);
+            },
+            $permissions
         );
     }
 

@@ -32,29 +32,36 @@
 
 namespace ShockedPlot7560\FactionMaster\Button\Collection;
 
+use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
-use ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\ChangeLanguage;
-use ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\FactionsTop;
-use ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\NoFaction\CreateFaction;
-use ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\NoFaction\JoinFaction;
-use ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\Quit;
-use ShockedPlot7560\FactionMaster\Button\Buttons\ViewHomes\Back;
+use ShockedPlot7560\FactionMaster\Button\Buttons\Back;
 use ShockedPlot7560\FactionMaster\Button\Buttons\ViewHomes\Home;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Route\MainPanel;
 
 class ViewHomesCollection extends ButtonCollection {
 
     const SLUG = "viewHomes";
 
-    public function __construct(UserEntity $User)
+    public function __construct()
     {
         parent::__construct(self::SLUG);
-        $Homes = MainAPI::getFactionHomes($User->faction);
-        foreach ($Homes as $Name => $Home) {
-            $this->register(new Home($Name, $Home));
+        $this->registerCallable(self::SLUG, function(UserEntity $User) {
+            $Homes = MainAPI::getFactionHomes($User->faction);
+            foreach ($Homes as $Name => $Home) {
+                $this->register(new Home($Name, $Home));
+            }
+            $this->register(new Back(MainPanel::SLUG));
+        });
+    }
+
+    public function init(Player $Player, UserEntity $User) : self {
+        $this->ButtonsList = [];
+        foreach ($this->processFunction as $Callable) {
+            call_user_func($Callable, $User, $Player);
         }
-        $this->register(new Back());
+        return $this;
     }
 
 }

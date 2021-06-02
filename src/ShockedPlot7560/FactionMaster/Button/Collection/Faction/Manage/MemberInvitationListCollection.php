@@ -30,27 +30,37 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\Button\Buttons\LanguagePanel;
+namespace ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage;
 
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Button\Button;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
-use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
+use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
+use ShockedPlot7560\FactionMaster\Button\Buttons\Back;
+use ShockedPlot7560\FactionMaster\Button\Buttons\InvitationListItem;
+use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Route\Faction\Members\Invitations\ManageMemberInvitation;
+use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMainMembers;
 
-class Back extends Button {
+class MemberInvitationListCollection extends ButtonCollection {
+
+    const SLUG = "memberInvitationList";
 
     public function __construct()
     {
-        parent::__construct(
-            "back", 
-            function(string $Player) {
-                return Utils::getText($Player, "BUTTON_BACK");
-            },  
-            function(Player $Player) {
-                Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player);
+        parent::__construct(self::SLUG);
+        $this->registerCallable(self::SLUG, function (array $Invitations) {
+            foreach ($Invitations as $Invitation) {
+                $this->register(new InvitationListItem($Invitation, ManageMemberInvitation::SLUG));
             }
-        );
+            $this->register(new Back(ManageMainMembers::SLUG));
+        });
+    }
+
+    public function init(Player $Player, UserEntity $User, array $Invitations) : self {
+        $this->ButtonsList = [];
+        foreach ($this->processFunction as $Callable) {
+            call_user_func($Callable, $Invitations, $Player, $User);
+        }
+        return $this;
     }
 
 }

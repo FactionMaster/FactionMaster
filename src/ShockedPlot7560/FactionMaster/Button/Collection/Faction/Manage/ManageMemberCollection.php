@@ -30,36 +30,38 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\Button\Collection;
+namespace ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage;
 
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
 use ShockedPlot7560\FactionMaster\Button\Buttons\Back;
-use ShockedPlot7560\FactionMaster\Button\Buttons\LanguagePanel\Langue;
+use ShockedPlot7560\FactionMaster\Button\Buttons\Faction\ChangeRank;
+use ShockedPlot7560\FactionMaster\Button\Buttons\Faction\KickOut;
+use ShockedPlot7560\FactionMaster\Button\Buttons\Faction\TransferProperty;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
+use ShockedPlot7560\FactionMaster\Utils\Ids;
 
-class LanguageCollection extends ButtonCollection {
+class ManageMemberCollection extends ButtonCollection {
 
-    const SLUG = "language";
+    const SLUG = "manageMember";
 
     public function __construct()
     {
         parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function() {
-            foreach (Utils::getConfigLang("languages-name") as $Name => $Langue) {
-                $this->register(new Langue($Langue));
-            }
-            $this->register(new Back(MainPanel::SLUG));
+        $this->registerCallable(self::SLUG, function (UserEntity $Member, UserEntity $User) {
+            $this->register(new ChangeRank($Member));
+            $this->register(new KickOut($Member));
+            if ($User->rank == Ids::OWNER_ID) $this->register(new TransferProperty($Member));
+            $this->register(new Back(ManageMembersCollection::SLUG));
         });
     }
 
-    public function init(Player $Player, UserEntity $User) : self {
+    public function init(Player $Player, UserEntity $User, UserEntity $Member) : self {
         $this->ButtonsList = [];
         foreach ($this->processFunction as $Callable) {
-            call_user_func($Callable, $Player, $User);
+            call_user_func($Callable, $Member, $User, $Player);
         }
         return $this;
     }
+
 }

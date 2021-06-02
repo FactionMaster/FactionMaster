@@ -33,6 +33,7 @@
 namespace ShockedPlot7560\FactionMaster\Button\Collection;
 
 use onebone\economyapi\EconomyAPI;
+use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\Button;
 use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
 use ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\ChangeLanguage;
@@ -43,11 +44,7 @@ use ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\Faction\ViewMembers;
 use ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\FactionsTop;
 use ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\LeaveDelete;
 use ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\Quit;
-use ShockedPlot7560\FactionMaster\Main;
-use ShockedPlot7560\FactionMaster\Route\Faction\BankMain;
-use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
+use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 
 class MainCollectionFac extends ButtonCollection {
 
@@ -56,37 +53,23 @@ class MainCollectionFac extends ButtonCollection {
     public function __construct()
     {
         parent::__construct(self::SLUG);
+        $this->registerCallable(self::SLUG, function() {
+            $this->register(new ViewMembers());
+            $this->register(new ViewHomes());
+            $this->register(new ManageMembers());
+            $this->register(new ManageFaction());
+            $this->register(new FactionsTop());
+            $this->register(new ChangeLanguage());
+            $this->register(new LeaveDelete());
+            $this->register(new Quit());
+        });
+    }
 
-        $this->register(new ViewMembers());
-
-        $this->register(new ViewHomes());
-
-        if (Main::getInstance()->EconomyAPI instanceof EconomyAPI) {
-            $this->register(new Button(
-                "bank", 
-                function($Player) {
-                    return Utils::getText($Player, "BUTTON_VIEW_BANK");
-                },
-                function($Player) {
-                    Utils::processMenu(RouterFactory::get(BankMain::SLUG), $Player);
-                }, 
-                [
-                    Ids::PERMISSION_BANK_DEPOSIT,
-                    Ids::PERMISSION_SEE_BANK_HISTORY
-                ]
-            ));
+    public function init(Player $Player, UserEntity $User) : self {
+        $this->ButtonsList = [];
+        foreach ($this->processFunction as $Callable) {
+            call_user_func($Callable, $Player, $User);
         }
-        
-        $this->register(new ManageMembers());
-
-        $this->register(new ManageFaction());
-
-        $this->register(new FactionsTop());
-
-        $this->register(new ChangeLanguage());
-
-        $this->register(new LeaveDelete());
-
-        $this->register(new Quit());
+        return $this;
     }
 }

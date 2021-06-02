@@ -30,27 +30,31 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\Button\Collection;
+namespace ShockedPlot7560\FactionMaster\Button\Collection\JoinFaction;
 
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
 use ShockedPlot7560\FactionMaster\Button\Buttons\Back;
-use ShockedPlot7560\FactionMaster\Button\Buttons\LanguagePanel\Langue;
+use ShockedPlot7560\FactionMaster\Button\Buttons\InvitationPending;
+use ShockedPlot7560\FactionMaster\Button\Buttons\RequestPending;
+use ShockedPlot7560\FactionMaster\Button\Buttons\SendInvitation;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Route\Invitations\DemandList;
+use ShockedPlot7560\FactionMaster\Route\Invitations\InvitationList;
+use ShockedPlot7560\FactionMaster\Route\Invitations\NewInvitation;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class LanguageCollection extends ButtonCollection {
+class JoinFactionMainCollection extends ButtonCollection {
 
-    const SLUG = "language";
+    const SLUG = "joinFaction";
 
     public function __construct()
     {
         parent::__construct(self::SLUG);
         $this->registerCallable(self::SLUG, function() {
-            foreach (Utils::getConfigLang("languages-name") as $Name => $Langue) {
-                $this->register(new Langue($Langue));
-            }
+            $this->register(new SendInvitation(NewInvitation::SLUG, []));
+            $this->register(new InvitationPending(InvitationList::SLUG, []));
+            $this->register(new RequestPending(DemandList::SLUG, []));
             $this->register(new Back(MainPanel::SLUG));
         });
     }
@@ -62,4 +66,5 @@ class LanguageCollection extends ButtonCollection {
         }
         return $this;
     }
+
 }

@@ -35,6 +35,7 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Button\ButtonFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\ViewHomesCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Route\Route;
@@ -49,6 +50,8 @@ class HomeListPanel implements Route {
 
     /** @var UserEntity */
     private $UserEntity;
+    /** @var ButtonCollection */
+    private $Collection;
 
     public function getSlug(): string
     {
@@ -58,6 +61,7 @@ class HomeListPanel implements Route {
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
         $message = "";
+        $this->Collection = ButtonFactory::get(ViewHomesCollection::SLUG)->init($player, $User);
         $Homes = MainAPI::getFactionHomes($User->faction);
         $this->UserEntity = $User;
         
@@ -70,17 +74,17 @@ class HomeListPanel implements Route {
 
     public function call(): callable
     {
-        $UserEntity = $this->UserEntity;
-        return function (Player $Player, $data) use ($UserEntity) {
+        $Collection = $this->Collection;
+        return function (Player $Player, $data) use ($Collection) {
             if ($data === null) return;
-            (new ViewHomesCollection($UserEntity))->process($data, $Player);
+            $Collection->process($data, $Player);
             return;
         };
     }
 
     private function manageMembersListMenu(string $message = "") : SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = (new ViewHomesCollection($this->UserEntity))->generateButtons($menu, $this->UserEntity->name);
+        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
         $menu->setTitle(Utils::getText($this->UserEntity->name, "HOME_FACTION_PANEL_TITLE"));
         $content = Utils::getText($this->UserEntity->name, "HOME_FACTION_PANEL_CONTENT");
         if ($message !== "") $content .= ("\n§r" . $message);

@@ -34,6 +34,7 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
+use ShockedPlot7560\FactionMaster\Button\ButtonFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\LanguageCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Route\Route;
@@ -47,6 +48,8 @@ class LanguagePanel implements Route {
     
     /** @var UserEntity */
     private $UserEntity;
+    /** @var ButtonCollection */
+    private $Collection;
 
     public function getSlug(): string
     {
@@ -56,22 +59,24 @@ class LanguagePanel implements Route {
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
         $this->UserEntity = $User;
+        $this->Collection = ButtonFactory::get(LanguageCollection::SLUG)->init($player, $User);
         $menu = $this->languagesMenu();
         $player->sendForm($menu);
     }
 
     public function call(): callable
     {
-        return function (Player $Player, $data) {
+        $Collection = $this->Collection;
+        return function (Player $Player, $data) use ($Collection) {
             if ($data === null) return;
-            (new LanguageCollection())->process($data, $Player);
+            $Collection->process($data, $Player);
             return;
         };
     }
 
     private function languagesMenu() : SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = (new LanguageCollection())->generateButtons($menu, $this->UserEntity->name);
+        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
         $menu->setTitle(Utils::getText($this->UserEntity->name, "CHANGE_LANGUAGE_TITLE"));
         return $menu;
     }

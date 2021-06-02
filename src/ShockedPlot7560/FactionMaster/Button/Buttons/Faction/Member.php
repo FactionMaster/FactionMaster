@@ -30,33 +30,41 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\Button\Buttons\ViewHomes;
+namespace ShockedPlot7560\FactionMaster\Button\Buttons\Faction;
 
-use pocketmine\math\Vector3;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\Button;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
+use ShockedPlot7560\FactionMaster\Route\Faction\ViewFactionMembers;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
+use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class Home extends Button {
+class Member extends Button {
 
-    public function __construct(string $Name, array $Home)
+    public function __construct(string $Name, int $Rank)
     {
         parent::__construct(
-            "home", 
-            function(string $Player) use ($Name, $Home) {
-                return Utils::getText($Player, "BUTTON_LISTING_HOME", [
-                    'name' => $Name,
-                    'x' => $Home['x'],
-                    'y' => $Home['y'],
-                    'z' => $Home['z']
-                ]);
+            "member", 
+            function(string $Player) use ($Name, $Rank) {
+                $text = $Name . "\n";
+                switch ($Rank) {
+                    case Ids::RECRUIT_ID:
+                        $text .= "§7" . Utils::getText($Player, "RECRUIT_RANK_NAME");
+                        break;
+                    case Ids::MEMBER_ID:
+                        $text .= "§7" . Utils::getText($Player, "MEMBER_RANK_NAME");
+                        break;
+                    case Ids::COOWNER_ID:
+                        $text .= "§7" . Utils::getText($Player, "COOWNER_RANK_NAME");
+                        break;
+                    case Ids::OWNER_ID:
+                        $text .= "§7" . Utils::getText($Player, "OWNER_RANK_NAME");
+                        break;
+                }
+                return $text;
             },  
-            function(Player $Player) use ($Home) {
-                $Player->teleport(new Vector3($Home["x"], $Home["y"], $Home['z']));
-                $Player->sendMessage(Utils::getText($Player->getName(), "SUCCESS_TELEPORT_HOME"));
-                Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player);
+            function(Player $Player) {
+                Utils::processMenu(RouterFactory::get(ViewFactionMembers::SLUG), $Player);
             }
         );
     }

@@ -30,36 +30,32 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\Button\Collection;
+namespace ShockedPlot7560\FactionMaster\Button\Buttons\Faction;
 
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
-use ShockedPlot7560\FactionMaster\Button\Buttons\Back;
-use ShockedPlot7560\FactionMaster\Button\Buttons\LanguagePanel\Langue;
+use ShockedPlot7560\FactionMaster\Button\Button;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
+use ShockedPlot7560\FactionMaster\Route\Faction\Members\MemberChangeRank;
+use ShockedPlot7560\FactionMaster\Router\RouterFactory;
+use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class LanguageCollection extends ButtonCollection {
+class ChangeRank extends Button {
 
-    const SLUG = "language";
-
-    public function __construct()
+    public function __construct(UserEntity $Member)
     {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function() {
-            foreach (Utils::getConfigLang("languages-name") as $Name => $Langue) {
-                $this->register(new Langue($Langue));
-            }
-            $this->register(new Back(MainPanel::SLUG));
-        });
+        parent::__construct(
+            "changeRank", 
+            function(string $Player){
+                return Utils::getText($Player, "BUTTON_CHANGE_RANK");
+            },  
+            function(Player $Player) use ($Member) {
+                Utils::processMenu(RouterFactory::get(MemberChangeRank::SLUG), $Player, [ $Member ]);
+            },
+            [
+                Ids::PERMISSION_CHANGE_MEMBER_RANK
+            ]
+        );
     }
 
-    public function init(Player $Player, UserEntity $User) : self {
-        $this->ButtonsList = [];
-        foreach ($this->processFunction as $Callable) {
-            call_user_func($Callable, $Player, $User);
-        }
-        return $this;
-    }
 }

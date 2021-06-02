@@ -34,6 +34,8 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
+use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
+use ShockedPlot7560\FactionMaster\Button\ButtonFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\MainCollectionFac;
 use ShockedPlot7560\FactionMaster\Button\Collection\MainCollectionNoFac;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
@@ -47,12 +49,13 @@ class MainPanel implements Route {
     const FACTION_TYPE = 1;
 
     public $PermissionNeed = [];
-    public $backMenu;
 
     /** @var UserEntity */
     private $UserEntity;
     /** @var int */
     private $menuType;
+    /** @var ButtonCollection */
+    private $Collection;
 
     public function getSlug(): string
     {
@@ -65,9 +68,11 @@ class MainPanel implements Route {
         if (isset($params[0])) $message = $params[0];
 
         if ($this->UserEntity->faction === null) {
+            $this->Collection = ButtonFactory::get(MainCollectionNoFac::SLUG)->init($Player, $User);
             $this->menuType = self::NO_FACTION_TYPE;
             $menu = $this->noFactionMenu($message);
         }else{
+            $this->Collection = ButtonFactory::get(MainCollectionFac::SLUG)->init($Player, $User);
             $this->menuType = self::FACTION_TYPE;
             $menu = $this->factionMenu($message);
         }
@@ -75,14 +80,15 @@ class MainPanel implements Route {
     }
 
     public function call() : callable{
-        return function (Player $Player, $data){
+        $Collection = $this->Collection;
+        return function (Player $Player, $data) use ($Collection) {
             if ($data === null) return;
             switch ($this->menuType) {
                 case self::NO_FACTION_TYPE:
-                    (new MainCollectionNoFac())->process($data, $Player);
+                    $Collection->process($data, $Player);
                     break;
                 case self::FACTION_TYPE:
-                    (new MainCollectionFac())->process($data, $Player);
+                    $Collection->process($data, $Player);
                     break;
                 default:
                     return;
@@ -93,7 +99,7 @@ class MainPanel implements Route {
 
     private function noFactionMenu(string $message = "") : SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = (new MainCollectionNoFac())->generateButtons($menu, $this->UserEntity->name);
+        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
         $menu->setTitle(Utils::getText($this->UserEntity->name, "MAIN_PANEL_TITLE_NO_FACTION"));
         if ($message !== "") $menu->setContent($message);
         return $menu;
@@ -101,7 +107,7 @@ class MainPanel implements Route {
 
     private function factionMenu(string $message = "") : SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = (new MainCollectionFac())->generateButtons($menu, $this->UserEntity->name);
+        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
         $menu->setTitle(Utils::getText($this->UserEntity->name, "MAIN_PANEL_TITLE_HAVE_FACTION", ["factionName" => $this->UserEntity->faction]));
         if ($message !== "") $menu->setContent($message);
         return $menu;

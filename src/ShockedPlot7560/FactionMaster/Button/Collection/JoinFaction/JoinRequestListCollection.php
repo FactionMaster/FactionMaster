@@ -30,36 +30,37 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\Button\Collection;
+namespace ShockedPlot7560\FactionMaster\Button\Collection\JoinFaction;
 
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
 use ShockedPlot7560\FactionMaster\Button\Buttons\Back;
-use ShockedPlot7560\FactionMaster\Button\Buttons\LanguagePanel\Langue;
+use ShockedPlot7560\FactionMaster\Button\Buttons\RequestListItem;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
+use ShockedPlot7560\FactionMaster\Route\Invitations\ManageDemand;
+use ShockedPlot7560\FactionMaster\Route\ManageInvitationMain;
 
-class LanguageCollection extends ButtonCollection {
+class JoinRequestListCollection extends ButtonCollection {
 
-    const SLUG = "language";
+    const SLUG = "joinRequestList";
 
     public function __construct()
     {
         parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function() {
-            foreach (Utils::getConfigLang("languages-name") as $Name => $Langue) {
-                $this->register(new Langue($Langue));
+        $this->registerCallable(self::SLUG, function (array $Requests) {
+            foreach ($Requests as $Request) {
+                $this->register(new RequestListItem($Request, ManageDemand::SLUG));
             }
-            $this->register(new Back(MainPanel::SLUG));
+            $this->register(new Back(ManageInvitationMain::SLUG));
         });
     }
 
-    public function init(Player $Player, UserEntity $User) : self {
+    public function init(Player $Player, UserEntity $User, array $Requests) : self {
         $this->ButtonsList = [];
         foreach ($this->processFunction as $Callable) {
-            call_user_func($Callable, $Player, $User);
+            call_user_func($Callable, $Requests, $Player, $User);
         }
         return $this;
     }
+
 }

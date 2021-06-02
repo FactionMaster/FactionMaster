@@ -81,7 +81,6 @@ class RouterFactory {
     private static $list;
 
     public static function init() : void {
-        $Main = Main::getInstance();
 
         self::registerRoute(new MainPanel());
         self::registerRoute(new CreateFactionPanel());
@@ -90,14 +89,6 @@ class RouterFactory {
         self::registerRoute(new ViewFactionMembers());
         self::registerRoute(new HomeListPanel());
         self::registerRoute(new LanguagePanel());
-
-        if ($Main->EconomyAPI instanceof EconomyAPI) {
-            self::registerRoute(new BankMain());
-            self::registerRoute(new BankDeposit());
-            if ($Main->config->get("bank-log")) {
-                self::registerRoute(new BankHistory());
-            }
-        }
 
         self::registerRoute(new ManageMainMembers());
         self::registerRoute(new ManageMembersList());

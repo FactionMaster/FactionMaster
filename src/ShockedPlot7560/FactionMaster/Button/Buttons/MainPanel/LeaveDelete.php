@@ -59,7 +59,7 @@ class LeaveDelete extends Button {
         return function(Player $Player) {
             $UserEntity = MainAPI::getUser($Player->getName());
             $Faction = MainAPI::getFactionOfPlayer($Player->getName());
-            if ($UserEntity->rank === Ids::OWNER_ID) {
+            if ($UserEntity->rank == Ids::OWNER_ID) {
                 Utils::processMenu(
                     RouterFactory::get(ConfirmationMenu::SLUG), 
                     $Player, 
