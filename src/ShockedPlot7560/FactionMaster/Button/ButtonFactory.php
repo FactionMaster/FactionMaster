@@ -32,6 +32,12 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
+use ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage\Alliance\AllianceInvitationCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage\Alliance\AllianceRequestCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage\Alliance\AllianceRequestListCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage\Alliance\ManageAllianceCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage\Alliance\AllianceInvitationListCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage\Alliance\ManageAllianceMainCollection;
 use ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage\ManageFactionMainCollection;
 use ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage\ManageInvitationCollection;
 use ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage\ManageMemberCollection;
@@ -81,6 +87,13 @@ class ButtonFactory {
 
         self::register(new PermissionMainCollection());
         self::register(new ManageFactionMainCollection());
+
+        self::register(new AllianceInvitationCollection());
+        self::register(new AllianceInvitationListCollection());
+        self::register(new AllianceRequestCollection());
+        self::register(new AllianceRequestListCollection());
+        self::register(new ManageAllianceCollection());
+        self::register(new ManageAllianceMainCollection());
     }
 
     public static function register(ButtonCollection $Collection, bool $override = false) : void {
