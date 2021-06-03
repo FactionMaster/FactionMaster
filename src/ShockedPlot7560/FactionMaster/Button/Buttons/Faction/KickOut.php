@@ -58,15 +58,15 @@ class KickOut extends Button {
                         $Faction = MainAPI::getFactionOfPlayer($Player->getName());
                         if ($data === null) return;
                         if ($data) {
-                            $message = Utils::getText($Player->name, "SUCCESS_KICK_OUT", ['playerName' => $Member->name]);
-                            if (!MainAPI::removeMember($Faction->name, $Member->name)) $message = Utils::getText($Player->name, "ERROR"); 
+                            $message = Utils::getText($Player->getName(), "SUCCESS_KICK_OUT", ['playerName' => $Member->name]);
+                            if (!MainAPI::removeMember($Faction->name, $Member->name)) $message = Utils::getText($Player->getName(), "ERROR"); 
                             Utils::processMenu(RouterFactory::get(ManageMembersList::SLUG), $Player, [$message]);
                         }else{
                             Utils::processMenu(RouterFactory::get(MembersManageMember::SLUG), $Player, [$Member]);
                         }
                     },
-                    Utils::getText($Player->name, "CONFIRMATION_TITLE_KICK_OUT"),
-                    Utils::getText($Player->name, "CONFIRMATION_CONTENT_KICK_OUT")
+                    Utils::getText($Player->getName(), "CONFIRMATION_TITLE_KICK_OUT"),
+                    Utils::getText($Player->getName(), "CONFIRMATION_CONTENT_KICK_OUT")
                 ]);
             },
             [

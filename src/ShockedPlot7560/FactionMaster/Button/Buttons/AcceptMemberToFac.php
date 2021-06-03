@@ -41,14 +41,15 @@ use ShockedPlot7560\FactionMaster\Route\Invitations\DemandList;
 use ShockedPlot7560\FactionMaster\Route\Invitations\ManageDemand;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
+use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class AcceptMemberRequest extends Button {
+class AcceptMemberToFac extends Button {
 
     public function __construct(InvitationEntity $Request)
     {
         parent::__construct(
-            "acceptRequest", 
+            "acceptMemberRequest", 
             function(string $Player) {
                 return Utils::getText($Player, "BUTTON_ACCEPT_REQUEST");
             },  
@@ -57,14 +58,14 @@ class AcceptMemberRequest extends Button {
                     function (Player $Player, $data) use ($Request) {
                         if ($data === null) return;
                         if ($data) {
-                            $Faction = MainAPI::getFaction($Request->sender);
+                            $Faction = MainAPI::getFaction($Request->receiver);
                             if (count($Faction->members) < $Faction->max_player) {
                                 $message = Utils::getText($Player->getName(), "SUCCESS_ACCEPT_REQUEST", ['name' => $Request->sender]);
-                                if (!MainAPI::addMember($Request->sender, $Request->receiver)) $message = Utils::getText($Player->getName(), "ERROR"); 
+                                if (!MainAPI::addMember($Request->receiver, $Request->sender)) $message = Utils::getText($Player->getName(), "ERROR"); 
                                 if (!MainAPI::removeInvitation($Request->sender, $Request->receiver, $Request->type)) $message = Utils::getText($Player->getName(), "ERROR"); 
                                 Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [$message]);
                             }else{
-                                $message = Utils::getText($Player->name, "MAX_PLAYER_REACH");
+                                $message = Utils::getText($Player->getName(), "MAX_PLAYER_REACH");
                                 Utils::processMenu(RouterFactory::get(DemandList::SLUG), $Player, [$message]);
                             }
                         }else{
@@ -74,7 +75,10 @@ class AcceptMemberRequest extends Button {
                     Utils::getText($Player->getName(), "CONFIRMATION_TITLE_ACCEPT_REQUEST"),
                     Utils::getText($Player->getName(), "CONFIRMATION_CONTENT_ACCEPT_REQUEST")
                 ]);
-            }
+            },
+            [
+                Ids::PERMISSION_ACCEPT_MEMBER_DEMAND
+            ]
         );
     }
 }

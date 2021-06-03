@@ -67,13 +67,13 @@ class MemberChangeRank implements Route {
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
         $this->UserEntity = $User;
-        $this->sliderData = [
-            Ids::RECRUIT_ID => Utils::getText($player->name, "RECRUIT_RANK_NAME"),
-            Ids::MEMBER_ID => Utils::getText($player->name, "MEMBER_RANK_NAME"),
-            Ids::COOWNER_ID => Utils::getText($player->name, "COOWNER_RANK_NAME")
-        ];
         if (!isset($params[0])) throw new InvalidArgumentException("Need the target player instance");
         $this->victim = $params[0];
+        $this->sliderData = [
+            Ids::RECRUIT_ID => Utils::getText($this->victim->name, "RECRUIT_RANK_NAME"),
+            Ids::MEMBER_ID => Utils::getText($this->victim->name, "MEMBER_RANK_NAME"),
+            Ids::COOWNER_ID => Utils::getText($this->victim->name, "COOWNER_RANK_NAME")
+        ];
 
         $menu = $this->changeRankMenu($this->victim);
         $player->sendForm($menu);

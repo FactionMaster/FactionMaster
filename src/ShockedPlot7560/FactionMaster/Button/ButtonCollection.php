@@ -83,7 +83,6 @@ class ButtonCollection {
     }
 
     public function process(int $keyButtonPress, Player $Player){
-        var_dump($this->ButtonsList);
         $this->ButtonsList[$keyButtonPress]->call($Player);
     }
 

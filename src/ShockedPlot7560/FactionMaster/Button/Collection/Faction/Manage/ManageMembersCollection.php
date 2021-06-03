@@ -33,6 +33,7 @@
 namespace ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage;
 
 use pocketmine\Player;
+use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
 use ShockedPlot7560\FactionMaster\Button\Buttons\Back;
 use ShockedPlot7560\FactionMaster\Button\Buttons\Faction\ManageMember;
@@ -51,7 +52,7 @@ class ManageMembersCollection extends ButtonCollection {
             foreach ($Faction->members as $Name => $Rank) {
                 if ($Name === $User->name) continue;
                 if ($Rank < $User->rank) {
-                    $this->register(new ManageMember($Name));
+                    $this->register(new ManageMember(MainAPI::getUser($Name)));
                 }
             }
             $this->register(new Back(ManageMainMembers::SLUG));

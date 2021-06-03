@@ -42,7 +42,7 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class DeleteRequest extends Button {
 
-    public function __construct(InvitationEntity $Request, string $PanelSlug, string $backPanelSlug)
+    public function __construct(InvitationEntity $Request, string $PanelSlug, string $backPanelSlug, array $permissions = [])
     {
         parent::__construct(
             "deleteRequest", 
@@ -64,7 +64,8 @@ class DeleteRequest extends Button {
                     Utils::getText($Player->getName(), "CONFIRMATION_TITLE_DELETE_REQUEST"),
                     Utils::getText($Player->getName(), "CONFIRMATION_CONTENT_DELETE_REQUEST")
                 ]);
-            }
+            },
+            $permissions
         );
     }
 }

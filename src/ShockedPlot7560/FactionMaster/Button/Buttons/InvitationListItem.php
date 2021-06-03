@@ -40,7 +40,7 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class InvitationListItem extends Button {
 
-    public function __construct(InvitationEntity $Invitation, string $PanelSlug)
+    public function __construct(InvitationEntity $Invitation, string $PanelSlug, array $permissions = [])
     {
         parent::__construct(
             "invitationItem", 
@@ -49,7 +49,8 @@ class InvitationListItem extends Button {
             },  
             function(Player $Player) use ($Invitation, $PanelSlug) {
                 Utils::processMenu(RouterFactory::get($PanelSlug), $Player, [$Invitation]);
-            }
+            },
+            $permissions
         );
     }
 

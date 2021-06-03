@@ -42,7 +42,7 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class DeleteInvitation extends Button {
 
-    public function __construct(InvitationEntity $Invitation, string $PanelSlug)
+    public function __construct(InvitationEntity $Invitation, string $PanelSlug, array $permissions = [])
     {
         parent::__construct(
             "deleteInvitation", 
@@ -64,7 +64,8 @@ class DeleteInvitation extends Button {
                     Utils::getText($Player->getName(), "CONFIRMATION_TITLE_DELETE_INVITATION"),
                     Utils::getText($Player->getName(), "CONFIRMATION_CONTENT_DELETE_INVITATION")
                 ]);
-            }
+            },
+            $permissions
         );
     }
 }

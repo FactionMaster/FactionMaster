@@ -32,9 +32,12 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
+use ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage\ManageInvitationCollection;
 use ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage\ManageMemberCollection;
 use ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage\ManageMembersCollection;
 use ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage\ManageMembersMainCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage\ManageRequestCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage\ManageRequestListCollection;
 use ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage\MemberInvitationListCollection;
 use ShockedPlot7560\FactionMaster\Button\Collection\Faction\ViewMembersCollection;
 use ShockedPlot7560\FactionMaster\Button\Collection\JoinFaction\JoinFactionMainCollection;
@@ -70,6 +73,9 @@ class ButtonFactory {
         self::register(new ManageMemberCollection());
         self::register(new ManageMembersMainCollection());
         self::register(new MemberInvitationListCollection());
+        self::register(new ManageInvitationCollection());
+        self::register(new ManageRequestListCollection());
+        self::register(new ManageRequestCollection());
     }
 
     public static function register(ButtonCollection $Collection, bool $override = false) : void {

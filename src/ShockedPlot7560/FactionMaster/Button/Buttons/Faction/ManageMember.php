@@ -34,22 +34,28 @@ namespace ShockedPlot7560\FactionMaster\Button\Buttons\Faction;
 
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\Button;
-use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMembersList;
+use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMember as MembersManageMember;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
+use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageMember extends Button {
 
-    public function __construct(string $Name)
+    public function __construct(UserEntity $User)
     {
         parent::__construct(
             "member", 
-            function(string $Player) use ($Name) {
-                return $Name;
+            function(string $Player) use ($User) {
+                return $User->name;
             },  
-            function(Player $Player) {
-                Utils::processMenu(RouterFactory::get(ManageMembersList::SLUG), $Player);
-            }
+            function(Player $Player) use ($User) {
+                Utils::processMenu(RouterFactory::get(MembersManageMember::SLUG), $Player, [$User]);
+            },
+            [
+                Ids::PERMISSION_KICK_MEMBER,
+                Ids::PERMISSION_CHANGE_MEMBER_RANK
+            ]
         );
     }
 

@@ -57,16 +57,16 @@ class TransferProperty extends Button {
                     function (Player $Player, $data) use ($Member) {
                         if ($data === null) return;
                         if ($data) {
-                            $message = Utils::getText($Player->name, "SUCCESS_TRANSFER_PROPERTY", ['playerName' => $Member->name]);
-                            if (!MainAPI::changeRank($Player->getName(), Ids::COOWNER_ID)) $message = Utils::getText($Player->name, "ERROR"); 
-                            if (!MainAPI::changeRank($Member->name, Ids::OWNER_ID)) $message = Utils::getText($Player->name, "ERROR");
+                            $message = Utils::getText($Player->getName(), "SUCCESS_TRANSFER_PROPERTY", ['playerName' => $Member->name]);
+                            if (!MainAPI::changeRank($Player->getName(), Ids::COOWNER_ID)) $message = Utils::getText($Player->getName(), "ERROR"); 
+                            if (!MainAPI::changeRank($Member->name, Ids::OWNER_ID)) $message = Utils::getText($Player->getName(), "ERROR");
                             Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [$message]);
                         }else{
                             Utils::processMenu(RouterFactory::get(MembersManageMember::SLUG), $Player, [$Member]);
                         }
                     },
-                    Utils::getText($Player->name, "CONFIRMATION_TITLE_TRANSFER_PROPERTY"),
-                    Utils::getText($Player->name, "CONFIRMATION_CONTENT_TRANSFER_PROPERTY")
+                    Utils::getText($Player->getName(), "CONFIRMATION_TITLE_TRANSFER_PROPERTY"),
+                    Utils::getText($Player->getName(), "CONFIRMATION_CONTENT_TRANSFER_PROPERTY")
                 ]);
             }
         );

@@ -34,33 +34,33 @@ namespace ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage;
 
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
+use ShockedPlot7560\FactionMaster\Button\Buttons\AcceptMemberToFac;
 use ShockedPlot7560\FactionMaster\Button\Buttons\Back;
-use ShockedPlot7560\FactionMaster\Button\Buttons\Faction\ChangeRank;
-use ShockedPlot7560\FactionMaster\Button\Buttons\Faction\KickOut;
-use ShockedPlot7560\FactionMaster\Button\Buttons\Faction\TransferProperty;
+use ShockedPlot7560\FactionMaster\Button\Buttons\DeleteRequest;
+use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMainMembers;
+use ShockedPlot7560\FactionMaster\Route\Faction\Members\Invitations\ManageMemberDemand;
+use ShockedPlot7560\FactionMaster\Route\Faction\Members\Invitations\MemberDemandList;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 
-class ManageMemberCollection extends ButtonCollection {
+class ManageRequestCollection extends ButtonCollection {
 
-    const SLUG = "manageMember";
+    const SLUG = "manageRequest";
 
     public function __construct()
     {
         parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (UserEntity $Member, UserEntity $User) {
-            $this->register(new ChangeRank($Member));
-            $this->register(new KickOut($Member));
-            if ($User->rank == Ids::OWNER_ID) $this->register(new TransferProperty($Member));
-            $this->register(new Back(ManageMainMembers::SLUG));
+        $this->registerCallable(self::SLUG, function (InvitationEntity $Request) {
+            $this->register(new AcceptMemberToFac($Request));
+            $this->register(new DeleteRequest($Request, MemberDemandList::SLUG, ManageMemberDemand::SLUG, [Ids::PERMISSION_REFUSE_MEMBER_DEMAND]));
+            $this->register(new Back(MemberDemandList::SLUG));
         });
     }
 
-    public function init(Player $Player, UserEntity $User, UserEntity $Member) : self {
+    public function init(Player $Player, UserEntity $User, InvitationEntity $Request) : self {
         $this->ButtonsList = [];
         foreach ($this->processFunction as $Callable) {
-            call_user_func($Callable, $Member, $User, $Player);
+            call_user_func($Callable, $Request, $Player, $User);
         }
         return $this;
     }

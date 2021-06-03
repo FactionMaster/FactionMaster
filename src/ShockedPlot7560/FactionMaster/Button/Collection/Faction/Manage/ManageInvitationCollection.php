@@ -35,32 +35,28 @@ namespace ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
 use ShockedPlot7560\FactionMaster\Button\Buttons\Back;
-use ShockedPlot7560\FactionMaster\Button\Buttons\Faction\ChangeRank;
-use ShockedPlot7560\FactionMaster\Button\Buttons\Faction\KickOut;
-use ShockedPlot7560\FactionMaster\Button\Buttons\Faction\TransferProperty;
+use ShockedPlot7560\FactionMaster\Button\Buttons\DeleteInvitation;
+use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMainMembers;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
+use ShockedPlot7560\FactionMaster\Route\Faction\Members\Invitations\MemberInvitationList;
 
-class ManageMemberCollection extends ButtonCollection {
+class ManageInvitationCollection extends ButtonCollection {
 
-    const SLUG = "manageMember";
+    const SLUG = "manageInvitation";
 
     public function __construct()
     {
         parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (UserEntity $Member, UserEntity $User) {
-            $this->register(new ChangeRank($Member));
-            $this->register(new KickOut($Member));
-            if ($User->rank == Ids::OWNER_ID) $this->register(new TransferProperty($Member));
-            $this->register(new Back(ManageMainMembers::SLUG));
+        $this->registerCallable(self::SLUG, function (InvitationEntity $Invitation) {
+            $this->register(new DeleteInvitation($Invitation, MemberInvitationList::SLUG));
+            $this->register(new Back(MemberInvitationList::SLUG));
         });
     }
 
-    public function init(Player $Player, UserEntity $User, UserEntity $Member) : self {
+    public function init(Player $Player, UserEntity $User, InvitationEntity $Invitation) : self {
         $this->ButtonsList = [];
         foreach ($this->processFunction as $Callable) {
-            call_user_func($Callable, $Member, $User, $Player);
+            call_user_func($Callable, $Invitation, $Player, $User);
         }
         return $this;
     }
