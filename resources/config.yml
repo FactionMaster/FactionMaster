@@ -36,6 +36,9 @@ MYSQL_database:
 SQLITE_database: 
   name: "FactionMaster"
 
+extensions:
+  - "FactionMasterExemple"
+
 # Enable bank and economy system
 # WARNING, it need EconomyAPI to work
 # true = enable / false = disable
