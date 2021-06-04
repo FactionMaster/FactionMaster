@@ -33,7 +33,6 @@
 namespace ShockedPlot7560\FactionMaster;
 
 use CortexPE\Commando\PacketHooker;
-use onebone\economyapi\EconomyAPI;
 use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
@@ -41,12 +40,6 @@ use ShockedPlot7560\FactionMaster\API\PermissionManager;
 use ShockedPlot7560\FactionMaster\Button\ButtonFactory;
 use ShockedPlot7560\FactionMaster\Command\FactionCommand;
 use ShockedPlot7560\FactionMaster\Database\Database;
-use ShockedPlot7560\FactionMaster\Event\BlockBreak;
-use ShockedPlot7560\FactionMaster\Event\BlockPlace;
-use ShockedPlot7560\FactionMaster\Event\EntityDamageByEntity;
-use ShockedPlot7560\FactionMaster\Event\Interact;
-use ShockedPlot7560\FactionMaster\Event\PlayerDeath;
-use ShockedPlot7560\FactionMaster\Event\PlayerLogin;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -80,7 +73,7 @@ class Main extends PluginBase implements Listener{
         $this->Database = new Database($this);
         
         if(!PacketHooker::isRegistered()) PacketHooker::register($this);
-        $this->loadEvents();
+        $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
 
         $this->FormUI = $this->getServer()->getPluginManager()->getPlugin("FormAPI");
         if ($this->FormUI === null) {
@@ -99,6 +92,7 @@ class Main extends PluginBase implements Listener{
             self::$logger->info("Loading extensions");
             foreach ($this->config->get("extensions") as $ExtensionName) {
                 self::$logger->info("Loading " . $ExtensionName);
+                /** @var \ShockedPlot7560\FactionMaster\API\Extension */
                 $Plugin = $this->getServer()->getPluginManager()->getPlugin($ExtensionName);
                 if ($Plugin === null) {
                     self::$logger->warning("Loading the extension: $ExtensionName, failed, check the name and presence of this extension on the server");
@@ -132,19 +126,4 @@ class Main extends PluginBase implements Listener{
     public static function getInstance() : self {
         return self::$instance;
     }
-
-    private function loadEvents() : void {
-        $Events = [
-            new PlayerLogin($this), 
-            new PlayerDeath($this), 
-            new EntityDamageByEntity($this),
-            new BlockBreak($this),
-            new Interact($this),
-            new BlockPlace($this)
-        ];
-        foreach ($Events as $Event) {
-            $this->getServer()->getPluginManager()->registerEvents($Event, $this);
-        }
-    }
-
 }
