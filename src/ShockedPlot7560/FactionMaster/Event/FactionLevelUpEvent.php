@@ -45,7 +45,7 @@ class FactionLevelUpEvent extends Event {
     private $reward;
     private $Count;
 
-    public function __construct(Player $Player, FactionEntity $Faction, int $oldLevel, RewardInterface $reward, int $Count)
+    public function __construct(Player $Player, string $Faction, int $oldLevel, RewardInterface $reward, int $Count)
     {
         $this->Player = $Player;
         $this->Faction = $Faction;
@@ -58,7 +58,7 @@ class FactionLevelUpEvent extends Event {
         return $this->Player;
     }
 
-    public function getFaction() : FactionEntity {
+    public function getFaction() : string {
         return $this->Faction;
     }
 

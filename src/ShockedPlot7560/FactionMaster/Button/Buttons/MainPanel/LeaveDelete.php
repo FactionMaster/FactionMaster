@@ -36,6 +36,8 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Button;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
+use ShockedPlot7560\FactionMaster\Event\FactionDeleteEvent;
+use ShockedPlot7560\FactionMaster\Event\FactionLeaveEvent;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
@@ -90,6 +92,7 @@ class LeaveDelete extends Button {
             if ($data) {
                 $message = Utils::getText($Player->getName(), "SUCCESS_LEAVE_FACTION");
                 if (!MainAPI::removeMember($Faction->name, $Player->getName())) $message = Utils::getText($Player->getName(), "ERROR");
+                (new FactionLeaveEvent($Player, $Faction))->call();
                 Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [$message]);
             }else{
                 Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player);
@@ -103,6 +106,7 @@ class LeaveDelete extends Button {
             if ($data) {
                 $message = Utils::getText($Player->getName(), "SUCCESS_DELETE_FACTION");
                 if (!MainAPI::removeFaction($Faction->name)) $message = Utils::getText($Player->getName(), "ERROR");
+                (new FactionDeleteEvent($Player, $Faction))->call();
                 Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [$message]);
             }else{
                 Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player);

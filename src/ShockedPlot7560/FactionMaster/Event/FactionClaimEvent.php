@@ -37,7 +37,7 @@ use pocketmine\level\format\Chunk;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
-class FactionCreateEvent extends Event {
+class FactionClaimEvent extends Event {
 
     private $Player;
     private $Faction;

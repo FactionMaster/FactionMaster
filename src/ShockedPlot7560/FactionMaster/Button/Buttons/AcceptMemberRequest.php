@@ -36,6 +36,8 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Button;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
+use ShockedPlot7560\FactionMaster\Event\FactionJoinEvent;
+use ShockedPlot7560\FactionMaster\Event\InvitationAcceptEvent;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\Invitations\DemandList;
 use ShockedPlot7560\FactionMaster\Route\Invitations\ManageDemand;
@@ -61,7 +63,9 @@ class AcceptMemberRequest extends Button {
                             if (count($Faction->members) < $Faction->max_player) {
                                 $message = Utils::getText($Player->getName(), "SUCCESS_ACCEPT_REQUEST", ['name' => $Request->sender]);
                                 if (!MainAPI::addMember($Request->sender, $Request->receiver)) $message = Utils::getText($Player->getName(), "ERROR"); 
+                                (new FactionJoinEvent($Player, $Faction))->call();
                                 if (!MainAPI::removeInvitation($Request->sender, $Request->receiver, $Request->type)) $message = Utils::getText($Player->getName(), "ERROR"); 
+                                (new InvitationAcceptEvent($Player, $Request))->call();
                                 Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [$message]);
                             }else{
                                 $message = Utils::getText($Player->name, "MAX_PLAYER_REACH");

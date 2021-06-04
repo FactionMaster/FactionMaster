@@ -36,6 +36,7 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Button;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Event\MemberKickOutEvent;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMember as MembersManageMember;
 use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMembersList;
@@ -60,6 +61,7 @@ class KickOut extends Button {
                         if ($data) {
                             $message = Utils::getText($Player->getName(), "SUCCESS_KICK_OUT", ['playerName' => $Member->name]);
                             if (!MainAPI::removeMember($Faction->name, $Member->name)) $message = Utils::getText($Player->getName(), "ERROR"); 
+                            (new MemberKickOutEvent($Player, $Faction, $Member))->call();
                             Utils::processMenu(RouterFactory::get(ManageMembersList::SLUG), $Player, [$message]);
                         }else{
                             Utils::processMenu(RouterFactory::get(MembersManageMember::SLUG), $Player, [$Member]);

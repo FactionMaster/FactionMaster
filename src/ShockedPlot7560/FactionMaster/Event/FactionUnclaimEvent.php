@@ -35,7 +35,6 @@ namespace ShockedPlot7560\FactionMaster\Event;
 use pocketmine\event\Event;
 use pocketmine\level\format\Chunk;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
 class FactionUnclaimEvent extends Event {
 
@@ -43,7 +42,7 @@ class FactionUnclaimEvent extends Event {
     private $Faction;
     private $Chunk;
 
-    public function __construct(Player $Player, FactionEntity $Faction, Chunk $Chunk)
+    public function __construct(Player $Player, string $Faction, Chunk $Chunk)
     {
         $this->Player = $Player;
         $this->Faction = $Faction;
@@ -54,7 +53,7 @@ class FactionUnclaimEvent extends Event {
         return $this->Player;
     }
 
-    public function getFaction() : FactionEntity {
+    public function getFaction() : string {
         return $this->Faction;
     }
 

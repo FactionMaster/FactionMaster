@@ -34,30 +34,23 @@ namespace ShockedPlot7560\FactionMaster\Event;
 
 use pocketmine\event\Event;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 
-class AllianceCreateEvent extends Event {
+class PlayerChangeLanguageEvent extends Event {
 
     private $Player;
-    private $UserEntity;
-    private $oldLanguageSlug;
+    private $LanguageSlug;
 
-    public function __construct(Player $Player, UserEntity $UserEntity, string $oldLanguageSlug)
+    public function __construct(Player $Player, string $LanguageSlug)
     {
         $this->Player = $Player;
-        $this->UserEntity = $UserEntity;
-        $this->oldLanguageSlug = $oldLanguageSlug;
+        $this->LanguageSlug = $LanguageSlug;
     }
 
     public function getPlayer() : Player {
         return $this->Player;
     }
 
-    public function getUserEntity() : UserEntity{
-        return $this->UserEntity;
-    }
-
-    public function getOldLanguageSlug() : string {
-        return $this->oldLanguageSlug;
+    public function getLanguageSlug() : string {
+        return $this->LanguageSlug;
     }
 }

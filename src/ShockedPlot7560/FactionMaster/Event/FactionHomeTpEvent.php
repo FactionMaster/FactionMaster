@@ -35,7 +35,6 @@ namespace ShockedPlot7560\FactionMaster\Event;
 use pocketmine\event\Event;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
 class FactionHomeTpEvent extends Event {
 
@@ -44,7 +43,7 @@ class FactionHomeTpEvent extends Event {
     private $Data;
     private $name;
 
-    public function __construct(Player $Player, FactionEntity $Faction, string $name, array $Data)
+    public function __construct(Player $Player, string $Faction, string $name, array $Data)
     {
         $this->Player = $Player;
         $this->Faction = $Faction;
@@ -56,7 +55,7 @@ class FactionHomeTpEvent extends Event {
         return $this->Player;
     }
 
-    public function getFaction() : FactionEntity {
+    public function getFaction() : string {
         return $this->Faction;
     }
 

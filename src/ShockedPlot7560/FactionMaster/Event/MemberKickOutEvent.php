@@ -37,7 +37,7 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 
-class MessageChangeEvent extends Event {
+class MemberKickOutEvent extends Event {
 
     private $Player;
     private $Faction;

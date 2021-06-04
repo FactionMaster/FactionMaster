@@ -34,18 +34,18 @@ namespace ShockedPlot7560\FactionMaster\Event;
 
 use pocketmine\event\Event;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
+use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 
 class MemberChangeRankEvent extends Event {
 
     private $Player;
-    private $Faction;
+    private $Target;
     private $oldRank;
 
-    public function __construct(Player $Player, FactionEntity $Faction, int $oldRank)
+    public function __construct(Player $Player, UserEntity $Target, int $oldRank)
     {
         $this->Player = $Player;
-        $this->Faction = $Faction;
+        $this->Target = $Target;
         $this->oldRank = $oldRank;
     }
 
@@ -53,8 +53,8 @@ class MemberChangeRankEvent extends Event {
         return $this->Player;
     }
 
-    public function getFaction() : FactionEntity{
-        return $this->Faction;
+    public function getTarget() : UserEntity{
+        return $this->Target;
     }
 
     public function getOldRank() : int {

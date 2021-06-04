@@ -36,6 +36,8 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Button;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
+use ShockedPlot7560\FactionMaster\Event\AllianceCreateEvent;
+use ShockedPlot7560\FactionMaster\Event\InvitationAcceptEvent;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\Alliance\AllianceDemandList;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
@@ -62,7 +64,9 @@ class AcceptAlly extends Button {
                                 if (count($FactionRequest->ally) < $FactionRequest->max_ally) {
                                     $message = Utils::getText($Player->getName(), "SUCCESS_ACCEPT_REQUEST", ['name' => $Request->sender]);
                                     if (!MainAPI::setAlly($Request->receiver, $Request->sender)) $message = Utils::getText($Player->getName(), "ERROR"); 
+                                    (new AllianceCreateEvent($Player, $Request->sender, $Request->receiver))->call();
                                     if (!MainAPI::removeInvitation($Request->sender, $Request->receiver, "alliance")) $message = Utils::getText($Player->getName(), "ERROR"); 
+                                    (new InvitationAcceptEvent($Player, $Request))->call();
                                     Utils::processMenu(RouterFactory::get(AllianceDemandList::SLUG), $Player, [$message]);
                                 }else{
                                     $message = Utils::getText($Player->getName(), "MAX_ALLY_REACH_OTHER");

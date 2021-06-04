@@ -36,6 +36,7 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Button;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
+use ShockedPlot7560\FactionMaster\Event\InvitationRefuseEvent;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -56,6 +57,7 @@ class DeleteRequest extends Button {
                         if ($data) {
                             $message = Utils::getText($Player->getName(), "SUCCESS_DELETE_REQUEST", ['name' => $Request->sender]);
                             if (!MainAPI::removeInvitation($Request->sender, $Request->receiver, $Request->type)) $message = Utils::getText($Player->getName(), "ERROR"); 
+                            (new InvitationRefuseEvent($Player, $Request))->call();
                             Utils::processMenu(RouterFactory::get($PanelSlug), $Player, [$message]);
                         }else{
                             Utils::processMenu(RouterFactory::get($backPanelSlug), $Player, [$Request]);

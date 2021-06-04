@@ -37,6 +37,7 @@ use jojoe77777\FormAPI\CustomForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Event\MemberChangeRankEvent;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
@@ -85,7 +86,7 @@ class MemberChangeRank implements Route {
         return function (Player $player, $data) use ($backMenu) {
             if ($data === null) return;
             MainAPI::changeRank($this->victim->name, $data[0]);
-            $this->victim->rank = $data[0];
+            (new MemberChangeRankEvent($player, ($this->victim->rank = $data[0]), $this->victim->rank))->call();
             Utils::processMenu($backMenu, $player, [ $this->victim ]);
         };
     }

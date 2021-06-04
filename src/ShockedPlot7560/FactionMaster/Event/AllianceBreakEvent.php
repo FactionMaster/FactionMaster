@@ -34,24 +34,29 @@ namespace ShockedPlot7560\FactionMaster\Event;
 
 use pocketmine\event\Event;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
 class AllianceBreakEvent extends Event {
 
     private $Player;
     private $Alliance;
+    private $Faction;
 
-    public function __construct(Player $Player, FactionEntity $Alliance)
+    public function __construct(Player $Player, string $Faction, string $Alliance)
     {
         $this->Player = $Player;
         $this->Alliance = $Alliance;
+        $this->Faction = $Faction;
     }
 
     public function getPlayer() : Player {
         return $this->Player;
     }
 
-    public function getAlliance() : FactionEntity{
+    public function getFaction() : string{
+        return $this->Faction;
+    }
+
+    public function getAlliance() : string{
         return $this->Alliance;
     }
 }

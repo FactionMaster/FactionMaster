@@ -35,13 +35,15 @@ namespace ShockedPlot7560\FactionMaster\Button\Buttons\LanguagePanel;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Button;
+use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Event\PlayerChangeLanguageEvent;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Langue extends Button {
 
-    public function __construct(string $Lang)
+    public function __construct(string $Lang, UserEntity $User)
     {
         parent::__construct(
             $Lang, 
@@ -49,13 +51,14 @@ class Langue extends Button {
                 $UserLang = MainAPI::getPlayerLang($Player);
                 return $Lang . (Utils::getConfigLang("languages-name")[$UserLang] === $Lang ? ("\n" . Utils::getText($Player, "CURRENT_LANG")): "");
             },  
-            function(Player $Player) use ($Lang) {
+            function(Player $Player) use ($Lang, $User) {
                 foreach (Utils::getConfigLang("languages-name") as $key => $value) {
                     if ($value === $Lang) {
                         $Lang = $key;
                     }
                 }
                 MainAPI::changeLanguage($Player->getName(), $Lang);
+                (new PlayerChangeLanguageEvent($Player, $Lang))->call();
                 Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player);
             }
         );

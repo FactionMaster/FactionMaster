@@ -36,6 +36,7 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Button;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Event\FactionPropertyTransferEvent;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMember as MembersManageMember;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
@@ -60,6 +61,7 @@ class TransferProperty extends Button {
                             $message = Utils::getText($Player->getName(), "SUCCESS_TRANSFER_PROPERTY", ['playerName' => $Member->name]);
                             if (!MainAPI::changeRank($Player->getName(), Ids::COOWNER_ID)) $message = Utils::getText($Player->getName(), "ERROR"); 
                             if (!MainAPI::changeRank($Member->name, Ids::OWNER_ID)) $message = Utils::getText($Player->getName(), "ERROR");
+                            (new FactionPropertyTransferEvent($Player, $Member, $Player->getName()))->call();
                             Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [$message]);
                         }else{
                             Utils::processMenu(RouterFactory::get(MembersManageMember::SLUG), $Player, [$Member]);

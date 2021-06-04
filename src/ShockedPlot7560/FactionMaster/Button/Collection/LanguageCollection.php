@@ -47,9 +47,9 @@ class LanguageCollection extends ButtonCollection {
     public function __construct()
     {
         parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function() {
+        $this->registerCallable(self::SLUG, function(UserEntity $User) {
             foreach (Utils::getConfigLang("languages-name") as $Name => $Langue) {
-                $this->register(new Langue($Langue));
+                $this->register(new Langue($Langue, $User));
             }
             $this->register(new Back(MainPanel::SLUG));
         });
@@ -58,7 +58,7 @@ class LanguageCollection extends ButtonCollection {
     public function init(Player $Player, UserEntity $User) : self {
         $this->ButtonsList = [];
         foreach ($this->processFunction as $Callable) {
-            call_user_func($Callable, $Player, $User);
+            call_user_func($Callable, $User, $Player);
         }
         return $this;
     }

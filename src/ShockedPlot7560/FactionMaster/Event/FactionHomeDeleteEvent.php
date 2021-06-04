@@ -35,7 +35,6 @@ namespace ShockedPlot7560\FactionMaster\Event;
 use pocketmine\event\Event;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
 class FactionHomeDeleteEvent extends Event {
 
@@ -44,11 +43,10 @@ class FactionHomeDeleteEvent extends Event {
     private $Data;
     private $name;
 
-    public function __construct(Player $Player, FactionEntity $Faction, string $name, array $Data)
+    public function __construct(Player $Player, string $Faction, string $name)
     {
         $this->Player = $Player;
         $this->Faction = $Faction;
-        $this->Data = $Data;
         $this->name = $name;
     }
 
@@ -56,20 +54,12 @@ class FactionHomeDeleteEvent extends Event {
         return $this->Player;
     }
 
-    public function getFaction() : FactionEntity {
+    public function getFaction() : string {
         return $this->Faction;
     }
 
     public function getName() : string {
         return $this->name;
-    }
-
-    public function getVector() : Vector3 {
-        return new Vector3($this->Data['x'], $this->Data['y'], $this->Data['z']);
-    }
-
-    public function getWorldName() : string {
-        return $this->Data['world'];
     }
 
 }

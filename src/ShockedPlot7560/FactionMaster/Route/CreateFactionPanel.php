@@ -37,6 +37,7 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Event\FactionCreateEvent;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -80,6 +81,7 @@ class CreateFactionPanel implements Route {
                     if (\strlen($data[1]) >= Main::getInstance()->config->get("min-faction-name-length")
                         && \strlen($data[1]) <= Main::getInstance()->config->get("max-faction-name-length")) {
                         if (MainAPI::addFaction($data[1], $Player->getName())) {
+                            (new FactionCreateEvent($Player, MainAPI::getFaction($data[1])))->call();
                             Utils::processMenu($backRoute, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_CREATE_FACTION")]);
                         }else{
                             $menu = $this->createFactionMenu(Utils::getText($this->UserEntity->name, "ERROR"));

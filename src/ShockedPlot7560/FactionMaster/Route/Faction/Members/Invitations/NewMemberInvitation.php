@@ -37,6 +37,7 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Event\InvitationSendEvent;
 use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMainMembers;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
@@ -92,8 +93,9 @@ class NewMemberInvitation implements Route {
                 }
                 if ($UserRequest instanceof UserEntity) {
                     if (!MainAPI::getFactionOfPlayer($data[1]) instanceof FactionEntity) {
-                        if (!MainAPI::areInInvitation($this->Faction->name, $data[1], "member")) {
-                            if (MainAPI::makeInvitation($this->Faction->name, $data[1], "member")) {
+                        if (!MainAPI::areInInvitation($this->Faction->name, $data[1], InvitationSendEvent::MEMBER_TYPE)) {
+                            if (MainAPI::makeInvitation($this->Faction->name, $data[1], InvitationSendEvent::MEMBER_TYPE)) {
+                                (new InvitationSendEvent($Player, $this->Faction->name, $data[1], InvitationSendEvent::MEMBER_TYPE))->call();
                                 Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_SEND_INVITATION", ['name' => $data[1]])] );
                             }else{
                                 $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "ERROR"));

@@ -36,6 +36,7 @@ use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Event\FactionLevelUpEvent;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ManageFactionMain;
@@ -187,6 +188,7 @@ class LevelUp implements Route {
                 }elseif (MainAPI::changeLevel($this->Faction->name, 1)) {
                     $result = $this->Reward->executeGet($this->Faction->name, $this->RewardData['value']);
                     if ($result === true) {
+                        (new FactionLevelUpEvent($Player, $factionName, $this->Faction->level, $this->Reward, $this->RewardData['value']))->call();
                         Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "SUCCESS_LEVEL_UP")]);
                     }else{
                         Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);

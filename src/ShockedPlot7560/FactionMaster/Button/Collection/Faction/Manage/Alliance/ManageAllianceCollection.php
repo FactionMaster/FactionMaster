@@ -39,6 +39,7 @@ use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
 use ShockedPlot7560\FactionMaster\Button\Buttons\Back;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Event\AllianceBreakEvent;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\Alliance\AllianceMainMenu;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\Alliance\ManageAlliance;
@@ -67,6 +68,7 @@ class ManageAllianceCollection extends ButtonCollection {
                             if ($data) {
                                 $message = Utils::getText($Player->getName(), "SUCCESS_BREAK_ALLIANCE", ['name' => $Ally->name]);
                                 if (!MainAPI::removeAlly($Faction->name, $Ally->name)) $message = Utils::getText($Player->getName(), "ERROR"); 
+                                (new AllianceBreakEvent($Player, $Faction->name, $Ally->name))->call();
                                 Utils::processMenu(RouterFactory::get(AllianceMainMenu::SLUG), $Player, [$message]);
                             }else{
                                 Utils::processMenu(RouterFactory::get(ManageAlliance::SLUG), $Player, [$Ally]);

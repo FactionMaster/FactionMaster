@@ -32,11 +32,12 @@
 
 namespace ShockedPlot7560\FactionMaster\Event;
 
+use pocketmine\event\Cancellable;
 use pocketmine\event\Event;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Route\Route;
 
-class MenuOpenEvent extends Event {
+class MenuOpenEvent extends Event implements Cancellable {
 
     private $Player;
     private $Route;
