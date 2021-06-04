@@ -50,6 +50,7 @@ allow-no-stuff: false
 default-home-limit: 2
 default-claim-limit: 2
 default-member-limit: 2
+default-ally-limit: 2
 default-power: 0
 default-money: 0
 

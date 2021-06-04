@@ -37,6 +37,7 @@ use pocketmine\Player;
 use pocketmine\plugin\PluginLogger;
 use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\MenuOpenEvent;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\Route;
@@ -59,7 +60,7 @@ class Utils {
         if ($UserPermissions === null) {
             $UserPermissions = [];
         }
-        if ($UserEntity->rank !== Ids::OWNER_ID && isset($route->PermissionNeed)) {
+        if ($UserEntity instanceof UserEntity && $UserEntity->rank !== Ids::OWNER_ID && isset($route->PermissionNeed)) {
             foreach ($route->PermissionNeed as $Permission) {
                 if (isset($UserPermissions[$Permission]) && $UserPermissions[$Permission]) {
                     $ev = new MenuOpenEvent($Player, $route);
@@ -70,6 +71,9 @@ class Utils {
                 }
             }
         }
+        $ev = new MenuOpenEvent($Player, $route);
+        $ev->call();
+        if ($ev->isCancelled()) return;
         $route($Player, $UserEntity, $UserPermissions, $params);
     }
 

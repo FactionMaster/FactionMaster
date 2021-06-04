@@ -57,7 +57,7 @@ class FactionTable implements TableInterface {
             `description` TEXT, 
             `messageFaction` TEXT,
             `ally` VARCHAR(255) NOT NULL DEFAULT '". \base64_encode(\serialize([]))."',
-            `max_player` INT(11) NOT NULL DEFAULT '". Main::getInstance()->config->get("default-player-limit") . "',
+            `max_player` INT(11) NOT NULL DEFAULT '". Main::getInstance()->config->get("default-member-limit") . "',
             `max_ally` INT(11) NOT NULL DEFAULT '". Main::getInstance()->config->get("default-ally-limit") . "',
             `max_claim` INT(11) NOT NULL DEFAULT '". Main::getInstance()->config->get("default-claim-limit") . "',
             `max_home` INT(11) NOT NULL DEFAULT '". Main::getInstance()->config->get("default-home-limit") . "',
