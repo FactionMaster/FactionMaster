@@ -36,6 +36,7 @@ use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
 class MapCommand extends BaseSubCommand {
 
@@ -64,6 +65,8 @@ class MapCommand extends BaseSubCommand {
     const NO_SYMBOL = "0";
     const CLAIM_COLOR = "§f";
     const CLAIM_ALLIES_COLOR = "§a";
+    const CLAIM_ENNEMIE_COLOR = "§4";
+    const CLAIM_OWN_COLOR = "§e";
 
     const HEIGHT = 10;
     const WIDTH = 48;
@@ -84,7 +87,14 @@ class MapCommand extends BaseSubCommand {
         $X = round($Player->getX());
         $Z = round($Player->getZ());
         $ChunkFaction = MainAPI::getFactionClaim($Player->getLevel()->getName(), $CentralChunk->getX(), $CentralChunk->getZ());
-        $FactionLabel = $ChunkFaction !== null ? ("§4" .$ChunkFaction) : ("§a" . "Wilderness");
+        if ($ChunkFaction === $UserEntity->faction) {
+            $FactionLabelColor = self::CLAIM_OWN_COLOR;
+        }elseif ($ChunkFaction !== null && MainAPI::isAlly($UserEntity->faction, $ChunkFaction)) {
+            $FactionLabelColor = self::CLAIM_ALLIES_COLOR;
+        }else{
+            $FactionLabelColor = self::CLAIM_ENNEMIE_COLOR;
+        }
+        $FactionLabel = $ChunkFaction !== null ? $FactionLabelColor .$ChunkFaction : "§a" . "Wilderness";
         $middleString = ".[ §2($X,$Z) " . $FactionLabel . " §6].";
         $lenMiddle = \strlen($middleString) - 3;
         $bottom = "";
@@ -112,6 +122,8 @@ class MapCommand extends BaseSubCommand {
                                 if ($UserEntity->faction !== null) {
                                     if (MainAPI::isAlly($UserEntity->faction, $Faction)) {
                                         $color = self::CLAIM_ALLIES_COLOR;
+                                    }elseif ($Faction === $UserEntity->faction) {
+                                        $color = self::CLAIM_OWN_COLOR;
                                     }else{
                                         $color = self::CLAIM_COLOR;
                                     }
