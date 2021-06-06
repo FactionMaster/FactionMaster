@@ -37,6 +37,7 @@ use jojoe77777\FormAPI\CustomForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Event\MemberChangeRankEvent;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
@@ -67,13 +68,13 @@ class MemberChangeRank implements Route {
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
         $this->UserEntity = $User;
-        $this->sliderData = [
-            Ids::RECRUIT_ID => Utils::getText($player->name, "RECRUIT_RANK_NAME"),
-            Ids::MEMBER_ID => Utils::getText($player->name, "MEMBER_RANK_NAME"),
-            Ids::COOWNER_ID => Utils::getText($player->name, "COOWNER_RANK_NAME")
-        ];
         if (!isset($params[0])) throw new InvalidArgumentException("Need the target player instance");
         $this->victim = $params[0];
+        $this->sliderData = [
+            Ids::RECRUIT_ID => Utils::getText($this->victim->name, "RECRUIT_RANK_NAME"),
+            Ids::MEMBER_ID => Utils::getText($this->victim->name, "MEMBER_RANK_NAME"),
+            Ids::COOWNER_ID => Utils::getText($this->victim->name, "COOWNER_RANK_NAME")
+        ];
 
         $menu = $this->changeRankMenu($this->victim);
         $player->sendForm($menu);
@@ -85,7 +86,7 @@ class MemberChangeRank implements Route {
         return function (Player $player, $data) use ($backMenu) {
             if ($data === null) return;
             MainAPI::changeRank($this->victim->name, $data[0]);
-            $this->victim->rank = $data[0];
+            (new MemberChangeRankEvent($player, ($this->victim->rank = $data[0]), $this->victim->rank))->call();
             Utils::processMenu($backMenu, $player, [ $this->victim ]);
         };
     }

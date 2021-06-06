@@ -37,6 +37,7 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Event\MessageChangeEvent;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
@@ -85,6 +86,7 @@ class ChangeMessage implements Route {
             if ($data === null) return;
             if (isset($data[1]) && \is_string($data[1])) {
                 if (MainAPI::changeMessage($this->Faction->name, $data[1])) {
+                    (new MessageChangeEvent($Player, $this->Faction, $data[1]))->call();
                     Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_MESSAGE_UPDATE")]);
                     return;
                 }

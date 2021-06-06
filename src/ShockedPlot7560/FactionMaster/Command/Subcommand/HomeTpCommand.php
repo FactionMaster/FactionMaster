@@ -38,6 +38,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Event\FactionHomeTpEvent;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -60,6 +61,7 @@ class HomeTpCommand extends BaseSubCommand {
             $Home = MainAPI::getFactionHome($UserEntity->faction, $args["name"]);
             if ($Home !== null) {
                 $sender->teleport(new Vector3($Home["x"], $Home["y"], $Home['z']));
+                (new FactionHomeTpEvent($sender, $UserEntity->faction, $args['name'], $Home))->call();
                 $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_TELEPORT"));
             }else{
                 $sender->sendMessage(Utils::getText($sender->getName(), "HOME_DONT_EXIST"));

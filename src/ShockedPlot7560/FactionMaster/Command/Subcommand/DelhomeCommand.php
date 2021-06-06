@@ -37,6 +37,7 @@ use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Event\FactionHomeDeleteEvent;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -62,6 +63,7 @@ class DelhomeCommand extends BaseSubCommand {
         if ((isset($permissions[Ids::PERMISSION_DELETE_FACTION_HOME]) && $permissions[Ids::PERMISSION_DELETE_FACTION_HOME]) || $UserEntity->rank == Ids::OWNER_ID) {
             if (MainAPI::getFactionHome($UserEntity->faction, $args["name"])) {
                 if (MainAPI::removeHome($UserEntity->faction, $args['name'])) {
+                    (new FactionHomeDeleteEvent($sender, $UserEntity->faction, $args['name']))->call();
                     $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_DELETE"));
                     return;
                 }else{

@@ -37,6 +37,7 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Event\VisibilityChangeEvent;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
@@ -83,9 +84,11 @@ class ChangeVisibility implements Route {
     public function call(): callable
     {
         $backMenu = $this->backMenu;
-        return function (Player $player, $data) use ($backMenu) {
+        $Faction = $this->Faction;
+        return function (Player $player, $data) use ($backMenu, $Faction) {
             if ($data === null) return;
             if (MainAPI::changeVisibility($this->Faction->name, $data[0])) {
+                (new VisibilityChangeEvent($player, $Faction, $data[0]))->call();
                 Utils::processMenu($backMenu,  $player, [Utils::getText($this->UserEntity->name, "SUCCESS_VISIBILITY_UPDATE")]);
             }else{
                 Utils::processMenu($backMenu, $player, [Utils::getText($this->UserEntity->name, "ERROR")]);
