@@ -98,6 +98,17 @@ class Main extends PluginBase implements Listener{
                     self::$logger->warning("Loading the extension: $ExtensionName, failed, check the name and presence of this extension on the server");
                 }else{
                     $Plugin->execute();
+                    foreach ($Plugin->getLangConfig() as $LangSLug => $LangConfig) {
+                        if (!$LangConfig instanceof Config) {
+                            self::$logger->warning("Loading the translate files of : $ExtensionName, check the return value of the function getLangConfig() and verify its key and value");
+                        }else{
+                            $LangMainFile = new Config($this->getDataFolder() . "Translation/$LangSLug.yml", Config::YAML);
+                            foreach ($LangConfig->getAll() as $key => $value) {
+                                $LangMainFile->__set($key, $value);
+                            }
+                            $LangMainFile->save();
+                        }
+                    }
                 }
             }
             self::$logger->info("Loading extensions finish");

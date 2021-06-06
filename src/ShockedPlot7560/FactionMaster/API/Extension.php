@@ -34,6 +34,19 @@ namespace ShockedPlot7560\FactionMaster\API;
 
 interface Extension {
 
+    /**
+     * Define here, all the lang file to load in the main Plugin
+     */
+    public function onLoad();
+
     public function execute():void;
 
+    /**
+     * Give the Config instance correspond to the translate files for the extension
+     * It must be in this format :
+     *      "fr_FR" => Config instance
+     *      "en_EN" => Config instance
+     * If the array key translate are not saved in the Main plugin, il will not be load
+     */
+    public function getLangConfig(): array;
 }
