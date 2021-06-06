@@ -35,39 +35,27 @@ namespace ShockedPlot7560\FactionMaster\Route\Faction\Members\Invitations;
 use InvalidArgumentException;
 use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Button\ButtonFactory;
+use ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage\ManageInvitationCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
-use ShockedPlot7560\FactionMaster\Route\Faction\Members\Invitations\MemberInvitationList;
-use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMainMembers;
 use ShockedPlot7560\FactionMaster\Route\Route;
-use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageMemberInvitation implements Route {
     
     const SLUG = "manageMemberInvitation";
 
-    public $PermissionNeed = [
-        Ids::PERMISSION_DELETE_PENDING_MEMBER_INVITATION
-    ];
-    public $backMenu;
-
-    /** @var array */
-    private $buttons;
+    /** @var \ShockedPlot7560\FactionMaster\Button\ButtonCollection */
+    private $Collection;
     /** @var InvitationEntity */
     private $invitation;
+    /** @var UserEntity */
+    private $UserEntity;
 
     public function getSlug(): string
     {
         return self::SLUG;
-    }
-
-    public function __construct()
-    {
-        $this->backMenu = RouterFactory::get(MemberInvitationList::SLUG);
     }
 
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
@@ -75,10 +63,7 @@ class ManageMemberInvitation implements Route {
         $this->UserEntity = $User;
         if (!isset($params[0]) || !$params[0] instanceof InvitationEntity) throw new InvalidArgumentException("Need the invitation instance");
         $this->invitation = $params[0];
-
-        $this->buttons = [];
-        if ((array_key_exists(Ids::PERMISSION_DELETE_PENDING_MEMBER_INVITATION, $UserPermissions) && $UserPermissions[Ids::PERMISSION_DELETE_PENDING_MEMBER_INVITATION]) || $User->rank == Ids::OWNER_ID) $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_DELETE_INVITATION");
-        $this->buttons[] = Utils::getText($this->UserEntity->name, "BUTTON_BACK");
+        $this->Collection = ButtonFactory::get(ManageInvitationCollection::SLUG)->init($player, $User, $this->invitation);
 
         $menu = $this->manageMember();
         $player->sendForm($menu);
@@ -86,50 +71,17 @@ class ManageMemberInvitation implements Route {
 
     public function call(): callable
     {
-        $invitation = $this->invitation;
-        $backMenu = $this->backMenu;
-        return function (Player $player, $data) use ($invitation, $backMenu) {
+        $Collection = $this->Collection;
+        return function (Player $player, $data) use ($Collection) {
             if ($data === null) return;
-            switch ($this->buttons[$data]) {
-                case Utils::getText($this->UserEntity->name, "BUTTON_BACK"):
-                    Utils::processMenu($backMenu, $player);
-                    break;
-                case Utils::getText($this->UserEntity->name, "BUTTON_DELETE_INVITATION"):
-                    Utils::processMenu(RouterFactory::get(ConfirmationMenu::SLUG), $player, [
-                        $this->callDelete($invitation->sender, $invitation->receiver),
-                        Utils::getText($this->UserEntity->name, "CONFIRMATION_TITLE_DELETE_INVITATION"),
-                        Utils::getText($this->UserEntity->name, "CONFIRMATION_CONTENT_DELETE_INVITATION")
-                    ]);
-                    break;
-                default:
-                    return;
-                    break;
-            }
+            $Collection->process($data, $player);
         };
     }
 
     private function manageMember() : SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = Utils::generateButton($menu, $this->buttons);
-        if (count($this->buttons) == 1) {
-            $menu->setContent(Utils::getText($this->UserEntity->name, "NO_ACTION_POSSIBLE"));
-        }
+        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
         $menu->setTitle(Utils::getText($this->UserEntity->name, "MANAGE_MEMBER_INVITATION_TITLE", ['name' => $this->invitation->receiver]));
         return $menu;
     }
-
-    private function callDelete(string $factionName, string $playerName) : callable {
-        $invitation = $this->invitation;
-        return function (Player $Player, $data) use ($factionName, $playerName, $invitation) {
-            if ($data === null) return;
-            if ($data) {
-                $message = Utils::getText($this->UserEntity->name, "SUCCESS_DELETE_INVITATION", ['name' => $playerName]);
-                if (!MainAPI::removeInvitation($factionName, $playerName, "member")) $message = Utils::getText($this->UserEntity->name, "ERROR"); 
-                Utils::processMenu(RouterFactory::get(ManageMainMembers::SLUG), $Player, [$message]);
-            }else{
-                Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [$invitation]);
-            }
-        };
-    }
-
 }

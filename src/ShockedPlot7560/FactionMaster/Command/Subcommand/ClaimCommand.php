@@ -36,6 +36,7 @@ use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Event\FactionClaimEvent;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
@@ -84,6 +85,7 @@ class ClaimCommand extends BaseSubCommand {
                     }
                     if (($result = $ItemCost->executeCost($FactionPlayer->name))) {
                         if (MainAPI::addClaim($sender->getPlayer(), $UserEntity->faction)) {
+                            (new FactionClaimEvent($sender, $FactionPlayer, $Chunk, $ItemCost->getType(), $ItemCost->getValue()))->call();
                             $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_CLAIM"));
                             return;
                         }else{

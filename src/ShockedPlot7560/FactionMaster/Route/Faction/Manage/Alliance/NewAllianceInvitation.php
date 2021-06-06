@@ -37,6 +37,7 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Event\InvitationSendEvent;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
@@ -83,8 +84,9 @@ class NewAllianceInvitation implements Route {
                     $FactionPlayer = MainAPI::getFactionOfPlayer($Player->getName());
                     if (count($FactionPlayer->ally) < $FactionPlayer->max_ally) {
                         if (count($FactionRequest->ally) < $FactionRequest->max_ally) {
-                            if (!MainAPI::areInInvitation($this->Faction->name, $data[1], "alliance")) {
-                                if (MainAPI::makeInvitation($this->Faction->name, $data[1], "alliance")) {
+                            if (!MainAPI::areInInvitation($this->Faction->name, $data[1], InvitationSendEvent::ALLIANCE_TYPE)) {
+                                if (MainAPI::makeInvitation($this->Faction->name, $data[1], InvitationSendEvent::ALLIANCE_TYPE)) {
+                                    (new InvitationSendEvent($Player, $this->Faction->name, $data[1], InvitationSendEvent::ALLIANCE_TYPE))->call();
                                     Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_SEND_INVITATION", ['name' => $data[1]])] );
                                 }else{
                                     $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "ERROR"));

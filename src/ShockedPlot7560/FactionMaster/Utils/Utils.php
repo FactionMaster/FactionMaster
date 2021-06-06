@@ -37,6 +37,8 @@ use pocketmine\Player;
 use pocketmine\plugin\PluginLogger;
 use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Event\MenuOpenEvent;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\Route;
 
@@ -58,14 +60,20 @@ class Utils {
         if ($UserPermissions === null) {
             $UserPermissions = [];
         }
-        if ($UserEntity->rank !== Ids::OWNER_ID && isset($route->PermissionNeed)) {
+        if ($UserEntity instanceof UserEntity && $UserEntity->rank !== Ids::OWNER_ID && isset($route->PermissionNeed)) {
             foreach ($route->PermissionNeed as $Permission) {
                 if (isset($UserPermissions[$Permission]) && $UserPermissions[$Permission]) {
+                    $ev = new MenuOpenEvent($Player, $route);
+                    $ev->call();
+                    if ($ev->isCancelled()) return;
                     $route($Player, $UserEntity, $UserPermissions, $params);
                     return;
                 }
             }
         }
+        $ev = new MenuOpenEvent($Player, $route);
+        $ev->call();
+        if ($ev->isCancelled()) return;
         $route($Player, $UserEntity, $UserPermissions, $params);
     }
 
@@ -74,78 +82,6 @@ class Utils {
             $string = \str_replace("{{".$key."}}", $value, $string);
         }
         return $string;
-    }
-
-    public static function getPermissionData(string $playerName) : array {
-        return [
-            [
-                "text" => self::getText($playerName, "PERMISSION_CHANGE_MEMBER_RANK"),
-                "id" => Ids::PERMISSION_CHANGE_MEMBER_RANK
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_KICK_MEMBER"),
-                "id" => Ids::PERMISSION_KICK_MEMBER
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_ACCEPT_MEMBER_DEMAND"),
-                "id" => Ids::PERMISSION_ACCEPT_MEMBER_DEMAND
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_REFUSE_MEMBER_DEMAND"),
-                "id" => Ids::PERMISSION_REFUSE_MEMBER_DEMAND
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_SEND_MEMBER_INVITATION"),
-                "id" => Ids::PERMISSION_SEND_MEMBER_INVITATION
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_DELETE_PENDING_MEMBER_INVITATION"),
-                "id" => Ids::PERMISSION_DELETE_PENDING_MEMBER_INVITATION
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_ACCEPT_ALLIANCE_DEMAND"),
-                "id" => Ids::PERMISSION_ACCEPT_ALLIANCE_DEMAND
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_REFUSE_ALLIANCE_DEMAND"),
-                "id" => Ids::PERMISSION_REFUSE_ALLIANCE_DEMAND
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_SEND_ALLIANCE_INVITATION"),
-                "id" => Ids::PERMISSION_SEND_ALLIANCE_INVITATION
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION"),
-                "id" => Ids::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS"),
-                "id" => Ids::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_CHANGE_FACTION_MESSAGE"),
-                "id" => Ids::PERMISSION_CHANGE_FACTION_MESSAGE
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_CHANGE_FACTION_DESCRIPTION"),
-                "id" => Ids::PERMISSION_CHANGE_FACTION_DESCRIPTION
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_CHANGE_FACTION_VISIBILITY"),
-                "id" => Ids::PERMISSION_CHANGE_FACTION_VISIBILITY
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_ADD_CLAIM"),
-                "id" => Ids::PERMISSION_ADD_CLAIM
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_REMOVE_CLAIM"),
-                "id" => Ids::PERMISSION_REMOVE_CLAIM
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_CHANGE_MEMBER_RANK"),
-                "id" => Ids::PERMISSION_TP_FACTION_HOME
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_ADD_FACTION_HOME"),
-                "id" => Ids::PERMISSION_ADD_FACTION_HOME
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_DELETE_FACTION_HOME"),
-                "id" => Ids::PERMISSION_DELETE_FACTION_HOME
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_LEVEL_UP"),
-                "id" => Ids::PERMISSION_LEVEL_UP
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_BANK_DEPOSIT"),
-                "id" => Ids::PERMISSION_BANK_DEPOSIT
-            ],[
-                "text" => self::getText($playerName, "PERMISSION_SEE_BANK_HISTORY"),
-                "id" => Ids::PERMISSION_SEE_BANK_HISTORY
-            ]
-        ];
     }
 
     public static function printLogo(PluginLogger $logger) {

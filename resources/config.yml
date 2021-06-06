@@ -27,7 +27,7 @@
  #
 
 # Use only SQLITE or MYSQL
-PROVIDER: "SQLITE"
+PROVIDER: "MYSQL"
 MYSQL_database:
   host: "localhost"
   name: "FactionMaster"
@@ -36,13 +36,8 @@ MYSQL_database:
 SQLITE_database: 
   name: "FactionMaster"
 
-# Enable bank and economy system
-# WARNING, it need EconomyAPI to work
-# true = enable / false = disable
-economy-system: true
-# will be save all the transaction
-# necessary need the economy-system to true
-bank-log: true
+extensions:
+  - "FactionMasterExemple"
 
 xp-win-per-kill: 1
 power-win-per-kill: 2
@@ -55,6 +50,7 @@ allow-no-stuff: false
 default-home-limit: 2
 default-claim-limit: 2
 default-member-limit: 2
+default-ally-limit: 2
 default-power: 0
 default-money: 0
 

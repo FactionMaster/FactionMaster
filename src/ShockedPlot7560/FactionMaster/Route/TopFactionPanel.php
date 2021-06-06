@@ -32,12 +32,10 @@
 
 namespace ShockedPlot7560\FactionMaster\Route;
 
-use jojoe77777\FormAPI\FormAPI;
 use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -58,9 +56,6 @@ class TopFactionPanel implements Route {
         $this->backMenu = RouterFactory::get(MainPanel::SLUG);
     }
 
-    /**
-     * @param array|null $params Give to first item the message to print if wanted
-     */
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
         $this->UserEntity = $User;

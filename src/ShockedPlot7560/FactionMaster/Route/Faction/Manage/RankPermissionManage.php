@@ -37,7 +37,9 @@ use jojoe77777\FormAPI\CustomForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\API\PermissionManager;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Event\PermissionChangeEvent;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
@@ -82,7 +84,7 @@ class RankPermissionManage implements Route {
         $this->UserEntity = $User;
         if (!isset($params[0]) || !\is_int($params[0])) throw new InvalidArgumentException("Please give the rank id in the first item of the \$params");
         $this->rank = $params[0];
-        $this->permissionsData = Utils::getPermissionData($User->name);
+        $this->permissionsData = PermissionManager::getAll();
         $this->permissionsUser = $UserPermissions;
         $this->Faction = MainAPI::getFactionOfPlayer($player->getName());
         $this->permissionsFaction = $this->Faction->permissions[$this->rank];
@@ -90,7 +92,7 @@ class RankPermissionManage implements Route {
         $this->check = [];
         foreach ($this->permissionsData as $key => $permission) {
             if ($User->rank == Ids::OWNER_ID || (isset($this->permissionsUser[$permission['id']]) && $this->permissionsUser[$permission['id']] === true)) {
-                $this->check[] = $permission['text'];
+                $this->check[] = $permission['nameCallable'];
             }else{
                 unset($this->permissionsData[$key]);
             }
@@ -109,6 +111,7 @@ class RankPermissionManage implements Route {
                 $i++;
             }
             if (MainAPI::updatePermissionFaction($this->Faction->name, $this->Faction->permissions)){
+                (new PermissionChangeEvent($Player, $this->Faction, $this->Faction->permissions))->call();
                 Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_PERMISSION_UPDATE")]);
             }else{
                 Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "ERROR")]);
@@ -120,7 +123,7 @@ class RankPermissionManage implements Route {
         $menu = new CustomForm($this->call());
         $menu->setTitle(Utils::getText($this->UserEntity->name, "MANAGE_PERMISSIONS_MAIN_TITLE"));
         foreach ($this->permissionsData as $value) {
-            $menu->addToggle($value['text'], $this->permissionsFaction[$value["id"]] ?? false);
+            $menu->addToggle(call_user_func($value['nameCallable'], $this->UserEntity->name), $this->permissionsFaction[$value["id"]] ?? false);
         }
         return $menu;
     }

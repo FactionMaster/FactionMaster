@@ -36,7 +36,6 @@ use InvalidArgumentException;
 use jojoe77777\FormAPI\ModalForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ConfirmationMenu implements Route {
@@ -49,10 +48,6 @@ class ConfirmationMenu implements Route {
     public function getSlug(): string
     {
         return self::SLUG;
-    }
-
-    public function __construct()
-    {
     }
 
     /**
