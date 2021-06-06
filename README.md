@@ -1,6 +1,7 @@
 # FactionMaster Plugin
 ###### FactionMaster, the faction plugin extensible and modulable to your way
 ## Extension base
+Exemple : [here](https://github.com/ShockedPlot7560/FactionMaster-Extension-Example)
 Your main class must implements [ShockedPlot7560\FactionMaster\API\Extension](https://github.com/ShockedPlot7560/FactionMaster/blob/master/src/ShockedPlot7560/FactionMaster/API/Extension.php)
 The execute() function will be called when the extension is loaded, so please put all the following content in it.
 ## Register route
