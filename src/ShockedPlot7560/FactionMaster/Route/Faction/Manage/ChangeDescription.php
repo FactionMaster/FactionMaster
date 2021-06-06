@@ -100,7 +100,7 @@ class ChangeDescription implements Route {
         $menu = new CustomForm($this->call());
         $menu->setTitle(Utils::getText($this->UserEntity->name, "CHANGE_DESCRIPTION_TITLE"));
         $menu->addLabel($message, $this->Faction->messageFaction);
-        $menu->addInput(Utils::getText($this->UserEntity->name, "CHANGE_DESCRIPTION_INPUT_CONTENT"));
+        $menu->addInput(Utils::getText($this->UserEntity->name, "CHANGE_DESCRIPTION_INPUT_CONTENT"),"",$this->Faction->description);
         return $menu;
     }
 }
