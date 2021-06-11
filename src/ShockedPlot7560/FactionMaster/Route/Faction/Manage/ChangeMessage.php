@@ -38,9 +38,9 @@ use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\MessageChangeEvent;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeMessage implements Route {
@@ -48,7 +48,7 @@ class ChangeMessage implements Route {
     const SLUG = "changeMessage";
 
     public $PermissionNeed = [
-        Ids::PERMISSION_CHANGE_FACTION_MESSAGE
+        PermissionIds::PERMISSION_CHANGE_FACTION_MESSAGE
     ];
     public $backMenu;
 

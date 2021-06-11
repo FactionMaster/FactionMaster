@@ -41,7 +41,6 @@ use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\Alliance\AllianceDemandList;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\Alliance\ManageAllianceDemand;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 
 class AllianceRequestCollection extends ButtonCollection {
 
@@ -52,7 +51,7 @@ class AllianceRequestCollection extends ButtonCollection {
         parent::__construct(self::SLUG);
         $this->registerCallable(self::SLUG, function (InvitationEntity $Request) {
             $this->register(new AcceptAlly($Request));
-            $this->register(new DeleteRequest($Request, AllianceDemandList::SLUG, ManageAllianceDemand::SLUG, [Ids::PERMISSION_REFUSE_ALLIANCE_DEMAND]));
+            $this->register(new DeleteRequest($Request, AllianceDemandList::SLUG, ManageAllianceDemand::SLUG, [PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND]));
             $this->register(new Back(AllianceDemandList::SLUG));
         });
     }

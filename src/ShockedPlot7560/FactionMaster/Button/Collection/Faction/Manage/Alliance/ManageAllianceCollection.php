@@ -40,11 +40,11 @@ use ShockedPlot7560\FactionMaster\Button\Buttons\Back;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\AllianceBreakEvent;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\Alliance\AllianceMainMenu;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\Alliance\ManageAlliance;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageAllianceCollection extends ButtonCollection {
@@ -79,7 +79,7 @@ class ManageAllianceCollection extends ButtonCollection {
                     ]);
                 },
                 [
-                    Ids::PERMISSION_BREAK_ALLIANCE
+                    PermissionIds::PERMISSION_BREAK_ALLIANCE
                 ]
             ));
             $this->register(new Back(AllianceMainMenu::SLUG));

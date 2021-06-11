@@ -38,9 +38,9 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\DescriptionChangeEvent;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeDescription implements Route {
@@ -48,7 +48,7 @@ class ChangeDescription implements Route {
     const SLUG = "changeDescription";
 
     public $PermissionNeed = [
-        Ids::PERMISSION_CHANGE_FACTION_DESCRIPTION
+        PermissionIds::PERMISSION_CHANGE_FACTION_DESCRIPTION
     ];
     public $backMenu;
 

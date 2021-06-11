@@ -30,35 +30,35 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\Faction;
+namespace ShockedPlot7560\FactionMaster\Permission;
 
-use ShockedPlot7560\FactionMaster\Button\Button;
-use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMainMembers;
-use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
+class Permission implements PermissionInterface {
 
-class ManageMembers extends Button {
+    private $slug;
+    private $callable;
+    private $id;
 
-    public function __construct()
+    public function __construct(string $slug, callable $callable, int $id) 
     {
-        parent::__construct(
-            "manageMembers", 
-            function($Player) {
-                return Utils::getText($Player, "BUTTON_MANAGE_MEMBERS");
-            },
-            function($Player) {
-                Utils::processMenu(RouterFactory::get(ManageMainMembers::SLUG), $Player);
-            }, 
-            [
-                PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND,
-                PermissionIds::PERMISSION_REFUSE_MEMBER_DEMAND,
-                PermissionIds::PERMISSION_DELETE_PENDING_MEMBER_INVITATION,
-                PermissionIds::PERMISSION_KICK_MEMBER,
-                PermissionIds::PERMISSION_CHANGE_MEMBER_RANK,
-                PermissionIds::PERMISSION_SEND_MEMBER_INVITATION
-            ]
-        );
+        $this->slug = $slug;
+        $this->callable = $callable;
+        $this->id = $id;
+    }
+
+    public function getId() : int {
+        return $this->id;
+    }
+
+    public function getSlug() : string {
+        return $this->slug;
+    } 
+
+    public function getCallable() : callable {
+        return $this->callable;
+    }
+
+    public function getName(string $playerName) : string {
+        return call_user_func($this->getCallable(), $playerName);
     }
 
 }

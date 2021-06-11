@@ -37,11 +37,11 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Button;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\MemberKickOutEvent;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMember as MembersManageMember;
 use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMembersList;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class KickOut extends Button {
@@ -72,7 +72,7 @@ class KickOut extends Button {
                 ]);
             },
             [
-                Ids::PERMISSION_KICK_MEMBER
+                PermissionIds::PERMISSION_KICK_MEMBER
             ]
         );
     }

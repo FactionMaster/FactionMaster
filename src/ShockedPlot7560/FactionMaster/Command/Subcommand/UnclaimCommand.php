@@ -37,6 +37,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Event\FactionUnclaimEvent;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -59,7 +60,7 @@ class UnclaimCommand extends BaseSubCommand {
             return;
         }elseif ($factionClaim === $UserEntity->faction) {
             $permissions = MainAPI::getMemberPermission($sender->getName());
-            if ((isset($permissions[Ids::PERMISSION_REMOVE_CLAIM]) && $permissions[Ids::PERMISSION_REMOVE_CLAIM]) || $UserEntity->rank == Ids::OWNER_ID) {
+            if (Utils::haveAccess($permissions, $UserEntity, PermissionIds::PERMISSION_REMOVE_CLAIM)) {
                 if (MainAPI::removeClaim($sender->getPlayer(), $UserEntity->faction)) {
                     (new FactionUnclaimEvent($Player, $factionClaim, $Chunk))->call();
                     $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_UNCLAIM"));

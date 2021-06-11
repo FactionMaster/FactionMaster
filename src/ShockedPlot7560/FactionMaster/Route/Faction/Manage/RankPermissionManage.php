@@ -40,6 +40,8 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\API\PermissionManager;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\PermissionChangeEvent;
+use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
@@ -50,7 +52,7 @@ class RankPermissionManage implements Route {
     const SLUG = "rankPermissionManage";
 
     public $PermissionNeed = [
-        Ids::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS
+        PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS
     ];
     public $backMenu;
 
@@ -84,15 +86,15 @@ class RankPermissionManage implements Route {
         $this->UserEntity = $User;
         if (!isset($params[0]) || !\is_int($params[0])) throw new InvalidArgumentException("Please give the rank id in the first item of the \$params");
         $this->rank = $params[0];
-        $this->permissionsData = PermissionManager::getAll();
+        $this->permissionsData = Main::getInstance()->getPermissionManager()->getAll();
         $this->permissionsUser = $UserPermissions;
         $this->Faction = MainAPI::getFactionOfPlayer($player->getName());
         $this->permissionsFaction = $this->Faction->permissions[$this->rank];
 
         $this->check = [];
         foreach ($this->permissionsData as $key => $permission) {
-            if ($User->rank == Ids::OWNER_ID || (isset($this->permissionsUser[$permission['id']]) && $this->permissionsUser[$permission['id']] === true)) {
-                $this->check[] = $permission['nameCallable'];
+            if ($User->rank == Ids::OWNER_ID || (isset($this->permissionsUser[$permission->getId()]) && $this->permissionsUser[$permission->getId()] === true)) {
+                $this->check[] = $permission->getName($player->getName());
             }else{
                 unset($this->permissionsData[$key]);
             }
@@ -107,7 +109,7 @@ class RankPermissionManage implements Route {
             if ($data === null) return;
             $i =0;
             foreach ($this->permissionsData as $key => $permissionDa) {
-                $this->Faction->permissions[$this->rank][$permissionDa['id']] = $data[$i];
+                $this->Faction->permissions[$this->rank][$permissionDa->getId()] = $data[$i];
                 $i++;
             }
             if (MainAPI::updatePermissionFaction($this->Faction->name, $this->Faction->permissions)){
@@ -123,7 +125,7 @@ class RankPermissionManage implements Route {
         $menu = new CustomForm($this->call());
         $menu->setTitle(Utils::getText($this->UserEntity->name, "MANAGE_PERMISSIONS_MAIN_TITLE"));
         foreach ($this->permissionsData as $value) {
-            $menu->addToggle(call_user_func($value['nameCallable'], $this->UserEntity->name), $this->permissionsFaction[$value["id"]] ?? false);
+            $menu->addToggle($value->getName($this->UserEntity->name), $this->permissionsFaction[$value->getId()] ?? false);
         }
         return $menu;
     }

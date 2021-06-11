@@ -38,6 +38,7 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Event\FactionClaimEvent;
 use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -55,7 +56,7 @@ class ClaimCommand extends BaseSubCommand {
             $sender->sendMessage(Utils::getText($sender->getName(), "NEED_FACTION"));
             return;
         }
-        if ((isset($permissions[Ids::PERMISSION_ADD_CLAIM]) && $permissions[Ids::PERMISSION_ADD_CLAIM]) || $UserEntity->rank == Ids::OWNER_ID) {
+        if (Utils::haveAccess($permissions, $UserEntity, PermissionIds::PERMISSION_ADD_CLAIM)) {
             $Player = $sender->getPlayer();
             $Chunk = $Player->getLevel()->getChunkAtPosition($Player);
             $X = $Chunk->getX();
@@ -83,7 +84,7 @@ class ClaimCommand extends BaseSubCommand {
                             $ItemCost->setValue($claimCost["value"] - (Main::getInstance()->config->get('decrease-factor') * count($Claims)));
                             break;
                     }
-                    if (($result = $ItemCost->executeCost($FactionPlayer->name))) {
+                    if (($result = $ItemCost->executeCost($FactionPlayer->name)) === true) {
                         if (MainAPI::addClaim($sender->getPlayer(), $UserEntity->faction)) {
                             (new FactionClaimEvent($sender, $FactionPlayer, $Chunk, $ItemCost->getType(), $ItemCost->getValue()))->call();
                             $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_CLAIM"));
@@ -93,6 +94,7 @@ class ClaimCommand extends BaseSubCommand {
                             return;
                         }
                     }else{
+                        \var_dump($result);
                         $sender->sendMessage(Utils::getText($sender->getName(), $result));
                         return;
                     }

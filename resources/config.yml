@@ -36,9 +36,6 @@ MYSQL_database:
 SQLITE_database: 
   name: "FactionMaster"
 
-extensions:
-  - "FactionMasterExemple"
-
 xp-win-per-kill: 1
 power-win-per-kill: 2
 power-loose-per-death: 2

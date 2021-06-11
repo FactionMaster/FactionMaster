@@ -38,12 +38,12 @@ use ShockedPlot7560\FactionMaster\Button\Button;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionJoinEvent;
 use ShockedPlot7560\FactionMaster\Event\InvitationAcceptEvent;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\Invitations\DemandList;
 use ShockedPlot7560\FactionMaster\Route\Invitations\ManageDemand;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class AcceptMemberToFac extends Button {
@@ -81,7 +81,7 @@ class AcceptMemberToFac extends Button {
                 ]);
             },
             [
-                Ids::PERMISSION_ACCEPT_MEMBER_DEMAND
+                PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND
             ]
         );
     }

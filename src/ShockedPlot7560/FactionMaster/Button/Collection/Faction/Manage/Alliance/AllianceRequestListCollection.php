@@ -37,9 +37,9 @@ use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
 use ShockedPlot7560\FactionMaster\Button\Buttons\Back;
 use ShockedPlot7560\FactionMaster\Button\Buttons\RequestListItem;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\Alliance\AllianceMainMenu;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\Alliance\ManageAllianceDemand;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 
 class AllianceRequestListCollection extends ButtonCollection {
 
@@ -50,7 +50,7 @@ class AllianceRequestListCollection extends ButtonCollection {
         parent::__construct(self::SLUG);
         $this->registerCallable(self::SLUG, function (array $Requests) {
             foreach ($Requests as $Request) {
-                $this->register(new RequestListItem($Request, ManageAllianceDemand::SLUG, [Ids::PERMISSION_ACCEPT_ALLIANCE_DEMAND, Ids::PERMISSION_REFUSE_ALLIANCE_DEMAND]));
+                $this->register(new RequestListItem($Request, ManageAllianceDemand::SLUG, [PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND, PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND]));
             }
             $this->register(new Back(AllianceMainMenu::SLUG));
         });

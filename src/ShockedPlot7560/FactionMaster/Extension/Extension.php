@@ -30,7 +30,7 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\API;
+namespace ShockedPlot7560\FactionMaster\Extension;
 
 interface Extension {
 
@@ -49,4 +49,6 @@ interface Extension {
      * If the array key translate are not saved in the Main plugin, il will not be load
      */
     public function getLangConfig(): array;
+
+    public function getExtensionName(): string;
 }

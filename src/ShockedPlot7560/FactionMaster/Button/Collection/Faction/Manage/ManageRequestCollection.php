@@ -39,9 +39,9 @@ use ShockedPlot7560\FactionMaster\Button\Buttons\Back;
 use ShockedPlot7560\FactionMaster\Button\Buttons\DeleteRequest;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\Faction\Members\Invitations\ManageMemberDemand;
 use ShockedPlot7560\FactionMaster\Route\Faction\Members\Invitations\MemberDemandList;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 
 class ManageRequestCollection extends ButtonCollection {
 
@@ -52,7 +52,7 @@ class ManageRequestCollection extends ButtonCollection {
         parent::__construct(self::SLUG);
         $this->registerCallable(self::SLUG, function (InvitationEntity $Request) {
             $this->register(new AcceptMemberToFac($Request));
-            $this->register(new DeleteRequest($Request, MemberDemandList::SLUG, ManageMemberDemand::SLUG, [Ids::PERMISSION_REFUSE_MEMBER_DEMAND]));
+            $this->register(new DeleteRequest($Request, MemberDemandList::SLUG, ManageMemberDemand::SLUG, [PermissionIds::PERMISSION_REFUSE_MEMBER_DEMAND]));
             $this->register(new Back(MemberDemandList::SLUG));
         });
     }

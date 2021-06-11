@@ -38,10 +38,10 @@ use ShockedPlot7560\FactionMaster\Button\Button;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Event\AllianceCreateEvent;
 use ShockedPlot7560\FactionMaster\Event\InvitationAcceptEvent;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\Alliance\AllianceDemandList;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class AcceptAlly extends Button {
@@ -85,7 +85,7 @@ class AcceptAlly extends Button {
                 ]);
             },
             [
-                Ids::PERMISSION_ACCEPT_ALLIANCE_DEMAND
+                PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND
             ]
         );
     }

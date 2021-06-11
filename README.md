@@ -3,8 +3,11 @@
 ## Extension base
 Exemple : [here](https://github.com/ShockedPlot7560/FactionMaster-Extension-Example)
 
-Your main class must implements [ShockedPlot7560\FactionMaster\API\Extension](https://github.com/ShockedPlot7560/FactionMaster/blob/master/src/ShockedPlot7560/FactionMaster/API/Extension.php)
+Your main class must implements [ShockedPlot7560\FactionMaster\Extension\Extension](https://github.com/ShockedPlot7560/FactionMaster/blob/master/src/ShockedPlot7560/FactionMaster/Extension/Extension.php)
 The execute() function will be called when the extension is loaded, so please put all the following content in it.
+
+**The registerExtension of [ShockedPlot7560\FactionMaster\Extension\ExtensionManager](https://github.com/ShockedPlot7560/FactionMaster/blob/master/src/ShockedPlot7560/FactionMaster/Extension/ExtensionManager.php) must be in the onLoad() function
+
 ## Register route
 ```php
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
@@ -66,15 +69,13 @@ $ButtonCollection->registerCallable("FactionMasterBank", function() use ($Button
 ## Register new permission
 Register new permissions that will be proposed in the Permissions management menu according to the grades
 ```php
-use ShockedPlot7560\FactionMaster\API\PermissionManager;
+use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Permission\Permission;
 
-PermissionManager::registerPermission(
-    "PERMISSION_SLUG", 
-    function(string $playerName) { 
-        return //Permission description; 
-    }, 
-    $ID
-);
+$PermissionManager = FactionMasterMain::getInstance()->getPermissionManager();
+$PermissionManager->registerPermission(new Permission(
+    //TODO: put the good argument
+), $overrideStatus);
 ```
 ## Register new translation SLUG
 On Main class of the Extension, the getLangConfig() function, return an array contain the config like :

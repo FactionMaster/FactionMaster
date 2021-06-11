@@ -34,9 +34,9 @@ namespace ShockedPlot7560\FactionMaster\Button\Buttons\Faction;
 
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\Button;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMembersList;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageMembersMain extends Button {
@@ -52,8 +52,8 @@ class ManageMembersMain extends Button {
                 Utils::processMenu(RouterFactory::get(ManageMembersList::SLUG), $Player);
             },
             [
-                Ids::PERMISSION_CHANGE_MEMBER_RANK,
-                Ids::PERMISSION_KICK_MEMBER
+                PermissionIds::PERMISSION_CHANGE_MEMBER_RANK,
+                PermissionIds::PERMISSION_KICK_MEMBER
             ]
         );
     }
