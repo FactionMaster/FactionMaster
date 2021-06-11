@@ -56,9 +56,6 @@ class ClaimCommand extends BaseSubCommand {
             $sender->sendMessage(Utils::getText($sender->getName(), "NEED_FACTION"));
             return;
         }
-        \var_dump($permissions);
-        \var_dump(PermissionIds::PERMISSION_ADD_CLAIM);
-        \var_dump((int)$UserEntity->rank);
         if (Utils::haveAccess($permissions, $UserEntity, PermissionIds::PERMISSION_ADD_CLAIM)) {
             $Player = $sender->getPlayer();
             $Chunk = $Player->getLevel()->getChunkAtPosition($Player);
@@ -87,7 +84,7 @@ class ClaimCommand extends BaseSubCommand {
                             $ItemCost->setValue($claimCost["value"] - (Main::getInstance()->config->get('decrease-factor') * count($Claims)));
                             break;
                     }
-                    if (($result = $ItemCost->executeCost($FactionPlayer->name))) {
+                    if (($result = $ItemCost->executeCost($FactionPlayer->name)) === true) {
                         if (MainAPI::addClaim($sender->getPlayer(), $UserEntity->faction)) {
                             (new FactionClaimEvent($sender, $FactionPlayer, $Chunk, $ItemCost->getType(), $ItemCost->getValue()))->call();
                             $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_CLAIM"));
@@ -97,6 +94,7 @@ class ClaimCommand extends BaseSubCommand {
                             return;
                         }
                     }else{
+                        \var_dump($result);
                         $sender->sendMessage(Utils::getText($sender->getName(), $result));
                         return;
                     }

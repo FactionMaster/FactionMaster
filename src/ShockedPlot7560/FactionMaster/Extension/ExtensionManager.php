@@ -50,6 +50,7 @@ class ExtensionManager {
 
     public function load() {
         $Logger = Main::$logger;
+        if (count($this->extensions)> 0) $Logger->info("§7Loading FactionMaster extension started");
         foreach ($this->extensions as $extension) {
             $Logger->info("§fLoading §7" . $extension->getExtensionName());
             $extension->execute();
@@ -66,5 +67,6 @@ class ExtensionManager {
             }
             $Logger->info("§7" . $extension->getExtensionName() . " §floading finish");
         }
+        if (count($this->extensions)> 0) $Logger->info("§7Loading FactionMaster extension finish");
     }
 }
