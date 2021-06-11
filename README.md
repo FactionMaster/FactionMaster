@@ -6,7 +6,7 @@ Exemple : [here](https://github.com/ShockedPlot7560/FactionMaster-Extension-Exam
 Your main class must implements [ShockedPlot7560\FactionMaster\Extension\Extension](https://github.com/ShockedPlot7560/FactionMaster/blob/master/src/ShockedPlot7560/FactionMaster/Extension/Extension.php)
 The execute() function will be called when the extension is loaded, so please put all the following content in it.
 
-**The registerExtension of [ShockedPlot7560\FactionMaster\Extension\ExtensionManager](https://github.com/ShockedPlot7560/FactionMaster/blob/master/src/ShockedPlot7560/FactionMaster/Extension/ExtensionManager.php) must be in the onLoad() function
+**The registerExtension of [ShockedPlot7560\FactionMaster\Extension\ExtensionManager](https://github.com/ShockedPlot7560/FactionMaster/blob/master/src/ShockedPlot7560/FactionMaster/Extension/ExtensionManager.php) must be in the onLoad() function**
 
 ## Register route
 ```php
