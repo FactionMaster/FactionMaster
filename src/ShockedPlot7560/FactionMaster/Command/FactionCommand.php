@@ -36,6 +36,7 @@ use CortexPE\Commando\BaseCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\ClaimCommand;
+use ShockedPlot7560\FactionMaster\Command\Subcommand\ClaimInfoCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\DelhomeCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\FactionCreateCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\FactionManageCommand;
@@ -65,7 +66,8 @@ class FactionCommand extends BaseCommand{
         $this->registerSubCommand(new HomeCommand("home", Utils::getText("", "COMMAND_HOME_DESCRIPTION")));
         $this->registerSubCommand(new MapCommand("map", Utils::getText("", "COMMAND_MAP_DESCRIPTION")));
         $this->registerSubCommand(new HelpCommand("help", Utils::getText("", "COMMAND_HELP_DESCRIPTION")));
-        $this->registerSubCommand(new InfoCommand("info", Utils::getText("", "COMMAND_HELP_DESCRIPTION")));
+        $this->registerSubCommand(new InfoCommand("info", Utils::getText("", "COMMAND_INFO_DESCRIPTION")));
+        $this->registerSubCommand(new ClaimInfoCommand("claiminfo", Utils::getText("", "COMMAND_CLAIM_INFO_DESCRIPTION")));
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args) : void {

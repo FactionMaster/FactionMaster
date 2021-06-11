@@ -77,7 +77,7 @@ class InfoCommand extends BaseSubCommand {
                 $visibility = "§6" . Utils::getText($sender->getName(), "INVITATION_VISIBILITY_NAME");
                 break;
         }
-        $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_INFO_VISIBILITY", ['ally' => $visibility]));
+        $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_INFO_VISIBILITY", ['visibility' => $visibility]));
         $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_INFO_LEVEL", ['level' => $Faction->level, 'power' => $Faction->power]));
         $Ally = "";
         foreach ($Faction->ally as $key => $ally) {

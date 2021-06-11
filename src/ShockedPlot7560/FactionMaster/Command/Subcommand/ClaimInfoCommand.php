@@ -36,24 +36,32 @@ use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Event\FactionClaimEvent;
+use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\HomeListPanel;
-use ShockedPlot7560\FactionMaster\Router\RouterFactory;
+use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class HomeCommand extends BaseSubCommand {
+class ClaimInfoCommand extends BaseSubCommand {
 
     protected function prepare(): void {}
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
         if (!$sender instanceof Player) return;
-        $permissions = MainAPI::getMemberPermission($sender->getName());
-        $UserEntity = MainAPI::getUser($sender->getName());
-        if (Utils::haveAccess($permissions, $UserEntity, PermissionIds::PERMISSION_TP_FACTION_HOME)) {
-            Utils::processMenu(RouterFactory::get(HomeListPanel::SLUG), $sender->getPlayer());
+        $Player = $sender->getPlayer();
+        $Chunk = $Player->getLevel()->getChunkAtPosition($Player);
+        $X = $Chunk->getX();
+        $Z = $Chunk->getZ();
+        $World = $Player->getLevel()->getName();
+
+        $FactionClaim = MainAPI::getFactionClaim($World, $X, $Z);
+        if ($FactionClaim !== null) {
+            Main::getInstance()->getServer()->dispatchCommand($Player, "f info " . $FactionClaim);
+            return;
         }else{
-            $sender->sendMessage(Utils::getText($sender->getName(), "DONT_PERMISSION"));
+            $sender->sendMessage(Utils::getText($sender->getName(), "NOT_CLAIMED"));
+            return;
         }
     }
 

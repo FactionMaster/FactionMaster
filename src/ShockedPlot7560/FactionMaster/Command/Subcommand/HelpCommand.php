@@ -56,7 +56,8 @@ class HelpCommand extends BaseSubCommand {
         $sender->sendMessage(" §8>> §r§b/f create: §7" . Utils::getText($sender->getName(), "COMMAND_CREATE_DESCRIPTION"));
         $sender->sendMessage(" §8>> §r§b/f map: §7" . Utils::getText($sender->getName(), "COMMAND_MAP_DESCRIPTION"));
         $sender->sendMessage(" §8>> §r§b/f help: §7" . Utils::getText($sender->getName(), "COMMAND_HELP_DESCRIPTION"));
-        $sender->sendMessage(" §8>> §r§b/f info <:name>: §7" . Utils::getText($sender->getName(), "COMMAND_HELP_DESCRIPTION"));
+        $sender->sendMessage(" §8>> §r§b/f info <:name>: §7" . Utils::getText($sender->getName(), "COMMAND_INFO_DESCRIPTION_GLOBAL"));
+        $sender->sendMessage(" §8>> §r§b/f claiminfo: §7" . Utils::getText($sender->getName(), "COMMAND_CLAIM_INFO_DESCRIPTION"));
     }
 
 }
