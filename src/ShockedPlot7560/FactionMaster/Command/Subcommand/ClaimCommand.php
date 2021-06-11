@@ -38,6 +38,7 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Event\FactionClaimEvent;
 use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -55,7 +56,10 @@ class ClaimCommand extends BaseSubCommand {
             $sender->sendMessage(Utils::getText($sender->getName(), "NEED_FACTION"));
             return;
         }
-        if ((isset($permissions[Ids::PERMISSION_ADD_CLAIM]) && $permissions[Ids::PERMISSION_ADD_CLAIM]) || $UserEntity->rank == Ids::OWNER_ID) {
+        \var_dump($permissions);
+        \var_dump(PermissionIds::PERMISSION_ADD_CLAIM);
+        \var_dump((int)$UserEntity->rank);
+        if (Utils::haveAccess($permissions, $UserEntity, PermissionIds::PERMISSION_ADD_CLAIM)) {
             $Player = $sender->getPlayer();
             $Chunk = $Player->getLevel()->getChunkAtPosition($Player);
             $X = $Chunk->getX();

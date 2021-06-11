@@ -42,11 +42,11 @@ use ShockedPlot7560\FactionMaster\Button\Buttons\RequestPending;
 use ShockedPlot7560\FactionMaster\Button\Buttons\SendInvitation;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\Alliance\AllianceDemandList;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\Alliance\AllianceInvitationList;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\Alliance\NewAllianceInvitation;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ManageFactionMain;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 
 class ManageAllianceMainCollection extends ButtonCollection {
 
@@ -59,11 +59,11 @@ class ManageAllianceMainCollection extends ButtonCollection {
             foreach ($Faction->ally as $Name) {
                 $this->register(new Ally(MainAPI::getFaction($Name)));
             }
-            $this->register(new SendInvitation(NewAllianceInvitation::SLUG, [Ids::PERMISSION_SEND_ALLIANCE_INVITATION]));
-            $this->register(new InvitationPending(AllianceInvitationList::SLUG, [Ids::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION]));
-            $this->register(new RequestPending(AllianceDemandList::SLUG, [Ids::PERMISSION_ACCEPT_ALLIANCE_DEMAND, Ids::PERMISSION_REFUSE_ALLIANCE_DEMAND]));
+            $this->register(new SendInvitation(NewAllianceInvitation::SLUG, [PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION]));
+            $this->register(new InvitationPending(AllianceInvitationList::SLUG, [PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION]));
+            $this->register(new RequestPending(AllianceDemandList::SLUG, [PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND, PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND]));
             $this->register(new Back(ManageFactionMain::SLUG));
-        });
+        }); 
     }
 
     public function init(Player $Player, UserEntity $User, FactionEntity $Faction) : self {

@@ -32,7 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Permission;
 
-class Permission {
+class Permission implements PermissionInterface {
 
     private $slug;
     private $callable;

@@ -38,15 +38,15 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\ButtonFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\Faction\Manage\ManageMembersCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\Route;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageMembersList implements Route {
 
     const SLUG = "manageMembersList";
 
-    public $PermissionNeed = [Ids::PERMISSION_CHANGE_MEMBER_RANK, Ids::PERMISSION_KICK_MEMBER];
+    public $PermissionNeed = [PermissionIds::PERMISSION_CHANGE_MEMBER_RANK, PermissionIds::PERMISSION_KICK_MEMBER];
 
     /** @var \ShockedPlot7560\FactionMaster\Button\ButtonCollection */
     private $Collection;

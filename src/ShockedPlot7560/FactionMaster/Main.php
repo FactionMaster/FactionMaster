@@ -40,7 +40,7 @@ use ShockedPlot7560\FactionMaster\Button\ButtonFactory;
 use ShockedPlot7560\FactionMaster\Command\FactionCommand;
 use ShockedPlot7560\FactionMaster\Database\Database;
 use ShockedPlot7560\FactionMaster\Extension\ExtensionManager;
-use ShockedPlot7560\FactionMaster\Extension\PermissionManager;
+use ShockedPlot7560\FactionMaster\Permission\PermissionManager;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -61,8 +61,10 @@ class Main extends PluginBase implements Listener{
     public $EconomyAPI;
     /** @var Config */
     public $levelConfig;
-    /** @var \ShockedPlot7560\FactionMaster\Extension\ExtensionManager */
+    /** @var ExtensionManager */
     private $ExtensionManager;
+    /** @var PermissionManager */
+    private $PermissionManager;
 
     public function onLoad()
     {
@@ -76,17 +78,16 @@ class Main extends PluginBase implements Listener{
         self::$logger->info("Initialization and saving of the database");
         $this->Database = new Database($this);
 
-        
         self::$logger->info("Loading the global structure");
         RouterFactory::init();
         RewardFactory::init();
         ButtonFactory::init();
-        PermissionManager::init();
     }
 
     public function onEnable()
     {
         $this->init();
+        $this->getPermissionManager();
         $this->getExtensionManager()->load();
     }
 
@@ -131,5 +132,10 @@ class Main extends PluginBase implements Listener{
     public function getExtensionManager() : ?ExtensionManager {
         if($this->ExtensionManager === null) $this->ExtensionManager = new ExtensionManager();
         return $this->ExtensionManager;
+    }
+
+    public function getPermissionManager() : ?PermissionManager {
+        if($this->PermissionManager === null) $this->PermissionManager = new PermissionManager();
+        return $this->PermissionManager;
     }
 }

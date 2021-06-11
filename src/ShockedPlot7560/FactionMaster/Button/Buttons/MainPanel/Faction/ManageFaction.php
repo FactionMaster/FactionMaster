@@ -33,9 +33,9 @@
 namespace ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\Faction;
 
 use ShockedPlot7560\FactionMaster\Button\Button;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ManageFactionMain;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageFaction extends Button {
@@ -51,15 +51,15 @@ class ManageFaction extends Button {
                 Utils::processMenu(RouterFactory::get(ManageFactionMain::SLUG), $Player);
             }, 
             [
-                Ids::PERMISSION_BREAK_ALLIANCE,
-                Ids::PERMISSION_SEND_ALLIANCE_INVITATION,
-                Ids::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
-                Ids::PERMISSION_REFUSE_ALLIANCE_DEMAND,
-                Ids::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION,
-                Ids::PERMISSION_CHANGE_FACTION_DESCRIPTION,
-                Ids::PERMISSION_CHANGE_FACTION_MESSAGE,
-                Ids::PERMISSION_CHANGE_FACTION_VISIBILITY,
-                Ids::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS
+                PermissionIds::PERMISSION_BREAK_ALLIANCE,
+                PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION,
+                PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
+                PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
+                PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION,
+                PermissionIds::PERMISSION_CHANGE_FACTION_DESCRIPTION,
+                PermissionIds::PERMISSION_CHANGE_FACTION_MESSAGE,
+                PermissionIds::PERMISSION_CHANGE_FACTION_VISIBILITY,
+                PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS
             ]
         );
     }

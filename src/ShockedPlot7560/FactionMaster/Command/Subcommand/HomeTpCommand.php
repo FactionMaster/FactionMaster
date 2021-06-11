@@ -39,6 +39,7 @@ use pocketmine\math\Vector3;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Event\FactionHomeTpEvent;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -57,7 +58,7 @@ class HomeTpCommand extends BaseSubCommand {
         }
         $permissions = MainAPI::getMemberPermission($sender->getName());
         $UserEntity = MainAPI::getUser($sender->getName());
-        if ((isset($permissions[Ids::PERMISSION_TP_FACTION_HOME]) && $permissions[Ids::PERMISSION_TP_FACTION_HOME]) || $UserEntity->rank == Ids::OWNER_ID) {
+        if (Utils::haveAccess($permissions, $UserEntity, PermissionIds::PERMISSION_TP_FACTION_HOME)) {
             $Home = MainAPI::getFactionHome($UserEntity->faction, $args["name"]);
             if ($Home !== null) {
                 $sender->teleport(new Vector3($Home["x"], $Home["y"], $Home['z']));

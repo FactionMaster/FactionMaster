@@ -60,9 +60,9 @@ class Utils {
         if ($UserPermissions === null) {
             $UserPermissions = [];
         }
-        if ($UserEntity instanceof UserEntity && $UserEntity->rank !== Ids::OWNER_ID && isset($route->PermissionNeed)) {
+        if ($UserEntity instanceof UserEntity && isset($route->PermissionNeed)) {
             foreach ($route->PermissionNeed as $Permission) {
-                if (isset($UserPermissions[$Permission]) && $UserPermissions[$Permission]) {
+                if (self::haveAccess($UserPermissions, $UserEntity, $Permission)){
                     $ev = new MenuOpenEvent($Player, $route);
                     $ev->call();
                     if ($ev->isCancelled()) return;
@@ -138,5 +138,12 @@ class Utils {
 
     public static function getXpLevel(int $level) : int {
         return 1000*pow(1.09, $level);
+    }
+
+    public static function haveAccess(array $permission, UserEntity $UserEntity, int $id) : bool {
+        if ((int)$UserEntity->rank === Ids::OWNER_ID) return true;
+        $PermissionManager = Main::getInstance()->getPermissionManager();
+        if (!$PermissionManager->isRegister($id)) return false;
+        return (isset($permission[$id]) && $permission[$id]);
     }
 }

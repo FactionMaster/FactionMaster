@@ -37,9 +37,9 @@ use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
 use ShockedPlot7560\FactionMaster\Button\Buttons\Back;
 use ShockedPlot7560\FactionMaster\Button\Buttons\RequestListItem;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\Faction\Members\Invitations\ManageMemberDemand;
 use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMainMembers;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 
 class ManageRequestListCollection extends ButtonCollection {
 
@@ -50,7 +50,7 @@ class ManageRequestListCollection extends ButtonCollection {
         parent::__construct(self::SLUG);
         $this->registerCallable(self::SLUG, function (array $Requests) {
             foreach ($Requests as $Request) {
-                $this->register(new RequestListItem($Request, ManageMemberDemand::SLUG, [Ids::PERMISSION_ACCEPT_MEMBER_DEMAND, Ids::PERMISSION_ACCEPT_MEMBER_DEMAND]));
+                $this->register(new RequestListItem($Request, ManageMemberDemand::SLUG, [PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND, PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND]));
             }
             $this->register(new Back(ManageMainMembers::SLUG));
         });

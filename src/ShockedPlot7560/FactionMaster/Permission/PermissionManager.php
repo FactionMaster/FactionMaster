@@ -30,61 +30,76 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\Extension;
+namespace ShockedPlot7560\FactionMaster\Permission;
 
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-/**
- * @deprecated
- */
 class PermissionManager {
 
-    /** @var array[] */
-    private static $list;
+    const PERMISSION_CHANGE_MEMBER_RANK = "PERMISSION_CHANGE_MEMBER_RANK";
+    const PERMISSION_KICK_MEMBER = "PERMISSION_KICK_MEMBER";
+    const PERMISSION_ACCEPT_MEMBER_DEMAND = "PERMISSION_ACCEPT_MEMBER_DEMAND";
+    const PERMISSION_REFUSE_MEMBER_DEMAND = "PERMISSION_REFUSE_MEMBER_DEMAND";
+    const PERMISSION_SEND_MEMBER_INVITATION = "PERMISSION_SEND_MEMBER_INVITATION";
+    const PERMISSION_DELETE_PENDING_MEMBER_INVITATION = "PERMISSION_DELETE_PENDING_MEMBER_INVITATION";
+    const PERMISSION_ACCEPT_ALLIANCE_DEMAND = "PERMISSION_ACCEPT_ALLIANCE_DEMAND";
+    const PERMISSION_REFUSE_ALLIANCE_DEMAND = "PERMISSION_REFUSE_ALLIANCE_DEMAND";
+    const PERMISSION_SEND_ALLIANCE_INVITATION = "PERMISSION_SEND_ALLIANCE_INVITATION";
+    const PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION = "PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION";
+    const PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS = "PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS";
+    const PERMISSION_CHANGE_FACTION_MESSAGE = "PERMISSION_CHANGE_FACTION_MESSAGE";
+    const PERMISSION_CHANGE_FACTION_DESCRIPTION = "PERMISSION_CHANGE_FACTION_DESCRIPTION";
+    const PERMISSION_CHANGE_FACTION_VISIBILITY = "PERMISSION_CHANGE_FACTION_VISIBILITY";
+    const PERMISSION_ADD_CLAIM = "PERMISSION_ADD_CLAIM";
+    const PERMISSION_REMOVE_CLAIM = "PERMISSION_REMOVE_CLAIM";
+    const PERMISSION_ADD_FACTION_HOME = "PERMISSION_ADD_FACTION_HOME";
+    const PERMISSION_DELETE_FACTION_HOME = "PERMISSION_DELETE_FACTION_HOME";
+    const PERMISSION_LEVEL_UP = "PERMISSION_LEVEL_UP";
 
-    public static function init() : void {
-        self::registerPermission("PERMISSION_CHANGE_MEMBER_RANK", function(string $playerName) { return Utils::getText($playerName, "PERMISSION_CHANGE_MEMBER_RANK");}, Ids::PERMISSION_CHANGE_MEMBER_RANK);
-        self::registerPermission("PERMISSION_KICK_MEMBER", function(string $playerName) { return Utils::getText($playerName, "PERMISSION_KICK_MEMBER");}, Ids::PERMISSION_KICK_MEMBER);
-        self::registerPermission("PERMISSION_ACCEPT_MEMBER_DEMAND", function(string $playerName) { return Utils::getText($playerName, "PERMISSION_ACCEPT_MEMBER_DEMAND");}, Ids::PERMISSION_ACCEPT_MEMBER_DEMAND);
-        self::registerPermission("PERMISSION_REFUSE_MEMBER_DEMAND", function(string $playerName) { return Utils::getText($playerName, "PERMISSION_REFUSE_MEMBER_DEMAND");}, Ids::PERMISSION_REFUSE_MEMBER_DEMAND);
-        self::registerPermission("PERMISSION_SEND_MEMBER_INVITATION", function(string $playerName) { return Utils::getText($playerName, "PERMISSION_SEND_MEMBER_INVITATION");}, Ids::PERMISSION_SEND_MEMBER_INVITATION);
-        self::registerPermission("PERMISSION_DELETE_PENDING_MEMBER_INVITATION", function(string $playerName) { return Utils::getText($playerName, "PERMISSION_DELETE_PENDING_MEMBER_INVITATION");}, Ids::PERMISSION_DELETE_PENDING_MEMBER_INVITATION);
-        self::registerPermission("PERMISSION_ACCEPT_ALLIANCE_DEMAND", function(string $playerName) { return Utils::getText($playerName, "PERMISSION_ACCEPT_ALLIANCE_DEMAND");}, Ids::PERMISSION_ACCEPT_ALLIANCE_DEMAND);
-        self::registerPermission("PERMISSION_REFUSE_ALLIANCE_DEMAND", function(string $playerName) { return Utils::getText($playerName, "PERMISSION_REFUSE_ALLIANCE_DEMAND");}, Ids::PERMISSION_REFUSE_ALLIANCE_DEMAND);
-        self::registerPermission("PERMISSION_SEND_ALLIANCE_INVITATION", function(string $playerName) { return Utils::getText($playerName, "PERMISSION_SEND_ALLIANCE_INVITATION");}, Ids::PERMISSION_SEND_ALLIANCE_INVITATION);
-        self::registerPermission("PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION", function(string $playerName) { return Utils::getText($playerName, "PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION");}, Ids::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION);
-        self::registerPermission("PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS", function(string $playerName) { return Utils::getText($playerName, "PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS");}, Ids::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS);
-        self::registerPermission("PERMISSION_CHANGE_FACTION_MESSAGE", function(string $playerName) { return Utils::getText($playerName, "PERMISSION_CHANGE_FACTION_MESSAGE");}, Ids::PERMISSION_CHANGE_FACTION_MESSAGE);
-        self::registerPermission("PERMISSION_CHANGE_FACTION_DESCRIPTION", function(string $playerName) { return Utils::getText($playerName, "PERMISSION_CHANGE_FACTION_DESCRIPTION");}, Ids::PERMISSION_CHANGE_FACTION_DESCRIPTION);
-        self::registerPermission("PERMISSION_CHANGE_FACTION_VISIBILITY", function(string $playerName) { return Utils::getText($playerName, "PERMISSION_CHANGE_FACTION_VISIBILITY");}, Ids::PERMISSION_CHANGE_FACTION_VISIBILITY);
-        self::registerPermission("PERMISSION_ADD_CLAIM", function(string $playerName) { return Utils::getText($playerName, "PERMISSION_ADD_CLAIM");}, Ids::PERMISSION_ADD_CLAIM);
-        self::registerPermission("PERMISSION_REMOVE_CLAIM", function(string $playerName) { return Utils::getText($playerName, "PERMISSION_REMOVE_CLAIM");}, Ids::PERMISSION_REMOVE_CLAIM);
-        self::registerPermission("PERMISSION_CHANGE_MEMBER_RANK", function(string $playerName) { return Utils::getText($playerName, "PERMISSION_CHANGE_MEMBER_RANK");}, Ids::PERMISSION_CHANGE_MEMBER_RANK);
-        self::registerPermission("PERMISSION_ADD_FACTION_HOME", function(string $playerName) { return Utils::getText($playerName, "PERMISSION_ADD_FACTION_HOME");}, Ids::PERMISSION_ADD_FACTION_HOME);
-        self::registerPermission("PERMISSION_DELETE_FACTION_HOME", function(string $playerName) { return Utils::getText($playerName, "PERMISSION_DELETE_FACTION_HOME");}, Ids::PERMISSION_DELETE_FACTION_HOME);
-        self::registerPermission("PERMISSION_LEVEL_UP", function(string $playerName) { return Utils::getText($playerName, "PERMISSION_LEVEL_UP");}, Ids::PERMISSION_LEVEL_UP);
+    private $permissions = [];
+
+    public function __construct()
+    {
+        $this->registerPermission(new Permission(self::PERMISSION_CHANGE_MEMBER_RANK, function(string $playerName) { return Utils::getText($playerName, self::PERMISSION_CHANGE_MEMBER_RANK);}, PermissionIds::PERMISSION_CHANGE_MEMBER_RANK))
+            ->registerPermission(new Permission(self::PERMISSION_KICK_MEMBER, function(string $playerName) { return Utils::getText($playerName, self::PERMISSION_KICK_MEMBER);}, PermissionIds::PERMISSION_KICK_MEMBER))
+            ->registerPermission(new Permission(self::PERMISSION_ACCEPT_MEMBER_DEMAND, function(string $playerName) { return Utils::getText($playerName, self::PERMISSION_ACCEPT_MEMBER_DEMAND);}, PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND))
+            ->registerPermission(new Permission(self::PERMISSION_REFUSE_MEMBER_DEMAND, function(string $playerName) { return Utils::getText($playerName, self::PERMISSION_REFUSE_MEMBER_DEMAND);}, PermissionIds::PERMISSION_REFUSE_MEMBER_DEMAND))
+            ->registerPermission(new Permission(self::PERMISSION_SEND_MEMBER_INVITATION, function(string $playerName) { return Utils::getText($playerName, self::PERMISSION_SEND_MEMBER_INVITATION);}, PermissionIds::PERMISSION_SEND_MEMBER_INVITATION))
+            ->registerPermission(new Permission(self::PERMISSION_DELETE_PENDING_MEMBER_INVITATION, function(string $playerName) { return Utils::getText($playerName, self::PERMISSION_DELETE_PENDING_MEMBER_INVITATION);}, PermissionIds::PERMISSION_DELETE_PENDING_MEMBER_INVITATION))
+            ->registerPermission(new Permission(self::PERMISSION_ACCEPT_ALLIANCE_DEMAND, function(string $playerName) { return Utils::getText($playerName, self::PERMISSION_ACCEPT_ALLIANCE_DEMAND);}, PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND))
+            ->registerPermission(new Permission(self::PERMISSION_REFUSE_ALLIANCE_DEMAND, function(string $playerName) { return Utils::getText($playerName, self::PERMISSION_REFUSE_ALLIANCE_DEMAND);}, PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND))
+            ->registerPermission(new Permission(self::PERMISSION_SEND_ALLIANCE_INVITATION, function(string $playerName) { return Utils::getText($playerName, self::PERMISSION_SEND_ALLIANCE_INVITATION);}, PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION))
+            ->registerPermission(new Permission(self::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION, function(string $playerName) { return Utils::getText($playerName, self::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION);}, PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION))
+            ->registerPermission(new Permission(self::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS, function(string $playerName) { return Utils::getText($playerName, self::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS);}, PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS))
+            ->registerPermission(new Permission(self::PERMISSION_CHANGE_FACTION_MESSAGE, function(string $playerName) { return Utils::getText($playerName, self::PERMISSION_CHANGE_FACTION_MESSAGE);}, PermissionIds::PERMISSION_CHANGE_FACTION_MESSAGE))
+            ->registerPermission(new Permission(self::PERMISSION_CHANGE_FACTION_DESCRIPTION, function(string $playerName) { return Utils::getText($playerName, self::PERMISSION_CHANGE_FACTION_DESCRIPTION);}, PermissionIds::PERMISSION_CHANGE_FACTION_DESCRIPTION))
+            ->registerPermission(new Permission(self::PERMISSION_CHANGE_FACTION_VISIBILITY, function(string $playerName) { return Utils::getText($playerName, self::PERMISSION_CHANGE_FACTION_VISIBILITY);}, PermissionIds::PERMISSION_CHANGE_FACTION_VISIBILITY))
+            ->registerPermission(new Permission(self::PERMISSION_ADD_CLAIM, function(string $playerName) { return Utils::getText($playerName, self::PERMISSION_ADD_CLAIM);}, PermissionIds::PERMISSION_ADD_CLAIM))
+            ->registerPermission(new Permission(self::PERMISSION_REMOVE_CLAIM, function(string $playerName) { return Utils::getText($playerName, self::PERMISSION_REMOVE_CLAIM);}, PermissionIds::PERMISSION_REMOVE_CLAIM))
+            ->registerPermission(new Permission(self::PERMISSION_ADD_FACTION_HOME, function(string $playerName) { return Utils::getText($playerName, self::PERMISSION_ADD_FACTION_HOME);}, PermissionIds::PERMISSION_ADD_FACTION_HOME))
+            ->registerPermission(new Permission(self::PERMISSION_DELETE_FACTION_HOME, function(string $playerName) { return Utils::getText($playerName, self::PERMISSION_DELETE_FACTION_HOME);}, PermissionIds::PERMISSION_DELETE_FACTION_HOME))
+            ->registerPermission(new Permission(self::PERMISSION_LEVEL_UP, function(string $playerName) { return Utils::getText($playerName, self::PERMISSION_LEVEL_UP);}, PermissionIds::PERMISSION_LEVEL_UP));
     }
 
-    public static function registerPermission(string $slug, callable $Name, int $ID, bool $override = false) : void {
-        if (self::isRegistered($slug) && $override === false) return;
-        self::$list[$slug] = [
-            "slug" => $slug,
-            "nameCallable" => $Name,
-            "id" => $ID
-        ];
+    public function registerPermission(PermissionInterface $permission, bool $override = false) : self {
+        if ($this->isRegister($permission->getId()) && !$override) throw new PermissionException("Permission id already use, conflicts detected");
+        $this->permissions[$permission->getId()] = $permission;
+        return $this;
     }
 
-    public static function get(string $slug) : ?array {
-        return self::$list[$slug] ?? null;
+    public function removePermission(int $id) : self {
+        if (isset($this->permissions[$id])) unset($this->permissions[$id]);
+        return $this;
     }
 
-    public static function isRegistered(string $slug) : bool {
-        return isset(self::$list[$slug]);
+    public function isRegister(int $id) : bool {
+        return isset($this->permissions[$id]);
     }
 
-    public static function getAll() : array {
-        return self::$list;
+    /**
+     * @return Permission[]
+     */
+    public function getAll() : array {
+        return $this->permissions;
     }
-
 }

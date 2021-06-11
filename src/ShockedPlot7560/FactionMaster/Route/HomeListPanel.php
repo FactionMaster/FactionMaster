@@ -38,15 +38,15 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\ButtonFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\ViewHomesCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\Route;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class HomeListPanel implements Route {
 
     const SLUG = "homeListPanel";
 
-    public $PermissionNeed = [Ids::PERMISSION_TP_FACTION_HOME];
+    public $PermissionNeed = [PermissionIds::PERMISSION_TP_FACTION_HOME];
 
     /** @var UserEntity */
     private $UserEntity;

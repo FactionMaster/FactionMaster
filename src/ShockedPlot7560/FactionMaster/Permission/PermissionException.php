@@ -30,35 +30,10 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\Faction;
+namespace ShockedPlot7560\FactionMaster\Permission;
 
-use ShockedPlot7560\FactionMaster\Button\Button;
-use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMainMembers;
-use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
+use Exception;
 
-class ManageMembers extends Button {
-
-    public function __construct()
-    {
-        parent::__construct(
-            "manageMembers", 
-            function($Player) {
-                return Utils::getText($Player, "BUTTON_MANAGE_MEMBERS");
-            },
-            function($Player) {
-                Utils::processMenu(RouterFactory::get(ManageMainMembers::SLUG), $Player);
-            }, 
-            [
-                PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND,
-                PermissionIds::PERMISSION_REFUSE_MEMBER_DEMAND,
-                PermissionIds::PERMISSION_DELETE_PENDING_MEMBER_INVITATION,
-                PermissionIds::PERMISSION_KICK_MEMBER,
-                PermissionIds::PERMISSION_CHANGE_MEMBER_RANK,
-                PermissionIds::PERMISSION_SEND_MEMBER_INVITATION
-            ]
-        );
-    }
+class PermissionException extends Exception {
 
 }

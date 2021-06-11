@@ -38,9 +38,9 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\InvitationSendEvent;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class NewAllianceInvitation implements Route {
@@ -48,7 +48,7 @@ class NewAllianceInvitation implements Route {
     const SLUG = "allianceInvitationCreate";
 
     public $PermissionNeed = [
-        Ids::PERMISSION_SEND_ALLIANCE_INVITATION
+        PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION
     ];
     public $backMenu;
 

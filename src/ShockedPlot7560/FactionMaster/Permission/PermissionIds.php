@@ -30,35 +30,29 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\Faction;
+namespace ShockedPlot7560\FactionMaster\Permission;
 
-use ShockedPlot7560\FactionMaster\Button\Button;
-use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\Faction\Members\ManageMainMembers;
-use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
+interface PermissionIds {
 
-class ManageMembers extends Button {
-
-    public function __construct()
-    {
-        parent::__construct(
-            "manageMembers", 
-            function($Player) {
-                return Utils::getText($Player, "BUTTON_MANAGE_MEMBERS");
-            },
-            function($Player) {
-                Utils::processMenu(RouterFactory::get(ManageMainMembers::SLUG), $Player);
-            }, 
-            [
-                PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND,
-                PermissionIds::PERMISSION_REFUSE_MEMBER_DEMAND,
-                PermissionIds::PERMISSION_DELETE_PENDING_MEMBER_INVITATION,
-                PermissionIds::PERMISSION_KICK_MEMBER,
-                PermissionIds::PERMISSION_CHANGE_MEMBER_RANK,
-                PermissionIds::PERMISSION_SEND_MEMBER_INVITATION
-            ]
-        );
-    }
-
+    const PERMISSION_CHANGE_MEMBER_RANK = 0;
+    const PERMISSION_KICK_MEMBER = 1;
+    const PERMISSION_ACCEPT_MEMBER_DEMAND = 2;
+    const PERMISSION_REFUSE_MEMBER_DEMAND = 3;
+    const PERMISSION_SEND_MEMBER_INVITATION = 4;
+    const PERMISSION_DELETE_PENDING_MEMBER_INVITATION = 5;
+    const PERMISSION_ACCEPT_ALLIANCE_DEMAND = 6;
+    const PERMISSION_REFUSE_ALLIANCE_DEMAND = 7;
+    const PERMISSION_SEND_ALLIANCE_INVITATION = 8;
+    const PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION = 9;
+    const PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS = 10;
+    const PERMISSION_CHANGE_FACTION_MESSAGE = 11;
+    const PERMISSION_CHANGE_FACTION_DESCRIPTION = 12;
+    const PERMISSION_DELETE_FACTION_HOME = 13;
+    const PERMISSION_ADD_FACTION_HOME = 14;
+    const PERMISSION_TP_FACTION_HOME = 15;
+    const PERMISSION_CHANGE_FACTION_VISIBILITY = 16;
+    const PERMISSION_BREAK_ALLIANCE = 17;
+    const PERMISSION_ADD_CLAIM = 18;
+    const PERMISSION_REMOVE_CLAIM = 19;
+    const PERMISSION_LEVEL_UP = 20;
 }

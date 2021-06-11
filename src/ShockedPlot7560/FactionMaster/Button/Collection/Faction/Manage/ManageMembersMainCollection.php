@@ -40,11 +40,11 @@ use ShockedPlot7560\FactionMaster\Button\Buttons\InvitationPending;
 use ShockedPlot7560\FactionMaster\Button\Buttons\RequestPending;
 use ShockedPlot7560\FactionMaster\Button\Buttons\SendInvitation;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\Faction\Members\Invitations\MemberDemandList;
 use ShockedPlot7560\FactionMaster\Route\Faction\Members\Invitations\MemberInvitationList;
 use ShockedPlot7560\FactionMaster\Route\Faction\Members\Invitations\NewMemberInvitation;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 
 class ManageMembersMainCollection extends ButtonCollection {
 
@@ -54,9 +54,9 @@ class ManageMembersMainCollection extends ButtonCollection {
     {
         parent::__construct(self::SLUG);
         $this->registerCallable(self::SLUG, function() {
-            $this->register(new SendInvitation(NewMemberInvitation::SLUG, [Ids::PERMISSION_SEND_MEMBER_INVITATION]));
-            $this->register(new InvitationPending(MemberInvitationList::SLUG, [Ids::PERMISSION_DELETE_PENDING_MEMBER_INVITATION]));
-            $this->register(new RequestPending(MemberDemandList::SLUG, [Ids::PERMISSION_ACCEPT_MEMBER_DEMAND, Ids::PERMISSION_REFUSE_MEMBER_DEMAND]));
+            $this->register(new SendInvitation(NewMemberInvitation::SLUG, [PermissionIds::PERMISSION_SEND_MEMBER_INVITATION]));
+            $this->register(new InvitationPending(MemberInvitationList::SLUG, [PermissionIds::PERMISSION_DELETE_PENDING_MEMBER_INVITATION]));
+            $this->register(new RequestPending(MemberDemandList::SLUG, [PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND, PermissionIds::PERMISSION_REFUSE_MEMBER_DEMAND]));
             $this->register(new ManageMembersMain());
             $this->register(new Back(MainPanel::SLUG));
         });

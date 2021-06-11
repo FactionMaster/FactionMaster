@@ -37,13 +37,13 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionLevelUpEvent;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\Faction\Manage\ManageFactionMain;
 use ShockedPlot7560\FactionMaster\Reward\RewardInterface;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class LevelUp implements Route {
@@ -51,7 +51,7 @@ class LevelUp implements Route {
     const SLUG = "levelUp";
 
     public $PermissionNeed = [
-        Ids::PERMISSION_LEVEL_UP
+        PermissionIds::PERMISSION_LEVEL_UP
     ];
     public $backMenu;
 

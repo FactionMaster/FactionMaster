@@ -38,6 +38,7 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\MemberChangeRankEvent;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
@@ -47,7 +48,7 @@ class MemberChangeRank implements Route {
     
     const SLUG = "memberChangeRank";
 
-    public $PermissionNeed = [Ids::PERMISSION_CHANGE_MEMBER_RANK];
+    public $PermissionNeed = [PermissionIds::PERMISSION_CHANGE_MEMBER_RANK];
     public $backMenu;
 
     /** @var array */

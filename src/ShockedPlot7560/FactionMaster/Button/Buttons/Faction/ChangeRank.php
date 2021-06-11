@@ -35,9 +35,9 @@ namespace ShockedPlot7560\FactionMaster\Button\Buttons\Faction;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\Button;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\Faction\Members\MemberChangeRank;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeRank extends Button {
@@ -53,7 +53,7 @@ class ChangeRank extends Button {
                 Utils::processMenu(RouterFactory::get(MemberChangeRank::SLUG), $Player, [ $Member ]);
             },
             [
-                Ids::PERMISSION_CHANGE_MEMBER_RANK
+                PermissionIds::PERMISSION_CHANGE_MEMBER_RANK
             ]
         );
     }

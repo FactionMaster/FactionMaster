@@ -38,6 +38,7 @@ use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\VisibilityChangeEvent;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
@@ -48,7 +49,7 @@ class ChangeVisibility implements Route {
     const SLUG = "changeVisibility";
 
     public $PermissionNeed = [
-        Ids::PERMISSION_CHANGE_FACTION_VISIBILITY
+        PermissionIds::PERMISSION_CHANGE_FACTION_VISIBILITY
     ];
     public $backMenu;
 
