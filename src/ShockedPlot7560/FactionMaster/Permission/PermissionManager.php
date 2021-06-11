@@ -30,11 +30,14 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\API;
+namespace ShockedPlot7560\FactionMaster\Extension;
 
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
+/**
+ * @deprecated
+ */
 class PermissionManager {
 
     /** @var array[] */

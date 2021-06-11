@@ -36,10 +36,11 @@ use CortexPE\Commando\PacketHooker;
 use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
-use ShockedPlot7560\FactionMaster\API\PermissionManager;
 use ShockedPlot7560\FactionMaster\Button\ButtonFactory;
 use ShockedPlot7560\FactionMaster\Command\FactionCommand;
 use ShockedPlot7560\FactionMaster\Database\Database;
+use ShockedPlot7560\FactionMaster\Extension\ExtensionManager;
+use ShockedPlot7560\FactionMaster\Extension\PermissionManager;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Router\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -60,59 +61,48 @@ class Main extends PluginBase implements Listener{
     public $EconomyAPI;
     /** @var Config */
     public $levelConfig;
+    /** @var \ShockedPlot7560\FactionMaster\Extension\ExtensionManager */
+    private $ExtensionManager;
 
-    public function onEnable()
+    public function onLoad()
     {
-        self::$logger = $this->getLogger();
         self::$instance = $this;
+        self::$logger = $this->getLogger();
         Utils::printLogo(self::$logger);
 
         self::$logger->info("Loading configurations");
         $this->loadConfig();
+
         self::$logger->info("Initialization and saving of the database");
         $this->Database = new Database($this);
-        
-        if(!PacketHooker::isRegistered()) PacketHooker::register($this);
-        $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
 
-        $this->FormUI = $this->getServer()->getPluginManager()->getPlugin("FormAPI");
-        if ($this->FormUI === null) {
-            self::$logger->alert("FactionMaster need FormAPI to work, please install them and reload server");
-            $this->getServer()->getPluginManager()->disablePlugin($this);
-        } 
         
-        $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", "FactionMaster command", ["f", "fac"]));
-
         self::$logger->info("Loading the global structure");
         RouterFactory::init();
         RewardFactory::init();
         ButtonFactory::init();
         PermissionManager::init();
-        if (\is_array($this->config->get("extensions"))) {
-            self::$logger->info("Loading extensions");
-            foreach ($this->config->get("extensions") as $ExtensionName) {
-                self::$logger->info("Loading " . $ExtensionName);
-                /** @var \ShockedPlot7560\FactionMaster\API\Extension */
-                $Plugin = $this->getServer()->getPluginManager()->getPlugin($ExtensionName);
-                if ($Plugin === null) {
-                    self::$logger->warning("Loading the extension: $ExtensionName, failed, check the name and presence of this extension on the server");
-                }else{
-                    $Plugin->execute();
-                    foreach ($Plugin->getLangConfig() as $LangSLug => $LangConfig) {
-                        if (!$LangConfig instanceof Config) {
-                            self::$logger->warning("Loading the translate files of : $ExtensionName, check the return value of the function getLangConfig() and verify its key and value");
-                        }else{
-                            $LangMainFile = new Config($this->getDataFolder() . "Translation/$LangSLug.yml", Config::YAML);
-                            foreach ($LangConfig->getAll() as $key => $value) {
-                                $LangMainFile->__set($key, $value);
-                            }
-                            $LangMainFile->save();
-                        }
-                    }
-                }
-            }
-            self::$logger->info("Loading extensions finish");
-        }
+    }
+
+    public function onEnable()
+    {
+        $this->init();
+        $this->getExtensionManager()->load();
+    }
+
+    private function init() {
+
+        $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
+
+        if(!PacketHooker::isRegistered()) PacketHooker::register($this);
+        $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", "FactionMaster command", ["f", "fac"]));
+
+        $this->FormUI = $this->getServer()->getPluginManager()->getPlugin("FormAPI");
+        if ($this->FormUI === null) {
+            self::$logger->critical("FactionMaster need FormAPI to work, please install them and reload server");
+            $this->getServer()->getPluginManager()->disablePlugin($this);
+        } 
+
     }
 
     private function loadConfig() : void {
@@ -136,5 +126,10 @@ class Main extends PluginBase implements Listener{
 
     public static function getInstance() : self {
         return self::$instance;
+    }
+
+    public function getExtensionManager() : ?ExtensionManager {
+        if($this->ExtensionManager === null) $this->ExtensionManager = new ExtensionManager();
+        return $this->ExtensionManager;
     }
 }
