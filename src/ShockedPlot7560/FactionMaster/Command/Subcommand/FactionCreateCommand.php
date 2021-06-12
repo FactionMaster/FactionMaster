@@ -37,7 +37,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Route\CreateFactionPanel;
-use ShockedPlot7560\FactionMaster\Router\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class FactionCreateCommand extends BaseSubCommand {

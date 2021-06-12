@@ -34,34 +34,24 @@ namespace ShockedPlot7560\FactionMaster\Button\Collection;
 
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
-use ShockedPlot7560\FactionMaster\Button\Buttons\Back;
-use ShockedPlot7560\FactionMaster\Button\Buttons\ViewHomes\Home;
+use ShockedPlot7560\FactionMaster\Button\Back;
+use ShockedPlot7560\FactionMaster\Button\Home;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
 
-class ViewHomesCollection extends ButtonCollection {
+class ViewHomesCollection extends Collection {
 
     const SLUG = "viewHomes";
 
     public function __construct()
     {
         parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function(UserEntity $User) {
-            $Homes = MainAPI::getFactionHomes($User->faction);
+        $this->registerCallable(self::SLUG, function(Player $player, UserEntity $user) {
+            $Homes = MainAPI::getFactionHomes($user->faction);
             foreach ($Homes as $Name => $Home) {
                 $this->register(new Home($Name, $Home));
             }
             $this->register(new Back(MainPanel::SLUG));
         });
     }
-
-    public function init(Player $Player, UserEntity $User) : self {
-        $this->ButtonsList = [];
-        foreach ($this->processFunction as $Callable) {
-            call_user_func($Callable, $User, $Player);
-        }
-        return $this;
-    }
-
 }

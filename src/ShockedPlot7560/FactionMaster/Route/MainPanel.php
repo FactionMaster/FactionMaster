@@ -34,8 +34,8 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
-use ShockedPlot7560\FactionMaster\Button\ButtonFactory;
+use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\MainCollectionFac;
 use ShockedPlot7560\FactionMaster\Button\Collection\MainCollectionNoFac;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
@@ -54,7 +54,7 @@ class MainPanel implements Route {
     private $UserEntity;
     /** @var int */
     private $menuType;
-    /** @var ButtonCollection */
+    /** @var Collection */
     private $Collection;
 
     public function getSlug(): string
@@ -68,11 +68,11 @@ class MainPanel implements Route {
         if (isset($params[0])) $message = $params[0];
 
         if ($this->UserEntity->faction === null) {
-            $this->Collection = ButtonFactory::get(MainCollectionNoFac::SLUG)->init($Player, $User);
+            $this->Collection = CollectionFactory::get(MainCollectionNoFac::SLUG)->init($Player, $User);
             $this->menuType = self::NO_FACTION_TYPE;
             $menu = $this->noFactionMenu($message);
         }else{
-            $this->Collection = ButtonFactory::get(MainCollectionFac::SLUG)->init($Player, $User);
+            $this->Collection = CollectionFactory::get(MainCollectionFac::SLUG)->init($Player, $User);
             $this->menuType = self::FACTION_TYPE;
             $menu = $this->factionMenu($message);
         }

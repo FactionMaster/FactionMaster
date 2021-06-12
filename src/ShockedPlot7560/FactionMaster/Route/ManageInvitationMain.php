@@ -34,10 +34,9 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Button\ButtonFactory;
-use ShockedPlot7560\FactionMaster\Button\Collection\JoinFaction\JoinFactionMainCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
+use ShockedPlot7560\FactionMaster\Button\Collection\JoinFactionMainCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageInvitationMain implements Route {
@@ -48,7 +47,7 @@ class ManageInvitationMain implements Route {
 
     /** @var UserEntity */
     private $UserEntity;
-    /** @var ButtonCollection */
+    /** @var Collection */
     private $Collection;
 
     public function getSlug(): string
@@ -59,7 +58,7 @@ class ManageInvitationMain implements Route {
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {        
         $this->UserEntity = $User;
-        $this->Collection = ButtonFactory::get(JoinFactionMainCollection::SLUG)->init($player, $User);
+        $this->Collection = CollectionFactory::get(JoinFactionMainCollection::SLUG)->init($player, $User);
         $message = "";
         if (isset($params[0])) $message = $params[0];
         $menu = $this->manageMainMenu($message);

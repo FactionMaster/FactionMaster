@@ -49,7 +49,7 @@ use ShockedPlot7560\FactionMaster\Command\Subcommand\MapCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\SethomeCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\UnclaimCommand;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
-use ShockedPlot7560\FactionMaster\Router\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class FactionCommand extends BaseCommand{

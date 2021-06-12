@@ -34,10 +34,9 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Button\ButtonFactory;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\LanguageCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class LanguagePanel implements Route {
@@ -48,7 +47,7 @@ class LanguagePanel implements Route {
     
     /** @var UserEntity */
     private $UserEntity;
-    /** @var ButtonCollection */
+    /** @var Collection */
     private $Collection;
 
     public function getSlug(): string
@@ -59,7 +58,7 @@ class LanguagePanel implements Route {
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
         $this->UserEntity = $User;
-        $this->Collection = ButtonFactory::get(LanguageCollection::SLUG)->init($player, $User);
+        $this->Collection = CollectionFactory::get(LanguageCollection::SLUG)->init($player, $User);
         $menu = $this->languagesMenu();
         $player->sendForm($menu);
     }

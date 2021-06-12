@@ -35,11 +35,10 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\Button\ButtonFactory;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\ViewHomesCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class HomeListPanel implements Route {
@@ -50,7 +49,7 @@ class HomeListPanel implements Route {
 
     /** @var UserEntity */
     private $UserEntity;
-    /** @var ButtonCollection */
+    /** @var Collection */
     private $Collection;
 
     public function getSlug(): string
@@ -61,7 +60,7 @@ class HomeListPanel implements Route {
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
         $message = "";
-        $this->Collection = ButtonFactory::get(ViewHomesCollection::SLUG)->init($player, $User);
+        $this->Collection = CollectionFactory::get(ViewHomesCollection::SLUG)->init($player, $User);
         $Homes = MainAPI::getFactionHomes($User->faction);
         $this->UserEntity = $User;
         

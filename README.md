@@ -10,7 +10,7 @@ The execute() function will be called when the extension is loaded, so please pu
 
 ## Register route
 ```php
-use ShockedPlot7560\FactionMaster\Router\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Route\Route;
 
 RouterFactory::registerRoute(new CustomRoute());
@@ -29,7 +29,7 @@ Utils::processMenu(RouterFactory::get($SLUG), $PmmpPlayer, [$params]);
 ## Create Button Collection
 The collection allows you to manage lists of buttons according to the permissions of each player
 ```php
-use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 
 class CollectionTest extends ButtonCollection {
     public function __construct() {
@@ -59,9 +59,9 @@ class CollectionTest extends ButtonCollection {
 
 ## Modified existing button menus
 ```php
-use ShockedPlot7560\FactionMaster\Button\ButtonFactory;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 
-$ButtonCollection = ButtonFactory::get(MainCollectionFac::SLUG);
+$ButtonCollection = CollectionFactory::get(MainCollectionFac::SLUG);
 $ButtonCollection->registerCallable("FactionMasterBank", function() use ($ButtonCollection) {
   $ButtonCollection->register($newButton, $index, $override);
 });
