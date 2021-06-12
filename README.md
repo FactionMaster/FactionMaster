@@ -10,7 +10,7 @@ The execute() function will be called when the extension is loaded, so please pu
 
 ## Register route
 ```php
-use ShockedPlot7560\FactionMaster\Router\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Route\Route;
 
 RouterFactory::registerRoute(new CustomRoute());
@@ -23,35 +23,25 @@ class CustomRoute implements Route {
 ## Call and send Route
 ```php
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 Utils::processMenu(RouterFactory::get($SLUG), $PmmpPlayer, [$params]);
 ```
 ## Create Button Collection
 The collection allows you to manage lists of buttons according to the permissions of each player
 ```php
-use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 
-class CollectionTest extends ButtonCollection {
+class CollectionTest extends Collection {
     public function __construct() {
         parent::__construct($Slug);
         
         // Registration of a function that will be called 
         // to generate the buttons when calling the init() function
-        $this->registerCallable($callableName, function() {
+        $this->registerCallable($callableName, function(Player $player, UserEntity $user /*more argument if wanted */) {
+            // The function has in default panel, the $plyaer and $user instance given
             $this->register(new Button(/*TODO: add argument*/));
         });
-    }
-    
-    /**
-     * Function that will generate the list of all possible buttons
-     * No restrictions on this function, you can give as many arguments as you want
-     */
-    public function init(/*Needed argument here*/) : self {
-        $this->ButtonsList = [];
-        foreach ($this->processFunction as $Callable) {
-            call_user_func($Callable, /*Put needed argument here*/);
-        }
-        return $this;
     }
 }
 
@@ -59,10 +49,11 @@ class CollectionTest extends ButtonCollection {
 
 ## Modified existing button menus
 ```php
-use ShockedPlot7560\FactionMaster\Button\ButtonFactory;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
+use ShockedPlot7560\FactionMaster\Button\Collection\MainCollectionFac;
 
-$ButtonCollection = ButtonFactory::get(MainCollectionFac::SLUG);
-$ButtonCollection->registerCallable("FactionMasterBank", function() use ($ButtonCollection) {
+$ButtonCollection = CollectionFactory::get(MainCollectionFac::SLUG);
+$ButtonCollection->registerCallable("FactionMasterExample", function() use ($ButtonCollection) {
   $ButtonCollection->register($newButton, $index, $override);
 });
 ```
@@ -72,7 +63,7 @@ Register new permissions that will be proposed in the Permissions management men
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Permission\Permission;
 
-$PermissionManager = FactionMasterMain::getInstance()->getPermissionManager();
+$PermissionManager = Main::getInstance()->getPermissionManager();
 $PermissionManager->registerPermission(new Permission(
     //TODO: put the good argument
 ), $overrideStatus);

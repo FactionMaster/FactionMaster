@@ -33,22 +33,21 @@
 namespace ShockedPlot7560\FactionMaster\Button\Collection;
 
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Button\ButtonCollection;
-use ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\ChangeLanguage;
-use ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\FactionsTop;
-use ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\NoFaction\CreateFaction;
-use ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\NoFaction\JoinFaction;
-use ShockedPlot7560\FactionMaster\Button\Buttons\MainPanel\Quit;
+use ShockedPlot7560\FactionMaster\Button\ChangeLanguage;
+use ShockedPlot7560\FactionMaster\Button\CreateFaction;
+use ShockedPlot7560\FactionMaster\Button\FactionsTop;
+use ShockedPlot7560\FactionMaster\Button\JoinFaction;
+use ShockedPlot7560\FactionMaster\Button\Quit;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 
-class MainCollectionNoFac extends ButtonCollection {
+class MainCollectionNoFac extends Collection {
 
     const SLUG = "mainNoFac";
 
     public function __construct()
     {
         parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function() {
+        $this->registerCallable(self::SLUG, function(Player $player, UserEntity $user) {
             $this->register(new CreateFaction());
             $this->register(new JoinFaction());
             $this->register(new FactionsTop());
@@ -56,13 +55,4 @@ class MainCollectionNoFac extends ButtonCollection {
             $this->register(new Quit());
         });
     }
-
-    public function init(Player $Player, UserEntity $User) : self {
-        $this->ButtonsList = [];
-        foreach ($this->processFunction as $Callable) {
-            call_user_func($Callable, $Player, $User);
-        }
-        return $this;
-    }
-
 }

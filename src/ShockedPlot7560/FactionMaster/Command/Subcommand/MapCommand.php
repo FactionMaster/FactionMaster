@@ -36,7 +36,6 @@ use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
 class MapCommand extends BaseSubCommand {
 
@@ -64,9 +63,9 @@ class MapCommand extends BaseSubCommand {
 
     const NO_SYMBOL = "0";
     const CLAIM_COLOR = "§f";
-    const CLAIM_ALLIES_COLOR = "§a";
+    const CLAIM_ALLIES_COLOR = "§e";
     const CLAIM_ENNEMIE_COLOR = "§4";
-    const CLAIM_OWN_COLOR = "§e";
+    const CLAIM_OWN_COLOR = "§b";
 
     const HEIGHT = 10;
     const WIDTH = 48;
@@ -94,7 +93,7 @@ class MapCommand extends BaseSubCommand {
         }else{
             $FactionLabelColor = self::CLAIM_ENNEMIE_COLOR;
         }
-        $FactionLabel = $ChunkFaction !== null ? $FactionLabelColor .$ChunkFaction : "§a" . "Wilderness";
+        $FactionLabel = $ChunkFaction !== null ? $FactionLabelColor .$ChunkFaction : "§5" . "Wilderness";
         $middleString = ".[ §2($X,$Z) " . $FactionLabel . " §6].";
         $lenMiddle = \strlen($middleString) - 3;
         $bottom = "";
