@@ -34,6 +34,7 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use jojoe77777\FormAPI\CustomForm;
 use pocketmine\Player;
+use pocketmine\Server;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
@@ -76,16 +77,17 @@ class NewAllianceInvitation implements Route {
         $backMenu = $this->backMenu;
         return function (Player $Player, $data) use ($backMenu) {
             if ($data === null) return;
-            $FactionRequest = MainAPI::getFaction($data[1]);
 
             if ($data[1] !== "") {
+                $targetName = $data[1];
+                $FactionRequest = MainAPI::getFaction($targetName);
                 if ($FactionRequest instanceof FactionEntity) {
                     $FactionPlayer = MainAPI::getFactionOfPlayer($Player->getName());
                     if (count($FactionPlayer->ally) < $FactionPlayer->max_ally) {
                         if (count($FactionRequest->ally) < $FactionRequest->max_ally) {
-                            if (!MainAPI::areInInvitation($this->Faction->name, $data[1], InvitationSendEvent::ALLIANCE_TYPE)) {
-                                if (MainAPI::makeInvitation($this->Faction->name, $data[1], InvitationSendEvent::ALLIANCE_TYPE)) {
-                                    (new InvitationSendEvent($Player, $this->Faction->name, $data[1], InvitationSendEvent::ALLIANCE_TYPE))->call();
+                            if (!MainAPI::areInInvitation($this->Faction->name, $targetName, InvitationSendEvent::ALLIANCE_TYPE)) {
+                                if (MainAPI::makeInvitation($this->Faction->name, $targetName, InvitationSendEvent::ALLIANCE_TYPE)) {
+                                    (new InvitationSendEvent($Player, $this->Faction->name, $targetName, InvitationSendEvent::ALLIANCE_TYPE))->call();
                                     Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_SEND_INVITATION", ['name' => $data[1]])] );
                                 }else{
                                     $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "ERROR"));

@@ -76,15 +76,16 @@ class NewInvitation implements Route {
         $backMenu = $this->backMenu;
         return function (Player $Player, $data) use ($backMenu) {
             if ($data === null) return;
-            $FactionRequest = MainAPI::getFaction($data[1]);
 
             if ($data[1] !== "") {
+                $targetName = $data[1];
+                $FactionRequest = MainAPI::getFaction($targetName);
                 if ($FactionRequest instanceof FactionEntity) {
                     if (count($FactionRequest->members) < $FactionRequest->max_player) {
                         if (!MainAPI::getFactionOfPlayer($Player->getName()) instanceof FactionEntity) {
-                            if (!MainAPI::areInInvitation($Player->getName(), $data[1], InvitationSendEvent::MEMBER_TYPE)) {
-                                if (MainAPI::makeInvitation($Player->getName(), $data[1], InvitationSendEvent::MEMBER_TYPE)) {
-                                    (new InvitationSendEvent($Player, $Player->getName(), $data[1], InvitationSendEvent::MEMBER_TYPE))->call();
+                            if (!MainAPI::areInInvitation($Player->getName(), $targetName, InvitationSendEvent::MEMBER_TYPE)) {
+                                if (MainAPI::makeInvitation($Player->getName(), $targetName, InvitationSendEvent::MEMBER_TYPE)) {
+                                    (new InvitationSendEvent($Player, $Player->getName(), $targetName, InvitationSendEvent::MEMBER_TYPE))->call();
                                     Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_SEND_INVITATION", ['name' => $data[1]])] );
                                 }else{
                                     $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "ERROR"));

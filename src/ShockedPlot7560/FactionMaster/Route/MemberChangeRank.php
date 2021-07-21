@@ -86,7 +86,8 @@ class MemberChangeRank implements Route {
         return function (Player $player, $data) use ($backMenu) {
             if ($data === null) return;
             MainAPI::changeRank($this->victim->name, $data[0]);
-            (new MemberChangeRankEvent($player, ($this->victim->rank = $data[0]), $this->victim->rank))->call();
+            $this->victim->rank = $data[0];
+            (new MemberChangeRankEvent($player, $this->victim, $this->victim->rank))->call();
             Utils::processMenu($backMenu, $player, [ $this->victim ]);
         };
     }

@@ -34,6 +34,7 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use jojoe77777\FormAPI\CustomForm;
 use pocketmine\Player;
+use pocketmine\Server;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
@@ -83,7 +84,9 @@ class NewMemberInvitation implements Route {
             if ($data === null) return;
             
             if ($data[1] !== "") {
-                $UserRequest = MainAPI::getUser($data[1]);
+                $targetName = Server::getInstance()->getPlayer($data[1]);
+                $targetName = $targetName === null ? $data[1] : $targetName;
+                $UserRequest = MainAPI::getUser($targetName);
                 $FactionPlayer = MainAPI::getFactionOfPlayer($Player->getName());
                 if (count($FactionPlayer->members) >= $FactionPlayer->max_player) {
                     $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "MAX_PLAYER_REACH"));
@@ -91,10 +94,10 @@ class NewMemberInvitation implements Route {
                     return;
                 }
                 if ($UserRequest instanceof UserEntity) {
-                    if (!MainAPI::getFactionOfPlayer($data[1]) instanceof FactionEntity) {
-                        if (!MainAPI::areInInvitation($this->Faction->name, $data[1], InvitationSendEvent::MEMBER_TYPE)) {
-                            if (MainAPI::makeInvitation($this->Faction->name, $data[1], InvitationSendEvent::MEMBER_TYPE)) {
-                                (new InvitationSendEvent($Player, $this->Faction->name, $data[1], InvitationSendEvent::MEMBER_TYPE))->call();
+                    if (!MainAPI::getFactionOfPlayer($targetName) instanceof FactionEntity) {
+                        if (!MainAPI::areInInvitation($this->Faction->name, $targetName, InvitationSendEvent::MEMBER_TYPE)) {
+                            if (MainAPI::makeInvitation($this->Faction->name, $targetName, InvitationSendEvent::MEMBER_TYPE)) {
+                                (new InvitationSendEvent($Player, $this->Faction->name, $targetName, InvitationSendEvent::MEMBER_TYPE))->call();
                                 Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_SEND_INVITATION", ['name' => $data[1]])] );
                             }else{
                                 $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "ERROR"));
