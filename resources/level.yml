@@ -1,18 +1,18 @@
 ---
 #First item correspond of the reward to level1 to level 2
 #In type field, allow :
-# money / power / allyLimit / claimLimit / homeLimit / memberLimit
+# power / allyLimit / claimLimit / homeLimit / memberLimit
 # to make your own reward, please read the documentation
-- type: money 
-  value: 2000 #quantity
+- type: homeLimit 
+  value: 2 #quantity
   cost:
     #if level up is free, put nothing here
     #To have more than 1 cost item, copy paste : 
     - type: power 
       value: 100
-- type: power 
-  value: 2000
+- type: memberLimit 
+  value: 3
   cost:
-    - type: money 
+    - type: power 
       value: 100
 ...

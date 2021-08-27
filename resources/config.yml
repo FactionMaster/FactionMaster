@@ -49,11 +49,10 @@ default-claim-limit: 2
 default-member-limit: 2
 default-ally-limit: 2
 default-power: 0
-default-money: 0
 
 claim-cost:
   # the type is the same type as level reward, you can put :
-  #   money / power / allyLimit / claimLimit / homeLimit / memberLimit
+  #   power / allyLimit / claimLimit / homeLimit / memberLimit
   #   to make your own reward, please read the documentation
   type: "power"
   # the start value for the first claim
