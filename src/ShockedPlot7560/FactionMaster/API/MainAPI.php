@@ -131,7 +131,7 @@ class MainAPI {
     }
 
     /**
-     * @return false|FactionEntity False on failure
+     * @return boolean False on failure
      */
     public static function addFaction(string $factionName, string $ownerName) {
         try {
@@ -586,7 +586,7 @@ class MainAPI {
     }
 
     /**
-     * @return ClaimEntity[]
+     * @return array[]
      */
     public static function getAllClaim() : array {
         $claims = self::$claim;
@@ -681,7 +681,7 @@ class MainAPI {
 
     /**
      * Return all the home register
-     * @return HomeEntity[]
+     * @return array[]
      */
     public static function getAllHome() : array {
         $homes = self::$home;
