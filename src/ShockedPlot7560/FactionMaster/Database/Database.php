@@ -69,7 +69,6 @@ class Database {
                 $databaseConfig = $Main->config->get("SQLITE_database");
                 $db = new PDO("sqlite:".$databaseConfig['name'].".sqlite");
                 break;
-                break;
             default:
                 $Main::$logger->alert("Please give a valid PROVIDER in config.yml, use only : " . self::MYSQL_PROVIDER . " or " . self::SQLITE_PROVIDER);
                 $Main->getServer()->getPluginManager()->disablePlugin($Main);

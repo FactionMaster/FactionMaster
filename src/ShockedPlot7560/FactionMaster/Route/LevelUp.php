@@ -168,10 +168,8 @@ class LevelUp implements Route {
     }
 
     private function callLevelUp(string $factionName) : callable {
-        $reward = $this->Reward;
         $rewardData = $this->RewardData;
-        $backMenu = $this->backMenu;
-        return function (Player $Player, $data) use ($factionName, $reward, $backMenu, $rewardData) {
+        return function (Player $Player, $data) use ($factionName, $rewardData) {
             if ($data === null) return;
             if ($data) {
                 $continue = true;

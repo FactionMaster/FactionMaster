@@ -43,7 +43,7 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Langue extends Button {
 
-    public function __construct(string $Lang, UserEntity $User)
+    public function __construct(string $Lang)
     {
         parent::__construct(
             $Lang, 

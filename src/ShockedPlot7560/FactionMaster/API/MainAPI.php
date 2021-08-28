@@ -586,7 +586,7 @@ class MainAPI {
     }
 
     /**
-     * @return array[]
+     * @return ClaimEntity[]
      */
     public static function getAllClaim() : array {
         $claims = self::$claim;
