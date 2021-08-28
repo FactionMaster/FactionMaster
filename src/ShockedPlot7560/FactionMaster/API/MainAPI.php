@@ -59,7 +59,7 @@ class MainAPI {
     /** @var UserEntity[] */
     public static $users = [];
     /** @var \PDO */
-    private static $PDO;
+    public static $PDO;
     /** @var array[] */
     public static $claim;
     /** @var array[] */
@@ -429,11 +429,16 @@ class MainAPI {
         $Faction2 = self::getFaction($faction2);
         if (!$Faction1 instanceof FactionEntity || !$Faction2 instanceof FactionEntity) return false;
         
-        unset($Faction1->ally[$faction1]);
-        unset($Faction2->ally[$faction2]);
-
         foreach ([$Faction1, $Faction2] as $key => $Faction) {
+            var_dump($Faction->ally);
+            foreach ($Faction->ally as $key => $alliance) {
+                if (in_array($alliance, [$faction1, $faction2])) {
+                    unset($Faction->ally[$key]);
+                }
+            }
             $query = self::$PDO->prepare("UPDATE " . FactionTable::TABLE_NAME . " SET ally = :ally WHERE name = :name");
+            var_dump($Faction->name);
+            var_dump($Faction->ally);
             if (!$query->execute([
                 'ally' => \base64_encode(\serialize($Faction->ally)),
                 'name' => $Faction->name

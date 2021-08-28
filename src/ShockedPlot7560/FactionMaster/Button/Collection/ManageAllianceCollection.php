@@ -63,9 +63,10 @@ class ManageAllianceCollection extends Collection {
                 function (Player $Player) use ($Ally) {
                     Utils::processMenu(RouterFactory::get(ConfirmationMenu::SLUG), $Player, [
                         function (Player $Player, $data) use ($Ally) {
+                            var_dump($data);
                             $Faction = MainAPI::getFactionOfPlayer($Player->getName());
                             if ($data === null) return;
-                            if ($data) {
+                            if ($data === true) {
                                 $message = Utils::getText($Player->getName(), "SUCCESS_BREAK_ALLIANCE", ['name' => $Ally->name]);
                                 if (!MainAPI::removeAlly($Faction->name, $Ally->name)) $message = Utils::getText($Player->getName(), "ERROR"); 
                                 (new AllianceBreakEvent($Player, $Faction->name, $Ally->name))->call();

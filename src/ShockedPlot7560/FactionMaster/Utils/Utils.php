@@ -154,7 +154,12 @@ class Utils {
         $Playerlang = MainAPI::getPlayerLang($playerName);
         $FileName = self::getConfigLang("languages")[$Playerlang];
         $Config = new Config(Main::getInstance()->getDataFolder() . "Translation/$FileName.yml", Config::YAML);
-        $Text = self::replaceParams($Config->get($slug), $args);
+        $textNoReplace = $Config->get($slug);
+        if ($textNoReplace === false) {
+            $Config = new Config(Main::getInstance()->getDataFolder() . "Translation/fr_FR.yml", Config::YAML);
+            $textNoReplace = $Config->get($slug);
+        }
+        $Text = self::replaceParams($textNoReplace, $args);
         return $Text;
     }
 

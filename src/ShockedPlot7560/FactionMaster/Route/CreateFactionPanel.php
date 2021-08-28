@@ -88,7 +88,7 @@ class CreateFactionPanel implements Route {
                             $Player->sendForm($menu);
                         }
                     }else{
-                        $menu = $this->createFactionMenu(Utils::getText($this->UserEntity->name, "MAX_MIN_REACH_NAME"));
+                        $menu = $this->createFactionMenu(Utils::getText($this->UserEntity->name, "MAX_MIN_REACH_NAME", ["min" => Utils::getConfig("min-faction-name-length"), "max" => Utils::getConfig("max-faction-name-length")]));
                         $Player->sendForm($menu);
                     }
                 }else{

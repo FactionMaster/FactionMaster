@@ -63,7 +63,7 @@ class AllianceMainMenu implements Route {
         $this->UserEntity = $User;
         $this->Collection = CollectionFactory::get(ManageAllianceMainCollection::SLUG)->init($player, $User, $this->FactionEntity);
 
-        $message = '';
+        $message = isset($params[0]) ? $params[0] : "";
         if (count($this->FactionEntity->ally) == 0) {
            $message .= Utils::getText($this->UserEntity->name, "NO_ALLY");
         }
