@@ -32,18 +32,12 @@
 
 namespace ShockedPlot7560\FactionMaster\Reward;
 
-use onebone\economyapi\EconomyAPI;
-use ShockedPlot7560\FactionMaster\Main;
-
 class RewardFactory {
 
     private static $list;
 
     public static function init() {
 
-        if (Main::getInstance()->EconomyAPI instanceof EconomyAPI) {
-            self::registerReward(new Money());
-        }
         self::registerReward(new Power());
         self::registerReward(new MemberLimit());
         self::registerReward(new HomeLimit());
@@ -71,6 +65,7 @@ class RewardFactory {
         return isset(self::$list[$type]);
     }
 
+    /** @return RewardInterface[] */
     public static function getAll() : array {
         return self::$list;
     }

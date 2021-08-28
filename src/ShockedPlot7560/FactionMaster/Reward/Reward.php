@@ -59,7 +59,7 @@ class Reward {
      * Récupère la quantité
      * @return int
      */
-    public function getValue() : int {
+    public function getValue() {
         return $this->value;
     }
 
@@ -67,7 +67,7 @@ class Reward {
      * Modifie la quantité
      * @param int|string $Value Quantité à définir
      */
-    public function setValue(int $value) : void{
+    public function setValue($value) : void{
         $this->value = $value;
     }
 }
