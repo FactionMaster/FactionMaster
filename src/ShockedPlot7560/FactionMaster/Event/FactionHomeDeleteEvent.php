@@ -42,12 +42,14 @@ class FactionHomeDeleteEvent extends Event {
     private $Faction;
     private $Data;
     private $name;
+    private $force;
 
-    public function __construct(Player $Player, string $Faction, string $name)
+    public function __construct(Player $Player, string $Faction, string $name, bool $force = false)
     {
         $this->Player = $Player;
         $this->Faction = $Faction;
         $this->name = $name;
+        $this->force = $force;
     }
 
     public function getPlayer() : Player {
@@ -60,6 +62,10 @@ class FactionHomeDeleteEvent extends Event {
 
     public function getName() : string {
         return $this->name;
+    }
+
+    public function isForceDelete(): bool {
+        return $this->force;
     }
 
 }

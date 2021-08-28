@@ -40,11 +40,13 @@ class InvitationDeleteEvent extends Event {
 
     private $Player;
     private $InvitationEntity;
+    private $force;
 
-    public function __construct(Player $Player, InvitationEntity $InvitationEntity)
+    public function __construct(Player $Player, InvitationEntity $InvitationEntity, bool $force = false)
     {
         $this->Player = $Player;
         $this->InvitationEntity = $InvitationEntity;
+        $this->force = $force;
     }
 
     public function getPlayer() : Player {
@@ -53,5 +55,9 @@ class InvitationDeleteEvent extends Event {
 
     public function getInvitationEntity() {
         return $this->InvitationEntity;
+    }
+
+    public function isForceDelete(): bool {
+        return $this->force;
     }
 }

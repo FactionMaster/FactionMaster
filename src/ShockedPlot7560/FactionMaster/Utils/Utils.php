@@ -44,6 +44,8 @@ use ShockedPlot7560\FactionMaster\Route\Route;
 
 class Utils {
 
+    const POCKETMINE_PERMISSIONS_CONSTANT = "Pocketmine";
+
     public const LOGO = [
         "             §8                  ________                     __      __                      __       __                        __                                                    ",
         "              §8                /        |                   /  |    /  |                    /  \     /  |                      /  |                                                   ",
@@ -86,14 +88,24 @@ class Utils {
             $UserPermissions = [];
         }
         if ($UserEntity instanceof UserEntity && isset($route->PermissionNeed)) {
+            $good = false;
             foreach ($route->PermissionNeed as $Permission) {
-                if (self::haveAccess($UserPermissions, $UserEntity, $Permission)){
-                    $ev = new MenuOpenEvent($Player, $route);
-                    $ev->call();
-                    if ($ev->isCancelled()) return;
-                    $route($Player, $UserEntity, $UserPermissions, $params);
-                    return;
+                if (is_string($Permission)) {
+                    if (self::haveAccess($UserPermissions, $UserEntity, $Permission)){
+                        $good = true;
+                    }                
+                }elseif (is_array($Permission) && $Permission[0] === self::POCKETMINE_PERMISSIONS_CONSTANT) {
+                    if ($Player->hasPermission($Permission[1])) {
+                        $good = true;
+                    }
                 }
+            }
+            if ($good === true) {
+                $ev = new MenuOpenEvent($Player, $route);
+                $ev->call();
+                if ($ev->isCancelled()) return;
+                $route($Player, $UserEntity, $UserPermissions, $params);
+                return;
             }
         }
         $ev = new MenuOpenEvent($Player, $route);
