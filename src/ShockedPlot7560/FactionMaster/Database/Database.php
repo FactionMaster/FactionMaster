@@ -74,7 +74,6 @@ class Database {
                 $Main::$logger->alert("Please give a valid PROVIDER in config.yml, use only : " . self::MYSQL_PROVIDER . " or " . self::SQLITE_PROVIDER);
                 $Main->getServer()->getPluginManager()->disablePlugin($Main);
                 return;
-                break;
         }
         
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

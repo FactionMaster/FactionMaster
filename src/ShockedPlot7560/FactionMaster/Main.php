@@ -57,10 +57,10 @@ class Main extends PluginBase implements Listener{
     public $Database;
     /** @var \pocketmine\plugin\Plugin */
     public $FormUI;
-    /** @var null|\onebone\economyapi\EconomyAPI */
-    public $EconomyAPI;
     /** @var Config */
     public $levelConfig;
+    /** @var Config */
+    public $translation;
     /** @var ExtensionManager */
     private $ExtensionManager;
     /** @var PermissionManager */

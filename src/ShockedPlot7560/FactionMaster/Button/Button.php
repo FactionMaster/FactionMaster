@@ -67,9 +67,6 @@ class Button {
         return \call_user_func($this->content, $playerName);
     }
 
-    /**
-     * @return int[]
-     */
     public function getPermissions() : array {
         return $this->permissions;
     }
@@ -80,7 +77,7 @@ class Button {
         if ($User->rank == Ids::OWNER_ID) return true;
         $PermissionsPlayer = MainAPI::getMemberPermission($playerName);
         foreach ($this->getPermissions() as $Permission) {
-            if (is_string($Permission) && $PermissionsPlayer !== null) {
+            if (!is_array($Permission) && $PermissionsPlayer !== null) {
                 if (isset($PermissionsPlayer[$Permission]) && $PermissionsPlayer[$Permission]) return true;
             }elseif (is_array($Permission) && $Permission[0] === Utils::POCKETMINE_PERMISSIONS_CONSTANT) {
                 return Main::getInstance()->getServer()->getPlayerExact($playerName)->hasPermission($Permission[1]);

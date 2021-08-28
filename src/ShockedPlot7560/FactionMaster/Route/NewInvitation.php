@@ -48,6 +48,8 @@ class NewInvitation implements Route {
 
     public $PermissionNeed = [];
     public $backMenu;
+    /** @var UserEntity */
+    private $UserEntity;
 
     public function getSlug(): string
     {

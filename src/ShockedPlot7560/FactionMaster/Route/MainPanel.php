@@ -92,7 +92,6 @@ class MainPanel implements Route {
                     break;
                 default:
                     return;
-                    break;
             }
         };
     }

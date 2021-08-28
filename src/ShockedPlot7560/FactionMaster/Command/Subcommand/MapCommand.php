@@ -126,6 +126,8 @@ class MapCommand extends BaseSubCommand {
                                     }else{
                                         $color = self::CLAIM_COLOR;
                                     }
+                                }else{
+                                    $color = self::CLAIM_COLOR;
                                 }
                                 $ClaimData[$Faction] = [
                                     "SYMBOL" => $SymbolData[$SymbolCursor],

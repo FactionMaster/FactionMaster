@@ -56,6 +56,7 @@ class ManageDemand implements Route {
     private $invitation;
     /** @var \ShockedPlot7560\FactionMaster\Button\Collection\Collection */
     private $Collection;
+    private $backMenu;
 
 
     public function getSlug(): string

@@ -51,6 +51,10 @@ class NewAllianceInvitation implements Route {
         PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION
     ];
     public $backMenu;
+    /** @var UserEntity */
+    private $UserEntity;
+    /** @var FactionEntity */
+    private $Faction;
 
     public function getSlug(): string
     {

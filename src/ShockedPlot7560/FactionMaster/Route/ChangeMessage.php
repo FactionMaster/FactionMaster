@@ -53,6 +53,8 @@ class ChangeMessage implements Route {
 
     /** @var FactionEntity */
     private $Faction;
+    /** @var UserEntity */
+    private $UserEntity;
 
     public function getSlug(): string
     {

@@ -35,6 +35,7 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\JoinRequestListCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;

@@ -52,6 +52,10 @@ class NewMemberInvitation implements Route {
         PermissionIds::PERMISSION_SEND_MEMBER_INVITATION
     ];
     public $backMenu;
+    /** @var UserEntity */
+    private $UserEntity;
+    /** @var FactionEntity */
+    private $Faction;
 
     public function getSlug(): string
     {

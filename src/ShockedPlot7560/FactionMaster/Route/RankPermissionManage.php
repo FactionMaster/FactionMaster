@@ -53,6 +53,8 @@ class RankPermissionManage implements Route {
         PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS
     ];
     public $backMenu;
+    /** @var UserEntity */
+    private $UserEntity;
 
     /** @var array */
     private $check;
@@ -64,6 +66,7 @@ class RankPermissionManage implements Route {
     private $permissionsFaction;
     /** @var FactionEntity */
     private $Faction;
+    private $rank;
 
     public function getSlug(): string
     {

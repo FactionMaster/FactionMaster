@@ -56,6 +56,8 @@ class ChangeVisibility implements Route {
     private $sliderData;
     /** @var FactionEntity */
     private $Faction;
+    /** @var UserEntity */
+    private $UserEntity;
 
     public function getSlug(): string
     {

@@ -55,6 +55,9 @@ class MemberChangeRank implements Route {
     /** @var UserEntity */
     private $victim;
 
+    /** @var UserEntity */
+    private $UserEntity;
+
     public function getSlug(): string
     {
         return self::SLUG;

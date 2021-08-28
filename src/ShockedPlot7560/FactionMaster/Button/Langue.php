@@ -51,7 +51,7 @@ class Langue extends Button {
                 $UserLang = MainAPI::getPlayerLang($Player);
                 return $Lang . (Utils::getConfigLang("languages-name")[$UserLang] === $Lang ? ("\n" . Utils::getText($Player, "CURRENT_LANG")): "");
             },  
-            function(Player $Player) use ($Lang, $User) {
+            function(Player $Player) use ($Lang) {
                 foreach (Utils::getConfigLang("languages-name") as $key => $value) {
                     if ($value === $Lang) {
                         $Lang = $key;

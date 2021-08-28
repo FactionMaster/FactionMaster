@@ -67,7 +67,7 @@ class AcceptMemberRequest extends Button {
                                 (new InvitationAcceptEvent($Player, $Request))->call();
                                 Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [$message]);
                             }else{
-                                $message = Utils::getText($Player->name, "MAX_PLAYER_REACH");
+                                $message = Utils::getText($Player->getName(), "MAX_PLAYER_REACH");
                                 Utils::processMenu(RouterFactory::get(DemandList::SLUG), $Player, [$message]);
                             }
                         }else{

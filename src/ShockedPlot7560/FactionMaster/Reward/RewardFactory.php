@@ -48,8 +48,6 @@ class RewardFactory {
 
     /**
      * Use to register or overwrite a new Reward
-     * @param Reward $reward A class implements the RewardInterface
-     * @param boolean $override (Default: false) If it's set to true and the slug are already use, it will be overwrite
      */
     public static function registerReward(RewardInterface $reward, bool $override = false) : void {
         $type = $reward->getType();

@@ -96,7 +96,6 @@ class MainAPI {
     }
 
     /**
-     * @param string $factionName 
      * @return null|FactionEntity Return null if faction not found
      */
     public static function getFaction(string $factionName) : ?FactionEntity {
@@ -111,18 +110,10 @@ class MainAPI {
         return $result === false ? null : $result;
     }
 
-    /**
-     * @param string 
-     * @return boolean
-     */
     public static function isFactionRegistered(string $factionName) : bool {
         return self::getFaction($factionName) instanceof FactionEntity;
     }
 
-    /**
-     * @param string $args
-     * @return boolean False on failure
-     */
     public static function removeFaction(string $factionName) : bool {
         try {
             $Faction = self::getFaction($factionName);
@@ -140,8 +131,6 @@ class MainAPI {
     }
 
     /**
-     * @param string $factionName 
-     * @param string $ownerName
      * @return false|FactionEntity False on failure
      */
     public static function addFaction(string $factionName, string $ownerName) {
@@ -162,7 +151,6 @@ class MainAPI {
     }
 
     /**
-     * @param string $factionName
      * @return UserEntity[]
      */
     public static function getMembers(string $factionName) : array {
@@ -174,10 +162,6 @@ class MainAPI {
     /**
      * Add a member to the target faction
      * **It will not check if the player are already in a faction !**
-     * @param string $factionName
-     * @param string $playerName
-     * @param int $rankId 
-     * @return boolean False on failure
      */
     public static function addMember(string $factionName, string $playerName, int $rankId = Ids::RECRUIT_ID) : bool {
         $Faction = self::getFaction($factionName);
@@ -201,11 +185,6 @@ class MainAPI {
         }
     }
 
-    /**
-     * @param string $factionName 
-     * @param string $playerName
-     * @return boolean False on failure
-     */
     public static function removeMember(string $factionName, string $playerName) : bool {
         $Faction = self::getFaction($factionName);
         if (!$Faction instanceof FactionEntity) return false;
@@ -228,8 +207,6 @@ class MainAPI {
 
     /**
      * Add a quantity of XP to the faction, *If the total xp of the level are exceeded, it will be set to this limit*
-     * @param string $factionName 
-     * @param int $xp
      * @return boolean False on failure
      */
     public static function addXP(string $factionName, int $xp) : bool {
@@ -260,9 +237,6 @@ class MainAPI {
 
     /**
      * Change the faction level and reset xp to 0
-     * @param string $factionName
-     * @param int $level Number level to change
-     * @return boolean
      */
     public static function changeLevel(string $factionName, int $level) : bool {
         try {
@@ -277,9 +251,7 @@ class MainAPI {
     }
 
     /**
-     * @param string $factionName 
      * @param int $power The power to change, it allow negative integer to substract
-     * @return boolean False on failure
      */
     public static function changePower(string $factionName, int $power) : bool {
         $Faction = self::getFaction($factionName);
@@ -299,7 +271,6 @@ class MainAPI {
     }
 
     /**
-     * @param string $playerName 
      * @return FactionEntity|null Null if the player has no faction or player not found
      */
     public static function getFactionOfPlayer(string $playerName) : ?FactionEntity {
@@ -316,10 +287,6 @@ class MainAPI {
         }
     }
 
-    /**
-     * @param string $playerName
-     * @return boolean False if the player have no faction
-     */
     public static function isInFaction(string $playerName) : bool {
         if (self::getFactionOfPlayer($playerName) instanceof FactionEntity) {
             return true;
@@ -327,21 +294,12 @@ class MainAPI {
         return false;
     }
 
-    /**
-     * @param string $playerName1 The name of the first player *The order does not matter*
-     * @param string $playerName2 The name of the second player *The order does not matter*
-     * @return boolean
-     */
     public static function sameFaction(string $playerName1, string $playerName2) : bool {
         $player1 = self::getFactionOfPlayer($playerName1);
         $player2 = self::getFactionOfPlayer($playerName2);
         return ($player1 === $player2) && ($player1 !== null);
     }
 
-    /**
-     * @param string $playerName
-     * @return UserEntity|null Null if the user are not found
-     */
     public static function getUser(string $playerName) : ?UserEntity {
         try {
             $query = self::$PDO->prepare("SELECT * FROM " . UserTable::TABLE_NAME . " WHERE name = :name");
@@ -356,10 +314,6 @@ class MainAPI {
         
     }
 
-    /**
-     * @param string $playerName
-     * @return boolean
-     */
     public static function userIsRegister(string $playerName) : bool {
         if (self::getUser($playerName) instanceof UserEntity) {
             return true;
@@ -367,11 +321,6 @@ class MainAPI {
         return false;
     }
 
-    /**
-     * @param string $factionName1
-     * @param string $factionName2
-     * @return boolean
-     */
     public static function isAlly(string $factionName1, string $factionName2) : bool {
         try {
             $query = self::$PDO->prepare("SELECT ally FROM " .FactionTable::TABLE_NAME . " WHERE name = :name");
@@ -386,11 +335,6 @@ class MainAPI {
         }
     }
 
-    /**
-     * @param string $factionName1
-     * @param string $factionName2
-     * @return boolean
-     */
     public static function setAlly(string $factionName1, string $factionName2) : bool {
         $Faction1 = self::getFaction($factionName1);
         $Faction2 = self::getFaction($factionName2);
@@ -417,11 +361,6 @@ class MainAPI {
         }
     }
 
-    /**
-     * @param string $faction1
-     * @param string $faction2
-     * @return boolean False on failure
-     */
     public static function removeAlly(string $faction1, string $faction2) : bool {
         if (!self::isAlly($faction1, $faction2)) return false;
 
@@ -447,11 +386,6 @@ class MainAPI {
         return true;
     }
 
-    /**
-     * @param string $playerName 
-     * @param int $rank The id of the rank define in Ids interface
-     * @return boolean
-     */
     public static function changeRank(string $playerName, int $rank) : bool {
         $Faction = self::getFactionOfPlayer($playerName);
         if (!$Faction instanceof FactionEntity) return false;
@@ -475,12 +409,6 @@ class MainAPI {
         }
     }
 
-    /**
-     * Use to change the faction's visibility : Public / private / invitation
-     * @param string $factionName 
-     * @param int $visibilityType The type define in Ids interface
-     * @return boolean False on failure
-     */
     public static function changeVisibility(string $factionName, int $visibilityType) : bool{
         try {
             $query = self::$PDO->prepare("UPDATE " . FactionTable::TABLE_NAME . " SET visibility = :visibility WHERE name = :name");
@@ -493,11 +421,6 @@ class MainAPI {
         }
     }
 
-    /**
-     * @param string $factionName
-     * @param int $message 
-     * @return boolean False on failure
-     */
     public static function changeMessage(string $factionName, string $message) : bool{
         try {
             $query = self::$PDO->prepare("UPDATE " . FactionTable::TABLE_NAME . " SET messageFaction = :message WHERE name = :name");
@@ -510,11 +433,6 @@ class MainAPI {
         }
     }
 
-    /**
-     * @param string $factionName
-     * @param int $description
-     * @return boolean False on failure
-     */
     public static function changeDescription(string $factionName, string $description) : bool{
         try {
             $query = self::$PDO->prepare("UPDATE " . FactionTable::TABLE_NAME . " SET description = :description WHERE name = :name");
@@ -529,7 +447,6 @@ class MainAPI {
 
     /**
      * Return the permission's array of the target player
-     * @param string $playerName
      * @return null|string[]
      */
     public static function getMemberPermission(string $playerName) : ?array {
@@ -549,10 +466,6 @@ class MainAPI {
 
     /**
      * Create an invitation between two entity
-     * @param string $sender Can be a user or faction name
-     * @param string $receiver Can be a user or faction name
-     * @param string $type Value : member or ally foreach -> invitation concern member or ally
-     * @return bool
      */
     public static function makeInvitation(string $sender, string $receiver, string $type) : bool {
         try {
@@ -567,12 +480,6 @@ class MainAPI {
         }
     }
 
-    /**
-     * @param string $sender
-     * @param string $receiver
-     * @param string $type
-     * @return boolean
-     */
     public static function areInInvitation(string $sender, string $receiver, string $type) : bool {
         try {
             $query = self::$PDO->prepare("SELECT * FROM " . InvitationTable::TABLE_NAME . " WHERE sender = :sender AND receiver = :receiver AND type = :type");
@@ -588,12 +495,6 @@ class MainAPI {
         }
     }
 
-    /**
-     * @param string $sender
-     * @param string $receiver
-     * @param string $type
-     * @return boolean False on failure
-     */
     public static function removeInvitation(string $sender, string $receiver, string $type) : bool {
         try {
             $query = self::$PDO->prepare("DELETE FROM " . InvitationTable::TABLE_NAME . " WHERE sender = :sender AND receiver = :receiver AND type = :type");
@@ -608,8 +509,6 @@ class MainAPI {
     }
 
     /**
-     * @param string $sender
-     * @param string $type
      * @return InvitationEntity[]
      */
     public static function getInvitationsBySender(string $sender, string $type) : array {
@@ -627,8 +526,6 @@ class MainAPI {
     }
 
     /**
-     * @param string $receiver
-     * @param string $type
      * @return InvitationEntity[]
      */
     public static function getInvitationsByReceiver(string $receiver, string $type) : array {
@@ -646,10 +543,8 @@ class MainAPI {
     }
 
     /**
-     * @param string $factionName
      * @param array $permissions The permissions in this format : [[1 => true],[],[],[]]
      *                          where each index of sub array are a permission's ids define in Ids interface
-     * @return boolean False on failure
      */
     public static function updatePermissionFaction(string $factionName, array $permissions) : bool {
         if (!isset($permissions[3])) throw new InvalidArgumentException("You must set the fourth item in the array");
@@ -664,10 +559,6 @@ class MainAPI {
         }
     }
 
-    /**
-     * @param string $playerName
-     * @return bool False on failure
-     */
     public static function addUser(string $playerName) : bool {
         try {
             $query = self::$PDO->prepare("INSERT INTO " . UserTable::TABLE_NAME . " (`name`) VALUES (:user)");
@@ -713,11 +604,6 @@ class MainAPI {
         }
     }
 
-    /**
-     * @param Player $player 
-     * @param string $factionName
-     * @return bool False on failure
-     */
     public static function addClaim(Player $player, string $factionName) : bool {
         $Chunk = $player->getLevel()->getChunkAtPosition($player);
         $X = $Chunk->getX();
@@ -738,12 +624,6 @@ class MainAPI {
         }
     }
 
-    /**
-     * @param string $World
-     * @param int $X
-     * @param int $Z
-     * @return bool
-     */
     public static function isClaim(string $World, int $X, int $Z) : bool{
         $stringClaim = Utils::claimToString($X, $Z, $World);
         foreach (self::$claim as $Faction => $FactionClaim) {
@@ -756,12 +636,6 @@ class MainAPI {
         return false;
     }
 
-    /**
-     * @param string $World
-     * @param int $X
-     * @param int $Z
-     * @return string|null Null if the chunk isn't claim
-     */
     public static function getFactionClaim(string $World, int $X, int $Z) : ?string {
         $stringClaim = Utils::claimToString($X, $Z, $World);
         foreach (self::$claim as $Faction => $FactionClaim) {
@@ -774,11 +648,6 @@ class MainAPI {
         return null;
     }
 
-    /**
-     * @param Player $player 
-     * @param string $factionName
-     * @return bool False on failure
-     */
     public static function removeClaim(Player $player, string $factionName) : bool {
         $Chunk = $player->getLevel()->getChunkAtPosition($player);
         $X = $Chunk->getX();
@@ -804,7 +673,6 @@ class MainAPI {
     }
 
     /**
-     * @param string $factionName
      * @return string[]
      */
     public static function getClaimsFaction(string $factionName) : array {
@@ -832,27 +700,16 @@ class MainAPI {
     }
 
     /**
-     * @param string $factionName
-     * @return array[] an array of HomeEntity convert with getToArray() function
+     * @return array an array of HomeEntity convert with getToArray() function
      */
     public static function getFactionHomes(string $factionName) : array {
         return self::$home[$factionName] ?? [];
     }
 
-    /**
-     * @param string $factionName
-     * @param string $name
-     * @return (int|string)[]|null return null if the home don't exist
-     */
     public static function getFactionHome(string $factionName, string $name) : ?array {
         return self::$home[$factionName][$name] ?? null;
     }
 
-    /**
-     * @param Player $player 
-     * @param string $factionName
-     * @return bool False on failure
-     */
     public static function removeHome(string $factionName, string $name) : bool {
         try {
             $query = self::$PDO->prepare("DELETE FROM " . HomeTable::TABLE_NAME . " WHERE faction = :faction AND name = :name");
@@ -867,11 +724,6 @@ class MainAPI {
         }
     }
 
-    /**
-     * @param Player $player 
-     * @param string $factionName
-     * @return bool False on failure
-     */
     public static function addHome(Player $player, string $factionName, string $name) : bool {
         try {
             $query = self::$PDO->prepare("INSERT INTO " . HomeTable::TABLE_NAME . " (x, y, z, world, faction, name) VALUES (:x, :y, :z, :world, :faction, :name)");
@@ -890,19 +742,10 @@ class MainAPI {
         }
     }
 
-    /**
-     * @param string $playerName
-     * @return string
-     */
     public static function getPlayerLang(string $playerName) : string {
         return self::$languages[$playerName] ?? Utils::getConfigLang("default-language");
     }
 
-    /**
-     * @param string $playerName
-     * @param string $slug
-     * @return bool False on failure
-     */
     public static function changeLanguage(string $playerName, string $slug) : bool {
         try {
             $query = self::$PDO->prepare("UPDATE " . UserTable::TABLE_NAME . " SET language = :lang WHERE name = :name");
@@ -917,10 +760,6 @@ class MainAPI {
         }
     }
 
-    /**
-     * @param int $level
-     * @return null|RewardInterface Null if reward don't exist or if it's maximum level
-     */
     public static function getLevelReward(int $level) : ?RewardInterface {
         $Data = self::getLevelRewardData($level);
         $Reward = RewardFactory::get($Data['type']);
@@ -928,20 +767,10 @@ class MainAPI {
         return $Reward;
     }
 
-    /**
-     * @param int $level
-     * @return array The data containt in level.yml
-     */
     public static function getLevelRewardData(int $level) : array {
         return Main::getInstance()->levelConfig->__get($level-2);
     }
 
-    /**
-     * @param string $factionName
-     * @param string $option The name of the column to update
-     * @param int $value
-     * @return bool False on failure
-     */
     public static function updateFactionOption(string $factionName, string $option, int $value) : bool {
         try {
             $query = self::$PDO->prepare("UPDATE " . FactionTable::TABLE_NAME . " SET " . $option . " = " . $option . " + :option WHERE name = :name");
