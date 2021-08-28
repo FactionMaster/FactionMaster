@@ -45,7 +45,7 @@ interface RewardInterface {
 
     public function getName(string $playerName) : string;
 
-    public function getType() : string;
+    public function getType() : ?string;
 
     public function getValue();
 
