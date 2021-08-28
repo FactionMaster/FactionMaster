@@ -8,6 +8,10 @@ The execute() function will be called when the extension is loaded, so please pu
 
 **The registerExtension of [ShockedPlot7560\FactionMaster\Extension\ExtensionManager](https://github.com/ShockedPlot7560/FactionMaster/blob/master/src/ShockedPlot7560/FactionMaster/Extension/ExtensionManager.php) must be in the onLoad() function**
 
+### Official extension list
+* [Invitation improve system](https://github.com/ShockedPlot7560/FactionMaster-InvitationImprove)
+* [Admin tools](https://github.com/ShockedPlot7560/FactionMaster-AdminTools)
+
 ## Register route
 ```php
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
