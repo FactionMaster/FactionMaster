@@ -34,13 +34,15 @@ namespace ShockedPlot7560\FactionMaster\Button;
 
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 /**
  * @param string $slug
  * @param callable $content The function use to get the content, get in parameter the name of player
  * @param callable $callable The function call when the button are click, get in parameter the player instance
- * @param int[] $permissions The array of the button permissions, only one of it are necessary to show the button
+ * @param (int|array)[] $permissions The array of the button permissions, only one of it are necessary to show the button
  */
 class Button {
 
@@ -77,9 +79,12 @@ class Button {
         $User = MainAPI::getUser($playerName);
         if ($User->rank == Ids::OWNER_ID) return true;
         $PermissionsPlayer = MainAPI::getMemberPermission($playerName);
-        if ($PermissionsPlayer === null) return false;
         foreach ($this->getPermissions() as $Permission) {
-            if (isset($PermissionsPlayer[$Permission]) && $PermissionsPlayer[$Permission]) return true;
+            if (is_string($Permission) && $PermissionsPlayer !== null) {
+                if (isset($PermissionsPlayer[$Permission]) && $PermissionsPlayer[$Permission]) return true;
+            }elseif (is_array($Permission) && $Permission[0] === Utils::POCKETMINE_PERMISSIONS_CONSTANT) {
+                return Main::getInstance()->getServer()->getPlayerExact($playerName)->hasPermission($Permission[1]);
+            }
         }
         return false;
     }
