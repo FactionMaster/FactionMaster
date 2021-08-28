@@ -70,7 +70,6 @@ class Main extends PluginBase implements Listener{
     {
         self::$instance = $this;
         self::$logger = $this->getLogger();
-        Utils::printLogo(self::$logger);
 
         self::$logger->info("Loading configurations");
         $this->loadConfig();
