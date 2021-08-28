@@ -576,7 +576,7 @@ class MainAPI {
      */
     public static function getTopFaction() : array {
         try {
-            $query = self::$PDO->prepare("SELECT * FROM " . FactionTable::TABLE_NAME . " ORDER BY level DESC, xp DESC, power DESC, money DESC LIMIT 10");
+            $query = self::$PDO->prepare("SELECT * FROM " . FactionTable::TABLE_NAME . " ORDER BY level DESC, xp DESC, power DESC LIMIT 10");
             $query->execute();
             $query->setFetchMode(PDO::FETCH_CLASS, FactionEntity::class);
             return $query->fetchAll();

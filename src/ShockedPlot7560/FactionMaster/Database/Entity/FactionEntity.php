@@ -64,8 +64,6 @@ class FactionEntity {
     public $max_home;
     /** @var int */
     public $power;
-    /** @var int */
-    public $money;
     /** @var string|array */
     public $permissions;
     /** @var string */

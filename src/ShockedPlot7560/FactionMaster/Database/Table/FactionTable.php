@@ -62,7 +62,6 @@ class FactionTable implements TableInterface {
             `max_claim` INT(11) NOT NULL DEFAULT '". Main::getInstance()->config->get("default-claim-limit") . "',
             `max_home` INT(11) NOT NULL DEFAULT '". Main::getInstance()->config->get("default-home-limit") . "',
             `power` INT(11) NOT NULL DEFAULT '". Main::getInstance()->config->get("default-power") . "',
-            `money` INT(16) NOT NULL DEFAULT '". Main::getInstance()->config->get("default-money") . "',
             `permissions` TEXT,
             `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         )");
