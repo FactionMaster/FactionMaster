@@ -36,7 +36,6 @@ use PDO;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use ShockedPlot7560\FactionMaster\Database\Database;
-use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class DatabaseTask extends AsyncTask {
@@ -46,10 +45,12 @@ class DatabaseTask extends AsyncTask {
     private $query;
     private $args;
     private $callable;
+    private $class;
 
-    public function __construct(string $query, array $args, ?callable $callable = null) {
+    public function __construct(string $query, array $args, ?callable $callable = null, ?string $class = null) {
         $this->query = $query;
         $this->args = $args;
+        $this->class = $class;
         $this->callable = $callable;
         $this->provider = Utils::getConfig("PROVIDER");
         switch ($this->provider) {
@@ -59,7 +60,7 @@ class DatabaseTask extends AsyncTask {
                 break;
             
             case Database::SQLITE_PROVIDER:
-                $this->db = array(Main::getInstance()->getDataFolder() . Utils::getConfig("SQLITE_database")["name"] . ".db");
+                $this->db = array(Utils::getDataFolder() . Utils::getConfig("SQLITE_database")["name"] . ".db");
                 break;
         }
     }
@@ -84,13 +85,18 @@ class DatabaseTask extends AsyncTask {
         }
         $query = $db->prepare($this->query);
         $query->execute((array) $this->args);
-        $this->setResult("");
+        $results = "";
+        if ($this->class !== null) {
+            $query->setFetchMode(PDO::FETCH_CLASS, $this->class);
+            $results = $query->fetchAll();
+        }
+        $this->setResult($results);
     }
 
     /**
      * @param Server $server
      */
     public function onCompletion(Server $server): void {
-        call_user_func($this->callable);
+        call_user_func($this->callable, $this->getResult());
     }
 }

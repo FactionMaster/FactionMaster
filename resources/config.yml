@@ -83,4 +83,11 @@ max-faction-name-length: 20
 # increasing it may reduce the players experience.
 # Default: 60
 timeout-task: 60
+
+# Change this value only if you are sure of what you are doing, 
+# reducing it may break some functionality of the plugin, 
+# increasing it may reduce the players experience.
+# Default: 200
+# It will determine ow much time Database synchronisation will be done
+sync-time: 200
 ...

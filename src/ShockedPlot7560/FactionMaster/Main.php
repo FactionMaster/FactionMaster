@@ -46,6 +46,8 @@ use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Task\InitTranslationFile;
 use ShockedPlot7560\FactionMaster\Task\LoadCacheTask;
+use ShockedPlot7560\FactionMaster\Task\SyncServerTask;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Main extends PluginBase implements Listener{
 
@@ -92,6 +94,7 @@ class Main extends PluginBase implements Listener{
             $langConfig[$extension->getExtensionName()] = $extension->getLangConfig();
         }
         $this->getServer()->getAsyncPool()->submitTask(new InitTranslationFile($langConfig, $this->getDataFolder(), self::$logger));
+        $this->getScheduler()->scheduleRepeatingTask(new SyncServerTask(), (int) Utils::getConfig("sync-time"));
     }
 
     private function init() {

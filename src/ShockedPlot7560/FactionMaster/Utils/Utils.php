@@ -190,4 +190,8 @@ class Utils {
     public static function newMenuSendTask(MenuSendTask $task) {
         Main::getInstance()->getScheduler()->scheduleRepeatingTask($task, 1);
     }
+
+    public static function getDataFolder(): string {
+        return Main::getInstance()->getDataFolder();
+    }
 }

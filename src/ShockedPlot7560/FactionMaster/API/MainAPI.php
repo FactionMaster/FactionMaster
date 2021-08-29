@@ -55,12 +55,6 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class MainAPI {
 
-    private static $instance;
-
-    public function __construct() {
-        self::$instance = $this;
-    }
-
     /** @var FactionEntity[] */
     public static $factions = [];
     /** @var UserEntity[] */
@@ -222,12 +216,16 @@ class MainAPI {
                     'permissions' => \base64_encode(\serialize([[],[],[],[]]))
                 ],
                 function () use ($factionName, $ownerName) {
-                    $query = MainAPI::$PDO->prepare("SELECT * FROM " . FactionTable::TABLE_NAME . " WHERE name = :name");
-                    $query->execute([ "name" => $factionName ]);
-                    $query->setFetchMode(PDO::FETCH_CLASS, FactionEntity::class);
-                    $Faction = $query->fetch();
-                    MainAPI::$factions[$factionName] = $Faction;
-                    MainAPI::addMember($factionName, $ownerName, Ids::OWNER_ID);
+                    Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+                        new DatabaseTask(
+                            "SELECT * FROM " . FactionTable::TABLE_NAME . " WHERE name = :name", 
+                            [ "name" => $factionName ],
+                            function ($result) use ($factionName, $ownerName) {
+                                MainAPI::$factions[$factionName] = $result[0];
+                                MainAPI::addMember($factionName, $ownerName, Ids::OWNER_ID);
+                            },
+                            FactionEntity::class
+                    ));
                 }
         ));
     }
@@ -586,15 +584,19 @@ class MainAPI {
                     'type' => $type
                 ],
                 function () use ($sender, $receiver, $type) {
-                    $query = MainAPI::$PDO->prepare("SELECT * FROM " . InvitationTable::TABLE_NAME . " WHERE sender = :sender AND receiver = :receiver AND type = :type");
-                    $query->execute([
-                        'sender' => $sender,
-                        'receiver' => $receiver,
-                        'type' => $type
-                    ]);
-                    $query->setFetchMode(PDO::FETCH_CLASS, InvitationEntity::class);
-                    $Invitation = $query->fetch();
-                    MainAPI::$invitation[$sender . "|" . $receiver] = $Invitation;
+                    Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+                        new DatabaseTask(
+                            "SELECT * FROM " . InvitationTable::TABLE_NAME . " WHERE sender = :sender AND receiver = :receiver AND type = :type", 
+                            [
+                                'sender' => $sender,
+                                'receiver' => $receiver,
+                                'type' => $type
+                            ],
+                            function ($result) use ($sender, $receiver) {
+                                MainAPI::$invitation[$sender . "|" . $receiver] = $result[0];
+                            },
+                            InvitationEntity::class
+                    ));
                 }
         ));
     }
@@ -673,13 +675,17 @@ class MainAPI {
                     'user' => $playerName
                 ],
                 function () use ($playerName) {
-                    $query = MainAPI::$PDO->prepare("SELECT * FROM " . UserTable::TABLE_NAME . " WHERE name = :name");
-                    $query->execute([
-                        'name' => $playerName
-                    ]);
-                    $query->setFetchMode(PDO::FETCH_CLASS, UserEntity::class);
-                    $user = $query->fetch();
-                    MainAPI::$users[$playerName] = $user;
+                    Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+                        new DatabaseTask(
+                            "SELECT * FROM " . UserTable::TABLE_NAME . " WHERE name = :name", 
+                            [
+                                'name' => $playerName
+                            ],
+                            function ($result) use ($playerName) {
+                                MainAPI::$users[$playerName] = $result[0];
+                            },
+                            UserEntity::class
+                    ));
                 }
         ));
     }
@@ -720,16 +726,20 @@ class MainAPI {
                     "faction" => $factionName
                 ],
                 function () use ($factionName, $World, $X, $Z) {
-                    $query = MainAPI::$PDO->prepare("SELECT * FROM " . ClaimTable::TABLE_NAME . " WHERE x = :x AND z = :z AND world = :world AND faction = :faction");
-                    $query->execute([
-                        'x' => $X,
-                        'z' => $Z,
-                        'faction' => $factionName,
-                        'world' => $World
-                    ]);
-                    $query->setFetchMode(PDO::FETCH_CLASS, ClaimEntity::class);
-                    $claim = $query->fetch();
-                    MainAPI::$claim[$factionName][] = $claim;
+                    Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+                        new DatabaseTask(
+                            "SELECT * FROM " . ClaimTable::TABLE_NAME . " WHERE x = :x AND z = :z AND world = :world AND faction = :faction", 
+                            [
+                                'x' => $X,
+                                'z' => $Z,
+                                'faction' => $factionName,
+                                'world' => $World
+                            ],
+                            function ($result) use ($factionName) {
+                                MainAPI::$claim[$factionName][] = $result[0];
+                            },
+                            ClaimEntity::class
+                    ));
                 }
         ));
     }
@@ -816,18 +826,22 @@ class MainAPI {
                     "name" => $name
                 ],
                 function () use ($player, $factionName, $name) {
-                    $query = MainAPI::$PDO->prepare("SELECT * FROM " . HomeTable::TABLE_NAME . " WHERE x = :x AND z = :z AND world = :world AND faction = :faction AND name = :name");
-                    $query->execute([
-                        "x" => floor($player->getX()),
-                        "z" => floor($player->getZ()),
-                        "y" => floor($player->getY()),
-                        "world" => $player->getLevel()->getName(),
-                        "faction" => $factionName,
-                        "name" => $name
-                    ]);
-                    $query->setFetchMode(PDO::FETCH_CLASS, HomeEntity::class);
-                    $home = $query->fetch();
-                    MainAPI::$home[$factionName][$name] = $home;
+                    Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+                        new DatabaseTask(
+                            "SELECT * FROM " . HomeTable::TABLE_NAME . " WHERE x = :x AND z = :z AND world = :world AND faction = :faction AND name = :name", 
+                            [
+                                "x" => floor($player->getX()),
+                                "z" => floor($player->getZ()),
+                                "y" => floor($player->getY()),
+                                "world" => $player->getLevel()->getName(),
+                                "faction" => $factionName,
+                                "name" => $name
+                            ],
+                            function ($result) use ($factionName, $name) {
+                                MainAPI::$home[$factionName][$name] = $result[0];
+                            },
+                            HomeEntity::class
+                    ));
                 }
         ));
     }

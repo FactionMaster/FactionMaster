@@ -54,6 +54,13 @@ use pocketmine\math\Vector3;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
+use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
+use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
+use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
+use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
+use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class EventListener implements Listener {
@@ -185,6 +192,58 @@ class EventListener implements Listener {
         }else{
             MainAPI::$languages[$playerName] = $UserEntity->language;
         }
+        Utils::newMenuSendTask(new MenuSendTask(
+            function () use ($playerName) {
+                return MainAPI::getUser($playerName) instanceof UserEntity;
+            },
+            function () use ($playerName) {
+                $user = MainAPI::getUser($playerName);
+                if ($user->faction !== null) {
+                    Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+                        new DatabaseTask(
+                            "SELECT * FROM " . FactionTable::TABLE_NAME . " WHERE name = :name", 
+                            [
+                                "name" => $user->faction
+                            ],
+                            function ($result) use ($user) {
+                                $faction = $result[0];
+                                MainAPI::$factions[$user->faction] = $faction;
+                            },
+                            FactionEntity::class
+                    ));                    
+                }
+                Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+                    new DatabaseTask(
+                        "SELECT * FROM " . InvitationTable::TABLE_NAME . " WHERE sender = :name OR receiver = :name" . ($user->faction !== null ? " OR sender = :factionName OR receiver = :factionName" : ""), 
+                        ($user->faction !== null ? [
+                            "name" => $playerName,
+                            "factionName" => $user->faction
+                        ]:[
+                            "name" => $playerName,
+                        ]),
+                        function ($result) {
+                            foreach ($result as $invitation) {
+                                MainAPI::$invitation[$invitation->sender . "|" . $invitation->receiver] = $invitation;
+                            }
+                        },
+                        InvitationEntity::class
+                ));
+                Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+                    new DatabaseTask(
+                        "SELECT * FROM " . UserTable::TABLE_NAME . " WHERE name = :name", 
+                        [
+                            "name" => $playerName
+                        ],
+                        function ($result) use ($playerName) {
+                            MainAPI::$users[$playerName] = $result[0];
+                        },
+                        UserEntity::class
+                ));  
+            },
+            function () use ($event) {
+                $event->getPlayer()->kick(Utils::getText($event->getPlayer()->getName(), "ERROR_DATA_SAVING"), false);
+            }
+        ));
         return;
     }
 }
