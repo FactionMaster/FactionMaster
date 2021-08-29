@@ -172,6 +172,7 @@ COMMAND_MAP_DESCRIPTION: "Displays the map listing all claims"
 COMMAND_HELP_DESCRIPTION: "Displays the orders"
 COMMAND_INFO_DESCRIPTION_GLOBAL: "Displays information about a faction"
 COMMAND_CLAIM_INFO_DESCRIPTION: "Displays information about a chunk"
+COMMAND_EXTENSION_DESCRIPTION: "Display extensions enabled"
 
 NEED_FACTION: " §c>> §4You need a faction to use this"
 SUCCESS_CLAIM: " §a>> §2Chunk claim successfully"

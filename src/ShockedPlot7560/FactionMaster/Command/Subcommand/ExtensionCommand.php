@@ -30,28 +30,29 @@
  *
 */
 
-namespace ShockedPlot7560\FactionMaster\Extension;
+namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-class ExtensionManager {
+use CortexPE\Commando\BaseSubCommand;
+use pocketmine\command\CommandSender;
+use ShockedPlot7560\FactionMaster\Main;
 
-    /** @var Extension[] */
-    public $extensions = [];
+class ExtensionCommand extends BaseSubCommand {
 
-    public function registerExtension(Extension $extension) {
-        $this->extensions[$extension->getExtensionName()] = $extension;
-    }
+    protected function prepare(): void {}
 
-    public function disableExtension(string $name) {
-        if (isset($this->extensions[$name])) unset($this->extensions[$name]);
-    }
-
-    public function load() {
-        foreach ($this->extensions as $extension) {
-            $extension->execute();
+    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
+    {
+        if (!$sender->isOp()) {
+            $sender->sendMessage("§4You haven't permission");
+            return;
         }
+        $extensions = Main::getInstance()->getExtensionManager()->getExtensions();
+        $string = "";
+        foreach ($extensions as $extension) {
+            $extension->execute();
+            $string .= "§a" . $extension->getExtensionName() . "§f, ";
+        }
+        $sender->sendMessage("FactionMaster is enabled with this extension: " . $string);
     }
 
-    public function getExtensions(): array {
-        return $this->extensions;
-    }
 }

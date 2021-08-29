@@ -38,6 +38,7 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\ClaimCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\ClaimInfoCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\DelhomeCommand;
+use ShockedPlot7560\FactionMaster\Command\Subcommand\ExtensionCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\FactionCreateCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\FactionManageCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\FactionTopCommand;
@@ -68,6 +69,7 @@ class FactionCommand extends BaseCommand{
         $this->registerSubCommand(new HelpCommand("help", Utils::getText("", "COMMAND_HELP_DESCRIPTION")));
         $this->registerSubCommand(new InfoCommand("info", Utils::getText("", "COMMAND_INFO_DESCRIPTION")));
         $this->registerSubCommand(new ClaimInfoCommand("claiminfo", Utils::getText("", "COMMAND_CLAIM_INFO_DESCRIPTION")));
+        $this->registerSubCommand(new ExtensionCommand("extension", Utils::getText("", "COMMAND_EXTENSION_DESCRIPTION")));
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args) : void {
