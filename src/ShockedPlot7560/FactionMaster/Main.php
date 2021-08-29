@@ -43,7 +43,6 @@ use ShockedPlot7560\FactionMaster\Extension\ExtensionManager;
 use ShockedPlot7560\FactionMaster\Permission\PermissionManager;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Main extends PluginBase implements Listener{
 
@@ -96,12 +95,6 @@ class Main extends PluginBase implements Listener{
 
         if(!PacketHooker::isRegistered()) PacketHooker::register($this);
         $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", "FactionMaster command", ["f", "fac"]));
-
-        $this->FormUI = $this->getServer()->getPluginManager()->getPlugin("FormAPI");
-        if ($this->FormUI === null) {
-            self::$logger->critical("FactionMaster need FormAPI to work, please install them and reload server");
-            $this->getServer()->getPluginManager()->disablePlugin($this);
-        } 
 
     }
 
