@@ -36,6 +36,8 @@ use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
+use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 
 class MapCommand extends BaseSubCommand {
 
@@ -77,6 +79,7 @@ class MapCommand extends BaseSubCommand {
         if (!$sender instanceof Player) return;
         $Player = $sender->getPlayer();
         $UserEntity = MainAPI::getUser($Player->getName());
+        if (!$UserEntity instanceof UserEntity) return;
         $CentralChunk = $Player->getLevel()->getChunkAtPosition($Player);
         $map = [];
         $SymbolData = self::SYMBOL;
@@ -86,14 +89,14 @@ class MapCommand extends BaseSubCommand {
         $X = round($Player->getX());
         $Z = round($Player->getZ());
         $ChunkFaction = MainAPI::getFactionClaim($Player->getLevel()->getName(), $CentralChunk->getX(), $CentralChunk->getZ());
-        if ($ChunkFaction === $UserEntity->faction) {
+        if ($ChunkFaction instanceof ClaimEntity && $ChunkFaction->faction === $UserEntity->faction) {
             $FactionLabelColor = self::CLAIM_OWN_COLOR;
-        }elseif ($ChunkFaction !== null && MainAPI::isAlly($UserEntity->faction, $ChunkFaction->faction)) {
+        }elseif ($ChunkFaction instanceof ClaimEntity && MainAPI::isAlly($UserEntity->faction, $ChunkFaction->faction)) {
             $FactionLabelColor = self::CLAIM_ALLIES_COLOR;
         }else{
             $FactionLabelColor = self::CLAIM_ENNEMIE_COLOR;
         }
-        $FactionLabel = $ChunkFaction !== null ? $FactionLabelColor .$ChunkFaction : "§5" . "Wilderness";
+        $FactionLabel = $ChunkFaction instanceof ClaimEntity ? $FactionLabelColor .$ChunkFaction->faction : "§5" . "Wilderness";
         $middleString = ".[ §2($X,$Z) " . $FactionLabel . " §6].";
         $lenMiddle = \strlen($middleString) - 3;
         $bottom = "";
@@ -112,8 +115,8 @@ class MapCommand extends BaseSubCommand {
                     continue;
                 }else{
                     $Faction = MainAPI::getFactionClaim($Player->getLevel()->getName(), $X, $Z);
-                    if ($Faction !== null) {
-                        if (!isset($ClaimData[$Faction])) {
+                    if ($Faction instanceof ClaimEntity) {
+                        if (!isset($ClaimData[$Faction->faction])) {
                             if (!isset($SymbolData[$SymbolCursor])) {
                                 $lign .= self::CLAIM_COLOR . self::NO_SYMBOL;
                                 continue;
@@ -121,7 +124,7 @@ class MapCommand extends BaseSubCommand {
                                 if ($UserEntity->faction !== null) {
                                     if (MainAPI::isAlly($UserEntity->faction, $Faction->faction)) {
                                         $color = self::CLAIM_ALLIES_COLOR;
-                                    }elseif ($Faction === $UserEntity->faction) {
+                                    }elseif ($Faction->faction === $UserEntity->faction) {
                                         $color = self::CLAIM_OWN_COLOR;
                                     }else{
                                         $color = self::CLAIM_COLOR;
@@ -129,7 +132,7 @@ class MapCommand extends BaseSubCommand {
                                 }else{
                                     $color = self::CLAIM_COLOR;
                                 }
-                                $ClaimData[$Faction] = [
+                                $ClaimData[$Faction->faction] = [
                                     "SYMBOL" => $SymbolData[$SymbolCursor],
                                     "COLOR" => $color,
                                     "FACTION" => $Faction
@@ -137,7 +140,7 @@ class MapCommand extends BaseSubCommand {
                                 $SymbolCursor++;
                             }
                         }
-                        $Data = $ClaimData[$Faction];
+                        $Data = $ClaimData[$Faction->faction];
                         $lign .= $Data['COLOR'] . $Data['SYMBOL'];
                     }else{
                         $lign .= self::WILDERNESS_COLOR . self::WILDERNESS_SYMBOL;

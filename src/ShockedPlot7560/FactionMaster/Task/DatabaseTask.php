@@ -78,6 +78,9 @@ class DatabaseTask extends AsyncTask {
             case Database::SQLITE_PROVIDER:
                 $db = new PDO("sqlite:".$this->db[3].".sqlite");
                 break;
+            default:
+                $db = new PDO("sqlite:".$this->db[3].".sqlite");
+                break;
         }
         $query = $db->prepare($this->query);
         $query->execute((array) $this->args);

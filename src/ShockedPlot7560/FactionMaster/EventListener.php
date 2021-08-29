@@ -73,7 +73,7 @@ class EventListener implements Listener {
 
         if (($faction = MainAPI::getFactionClaim($level->getName(), $Chunk->getX(), $Chunk->getZ())) !== null) {
             $factionPlayer = MainAPI::getFactionOfPlayer($event->getPlayer()->getName());
-            if (!$factionPlayer instanceof FactionEntity || ($factionPlayer instanceof FactionEntity && $faction !== $factionPlayer->name)) {
+            if (!$factionPlayer instanceof FactionEntity || ($factionPlayer instanceof FactionEntity && $faction->faction !== $factionPlayer->name)) {
                 $event->setCancelled(true);
                 $event->getPlayer()->sendMessage(Utils::getText($event->getPlayer()->getName(), "CANT_BREAK_CLAIM"));
                 return;
@@ -88,7 +88,7 @@ class EventListener implements Listener {
 
         if (($faction = MainAPI::getFactionClaim($level->getName(), $Chunk->getX(), $Chunk->getZ())) !== null) {
             $factionPlayer = MainAPI::getFactionOfPlayer($event->getPlayer()->getName());
-            if (!$factionPlayer instanceof FactionEntity || ($factionPlayer instanceof FactionEntity && $faction !== $factionPlayer->name)) {
+            if (!$factionPlayer instanceof FactionEntity || ($factionPlayer instanceof FactionEntity && $faction->faction !== $factionPlayer->name)) {
                 $event->setCancelled(true);
                 $event->getPlayer()->sendMessage(Utils::getText($event->getPlayer()->getName(), "CANT_PLACE_CLAIM"));
                 return;
@@ -167,7 +167,7 @@ class EventListener implements Listener {
             $Block instanceof FenceGate || $Block instanceof Furnace || $Block instanceof ItemFrame) {
                 if (($faction = MainAPI::getFactionClaim($level->getName(), $Chunk->getX(), $Chunk->getZ())) !== null) {
                     $factionPlayer = MainAPI::getFactionOfPlayer($event->getPlayer()->getName());
-                    if (!$factionPlayer instanceof FactionEntity || ($factionPlayer instanceof FactionEntity && $faction !== $factionPlayer->name)) {
+                    if (!$factionPlayer instanceof FactionEntity || ($factionPlayer instanceof FactionEntity && $faction->faction !== $factionPlayer->name)) {
                         $event->setCancelled(true);
                         $event->getPlayer()->sendMessage(Utils::getText($Player->getName(), "CANT_INTERACT_CLAIM"));
                         return;

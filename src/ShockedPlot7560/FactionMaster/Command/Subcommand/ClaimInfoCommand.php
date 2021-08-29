@@ -57,7 +57,7 @@ class ClaimInfoCommand extends BaseSubCommand {
 
         $FactionClaim = MainAPI::getFactionClaim($World, $X, $Z);
         if ($FactionClaim !== null) {
-            Main::getInstance()->getServer()->dispatchCommand($Player, "f info " . $FactionClaim);
+            Main::getInstance()->getServer()->dispatchCommand($Player, "f info " . $FactionClaim->faction);
             return;
         }else{
             $sender->sendMessage(Utils::getText($sender->getName(), "NOT_CLAIMED"));

@@ -65,7 +65,7 @@ class SethomeCommand extends BaseSubCommand {
         }
         if (Utils::haveAccess($permissions, $UserEntity, PermissionIds::PERMISSION_ADD_FACTION_HOME)) {
             $Player = $sender->getPlayer();
-            if (!MainAPI::getFactionHome($UserEntity->faction, $args["name"])) {
+            if (!MainAPI::getFactionHome($UserEntity->faction, $args["name"]) instanceof HomeEntity) {
                 $Faction = MainAPI::getFaction($UserEntity->faction);
                 if (count(MainAPI::getFactionHomes($UserEntity->faction)) < $Faction->max_home) {
                     $Chunk = $Player->getLevel()->getChunkAtPosition($Player);

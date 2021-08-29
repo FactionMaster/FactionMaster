@@ -35,19 +35,20 @@ namespace ShockedPlot7560\FactionMaster\Event;
 use pocketmine\event\Event;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
+use ShockedPlot7560\FactionMaster\Database\Entity\HomeEntity;
 
 class FactionHomeTpEvent extends Event {
 
     private $Player;
     private $Faction;
-    private $Data;
+    private $home;
     private $name;
 
-    public function __construct(Player $Player, string $Faction, string $name, array $Data)
+    public function __construct(Player $Player, string $Faction, string $name, HomeEntity $home)
     {
         $this->Player = $Player;
         $this->Faction = $Faction;
-        $this->Data = $Data;
+        $this->home = $home;
         $this->name = $name;
     }
 
@@ -68,7 +69,7 @@ class FactionHomeTpEvent extends Event {
     }
 
     public function getWorldName() : string {
-        return $this->Data['world'];
+        return $this->home->world;
     }
 
 }

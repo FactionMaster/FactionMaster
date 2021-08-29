@@ -59,7 +59,7 @@ class UnclaimCommand extends BaseSubCommand {
         if ($factionClaim === null) {
             $sender->sendMessage(Utils::getText($sender->getName(), "NOT_CLAIMED"));
             return;
-        }elseif ($factionClaim === $UserEntity->faction) {
+        }elseif ($factionClaim->faction === $UserEntity->faction) {
             $permissions = MainAPI::getMemberPermission($sender->getName());
             if (Utils::haveAccess($permissions, $UserEntity, PermissionIds::PERMISSION_REMOVE_CLAIM)) {
                 MainAPI::removeClaim($sender->getPlayer(), $UserEntity->faction);
@@ -68,7 +68,7 @@ class UnclaimCommand extends BaseSubCommand {
                         return !MainAPI::getFactionClaim($World, $X, $Z) instanceof ClaimEntity;
                     },
                     function () use ($Player, $factionClaim, $Chunk, $sender) {
-                        (new FactionUnclaimEvent($Player, $factionClaim, $Chunk))->call();
+                        (new FactionUnclaimEvent($Player, $factionClaim->faction, $Chunk))->call();
                         $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_UNCLAIM"));
                     },
                     function () use ($sender) {

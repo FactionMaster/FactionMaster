@@ -69,9 +69,9 @@ class MainAPI {
     public static $PDO;
     /** @var ClaimEntity[][] */
     public static $claim = [];
-    /** @var HomeEntity[] */
+    /** @var HomeEntity[][] */
     public static $home = [];
-    /** @var InvitationEntity */
+    /** @var InvitationEntity[] */
     public static $invitation = [];
     /** @var string[] */
     public static $languages = [];
@@ -190,7 +190,7 @@ class MainAPI {
             new DatabaseTask(
                 "DELETE FROM " . FactionTable::SLUG . " WHERE name = :name", 
                 [ "name" => $factionName ],
-                function () use ($factionName, $faction) {
+                function () use ($factionName) {
                     unset(MainAPI::$factions[$factionName]);
                 }
         ));
@@ -699,7 +699,7 @@ class MainAPI {
     }
 
     /**
-     * @return ClaimEntity[]
+     * @return ClaimEntity[][]
      */
     public static function getAllClaim() : array {
         return self::$claim;
@@ -735,7 +735,7 @@ class MainAPI {
     }
 
     public static function isClaim(string $World, int $X, int $Z) : bool{
-        return self::getFactionClaim($World, $X, $Z) instanceof FactionEntity;
+        return self::getFactionClaim($World, $X, $Z) instanceof ClaimEntity;
     }
 
     public static function getFactionClaim(string $World, int $X, int $Z) : ?ClaimEntity {
@@ -784,7 +784,7 @@ class MainAPI {
         return self::$home[$factionName] ?? [];
     }
 
-    public static function getFactionHome(string $factionName, string $name) : ?array {
+    public static function getFactionHome(string $factionName, string $name) : ?HomeEntity {
         return self::$home[$factionName][$name] ?? null;
     }
 

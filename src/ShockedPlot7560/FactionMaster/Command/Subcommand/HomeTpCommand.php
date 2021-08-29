@@ -60,7 +60,7 @@ class HomeTpCommand extends BaseSubCommand {
         if (Utils::haveAccess($permissions, $UserEntity, PermissionIds::PERMISSION_TP_FACTION_HOME)) {
             $Home = MainAPI::getFactionHome($UserEntity->faction, $args["name"]);
             if ($Home !== null) {
-                $sender->teleport(new Vector3($Home["x"], $Home["y"], $Home['z']));
+                $sender->teleport(new Vector3($Home->x, $Home->y, $Home->z));
                 (new FactionHomeTpEvent($sender, $UserEntity->faction, $args['name'], $Home))->call();
                 $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_TELEPORT"));
             }else{

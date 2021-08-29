@@ -108,7 +108,7 @@ class LeaveDelete extends Button {
                 $message = Utils::getText($Player->getName(), "SUCCESS_DELETE_FACTION");
                 MainAPI::removeFaction($Faction->name);
                 Utils::newMenuSendTask(new MenuSendTask(
-                    function () use ($Player, $Faction) {
+                    function () use ($Faction) {
                         return !MainAPI::getFaction($Faction->name) instanceof FactionEntity;
                     },
                     function () use ($Player, $Faction, $message) {

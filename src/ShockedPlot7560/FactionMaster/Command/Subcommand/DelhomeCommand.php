@@ -63,7 +63,7 @@ class DelhomeCommand extends BaseSubCommand {
             return;
         }
         if (Utils::haveAccess($permissions, $UserEntity, PermissionIds::PERMISSION_DELETE_FACTION_HOME)) {
-            if (MainAPI::getFactionHome($UserEntity->faction, $args["name"])) {
+            if (MainAPI::getFactionHome($UserEntity->faction, $args["name"]) instanceof HomeEntity) {
                 MainAPI::removeHome($UserEntity->faction, $args['name']);
                 Utils::newMenuSendTask(new MenuSendTask(
                     function () use ($UserEntity, $args) {
