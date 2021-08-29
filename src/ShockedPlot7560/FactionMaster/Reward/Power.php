@@ -45,7 +45,8 @@ class Power extends Reward implements RewardInterface {
 
     public function executeGet(string $factionName, $value = null) : bool {
         if ($value !== null) $this->setValue($value);
-        return MainAPI::changePower($factionName, $this->value);
+        MainAPI::changePower($factionName, $this->value);
+        return true;
     }
 
     public function executeCost(string $factionName, $value = null) {
@@ -54,7 +55,7 @@ class Power extends Reward implements RewardInterface {
         if (($Faction->power - $this->getValue()) < 0) {
             return "NO_ENOUGH_POWER";
         }
-        return ($result = MainAPI::changePower($factionName, $this->value * -1)) === false ? "ERROR" : $result;
+        return true;
     }
 
 }

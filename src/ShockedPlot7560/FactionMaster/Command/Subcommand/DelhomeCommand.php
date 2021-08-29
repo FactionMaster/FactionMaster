@@ -37,8 +37,10 @@ use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Database\Entity\HomeEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionHomeDeleteEvent;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class DelhomeCommand extends BaseSubCommand {
@@ -62,14 +64,20 @@ class DelhomeCommand extends BaseSubCommand {
         }
         if (Utils::haveAccess($permissions, $UserEntity, PermissionIds::PERMISSION_DELETE_FACTION_HOME)) {
             if (MainAPI::getFactionHome($UserEntity->faction, $args["name"])) {
-                if (MainAPI::removeHome($UserEntity->faction, $args['name'])) {
-                    (new FactionHomeDeleteEvent($sender, $UserEntity->faction, $args['name']))->call();
-                    $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_DELETE"));
-                    return;
-                }else{
-                    $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
-                    return;
-                }
+                MainAPI::removeHome($UserEntity->faction, $args['name']);
+                Utils::newMenuSendTask(new MenuSendTask(
+                    function () use ($UserEntity, $args) {
+                        return !MainAPI::getFactionHome($UserEntity->faction, $args['name']) instanceof HomeEntity;
+                    },
+                    function () use ($sender, $UserEntity, $args) {
+                        (new FactionHomeDeleteEvent($sender, $UserEntity->faction, $args['name']))->call();
+                        $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_DELETE"));
+                    },
+                    function () use ($sender) {
+                        $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
+                    }
+                ));
+                return;
             }else{
                 $sender->sendMessage(Utils::getText($sender->getName(), "HOME_DONT_EXIST"));
                 return;

@@ -40,6 +40,7 @@ use ShockedPlot7560\FactionMaster\Event\FactionClaimEvent;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ClaimCommand extends BaseSubCommand {
@@ -84,14 +85,20 @@ class ClaimCommand extends BaseSubCommand {
                             break;
                     }
                     if (($result = $ItemCost->executeCost($FactionPlayer->name)) === true) {
-                        if (MainAPI::addClaim($sender->getPlayer(), $UserEntity->faction)) {
-                            (new FactionClaimEvent($sender, $FactionPlayer, $Chunk, $ItemCost->getType(), $ItemCost->getValue()))->call();
-                            $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_CLAIM"));
-                            return;
-                        }else{
-                            $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
-                            return;
-                        }
+                        MainAPI::addClaim($sender->getPlayer(), $UserEntity->faction);
+                        Utils::newMenuSendTask(new MenuSendTask(
+                            function () use ($World, $X, $Z) {
+                                return MainAPI::isClaim($World, $X, $Z);
+                            },
+                            function () use ($sender, $FactionPlayer, $Chunk, $ItemCost) {
+                                (new FactionClaimEvent($sender, $FactionPlayer, $Chunk, $ItemCost->getType(), $ItemCost->getValue()))->call();
+                                $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_CLAIM"));
+                            },
+                            function () use ($sender) {
+                                $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
+                            }
+                        ));
+                        return;
                     }else{
                         $sender->sendMessage(Utils::getText($sender->getName(), $result));
                         return;

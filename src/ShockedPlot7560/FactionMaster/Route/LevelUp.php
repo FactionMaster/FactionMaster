@@ -44,6 +44,7 @@ use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\ManageFactionMain;
 use ShockedPlot7560\FactionMaster\Reward\RewardInterface;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class LevelUp implements Route {
@@ -186,14 +187,28 @@ class LevelUp implements Route {
                 }
                 if ($continue !== true) {
                     Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [$continue]);
-                }elseif (MainAPI::changeLevel($this->Faction->name, 1)) {
-                    $result = $this->Reward->executeGet($this->Faction->name, $this->RewardData['value']);
-                    if ($result === true) {
-                        (new FactionLevelUpEvent($Player, $factionName, $this->Faction->level, $this->Reward, $this->RewardData['value']))->call();
-                        Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "SUCCESS_LEVEL_UP")]);
-                    }else{
-                        Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
-                    }
+                }else {
+                    $Faction = $this->Faction;
+                    $Reward = $this->Reward;
+                    $RewardData = $this->RewardData;
+                    MainAPI::changeLevel($Faction->name, 1);
+                    Utils::newMenuSendTask(new MenuSendTask(
+                        function () use ($Faction) {
+                            return MainAPI::getFaction($Faction->name)->level == $Faction->level + 1;
+                        },
+                        function () use ($Player, $Reward, $Faction, $RewardData, $factionName) {
+                            $result = $Reward->executeGet($Faction->name, $RewardData['value']);
+                            if ($result === true) {
+                                (new FactionLevelUpEvent($Player, $factionName, $Faction->level, $Reward, $RewardData['value']))->call();
+                                Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "SUCCESS_LEVEL_UP")]);
+                            }else{
+                                Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                            }
+                        },
+                        function () use ($Player) {
+                            Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                        }
+                    ));
                 }
             }else{
                 Utils::processMenu(RouterFactory::get(self::SLUG), $Player);

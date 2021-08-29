@@ -77,4 +77,10 @@ allow-home-ennemy-claim: true
 
 min-faction-name-length: 3
 max-faction-name-length: 20
+
+# Change this value only if you are sure of what you are doing, 
+# reducing it may break some functionality of the plugin, 
+# increasing it may reduce the players experience.
+# Default: 60
+timeout-task: 60
 ...

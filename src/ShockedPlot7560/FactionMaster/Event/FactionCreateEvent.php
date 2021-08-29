@@ -34,14 +34,13 @@ namespace ShockedPlot7560\FactionMaster\Event;
 
 use pocketmine\event\Event;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
 class FactionCreateEvent extends Event {
 
     private $Player;
     private $Faction;
 
-    public function __construct(Player $Player, FactionEntity $Faction)
+    public function __construct(Player $Player, string $Faction)
     {
         $this->Player = $Player;
         $this->Faction = $Faction;
@@ -51,7 +50,7 @@ class FactionCreateEvent extends Event {
         return $this->Player;
     }
 
-    public function getFaction() : FactionEntity {
+    public function getFaction() : string {
         return $this->Faction;
     }
 

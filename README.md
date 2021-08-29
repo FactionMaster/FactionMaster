@@ -1,9 +1,7 @@
 # FactionMaster Plugin
 ###### FactionMaster, the faction plugin extensible and modulable to your way
 
-## Official extension list
-* [Invitation improve system](https://github.com/ShockedPlot7560/FactionMaster-InvitationImprove)
-* [Admin tools](https://github.com/ShockedPlot7560/FactionMaster-AdminTools)
+**WARNING, As long as the plugin is in alpha version, it may not be fully stable, so be aware that when installing it it is important to report any issues.**
 
 ## Contributing
 For developers who want to participate, please open a Pull Request and describe why and how this change is made

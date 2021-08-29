@@ -36,8 +36,10 @@ use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionUnclaimEvent;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class UnclaimCommand extends BaseSubCommand {
@@ -60,14 +62,20 @@ class UnclaimCommand extends BaseSubCommand {
         }elseif ($factionClaim === $UserEntity->faction) {
             $permissions = MainAPI::getMemberPermission($sender->getName());
             if (Utils::haveAccess($permissions, $UserEntity, PermissionIds::PERMISSION_REMOVE_CLAIM)) {
-                if (MainAPI::removeClaim($sender->getPlayer(), $UserEntity->faction)) {
-                    (new FactionUnclaimEvent($Player, $factionClaim, $Chunk))->call();
-                    $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_UNCLAIM"));
-                    return;
-                }else{
-                    $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
-                    return;
-                }
+                MainAPI::removeClaim($sender->getPlayer(), $UserEntity->faction);
+                Utils::newMenuSendTask(new MenuSendTask(
+                    function () use ($World, $X, $Z) {
+                        return !MainAPI::getFactionClaim($World, $X, $Z) instanceof ClaimEntity;
+                    },
+                    function () use ($Player, $factionClaim, $Chunk, $sender) {
+                        (new FactionUnclaimEvent($Player, $factionClaim, $Chunk))->call();
+                        $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_UNCLAIM"));
+                    },
+                    function () use ($sender) {
+                        $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
+                    }
+                ));
+                return;
             }else{
                 $sender->sendMessage(Utils::getText($sender->getName(), "DONT_PERMISSION"));
                 return;

@@ -35,6 +35,7 @@ namespace ShockedPlot7560\FactionMaster\Button;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
+use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionJoinEvent;
 use ShockedPlot7560\FactionMaster\Event\InvitationAcceptEvent;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
@@ -42,6 +43,7 @@ use ShockedPlot7560\FactionMaster\Route\DemandList;
 use ShockedPlot7560\FactionMaster\Route\ManageDemand;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class AcceptMemberRequest extends Button {
@@ -61,11 +63,32 @@ class AcceptMemberRequest extends Button {
                             $Faction = MainAPI::getFaction($Request->sender);
                             if (count($Faction->members) < $Faction->max_player) {
                                 $message = Utils::getText($Player->getName(), "SUCCESS_ACCEPT_REQUEST", ['name' => $Request->sender]);
-                                if (!MainAPI::addMember($Request->sender, $Request->receiver)) $message = Utils::getText($Player->getName(), "ERROR"); 
-                                (new FactionJoinEvent($Player, $Faction))->call();
-                                if (!MainAPI::removeInvitation($Request->sender, $Request->receiver, $Request->type)) $message = Utils::getText($Player->getName(), "ERROR"); 
-                                (new InvitationAcceptEvent($Player, $Request))->call();
-                                Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [$message]);
+                                MainAPI::addMember($Request->sender, $Request->receiver);
+                                Utils::newMenuSendTask(new MenuSendTask(
+                                    function () use ($Request) {
+                                        $user = MainAPI::getUser($Request->receiver);
+                                        return $user instanceof UserEntity && $user->faction === $Request->sender;
+                                    },
+                                    function () use ($Request, $Player, $Faction, $message) {
+                                        (new FactionJoinEvent($Player, $Faction))->call();
+                                        MainAPI::removeInvitation($Request->sender, $Request->receiver, $Request->type);
+                                        Utils::newMenuSendTask(new MenuSendTask(
+                                            function () use ($Request) {
+                                                return !MainAPI::areInInvitation($Request->sender, $Request->receiver, $Request->type);
+                                            },
+                                            function () use ($Request, $Player, $message) {
+                                                (new InvitationAcceptEvent($Player, $Request))->call();
+                                                Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [$message]);
+                                            },
+                                            function () use ($Player) {
+                                                Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                            }
+                                        ));
+                                    },
+                                    function () use ($Player) {
+                                        Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                    }
+                                ));                                
                             }else{
                                 $message = Utils::getText($Player->getName(), "MAX_PLAYER_REACH");
                                 Utils::processMenu(RouterFactory::get(DemandList::SLUG), $Player, [$message]);

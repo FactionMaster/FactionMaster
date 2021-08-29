@@ -41,6 +41,7 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\MenuOpenEvent;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\Route;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 
 class Utils {
 
@@ -184,5 +185,9 @@ class Utils {
         $PermissionManager = Main::getInstance()->getPermissionManager();
         if (!$PermissionManager->isRegister($id)) return false;
         return (isset($permission[$id]) && $permission[$id]);
+    }
+
+    public static function newMenuSendTask(MenuSendTask $task) {
+        Main::getInstance()->getScheduler()->scheduleRepeatingTask($task, 1);
     }
 }

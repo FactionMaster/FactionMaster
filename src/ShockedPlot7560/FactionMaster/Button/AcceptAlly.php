@@ -41,6 +41,7 @@ use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\AllianceDemandList;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class AcceptAlly extends Button {
@@ -62,11 +63,32 @@ class AcceptAlly extends Button {
                                 $FactionRequest = MainAPI::getFaction($Request->sender);
                                 if (count($FactionRequest->ally) < $FactionRequest->max_ally) {
                                     $message = Utils::getText($Player->getName(), "SUCCESS_ACCEPT_REQUEST", ['name' => $Request->sender]);
-                                    if (!MainAPI::setAlly($Request->receiver, $Request->sender)) $message = Utils::getText($Player->getName(), "ERROR"); 
-                                    (new AllianceCreateEvent($Player, $Request->sender, $Request->receiver))->call();
-                                    if (!MainAPI::removeInvitation($Request->sender, $Request->receiver, "alliance")) $message = Utils::getText($Player->getName(), "ERROR"); 
-                                    (new InvitationAcceptEvent($Player, $Request))->call();
-                                    Utils::processMenu(RouterFactory::get(AllianceDemandList::SLUG), $Player, [$message]);
+                                    MainAPI::setAlly($Request->receiver, $Request->sender);
+                                    Utils::newMenuSendTask(new MenuSendTask(
+                                        function () use ($Request) {
+                                            return MainAPI::isAlly($Request->receiver, $Request->sender);
+                                        },
+                                        function () use ($Request, $Player, $message) {
+                                            (new AllianceCreateEvent($Player, $Request->sender, $Request->receiver))->call();
+                                            MainAPI::removeInvitation($Request->sender, $Request->receiver, "alliance");
+                                            Utils::newMenuSendTask(new MenuSendTask(
+                                                function () use ($Request) {
+                                                    return !MainAPI::areInInvitation($Request->sender, $Request->receiver, "alliance");
+                                                },
+                                                function () use ($Request, $Player, $message) {
+                                                    (new InvitationAcceptEvent($Player, $Request))->call();
+                                                    Utils::processMenu(RouterFactory::get(AllianceDemandList::SLUG), $Player, [$message]);
+                                                },
+                                                function () use ($Player) {
+                                                    Utils::processMenu(RouterFactory::get(AllianceDemandList::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                                }
+                                            ));
+                                        },
+                                        function () use ($Player) {
+                                            Utils::processMenu(RouterFactory::get(AllianceDemandList::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                        }
+                                    ));
+                                    
                                 }else{
                                     $message = Utils::getText($Player->getName(), "MAX_ALLY_REACH_OTHER");
                                     Utils::processMenu(RouterFactory::get(AllianceDemandList::SLUG), $Player, [$message]);

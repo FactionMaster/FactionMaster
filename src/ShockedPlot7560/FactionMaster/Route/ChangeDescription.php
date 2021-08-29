@@ -38,8 +38,10 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\DescriptionChangeEvent;
+use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeDescription implements Route {
@@ -86,13 +88,24 @@ class ChangeDescription implements Route {
         return function (Player $Player, $data) use ($backMenu) {
             if ($data === null) return;
             if (isset($data[1]) && \is_string($data[1])) {
-                if (MainAPI::changeDescription($this->Faction->name, $data[1])) {
-                    (new DescriptionChangeEvent($Player, $this->Faction, $data[1]))->call();
-                    Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_DESCRIPTION_UPDATE")]);
-                    return;
-                }
+                $Faction = $this->Faction;
+                $description = $data[1];
+                MainAPI::changeDescription($Faction->name, $description);
+                Utils::newMenuSendTask(new MenuSendTask(
+                    function () use ($Faction, $description) {
+                        return MainAPI::getFaction($Faction->name)->description === $description;
+                    },
+                    function () use ($Player, $Faction, $description, $backMenu) {
+                        (new DescriptionChangeEvent($Player, $Faction, $description))->call();
+                        Utils::processMenu($backMenu, $Player, [Utils::getText($Player->getName(), "SUCCESS_DESCRIPTION_UPDATE")]);
+                    },
+                    function () use ($Player) {
+                        Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                    }
+                ));
+                return;
             }
-            $menu = $this->changeDescriptionMenu(Utils::getText($this->UserEntity->name, "ERROR"));
+            $menu = $this->changeDescriptionMenu(Utils::getText($Player->getName(), "ERROR"));
             $Player->sendForm($menu);;
         };
     }

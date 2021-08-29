@@ -88,7 +88,7 @@ class MapCommand extends BaseSubCommand {
         $ChunkFaction = MainAPI::getFactionClaim($Player->getLevel()->getName(), $CentralChunk->getX(), $CentralChunk->getZ());
         if ($ChunkFaction === $UserEntity->faction) {
             $FactionLabelColor = self::CLAIM_OWN_COLOR;
-        }elseif ($ChunkFaction !== null && MainAPI::isAlly($UserEntity->faction, $ChunkFaction)) {
+        }elseif ($ChunkFaction !== null && MainAPI::isAlly($UserEntity->faction, $ChunkFaction->faction)) {
             $FactionLabelColor = self::CLAIM_ALLIES_COLOR;
         }else{
             $FactionLabelColor = self::CLAIM_ENNEMIE_COLOR;
@@ -119,7 +119,7 @@ class MapCommand extends BaseSubCommand {
                                 continue;
                             }else{
                                 if ($UserEntity->faction !== null) {
-                                    if (MainAPI::isAlly($UserEntity->faction, $Faction)) {
+                                    if (MainAPI::isAlly($UserEntity->faction, $Faction->faction)) {
                                         $color = self::CLAIM_ALLIES_COLOR;
                                     }elseif ($Faction === $UserEntity->faction) {
                                         $color = self::CLAIM_OWN_COLOR;

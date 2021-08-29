@@ -40,6 +40,7 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\MessageChangeEvent;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeMessage implements Route {
@@ -86,13 +87,24 @@ class ChangeMessage implements Route {
         return function (Player $Player, $data) use ($backMenu) {
             if ($data === null) return;
             if (isset($data[1]) && \is_string($data[1])) {
-                if (MainAPI::changeMessage($this->Faction->name, $data[1])) {
-                    (new MessageChangeEvent($Player, $this->Faction, $data[1]))->call();
-                    Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_MESSAGE_UPDATE")]);
-                    return;
-                }
+                $Faction = $this->Faction;
+                $message = $data[1];
+                MainAPI::changeMessage($this->Faction->name, $message);
+                Utils::newMenuSendTask(new MenuSendTask(
+                    function () use ($Faction, $message) {
+                        return MainAPI::getFaction($Faction->name)->messageFaction === $message;
+                    },
+                    function () use ($Player, $Faction, $message, $backMenu) {
+                        (new MessageChangeEvent($Player, $Faction, $message))->call();
+                        Utils::processMenu($backMenu, $Player, [Utils::getText($Player->getName(), "SUCCESS_MESSAGE_UPDATE")]);
+                    },
+                    function () use ($Player) {
+                        Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                    }
+                ));
+                return;
             }
-            $menu = $this->changeMessageMenu(Utils::getText($this->UserEntity->name, "ERROR"));
+            $menu = $this->changeMessageMenu(Utils::getText($Player->getName(), "ERROR"));
             $Player->sendForm($menu);
         };
     }

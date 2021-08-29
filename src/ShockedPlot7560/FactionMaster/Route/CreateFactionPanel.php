@@ -40,6 +40,7 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionCreateEvent;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class CreateFactionPanel implements Route {
@@ -78,18 +79,25 @@ class CreateFactionPanel implements Route {
         $backRoute = $this->backMenu;
         return function (Player $Player, $data) use ($backRoute) {
             if ($data === null) return;
-            $FactionRequest = MainAPI::getFaction($data[1]);
-            if ($data[1] !== "") {
+            $factionName = $data[1];
+            $FactionRequest = MainAPI::getFaction($factionName);
+            if ($factionName !== "") {
                 if (!$FactionRequest instanceof FactionEntity) {
-                    if (\strlen($data[1]) >= Main::getInstance()->config->get("min-faction-name-length")
-                        && \strlen($data[1]) <= Main::getInstance()->config->get("max-faction-name-length")) {
-                        if (MainAPI::addFaction($data[1], $Player->getName())) {
-                            (new FactionCreateEvent($Player, MainAPI::getFaction($data[1])))->call();
-                            Utils::processMenu($backRoute, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_CREATE_FACTION")]);
-                        }else{
-                            $menu = $this->createFactionMenu(Utils::getText($this->UserEntity->name, "ERROR"));
-                            $Player->sendForm($menu);
-                        }
+                    if (\strlen($factionName) >= Main::getInstance()->config->get("min-faction-name-length")
+                        && \strlen($factionName) <= Main::getInstance()->config->get("max-faction-name-length")) {
+                        MainAPI::addFaction($factionName, $Player->getName());
+                        Utils::newMenuSendTask(new MenuSendTask(
+                            function () use ($factionName) {
+                                return MainAPI::getFaction($factionName) instanceof FactionEntity;
+                            },
+                            function () use ($factionName, $Player, $backRoute) {
+                                (new FactionCreateEvent($Player, $factionName))->call();
+                                Utils::processMenu($backRoute, $Player, [Utils::getText($Player->getName(), "SUCCESS_CREATE_FACTION")]);
+                            },
+                            function () use ($Player) {
+                                Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                            }
+                        ));
                     }else{
                         $menu = $this->createFactionMenu(Utils::getText($this->UserEntity->name, "MAX_MIN_REACH_NAME", ["min" => Utils::getConfig("min-faction-name-length"), "max" => Utils::getConfig("max-faction-name-length")]));
                         $Player->sendForm($menu);

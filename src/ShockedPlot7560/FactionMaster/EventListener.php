@@ -181,10 +181,7 @@ class EventListener implements Listener {
         $UserEntity = MainAPI::getUser($playerName);
         if ($UserEntity === null) {
             MainAPI::$languages[$playerName] = Utils::getConfigLang("default-language");
-            if (!MainAPI::addUser($playerName)) {
-                $event->setKickMessage(Utils::getText($event->getPlayer()->getName(), "ERROR_DATA_SAVING"));
-                $event->setCancelled(true);
-            }
+            MainAPI::addUser($playerName);
         }else{
             MainAPI::$languages[$playerName] = $UserEntity->language;
         }

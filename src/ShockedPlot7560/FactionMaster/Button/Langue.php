@@ -38,6 +38,7 @@ use ShockedPlot7560\FactionMaster\Button\Button;
 use ShockedPlot7560\FactionMaster\Event\PlayerChangeLanguageEvent;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Langue extends Button {
@@ -57,8 +58,18 @@ class Langue extends Button {
                     }
                 }
                 MainAPI::changeLanguage($Player->getName(), $Lang);
-                (new PlayerChangeLanguageEvent($Player, $Lang))->call();
-                Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player);
+                Utils::newMenuSendTask(new MenuSendTask(
+                    function () use ($Lang, $Player) {
+                        return MainAPI::getPlayerLang($Player->getName()) === $Lang;
+                    },
+                    function () use ($Player, $Lang) {
+                        (new PlayerChangeLanguageEvent($Player, $Lang))->call();
+                        Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player);
+                    },
+                    function () use ($Player) {
+                        Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                    }
+                ));
             }
         );
     }

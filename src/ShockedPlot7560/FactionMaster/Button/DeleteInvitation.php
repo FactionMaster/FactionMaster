@@ -38,6 +38,7 @@ use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Event\InvitationDeleteEvent;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class DeleteInvitation extends Button {
@@ -55,9 +56,19 @@ class DeleteInvitation extends Button {
                         if ($data === null) return;
                         if ($data) {
                             $message = Utils::getText($Player->getName(), "SUCCESS_DELETE_INVITATION", ['name' => $Invitation->receiver]);
-                            if (!MainAPI::removeInvitation($Invitation->sender, $Invitation->receiver, $Invitation->type)) $message = Utils::getText($Player->getName(), "ERROR"); 
-                            (new InvitationDeleteEvent($Player, $Invitation))->call();
-                            Utils::processMenu(RouterFactory::get($PanelSlug), $Player, [$message]);
+                            MainAPI::removeInvitation($Invitation->sender, $Invitation->receiver, $Invitation->type);
+                            Utils::newMenuSendTask(new MenuSendTask(
+                                function () use ($Invitation) {
+                                    return !MainAPI::areInInvitation($Invitation->sender, $Invitation->receiver, $Invitation->type);
+                                },
+                                function () use ($Invitation, $Player, $PanelSlug, $message) {
+                                    (new InvitationDeleteEvent($Player, $Invitation))->call();
+                                    Utils::processMenu(RouterFactory::get($PanelSlug), $Player, [$message]);
+                                },
+                                function () use ($Player, $PanelSlug) {
+                                    Utils::processMenu(RouterFactory::get($PanelSlug), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                }
+                            ));
                         }else{
                             Utils::processMenu(RouterFactory::get($PanelSlug), $Player, [$Invitation]);
                         }

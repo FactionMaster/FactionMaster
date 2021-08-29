@@ -37,9 +37,11 @@ use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Database\Entity\HomeEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionHomeCreateEvent;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class SethomeCommand extends BaseSubCommand {
@@ -68,14 +70,20 @@ class SethomeCommand extends BaseSubCommand {
                 if (count(MainAPI::getFactionHomes($UserEntity->faction)) < $Faction->max_home) {
                     $Chunk = $Player->getLevel()->getChunkAtPosition($Player);
                     if (Main::getInstance()->config->get("allow-home-ennemy-claim") && MainAPI::getFactionClaim($Player->getLevel()->getName(), $Chunk->getX(), $Chunk->getZ())  === null) {
-                        if (MainAPI::addHome($Player, $UserEntity->faction, $args['name'])) {
-                            (new FactionHomeCreateEvent($sender, $Faction, $args['name']))->call();
-                            $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_CREATE"));
-                            return;
-                        }else{
-                            $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
-                            return;
-                        }
+                        MainAPI::addHome($Player, $UserEntity->faction, $args['name']);
+                        Utils::newMenuSendTask(new MenuSendTask(
+                            function () use ($UserEntity, $args) {
+                                return MainAPI::getFactionHome($UserEntity->faction, $args['name']) instanceof HomeEntity;
+                            },
+                            function () use ($sender, $Faction, $args) {
+                                (new FactionHomeCreateEvent($sender, $Faction, $args['name']))->call();
+                                $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_CREATE"));
+                            },
+                            function () use ($sender) {
+                                $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
+                            }
+                        ));
+                        return;
                     }else{
                         $sender->sendMessage(Utils::getText($sender->getName(), "CANT_SETHOME_ENNEMY_CLAIM"));
                         return;

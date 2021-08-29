@@ -75,7 +75,7 @@ class Main extends PluginBase implements Listener{
 
         $this->loadConfig();
         $this->Database = new Database($this);
-        $this->getServer()->getAsyncPool()->submitTask(new LoadCacheTask());
+        //$this->getServer()->getAsyncPool()->submitTask(new LoadCacheTask());
 
         RouterFactory::init();
         RewardFactory::init();

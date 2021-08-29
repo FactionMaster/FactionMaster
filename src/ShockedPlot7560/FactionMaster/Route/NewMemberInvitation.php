@@ -42,6 +42,7 @@ use ShockedPlot7560\FactionMaster\Event\InvitationSendEvent;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\ManageMainMembers;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class NewMemberInvitation implements Route {
@@ -99,14 +100,21 @@ class NewMemberInvitation implements Route {
                 }
                 if ($UserRequest instanceof UserEntity) {
                     if (!MainAPI::getFactionOfPlayer($targetName) instanceof FactionEntity) {
-                        if (!MainAPI::areInInvitation($this->Faction->name, $targetName, InvitationSendEvent::MEMBER_TYPE)) {
-                            if (MainAPI::makeInvitation($this->Faction->name, $targetName, InvitationSendEvent::MEMBER_TYPE)) {
-                                (new InvitationSendEvent($Player, $this->Faction->name, $targetName, InvitationSendEvent::MEMBER_TYPE))->call();
-                                Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_SEND_INVITATION", ['name' => $data[1]])] );
-                            }else{
-                                $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "ERROR"));
-                                $Player->sendForm($menu);;
-                            }
+                        $Faction = $this->Faction;
+                        if (!MainAPI::areInInvitation($Faction->name, $targetName, InvitationSendEvent::MEMBER_TYPE)) {
+                            MainAPI::makeInvitation($Faction->name, $targetName, InvitationSendEvent::MEMBER_TYPE);
+                            Utils::newMenuSendTask(new MenuSendTask(
+                                function () use ($Faction, $targetName) {
+                                    return MainAPI::areInInvitation($Faction->name, $targetName, InvitationSendEvent::MEMBER_TYPE);
+                                },
+                                function () use ($Player, $targetName, $backMenu, $data, $Faction) {
+                                    (new InvitationSendEvent($Player, $Faction->name, $targetName, InvitationSendEvent::MEMBER_TYPE))->call();
+                                    Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_SEND_INVITATION", ['name' => $data[1]])] );
+                                },
+                                function () use ($Player) {
+                                    Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                }
+                            ));
                         }else{
                             $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "ALREADY_PENDING_INVITATION"));
                             $Player->sendForm($menu);;

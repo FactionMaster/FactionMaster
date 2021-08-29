@@ -45,12 +45,13 @@ class ClaimLimit extends Reward implements RewardInterface {
 
     public function executeGet(string $factionName, $value = null) : bool {
         if ($value !== null) $this->setValue($value);
-        return MainAPI::updateFactionOption($factionName, 'max_claim', $this->value);
+        $result = MainAPI::updateFactionOption($factionName, 'max_claim', $this->value);
+        return $result === false ? false : true ;
     }
 
     public function executeCost(string $factionName, $value = null) {
         if ($value !== null) $this->setValue($value);
-        return ($result = MainAPI::updateFactionOption($factionName, 'max_claim', $this->value * -1)) === false ? "ERROR" : $result;
+        return MainAPI::updateFactionOption($factionName, 'max_claim', $this->value * -1) === false ? "ERROR" : true;
     }
 
 }

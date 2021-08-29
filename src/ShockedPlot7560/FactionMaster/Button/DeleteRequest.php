@@ -38,6 +38,7 @@ use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Event\InvitationRefuseEvent;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class DeleteRequest extends Button {
@@ -55,9 +56,19 @@ class DeleteRequest extends Button {
                         if ($data === null) return;
                         if ($data) {
                             $message = Utils::getText($Player->getName(), "SUCCESS_DELETE_REQUEST", ['name' => $Request->sender]);
-                            if (!MainAPI::removeInvitation($Request->sender, $Request->receiver, $Request->type)) $message = Utils::getText($Player->getName(), "ERROR"); 
-                            (new InvitationRefuseEvent($Player, $Request))->call();
-                            Utils::processMenu(RouterFactory::get($PanelSlug), $Player, [$message]);
+                            MainAPI::removeInvitation($Request->sender, $Request->receiver, $Request->type);
+                            Utils::newMenuSendTask(new MenuSendTask(
+                                function () use ($Request) {
+                                    return !MainAPI::areInInvitation($Request->sender, $Request->receiver, $Request->type);
+                                },
+                                function () use ($Request, $Player, $PanelSlug, $message) {
+                                    (new InvitationRefuseEvent($Player, $Request))->call();
+                                    Utils::processMenu(RouterFactory::get($PanelSlug), $Player, [$message]);
+                                },
+                                function () use ($Player, $PanelSlug) {
+                                    Utils::processMenu(RouterFactory::get($PanelSlug), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                }
+                            ));
                         }else{
                             Utils::processMenu(RouterFactory::get($backPanelSlug), $Player, [$Request]);
                         }

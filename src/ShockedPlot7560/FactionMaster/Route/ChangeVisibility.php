@@ -40,6 +40,7 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\VisibilityChangeEvent;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -87,14 +88,23 @@ class ChangeVisibility implements Route {
     {
         $backMenu = $this->backMenu;
         $Faction = $this->Faction;
-        return function (Player $player, $data) use ($backMenu, $Faction) {
+        return function (Player $Player, $data) use ($backMenu, $Faction) {
             if ($data === null) return;
-            if (MainAPI::changeVisibility($this->Faction->name, $data[0])) {
-                (new VisibilityChangeEvent($player, $Faction, $data[0]))->call();
-                Utils::processMenu($backMenu,  $player, [Utils::getText($this->UserEntity->name, "SUCCESS_VISIBILITY_UPDATE")]);
-            }else{
-                Utils::processMenu($backMenu, $player, [Utils::getText($this->UserEntity->name, "ERROR")]);
-            }
+            $Faction = $this->Faction;
+            $visibility = $data[0];
+            MainAPI::changeVisibility($Faction->name, $visibility);
+            Utils::newMenuSendTask(new MenuSendTask(
+                function () use ($Faction, $visibility) {
+                    return MainAPI::getFaction($Faction->name)->visibility == $visibility;
+                },
+                function () use ($Player, $Faction, $visibility, $backMenu) {
+                    (new VisibilityChangeEvent($Player, $Faction, $visibility))->call();
+                    Utils::processMenu($backMenu, $Player, [Utils::getText($Player->getName(), "SUCCESS_VISIBILITY_UPDATE")]);
+                },
+                function () use ($Player) {
+                    Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                }
+            ));
         };
     }
 

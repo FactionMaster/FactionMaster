@@ -42,6 +42,7 @@ use ShockedPlot7560\FactionMaster\Event\PermissionChangeEvent;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -109,16 +110,26 @@ class RankPermissionManage implements Route {
         return function (Player $Player, $data) use ($backMenu) {
             if ($data === null) return;
             $i =0;
+            $oldPermission = $this->Faction->permissions;
             foreach ($this->permissionsData as $key => $permissionDa) {
                 $this->Faction->permissions[$this->rank][$permissionDa->getId()] = $data[$i];
                 $i++;
             }
-            if (MainAPI::updatePermissionFaction($this->Faction->name, $this->Faction->permissions)){
-                (new PermissionChangeEvent($Player, $this->Faction, $this->Faction->permissions))->call();
-                Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_PERMISSION_UPDATE")]);
-            }else{
-                Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "ERROR")]);
-            }
+            if ($this->Faction->permissions === $oldPermission) return Utils::processMenu($backMenu, $Player);
+            $Faction = $this->Faction;
+            MainAPI::updatePermissionFaction($Faction->name, $Faction->permissions);
+            Utils::newMenuSendTask(new MenuSendTask(
+                function () use ($Faction, $oldPermission) {
+                    return MainAPI::getFaction($Faction->name)->permissions !== $oldPermission;
+                },
+                function () use ($Player, $backMenu, $Faction) {
+                    (new PermissionChangeEvent($Player, $Faction, $Faction->permissions))->call();
+                    Utils::processMenu($backMenu, $Player, [Utils::getText($Player->getName(), "SUCCESS_PERMISSION_UPDATE")]);
+                },
+                function () use ($Player) {
+                    Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                }
+            ));
         };
     }
 

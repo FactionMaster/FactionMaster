@@ -40,6 +40,7 @@ use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\ManageMember as MembersManageMember;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -58,10 +59,22 @@ class TransferProperty extends Button {
                         if ($data === null) return;
                         if ($data) {
                             $message = Utils::getText($Player->getName(), "SUCCESS_TRANSFER_PROPERTY", ['playerName' => $Member->name]);
-                            if (!MainAPI::changeRank($Player->getName(), Ids::COOWNER_ID)) $message = Utils::getText($Player->getName(), "ERROR"); 
-                            if (!MainAPI::changeRank($Member->name, Ids::OWNER_ID)) $message = Utils::getText($Player->getName(), "ERROR");
-                            (new FactionPropertyTransferEvent($Player, $Member, $Player->getName()))->call();
-                            Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [$message]);
+                            MainAPI::changeRank($Player->getName(), Ids::COOWNER_ID);
+                            MainAPI::changeRank($Member->name, Ids::OWNER_ID);
+                            Utils::newMenuSendTask(new MenuSendTask(
+                                function () use ($Player, $Member) {
+                                    $user = MainAPI::getUser($Player->getName());
+                                    $user2 = MainAPI::getUser($Member->name);
+                                    return $user->rank === Ids::COOWNER_ID && $user2->rank === Ids::OWNER_ID;
+                                },
+                                function () use ($Player, $Member, $message) {
+                                    (new FactionPropertyTransferEvent($Player, $Member, $Player->getName()))->call();
+                                    Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [$message]);
+                                },
+                                function () use ($Player) {
+                                    Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                }
+                            ));
                         }else{
                             Utils::processMenu(RouterFactory::get(MembersManageMember::SLUG), $Player, [$Member]);
                         }

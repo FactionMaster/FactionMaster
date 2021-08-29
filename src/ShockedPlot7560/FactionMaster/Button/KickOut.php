@@ -41,6 +41,7 @@ use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\ManageMember as MembersManageMember;
 use ShockedPlot7560\FactionMaster\Route\ManageMembersList;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class KickOut extends Button {
@@ -59,9 +60,21 @@ class KickOut extends Button {
                         if ($data === null) return;
                         if ($data) {
                             $message = Utils::getText($Player->getName(), "SUCCESS_KICK_OUT", ['playerName' => $Member->name]);
-                            if (!MainAPI::removeMember($Faction->name, $Member->name)) $message = Utils::getText($Player->getName(), "ERROR"); 
-                            (new MemberKickOutEvent($Player, $Faction, $Member))->call();
-                            Utils::processMenu(RouterFactory::get(ManageMembersList::SLUG), $Player, [$message]);
+                            MainAPI::removeMember($Faction->name, $Member->name);
+                            Utils::newMenuSendTask(new MenuSendTask(
+                                function () use ($Player, $Faction) {
+                                    $user = MainAPI::getUser($Player->getName());
+                                    return $user instanceof UserEntity && $user->faction !== $Faction->name;
+                                },
+                                function () use ($Player, $Faction, $message) {
+                                    $Member = MainAPI::getUser($Player->getName());
+                                    (new MemberKickOutEvent($Player, $Faction, $Member))->call();
+                                    Utils::processMenu(RouterFactory::get(ManageMembersList::SLUG), $Player, [$message]);
+                                },
+                                function () use ($Player) {
+                                    Utils::processMenu(RouterFactory::get(ManageMembersList::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                }
+                            ));
                         }else{
                             Utils::processMenu(RouterFactory::get(MembersManageMember::SLUG), $Player, [$Member]);
                         }
