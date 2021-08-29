@@ -1,7 +1,9 @@
-default-language: FR
+default-language: EN
 
 languages:
   "FR": "fr_FR"
+  "EN": "en_EN"
 
 languages-name:
   "FR": "Français"
+  "EN": "English"
