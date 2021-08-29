@@ -93,7 +93,6 @@ class ClaimCommand extends BaseSubCommand {
                             return;
                         }
                     }else{
-                        \var_dump($result);
                         $sender->sendMessage(Utils::getText($sender->getName(), $result));
                         return;
                     }

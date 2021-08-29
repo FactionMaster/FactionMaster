@@ -48,7 +48,7 @@ class LanguageCollection extends Collection {
         parent::__construct(self::SLUG);
         $this->registerCallable(self::SLUG, function(Player $player, UserEntity $user) {
             foreach (Utils::getConfigLang("languages-name") as $Langue) {
-                $this->register(new Langue($Langue, $user));
+                $this->register(new Langue($Langue));
             }
             $this->register(new Back(MainPanel::SLUG));
         });

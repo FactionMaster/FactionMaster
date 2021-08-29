@@ -63,7 +63,6 @@ class ManageAllianceCollection extends Collection {
                 function (Player $Player) use ($Ally) {
                     Utils::processMenu(RouterFactory::get(ConfirmationMenu::SLUG), $Player, [
                         function (Player $Player, $data) use ($Ally) {
-                            var_dump($data);
                             $Faction = MainAPI::getFactionOfPlayer($Player->getName());
                             if ($data === null) return;
                             if ($data === true) {

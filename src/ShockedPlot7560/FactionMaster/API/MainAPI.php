@@ -284,7 +284,6 @@ class MainAPI {
             $result = $query->fetch();
             return $result === false ? null : $result;
         } catch (\Throwable $th) {
-            var_dump($th->getMessage());
             return null;
         }
         
@@ -345,15 +344,12 @@ class MainAPI {
         if (!$Faction1 instanceof FactionEntity || !$Faction2 instanceof FactionEntity) return false;
         
         foreach ([$Faction1, $Faction2] as $key => $Faction) {
-            var_dump($Faction->ally);
             foreach ($Faction->ally as $key => $alliance) {
                 if (in_array($alliance, [$faction1, $faction2])) {
                     unset($Faction->ally[$key]);
                 }
             }
             $query = self::$PDO->prepare("UPDATE " . FactionTable::TABLE_NAME . " SET ally = :ally WHERE name = :name");
-            var_dump($Faction->name);
-            var_dump($Faction->ally);
             if (!$query->execute([
                 'ally' => \base64_encode(\serialize($Faction->ally)),
                 'name' => $Faction->name
@@ -542,7 +538,6 @@ class MainAPI {
                 'user' => $playerName
             ]);
         } catch (\PDOException $Exception) {
-            var_dump($Exception->getMessage());
             return false;
         }
     }
