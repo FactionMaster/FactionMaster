@@ -44,6 +44,7 @@ use ShockedPlot7560\FactionMaster\Extension\ExtensionManager;
 use ShockedPlot7560\FactionMaster\Permission\PermissionManager;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Task\InitTranslationFile;
 use ShockedPlot7560\FactionMaster\Task\LoadCacheTask;
 
 class Main extends PluginBase implements Listener{
@@ -75,7 +76,7 @@ class Main extends PluginBase implements Listener{
         $this->loadConfig();
         $this->Database = new Database($this);
         $this->getServer()->getAsyncPool()->submitTask(new LoadCacheTask());
-        
+
         RouterFactory::init();
         RewardFactory::init();
         CollectionFactory::init();
@@ -86,6 +87,11 @@ class Main extends PluginBase implements Listener{
         $this->init();
         $this->getPermissionManager();
         $this->getExtensionManager()->load();
+        $langConfig = [];
+        foreach ($this->getExtensionManager()->getExtensions() as $extension) {
+            $langConfig[$extension->getExtensionName()] = $extension->getLangConfig();
+        }
+        $this->getServer()->getAsyncPool()->submitTask(new InitTranslationFile($langConfig, $this->getDataFolder(), self::$logger));
     }
 
     private function init() {

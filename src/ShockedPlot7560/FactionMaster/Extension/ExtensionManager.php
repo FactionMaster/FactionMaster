@@ -53,19 +53,12 @@ class ExtensionManager {
         $string = "";
         foreach ($this->extensions as $extension) {
             $extension->execute();
-            foreach ($extension->getLangConfig() as $LangSLug => $LangConfig) {
-                if (!$LangConfig instanceof Config) {
-                    $Logger->warning("Loading the translate files of : ".$extension->getExtensionName().", check the return value of the function getLangConfig() and verify its key and value. If you are not the author of this extension, please inform him");
-                }else{
-                    $LangMainFile = new Config(Main::getInstance()->getDataFolder() . "Translation/$LangSLug.yml", Config::YAML);
-                    foreach ($LangConfig->getAll() as $key => $value) {
-                        $LangMainFile->__set($key, $value);
-                    }
-                    $LangMainFile->save();
-                }
-            }
             $string .= $extension->getExtensionName() . ",";
         }
         $Logger->info("FactionMaster is enabled with this extension: " . $string);
+    }
+
+    public function getExtensions(): array {
+        return $this->extensions;
     }
 }
