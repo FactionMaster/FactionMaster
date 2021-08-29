@@ -36,6 +36,7 @@ use CortexPE\Commando\PacketHooker;
 use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
+use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Command\FactionCommand;
 use ShockedPlot7560\FactionMaster\Database\Database;
@@ -43,6 +44,7 @@ use ShockedPlot7560\FactionMaster\Extension\ExtensionManager;
 use ShockedPlot7560\FactionMaster\Permission\PermissionManager;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Task\LoadCacheTask;
 
 class Main extends PluginBase implements Listener{
 
@@ -75,6 +77,7 @@ class Main extends PluginBase implements Listener{
 
         self::$logger->info("Initialization and saving of the database");
         $this->Database = new Database($this);
+        $this->getServer()->getAsyncPool()->submitTask(new LoadCacheTask());
 
         self::$logger->info("Loading the global structure");
         RouterFactory::init();

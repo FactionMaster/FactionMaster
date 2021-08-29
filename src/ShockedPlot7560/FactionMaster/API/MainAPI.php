@@ -61,38 +61,14 @@ class MainAPI {
     /** @var \PDO */
     public static $PDO;
     /** @var array[] */
-    public static $claim;
+    public static $claim = [];
     /** @var array[] */
-    public static $home;
+    public static $home = [];
     /** @var string[] */
-    public static $languages;
+    public static $languages = [];
 
     public static function init(PDO $PDO) {
         self::$PDO = $PDO;
-        self::initClaim();
-        self::initHome();
-    }
-
-    private static function initClaim() {
-        self::$claim = [];
-        foreach (MainAPI::getAllClaim() as $Claim) {
-            if (!isset(self::$claim[$Claim->faction])) {
-                self::$claim[$Claim->faction] = [$Claim->getToString()];
-            }else{
-                self::$claim[$Claim->faction][] = $Claim->getToString();
-            }
-        }
-    }
-
-    private static function initHome() {
-        self::$home = [];
-        foreach (MainAPI::getAllHome() as $Home) {
-            if (!isset(self::$home[$Home->faction])) {
-                self::$home[$Home->faction] = [$Home->name => $Home->getToArray()];
-            }else{
-                self::$home[$Home->faction][$Home->name] = $Home->getToArray();
-            }
-        }
     }
 
     /**
@@ -595,7 +571,7 @@ class MainAPI {
                 $query = self::$PDO->prepare("SELECT * FROM " . ClaimTable::TABLE_NAME);
                 $query->execute();
                 $query->setFetchMode(PDO::FETCH_CLASS, ClaimEntity::class);
-                return $query->fetchAll();
+                return $query->fetchAll() ?? [];
             } catch (\PDOException $Exception) {
                 return [];
             }
