@@ -41,13 +41,13 @@ class FactionJoinEvent extends Event {
     private $Player;
     private $Faction;
 
-    public function __construct(Player $Player, FactionEntity $Faction)
+    public function __construct($Player, FactionEntity $Faction)
     {
         $this->Player = $Player;
         $this->Faction = $Faction;
     }
 
-    public function getPlayer() : Player {
+    public function getPlayer() {
         return $this->Player;
     }
 
