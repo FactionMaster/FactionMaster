@@ -72,14 +72,10 @@ class Main extends PluginBase implements Listener{
         self::$instance = $this;
         self::$logger = $this->getLogger();
 
-        self::$logger->info("Loading configurations");
         $this->loadConfig();
-
-        self::$logger->info("Initialization and saving of the database");
         $this->Database = new Database($this);
         $this->getServer()->getAsyncPool()->submitTask(new LoadCacheTask());
-
-        self::$logger->info("Loading the global structure");
+        
         RouterFactory::init();
         RewardFactory::init();
         CollectionFactory::init();

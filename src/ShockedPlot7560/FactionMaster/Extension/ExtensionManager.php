@@ -50,13 +50,12 @@ class ExtensionManager {
 
     public function load() {
         $Logger = Main::$logger;
-        if (count($this->extensions)> 0) $Logger->info("§7Loading FactionMaster extension started");
+        $string = "";
         foreach ($this->extensions as $extension) {
-            $Logger->info("§fLoading §7" . $extension->getExtensionName());
             $extension->execute();
             foreach ($extension->getLangConfig() as $LangSLug => $LangConfig) {
                 if (!$LangConfig instanceof Config) {
-                    $Logger->warning("Loading the translate files of : ".$extension->getExtensionName().", check the return value of the function getLangConfig() and verify its key and value");
+                    $Logger->warning("Loading the translate files of : ".$extension->getExtensionName().", check the return value of the function getLangConfig() and verify its key and value. If you are not the author of this extension, please inform him");
                 }else{
                     $LangMainFile = new Config(Main::getInstance()->getDataFolder() . "Translation/$LangSLug.yml", Config::YAML);
                     foreach ($LangConfig->getAll() as $key => $value) {
@@ -65,8 +64,8 @@ class ExtensionManager {
                     $LangMainFile->save();
                 }
             }
-            $Logger->info("§7" . $extension->getExtensionName() . " §floading finish");
+            $string .= $extension->getExtensionName() . ",";
         }
-        if (count($this->extensions)> 0) $Logger->info("§7Loading FactionMaster extension finish");
+        $Logger->info("FactionMaster is enabled with this extension: " . $string);
     }
 }
