@@ -48,7 +48,7 @@ class DeleteRequest extends Button {
         parent::__construct(
             "deleteRequest", 
             function(string $Player) {
-                return Utils::getText($Player, "BUTTON_DELETE_REQUEST");
+                return Utils::getText($Player, "BUTTON_REFUSE_REQUEST");
             },  
             function(Player $Player) use ($Request, $PanelSlug, $backPanelSlug) {
                 Utils::processMenu(RouterFactory::get(ConfirmationMenu::SLUG), $Player, [

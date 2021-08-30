@@ -98,7 +98,7 @@ class NewInvitation implements Route {
                                         },
                                         function () use ($Player, $FactionRequest, $backMenu) {
                                             (new FactionJoinEvent($Player, $FactionRequest))->call();
-                                            Utils::processMenu($backMenu, $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_JOIN_FACTION", ['factionName' => $FactionRequest->name])] );
+                                            Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_JOIN_FACTION", ['factionName' => $FactionRequest->name])] );
                                         },
                                         function () use ($Player) {
                                             Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
@@ -128,9 +128,9 @@ class NewInvitation implements Route {
                                                     function () use ($FactionRequest, $Player) {
                                                         return !MainAPI::areInInvitation($FactionRequest->name, $Player->getName(), "member");
                                                     },
-                                                    function () use ($Request, $Player, $backMenu) {
+                                                    function () use ($Request, $Player) {
                                                         (new InvitationAcceptEvent($Player, $Request))->call();
-                                                        Utils::processMenu($backMenu, $Player, [Utils::getText($Player->getName(), "SUCCESS_JOIN_FACTION", ['factionName' => $Request->sender])] );
+                                                        Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [Utils::getText($Player->getName(), "SUCCESS_JOIN_FACTION", ['factionName' => $Request->sender])] );
                                                     },
                                                     function () use ($Player) {
                                                         Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
