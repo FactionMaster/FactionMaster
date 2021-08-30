@@ -38,6 +38,8 @@ use pocketmine\Server;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Event\AllianceCreateEvent;
+use ShockedPlot7560\FactionMaster\Event\InvitationAcceptEvent;
 use ShockedPlot7560\FactionMaster\Event\InvitationSendEvent;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
@@ -91,7 +93,34 @@ class NewAllianceInvitation implements Route {
                     if (count($FactionPlayer->ally) < $FactionPlayer->max_ally) {
                         if (count($FactionRequest->ally) < $FactionRequest->max_ally) {
                             $Faction = $this->Faction;
-                            if (!MainAPI::areInInvitation($Faction->name, $targetName, InvitationSendEvent::ALLIANCE_TYPE)) {
+                            if (MainAPI::areInInvitation($targetName, $Faction->name, InvitationSendEvent::ALLIANCE_TYPE)) {
+                                MainAPI::setAlly($targetName, $Faction->name);
+                                Utils::newMenuSendTask(new MenuSendTask(
+                                    function () use ($targetName, $Faction) {
+                                        return MainAPI::isAlly($targetName, $Faction->name);
+                                    },
+                                    function () use ($Faction, $targetName, $Player, $backMenu) {
+                                        (new AllianceCreateEvent($Player, $Faction->name, $targetName))->call();
+                                        $invit = MainAPI::getInvitationsBySender($targetName, "alliance")[0];
+                                        MainAPI::removeInvitation($targetName, $Faction->name, "alliance");
+                                        Utils::newMenuSendTask(new MenuSendTask(
+                                            function () use ($targetName, $Faction) {
+                                                return !MainAPI::areInInvitation($targetName, $Faction->name, "alliance");
+                                            },
+                                            function () use ($invit, $Player, $backMenu) {
+                                                (new InvitationAcceptEvent($Player, $invit))->call();
+                                                Utils::processMenu($backMenu, $Player, [Utils::getText($Player->getName(), "SUCCESS_ACCEPT_REQUEST", ['name' => $invit->sender])]);
+                                            },
+                                            function () use ($Player) {
+                                                Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                            }
+                                        ));
+                                    },
+                                    function () use ($Player) {
+                                        Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                    }
+                                ));
+                            }elseif (!MainAPI::areInInvitation($Faction->name, $targetName, InvitationSendEvent::ALLIANCE_TYPE)) {
                                 MainAPI::makeInvitation($Faction->name, $targetName, InvitationSendEvent::ALLIANCE_TYPE);
                                 Utils::newMenuSendTask(new MenuSendTask(
                                     function () use ($Faction, $targetName) {

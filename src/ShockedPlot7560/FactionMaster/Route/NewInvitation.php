@@ -38,6 +38,7 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionJoinEvent;
+use ShockedPlot7560\FactionMaster\Event\InvitationAcceptEvent;
 use ShockedPlot7560\FactionMaster\Event\InvitationSendEvent;
 use ShockedPlot7560\FactionMaster\Route\ManageInvitationMain;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
@@ -103,12 +104,44 @@ class NewInvitation implements Route {
                                             Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
                                         }
                                     ));
+                                    if (MainAPI::areInInvitation($FactionRequest->name, $Player->getName(), "member")){
+                                        MainAPI::removeInvitation($FactionRequest->name, $Player->getName(), "member");
+                                    } elseif (MainAPI::areInInvitation($Player->getName(), $FactionRequest->name, "member")){
+                                        MainAPI::removeInvitation($Player->getName(), $FactionRequest->name, "member");
+                                    }
                                     break;
                                 case Ids::PRIVATE_VISIBILITY:
                                     Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "FACTION_DONT_ACCEPT_INVITATION")]);
                                     break;
                                 case Ids::INVITATION_VISIBILITY:
-                                    if (!MainAPI::areInInvitation($Player->getName(), $targetName, InvitationSendEvent::MEMBER_TYPE)) {
+                                    if (MainAPI::areInInvitation($targetName, $Player->getName(), InvitationSendEvent::MEMBER_TYPE)) {
+                                        MainAPI::addMember($targetName, $Player->getName());
+                                        Utils::newMenuSendTask(new MenuSendTask(
+                                            function () use ($targetName, $Player) {
+                                                return MainAPI::getUser($Player->getName())->faction === $targetName;
+                                            },
+                                            function () use ($Player, $FactionRequest, $backMenu) {
+                                                (new FactionJoinEvent($Player, $FactionRequest))->call();
+                                                $Request = MainAPI::$invitation[$FactionRequest->name . "|" . $Player->getName()];
+                                                MainAPI::removeInvitation($FactionRequest->name, $Player->getName(), "member");
+                                                Utils::newMenuSendTask(new MenuSendTask(
+                                                    function () use ($FactionRequest, $Player) {
+                                                        return !MainAPI::areInInvitation($FactionRequest->name, $Player->getName(), "member");
+                                                    },
+                                                    function () use ($Request, $Player, $backMenu) {
+                                                        (new InvitationAcceptEvent($Player, $Request))->call();
+                                                        Utils::processMenu($backMenu, $Player, [Utils::getText($Player->getName(), "SUCCESS_JOIN_FACTION", ['factionName' => $Request->sender])] );
+                                                    },
+                                                    function () use ($Player) {
+                                                        Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                                    }
+                                                ));
+                                            },
+                                            function () use ($Player) {
+                                                Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                            }
+                                        ));
+                                    }elseif (!MainAPI::areInInvitation($Player->getName(), $targetName, InvitationSendEvent::MEMBER_TYPE)) {
                                         MainAPI::makeInvitation($Player->getName(), $targetName, InvitationSendEvent::MEMBER_TYPE);
                                         Utils::newMenuSendTask(new MenuSendTask(
                                             function () use ($Player, $targetName) {

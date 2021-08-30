@@ -114,12 +114,12 @@ class NewMemberInvitation implements Route {
                                     function () use ($UserRequest, $Player, $Faction, $backMenu) {
                                         (new FactionJoinEvent($UserRequest, $Faction))->call();
                                         $Request = MainAPI::$invitation[$UserRequest->name . "|" . $Faction->name];
-                                        MainAPI::removeInvitation($UserRequest->name, $Faction->receiver, "member");
+                                        MainAPI::removeInvitation($UserRequest->name, $Faction->name, "member");
                                         Utils::newMenuSendTask(new MenuSendTask(
                                             function () use ($UserRequest, $Faction) {
-                                                return !MainAPI::areInInvitation($UserRequest->name, $Faction->receiver, "member");
+                                                return !MainAPI::areInInvitation($UserRequest->name, $Faction->name, "member");
                                             },
-                                            function () use ($Request, $Player, $backMenu) {
+                                            function () use ($Request, $Player, $backMenu, $UserRequest) {
                                                 (new InvitationAcceptEvent($Player, $Request))->call();
                                                 Utils::processMenu($backMenu, $Player, [Utils::getText($Player->getName(), "SUCCESS_ACCEPT_REQUEST", ['name' => $UserRequest->name])] );
                                             },
