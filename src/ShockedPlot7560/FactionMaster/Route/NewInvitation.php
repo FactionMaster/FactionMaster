@@ -96,7 +96,7 @@ class NewInvitation implements Route {
                                         function () use ($Player, $FactionRequest) {
                                             return MainAPI::getUser($Player->getName())->faction === $FactionRequest->name;
                                         },
-                                        function () use ($Player, $FactionRequest, $backMenu) {
+                                        function () use ($Player, $FactionRequest) {
                                             (new FactionJoinEvent($Player, $FactionRequest))->call();
                                             Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [Utils::getText($this->UserEntity->name, "SUCCESS_JOIN_FACTION", ['factionName' => $FactionRequest->name])] );
                                         },
@@ -120,7 +120,7 @@ class NewInvitation implements Route {
                                             function () use ($targetName, $Player) {
                                                 return MainAPI::getUser($Player->getName())->faction === $targetName;
                                             },
-                                            function () use ($Player, $FactionRequest, $backMenu) {
+                                            function () use ($Player, $FactionRequest) {
                                                 (new FactionJoinEvent($Player, $FactionRequest))->call();
                                                 $Request = MainAPI::$invitation[$FactionRequest->name . "|" . $Player->getName()];
                                                 MainAPI::removeInvitation($FactionRequest->name, $Player->getName(), "member");
