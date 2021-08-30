@@ -123,9 +123,9 @@ class MainAPI {
             $result = $query->fetchAll();
             foreach ($result as $claim) {
                 if (!isset(self::$claim[$claim->faction])) {
-                    self::$home[$claim->faction] = [$claim];
+                    self::$claim[$claim->faction] = [$claim];
                 }else{
-                    self::$home[$claim->faction][] = $claim;
+                    self::$claim[$claim->faction][] = $claim;
                 }
             }
             return true;
@@ -164,7 +164,7 @@ class MainAPI {
 
     /**
      * Return all the home register
-     * @return HomeEntity[]
+     * @return HomeEntity[][]
      */
     public static function getAllHome() : array {
         return self::$home;

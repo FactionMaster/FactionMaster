@@ -171,7 +171,7 @@ class MapCommand extends BaseSubCommand {
         }
         $text = "";
         foreach ($ClaimData as $key => $Claim) {
-            $newString = " " . $Claim['COLOR'] . $Claim['SYMBOL'] . ": " . $Claim['FACTION'];
+            $newString = " " . $Claim['COLOR'] . $Claim['SYMBOL'] . ": " . $Claim['FACTION']->faction;
             if (\strlen($text . $newString) > 48) {
                 $Player->sendMessage($text . $newString);
                 $text = "";

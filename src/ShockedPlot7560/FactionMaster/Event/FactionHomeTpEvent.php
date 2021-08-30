@@ -65,7 +65,7 @@ class FactionHomeTpEvent extends Event {
     }
 
     public function getVector() : Vector3 {
-        return new Vector3($this->Data['x'], $this->Data['y'], $this->Data['z']);
+        return new Vector3($this->home->x, $this->home->y, $this->home->z);
     }
 
     public function getWorldName() : string {
