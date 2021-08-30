@@ -40,6 +40,7 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Command\FactionCommand;
 use ShockedPlot7560\FactionMaster\Database\Database;
+use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
 use ShockedPlot7560\FactionMaster\Extension\ExtensionManager;
 use ShockedPlot7560\FactionMaster\Permission\PermissionManager;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
@@ -70,8 +71,11 @@ class Main extends PluginBase implements Listener{
     /** @var PermissionManager */
     private $PermissionManager;
 
+    private static $topFactionQuery;
+
     public function onLoad()
     {
+        self::$topFactionQuery = "SELECT * FROM " . FactionTable::TABLE_NAME . " ORDER BY level DESC, xp DESC, power DESC LIMIT 10";
         self::$instance = $this;
         self::$logger = $this->getLogger();
 
@@ -137,5 +141,13 @@ class Main extends PluginBase implements Listener{
     public function getPermissionManager() : ?PermissionManager {
         if($this->PermissionManager === null) $this->PermissionManager = new PermissionManager();
         return $this->PermissionManager;
+    }
+
+    public static function getTopQuery(): string {
+        return self::$topFactionQuery;
+    }
+
+    public static function setTopQuery(string $query) {
+        self::$topFactionQuery = $query;
     }
 }

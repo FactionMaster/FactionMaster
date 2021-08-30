@@ -36,7 +36,9 @@ use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class TopFactionPanel implements Route {
@@ -61,7 +63,7 @@ class TopFactionPanel implements Route {
     public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
     {
         $this->UserEntity = $User;
-        $menu = $this->topFactionMenu();
+        $menu = $this->topFactionMenu($params[0]);
         $player->sendForm($menu);;
     }
 
@@ -73,11 +75,11 @@ class TopFactionPanel implements Route {
         };
     }
 
-    private function topFactionMenu() : SimpleForm {
+    private function topFactionMenu(array $top) : SimpleForm {
         $menu = new SimpleForm($this->call());
         $menu->setTitle(Utils::getText($this->UserEntity->name, "TOP_FACTION_TITLE"));
         $content = '';
-        foreach (MainAPI::getTopFaction() as $key => $Faction) {
+        foreach ($top as $key => $Faction) {
             $content .= Utils::getText($this->UserEntity->name, "TOP_FACTION_LINE", [
                 'rank' => ($key + 1),
                 'factionName' => $Faction->name,
