@@ -34,26 +34,27 @@ namespace ShockedPlot7560\FactionMaster\Button;
 
 use pocketmine\math\Vector3;
 use pocketmine\Player;
+use ShockedPlot7560\FactionMaster\Database\Entity\HomeEntity;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Home extends Button {
 
-    public function __construct(string $Name, array $Home)
+    public function __construct(string $Name, HomeEntity $Home)
     {
         parent::__construct(
             "home", 
             function(string $Player) use ($Name, $Home) {
                 return Utils::getText($Player, "BUTTON_LISTING_HOME", [
                     'name' => $Name,
-                    'x' => $Home['x'],
-                    'y' => $Home['y'],
-                    'z' => $Home['z']
+                    'x' => $Home->x,
+                    'y' => $Home->y,
+                    'z' => $Home->z
                 ]);
             },  
             function(Player $Player) use ($Home) {
-                $Player->teleport(new Vector3($Home["x"], $Home["y"], $Home['z']));
+                $Player->teleport(new Vector3($Home->x, $Home->y, $Home->z));
                 $Player->sendMessage(Utils::getText($Player->getName(), "SUCCESS_TELEPORT_HOME"));
                 Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player);
             }

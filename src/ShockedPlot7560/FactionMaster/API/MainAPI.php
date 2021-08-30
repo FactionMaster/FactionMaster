@@ -790,6 +790,9 @@ class MainAPI {
         return self::$claim[$factionName] ?? [];
     }
 
+    /**
+     * @return HomeEntity[]
+     */
     public static function getFactionHomes(string $factionName) : array {
         return self::$home[$factionName] ?? [];
     }
@@ -828,7 +831,7 @@ class MainAPI {
                 function () use ($player, $factionName, $name) {
                     Main::getInstance()->getServer()->getAsyncPool()->submitTask(
                         new DatabaseTask(
-                            "SELECT * FROM " . HomeTable::TABLE_NAME . " WHERE x = :x AND z = :z AND world = :world AND faction = :faction AND name = :name", 
+                            "SELECT * FROM " . HomeTable::TABLE_NAME . " WHERE x = :x AND z = :z AND y = :y AND world = :world AND faction = :faction AND name = :name", 
                             [
                                 "x" => floor($player->getX()),
                                 "z" => floor($player->getZ()),
