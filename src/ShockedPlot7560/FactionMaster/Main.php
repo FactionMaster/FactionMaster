@@ -34,6 +34,7 @@ namespace ShockedPlot7560\FactionMaster;
 
 use CortexPE\Commando\PacketHooker;
 use pocketmine\event\Listener;
+use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
@@ -81,7 +82,13 @@ class Main extends PluginBase implements Listener{
 
         $this->loadConfig();
         $this->Database = new Database($this);
-        //$this->getServer()->getAsyncPool()->submitTask(new LoadCacheTask());
+        
+        if (Utils::getConfig("active-image") == true) {
+            $invCrashFix = $this->getServer()->getPluginManager()->getPlugin("FormImagesFix");
+            if (!$invCrashFix instanceof Plugin) {
+                self::$logger->warning("For a better experience, please install FormImagesFix, see the following link: https://poggit.pmmp.io/r/77731/FormImagesFix_dev-8.phar. (This message is displayed because you have activated the images for FactionMaster)");
+            }
+        }
 
         RouterFactory::init();
         RewardFactory::init();
@@ -107,7 +114,7 @@ class Main extends PluginBase implements Listener{
 
         if(!PacketHooker::isRegistered()) PacketHooker::register($this);
         $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", "FactionMaster command", ["f", "fac"]));
-
+        //var_dump($this->getServer()->getResourcePackManager()->getPackById());
     }
 
     private function loadConfig() : void {

@@ -32,6 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
+use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Main;
@@ -50,13 +51,17 @@ class Button {
     private $content;
     private $permissions;
     private $callable;
+    private $imgPath;
+    private $imgType;
 
-    public function __construct(string $slug, callable $content, callable $callable, array $permissions = [])
+    public function __construct(string $slug, callable $content, callable $callable, array $permissions = [], string $imgPath = "", int $imgType = SimpleForm::IMAGE_TYPE_URL)
     {
         $this->slug = $slug;
         $this->content = $content;
         $this->permissions = $permissions;
         $this->callable = $callable;
+        $this->imgPath = $imgPath;
+        $this->imgType = $imgType;
     }
 
     public function getSlug() : string {
@@ -92,5 +97,13 @@ class Button {
 
     public function call(Player $Player) {
         return call_user_func($this->getCallable(), $Player);
+    }
+
+    public function getImgPath(): string {
+        return $this->imgPath;
+    }
+
+    public function getImgType(): int {
+        return $this->imgType;
     }
 }

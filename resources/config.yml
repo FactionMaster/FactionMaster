@@ -90,4 +90,8 @@ timeout-task: 60
 # Default: 200
 # It will determine ow much time Database synchronisation will be done
 sync-time: 200
+
+# If it set to true, image will be display near button
+# If it set to false, image will be disabled
+active-image: true
 ...
