@@ -73,3 +73,39 @@ array(
     "fr_FR" => new Config($this->getDataFolder() . "fr_FR.yml", Config::YAML)
 );
 ```
+##  Change TopFaction SQL query
+```php
+Main::getInstance()->setTopQuery($query);
+```
+
+## Awaiting DatabaseQuery update/insert async response
+For example with a faction create
+```php
+MainAPI::addFaction($factionName, $playerName);
+Utils::newMenuSendTask(new MenuSendTask(
+    function () use ($factionName) {
+        // callable use to verify if the faction are created
+        return MainAPI::getFaction($factionName) instanceof FactionEntity;
+    },
+    function () {
+        // Your instruction on Success
+    },
+    function () use ($Player) {
+        // Your instruction on Error/Timeout set in config.yml
+    }
+));
+```
+## Awaiting DatabaseQuery select async response
+```php
+Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+    new DatabaseTask(
+        "SELECT * FROM $tableName WHERE name = :name), 
+        // Your query argument
+        [
+            "name" => $playerName,
+        ],
+        // Function called on success with results on first argument
+        function ($result) { },
+        // Class entity return
+));
+```
