@@ -72,6 +72,20 @@ class SyncServerTask extends Task {
         $data["home"] = $query->fetchAll();
 
         foreach ($data as $type => $data2) {
+            switch ($type) {
+                case 'faction':
+                    if (count($data2) > 0) MainAPI::$factions = [];
+                    break;
+                case "invitation":
+                    if (count($data2) > 0) MainAPI::$invitation = [];
+                    break;
+                case "user":
+                    if (count($data2) > 0) MainAPI::$users = [];
+                    break;
+                case "home":
+                    if (count($data2) > 0) MainAPI::$home = [];
+                    break;
+            }
             foreach ($data2 as $dat) {
                 switch ($type) {
                     case 'faction':
