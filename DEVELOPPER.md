@@ -109,3 +109,12 @@ Main::getInstance()->getServer()->getAsyncPool()->submitTask(
         // Class entity return
 ));
 ```
+## Add Reward to FactionMaster
+To implements a new Reward in FactionMaster you need to implements [ShockedPlot7560\FactionMaster\Reward\RewardInterface] 
+The ``executeGet`` function will be called when you want to get this reward.
+The ``executeCost`` will be called when we wish to use this reward as a means of "payment".
+
+To register a new Reward, use :
+```php
+RewardFactory::registerReward($reward);
+```
