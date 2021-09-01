@@ -78,7 +78,7 @@ class Langue extends Button {
                 ));
             },
             [],
-            "textures/img/lang/" . $slugG,
+            (isset($slugG) ? "textures/img/lang/" . $slugG : ""),
             SimpleForm::IMAGE_TYPE_PATH
         );
     }
