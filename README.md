@@ -3,6 +3,9 @@
 
 **WARNING, As long as the plugin is in alpha version, it may not be fully stable, so be aware that when installing it it is important to report any issues.**
 
+## Use image
+To use the basic images with FactionMaster, install the .zip file available [here](https://github.com/ShockedPlot7560/FactionMaster/blob/master/FactionMaster.zip) in the ``resource_packs`` folder on your server and modify the ``resource_packs.yml`` as instructed in it. Request that the texture pack be added by default when joining the server, stop and restart your server. Everything is ready to go!
+
 ## Contributing
 For developers who want to participate, please open a Pull Request and describe why and how this change is made
 
