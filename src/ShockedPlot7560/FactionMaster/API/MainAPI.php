@@ -182,7 +182,7 @@ class MainAPI {
         $faction = MainAPI::$factions[$factionName];
         Main::getInstance()->getServer()->getAsyncPool()->submitTask(
             new DatabaseTask(
-                "DELETE FROM " . FactionTable::SLUG . " WHERE name = :name", 
+                "DELETE FROM " . FactionTable::TABLE_NAME . " WHERE name = :name", 
                 [ "name" => $factionName ],
                 function () use ($factionName) {
                     unset(MainAPI::$factions[$factionName]);
@@ -206,7 +206,7 @@ class MainAPI {
     public static function addFaction(string $factionName, string $ownerName) {
         Main::getInstance()->getServer()->getAsyncPool()->submitTask(
             new DatabaseTask(
-                "INSERT INTO " . FactionTable::SLUG . " (name, members, ally, permissions) VALUES (:name, :members, :ally, :permissions)", 
+                "INSERT INTO " . FactionTable::TABLE_NAME . " (name, members, ally, permissions) VALUES (:name, :members, :ally, :permissions)", 
                 [
                     'name' => $factionName,
                     'members' => \base64_encode(\serialize([
