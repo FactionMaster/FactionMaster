@@ -32,6 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
+use jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Route\HomeListPanel;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -47,7 +48,10 @@ class ViewHomes extends Button {
             }, 
             function($Player) {
                 Utils::processMenu(RouterFactory::get(HomeListPanel::SLUG), $Player);
-            }
+            },
+            [],
+            "textures/img/house",
+            SimpleForm::IMAGE_TYPE_PATH
         );
     }
 
