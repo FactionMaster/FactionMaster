@@ -32,6 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
+use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Button;
@@ -45,6 +46,11 @@ class Langue extends Button {
 
     public function __construct(string $Lang)
     {
+        foreach (Utils::getConfigLang("languages-name") as $slug => $langN) {
+            if ($langN === $Lang) {
+                $slugG = $slug;
+            }
+        }
         parent::__construct(
             $Lang, 
             function(string $Player) use ($Lang) {
@@ -70,7 +76,10 @@ class Langue extends Button {
                         Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
                     }
                 ));
-            }
+            },
+            [],
+            "textures/img/lang/" . $slugG,
+            SimpleForm::IMAGE_TYPE_PATH
         );
     }
 

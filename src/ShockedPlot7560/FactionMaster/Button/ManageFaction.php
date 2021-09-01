@@ -32,6 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
+use jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\ManageFactionMain;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
@@ -59,7 +60,9 @@ class ManageFaction extends Button {
                 PermissionIds::PERMISSION_CHANGE_FACTION_MESSAGE,
                 PermissionIds::PERMISSION_CHANGE_FACTION_VISIBILITY,
                 PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS
-            ]
+            ],
+            "textures/img/option_faction",
+            SimpleForm::IMAGE_TYPE_PATH
         );
     }
 

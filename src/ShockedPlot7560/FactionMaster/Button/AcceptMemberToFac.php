@@ -32,6 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
+use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
@@ -104,7 +105,9 @@ class AcceptMemberToFac extends Button {
             },
             [
                 PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND
-            ]
+            ],
+            "textures/img/true",
+            SimpleForm::IMAGE_TYPE_PATH
         );
     }
 }

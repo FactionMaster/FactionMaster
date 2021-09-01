@@ -32,6 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Button\Collection;
 
+use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\Button;
 use ShockedPlot7560\FactionMaster\Button\Back;
@@ -64,7 +65,9 @@ class ManageFactionMainCollection extends Collection {
                 function(Player $Player) {
                     Utils::processMenu(RouterFactory::get(ChangeDescription::SLUG), $Player);
                 },
-                [ PermissionIds::PERMISSION_CHANGE_FACTION_DESCRIPTION ]
+                [ PermissionIds::PERMISSION_CHANGE_FACTION_DESCRIPTION ],
+                "textures/img/description",
+                SimpleForm::IMAGE_TYPE_PATH
             ));
             $this->register(new Button(
                 "changeMessage", 
@@ -74,7 +77,9 @@ class ManageFactionMainCollection extends Collection {
                 function(Player $Player) {
                     Utils::processMenu(RouterFactory::get(ChangeMessage::SLUG), $Player);
                 },
-                [ PermissionIds::PERMISSION_CHANGE_FACTION_MESSAGE ]
+                [ PermissionIds::PERMISSION_CHANGE_FACTION_MESSAGE ],
+                "textures/img/message",
+                SimpleForm::IMAGE_TYPE_PATH
             ));
             $this->register(new Button(
                 "changeVisibility", 
@@ -84,7 +89,9 @@ class ManageFactionMainCollection extends Collection {
                 function(Player $Player) {
                     Utils::processMenu(RouterFactory::get(ChangeVisibility::SLUG), $Player);
                 },
-                [ PermissionIds::PERMISSION_CHANGE_FACTION_VISIBILITY ]
+                [ PermissionIds::PERMISSION_CHANGE_FACTION_VISIBILITY ],
+                "textures/img/visibility",
+                SimpleForm::IMAGE_TYPE_PATH
             ));
             $this->register(new Button(
                 "levelUp", 
@@ -96,7 +103,9 @@ class ManageFactionMainCollection extends Collection {
                 },
                 [
                     PermissionIds::PERMISSION_LEVEL_UP
-                ]
+                ],
+                "textures/img/level_up",
+                SimpleForm::IMAGE_TYPE_PATH
             ));
             $this->register(new Button(
                 "changePermission", 
@@ -108,7 +117,9 @@ class ManageFactionMainCollection extends Collection {
                 },
                 [
                     PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS
-                ]
+                ],
+                "textures/img/permission",
+                SimpleForm::IMAGE_TYPE_PATH
             ));
             $this->register(new Button(
                 "manageAlliance", 
@@ -123,7 +134,9 @@ class ManageFactionMainCollection extends Collection {
                     PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION,
                     PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
                     PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND
-                ]
+                ],
+                "textures/img/option_alliance",
+                SimpleForm::IMAGE_TYPE_PATH
             ));
             $this->register(new Back(MainPanel::SLUG));
         });

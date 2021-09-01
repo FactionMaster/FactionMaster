@@ -34,7 +34,9 @@ namespace ShockedPlot7560\FactionMaster;
 
 use CortexPE\Commando\PacketHooker;
 use pocketmine\event\Listener;
+use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginBase;
+use pocketmine\resourcepacks\ResourcePack;
 use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
@@ -89,6 +91,15 @@ class Main extends PluginBase implements Listener{
         $this->loadConfig();
         $this->loadTableInitQuery();
         $this->Database = new Database($this);
+        
+        if (Utils::getConfig("active-image") == true) {
+            $pack = $this->getServer()->getResourcePackManager()->getPackById("6ac63fa8-b4d3-4cf6-b64f-1e88ab50f57f");
+            if (!$pack instanceof ResourcePack) {
+                self::$logger->warning("To enable FactionMaster images and a better player experience, please download the dedicated FactionMaster pack. Then reactivate the images once this is done.");
+                $this->config->set("active-image", false);
+                $this->config->save();
+            }
+        }
 
         RouterFactory::init();
         RewardFactory::init();
@@ -114,7 +125,6 @@ class Main extends PluginBase implements Listener{
 
         if(!PacketHooker::isRegistered()) PacketHooker::register($this);
         $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", "FactionMaster command", ["f", "fac"]));
-
     }
 
     private function loadConfig() : void {

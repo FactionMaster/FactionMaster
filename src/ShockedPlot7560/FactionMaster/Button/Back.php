@@ -32,6 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
+use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -47,7 +48,9 @@ class Back extends Button {
             },  
             function(Player $Player) use ($BackPanelString) {
                 Utils::processMenu(RouterFactory::get($BackPanelString), $Player);
-            }
+            },[],
+            "textures/img/back",
+            SimpleForm::IMAGE_TYPE_PATH
         );
     }
 
