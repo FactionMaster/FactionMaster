@@ -40,7 +40,11 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Command\FactionCommand;
 use ShockedPlot7560\FactionMaster\Database\Database;
+use ShockedPlot7560\FactionMaster\Database\Table\ClaimTable;
 use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
+use ShockedPlot7560\FactionMaster\Database\Table\HomeTable;
+use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
+use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\Extension\ExtensionManager;
 use ShockedPlot7560\FactionMaster\Permission\PermissionManager;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
@@ -48,6 +52,7 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Task\InitTranslationFile;
 use ShockedPlot7560\FactionMaster\Task\LoadCacheTask;
 use ShockedPlot7560\FactionMaster\Task\SyncServerTask;
+use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Main extends PluginBase implements Listener{
@@ -71,6 +76,8 @@ class Main extends PluginBase implements Listener{
     /** @var PermissionManager */
     private $PermissionManager;
 
+    /** @var array */
+    private static $tableQuery;
     private static $topFactionQuery;
 
     public function onLoad()
@@ -80,8 +87,8 @@ class Main extends PluginBase implements Listener{
         self::$logger = $this->getLogger();
 
         $this->loadConfig();
+        $this->loadTableInitQuery();
         $this->Database = new Database($this);
-        //$this->getServer()->getAsyncPool()->submitTask(new LoadCacheTask());
 
         RouterFactory::init();
         RewardFactory::init();
@@ -127,6 +134,68 @@ class Main extends PluginBase implements Listener{
             $this->saveResource("Translation/$language.yml");
         }
 
+    }
+    
+    public static function getTableInitQuery(string $class): ?string {
+        return self::$tableQuery[$class] ?? null;
+    }
+
+    public static function setTableInitQuery(string $class, string $query) {
+        self::$tableQuery[$class] = $query;
+    }
+
+    private function loadTableInitQuery(): void {
+        $auto_increment = $this->config->get("PROVIDER") === Database::MYSQL_PROVIDER ? "AUTO_INCREMENT" : "AUTOINCREMENT";
+        self::$tableQuery = [
+            FactionTable::class => "CREATE TABLE IF NOT EXISTS `". FactionTable::TABLE_NAME ."` ( 
+                `id` INTEGER NOT NULL PRIMARY KEY $auto_increment, 
+                `name` VARCHAR(22) NOT NULL, 
+                `members` VARCHAR(255) NOT NULL DEFAULT '". base64_encode(serialize([]))."',
+                `visibility` INT(11) DEFAULT " . Ids::PRIVATE_VISIBILITY . ",
+                `xp` INT(11) NOT NULL DEFAULT '0',
+                `level` INT(11) NOT NULL DEFAULT '1',
+                `description` TEXT, 
+                `messageFaction` TEXT,
+                `ally` VARCHAR(255) NOT NULL DEFAULT '". base64_encode(serialize([]))."',
+                `max_player` INT(11) NOT NULL DEFAULT '". $this->config->get("default-member-limit") . "',
+                `max_ally` INT(11) NOT NULL DEFAULT '". $this->config->get("default-ally-limit") . "',
+                `max_claim` INT(11) NOT NULL DEFAULT '". $this->config->get("default-claim-limit") . "',
+                `max_home` INT(11) NOT NULL DEFAULT '". $this->config->get("default-home-limit") . "',
+                `power` INT(11) NOT NULL DEFAULT '". $this->config->get("default-power") . "',
+                `permissions` TEXT,
+                `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )",
+            ClaimTable::class => "CREATE TABLE IF NOT EXISTS `". ClaimTable::TABLE_NAME ."` ( 
+                `id` INTEGER NOT NULL PRIMARY KEY $auto_increment , 
+                `faction` VARCHAR(255) NOT NULL , 
+                `x` INT(11) NOT NULL , 
+                `z` INT(11) NOT NULL,
+                `world` VARCHAR(255) NOT NULL
+            )",
+            HomeTable::class => "CREATE TABLE IF NOT EXISTS `". HomeTable::TABLE_NAME ."` ( 
+                `id` INTEGER NOT NULL PRIMARY KEY $auto_increment , 
+                `name` VARCHAR(255) NOT NULL , 
+                `faction` VARCHAR(255) NOT NULL , 
+                `x` INT(11) NOT NULL,
+                `y` INT(11) NOT NULL,
+                `z` INT(11) NOT NULL,
+                `world` VARCHAR(255) NOT NULL
+            )",
+            InvitationTable::class => "CREATE TABLE IF NOT EXISTS `". InvitationTable::TABLE_NAME ."` ( 
+                `id` INTEGER NOT NULL PRIMARY KEY $auto_increment, 
+                `sender` VARCHAR(255) NOT NULL, 
+                `receiver` VARCHAR(255) NOT NULL,
+                `type` VARCHAR(255) NOT NULL,
+                `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )",
+            UserTable::class => "CREATE TABLE IF NOT EXISTS `". UserTable::TABLE_NAME ."` ( 
+                `name` VARCHAR(22) NOT NULL, 
+                `faction` VARCHAR(255) DEFAULT NULL,
+                `rank` INT(11) DEFAULT NULL,
+                `language` VARCHAR(255) NOT NULL DEFAULT '". Utils::getConfigLang("default-language") ."',
+                PRIMARY KEY (`name`)
+            )"
+        ];
     }
 
     public static function getInstance() : self {

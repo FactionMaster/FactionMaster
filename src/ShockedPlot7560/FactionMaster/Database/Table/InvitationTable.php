@@ -33,7 +33,6 @@
 namespace ShockedPlot7560\FactionMaster\Database\Table;
 
 use PDO;
-use ShockedPlot7560\FactionMaster\Database\Database;
 use ShockedPlot7560\FactionMaster\Main;
 
 class InvitationTable implements TableInterface {
@@ -44,16 +43,8 @@ class InvitationTable implements TableInterface {
     const TABLE_NAME = "invitation";
     const SLUG = "invitation";
 
-    public function init() : self
-    {
-        $auto_increment = Main::getInstance()->config->get("PROVIDER") === Database::MYSQL_PROVIDER ? "AUTO_INCREMENT" : "AUTOINCREMENT";
-        $this->PDO->query("CREATE TABLE IF NOT EXISTS `". self::TABLE_NAME ."` ( 
-            `id` INTEGER NOT NULL PRIMARY KEY $auto_increment, 
-            `sender` VARCHAR(255) NOT NULL, 
-            `receiver` VARCHAR(255) NOT NULL,
-            `type` VARCHAR(255) NOT NULL,
-            `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-        )");
+    public function init() : self {
+        $this->PDO->query(Main::getTableInitQuery(__CLASS__));
         return $this;
     }
 

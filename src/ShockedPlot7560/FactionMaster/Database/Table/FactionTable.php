@@ -33,9 +33,7 @@
 namespace ShockedPlot7560\FactionMaster\Database\Table;
 
 use PDO;
-use ShockedPlot7560\FactionMaster\Database\Database;
 use ShockedPlot7560\FactionMaster\Main;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 
 class FactionTable implements TableInterface {
 
@@ -46,25 +44,7 @@ class FactionTable implements TableInterface {
     const SLUG = "faction";
 
     public function init(): self {
-        $auto_increment = Main::getInstance()->config->get("PROVIDER") === Database::MYSQL_PROVIDER ? "AUTO_INCREMENT" : "AUTOINCREMENT";
-        $this->PDO->query("CREATE TABLE IF NOT EXISTS `". self::TABLE_NAME ."` ( 
-            `id` INTEGER NOT NULL PRIMARY KEY $auto_increment, 
-            `name` VARCHAR(22) NOT NULL, 
-            `members` VARCHAR(255) NOT NULL DEFAULT '". \base64_encode(\serialize([]))."',
-            `visibility` INT(11) DEFAULT " . Ids::PRIVATE_VISIBILITY . ",
-            `xp` INT(11) NOT NULL DEFAULT '0',
-            `level` INT(11) NOT NULL DEFAULT '1',
-            `description` TEXT, 
-            `messageFaction` TEXT,
-            `ally` VARCHAR(255) NOT NULL DEFAULT '". \base64_encode(\serialize([]))."',
-            `max_player` INT(11) NOT NULL DEFAULT '". Main::getInstance()->config->get("default-member-limit") . "',
-            `max_ally` INT(11) NOT NULL DEFAULT '". Main::getInstance()->config->get("default-ally-limit") . "',
-            `max_claim` INT(11) NOT NULL DEFAULT '". Main::getInstance()->config->get("default-claim-limit") . "',
-            `max_home` INT(11) NOT NULL DEFAULT '". Main::getInstance()->config->get("default-home-limit") . "',
-            `power` INT(11) NOT NULL DEFAULT '". Main::getInstance()->config->get("default-power") . "',
-            `permissions` TEXT,
-            `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-        )");
+        $this->PDO->query(Main::getTableInitQuery(__CLASS__));
         return $this;
     }
 
