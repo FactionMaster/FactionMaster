@@ -32,6 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
+use jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\ManageMainMembers;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
@@ -56,7 +57,9 @@ class ManageMembers extends Button {
                 PermissionIds::PERMISSION_KICK_MEMBER,
                 PermissionIds::PERMISSION_CHANGE_MEMBER_RANK,
                 PermissionIds::PERMISSION_SEND_MEMBER_INVITATION
-            ]
+            ],
+            "textures/img/option_member",
+            SimpleForm::IMAGE_TYPE_PATH
         );
     }
 

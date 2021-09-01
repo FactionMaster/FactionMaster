@@ -32,6 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
+use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
@@ -54,7 +55,10 @@ class LeaveDelete extends Button {
             function($Player) {
                 return Utils::getText($Player, "BUTTON_LEAVE_DELETE_FACTION");
             },  
-            $this->leaveDeleteButtonFunction()
+            $this->leaveDeleteButtonFunction(),
+            [],
+            "textures/img/trash",
+            SimpleForm::IMAGE_TYPE_PATH
         );
     }
 

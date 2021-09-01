@@ -32,6 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
+use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
@@ -77,7 +78,9 @@ class DeleteRequest extends Button {
                     Utils::getText($Player->getName(), "CONFIRMATION_CONTENT_DELETE_REQUEST")
                 ]);
             },
-            $permissions
+            $permissions,
+            "textures/img/false",
+            SimpleForm::IMAGE_TYPE_PATH
         );
     }
 }

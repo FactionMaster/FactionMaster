@@ -36,6 +36,7 @@ use CortexPE\Commando\PacketHooker;
 use pocketmine\event\Listener;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginBase;
+use pocketmine\resourcepacks\ResourcePack;
 use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
@@ -84,9 +85,11 @@ class Main extends PluginBase implements Listener{
         $this->Database = new Database($this);
         
         if (Utils::getConfig("active-image") == true) {
-            $invCrashFix = $this->getServer()->getPluginManager()->getPlugin("FormImagesFix");
-            if (!$invCrashFix instanceof Plugin) {
-                self::$logger->warning("For a better experience, please install FormImagesFix, see the following link: https://poggit.pmmp.io/r/77731/FormImagesFix_dev-8.phar. (This message is displayed because you have activated the images for FactionMaster)");
+            $pack = $this->getServer()->getResourcePackManager()->getPackById("ed7b0932-f208-37b0-8c8d-5d7e5560bb77");
+            if (!$pack instanceof ResourcePack) {
+                self::$logger->warning("To enable FactionMaster images and a better player experience, please download the dedicated FactionMaster pack. Then reactivate the images once this is done.");
+                $this->config->set("active-image", false);
+                $this->config->save();
             }
         }
 
@@ -114,7 +117,7 @@ class Main extends PluginBase implements Listener{
 
         if(!PacketHooker::isRegistered()) PacketHooker::register($this);
         $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", "FactionMaster command", ["f", "fac"]));
-        //var_dump($this->getServer()->getResourcePackManager()->getPackById());
+        var_dump($this->getServer()->getResourcePackManager()->getPackIdList());
     }
 
     private function loadConfig() : void {

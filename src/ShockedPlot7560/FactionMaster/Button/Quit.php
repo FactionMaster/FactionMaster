@@ -32,6 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
+use jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Quit extends Button {
@@ -45,7 +46,9 @@ class Quit extends Button {
             },  
             function($Player) {
                 return;
-            }
+            },[],
+            "textures/img/back",
+            SimpleForm::IMAGE_TYPE_PATH
         );
     }
 
