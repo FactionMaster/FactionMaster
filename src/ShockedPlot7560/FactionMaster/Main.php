@@ -85,7 +85,7 @@ class Main extends PluginBase implements Listener{
         $this->Database = new Database($this);
         
         if (Utils::getConfig("active-image") == true) {
-            $pack = $this->getServer()->getResourcePackManager()->getPackById("ed7b0932-f208-37b0-8c8d-5d7e5560bb77");
+            $pack = $this->getServer()->getResourcePackManager()->getPackById("6ac63fa8-b4d3-4cf6-b64f-1e88ab50f57f");
             if (!$pack instanceof ResourcePack) {
                 self::$logger->warning("To enable FactionMaster images and a better player experience, please download the dedicated FactionMaster pack. Then reactivate the images once this is done.");
                 $this->config->set("active-image", false);
