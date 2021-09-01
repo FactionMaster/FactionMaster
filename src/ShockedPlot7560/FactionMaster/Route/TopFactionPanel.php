@@ -76,7 +76,6 @@ class TopFactionPanel implements Route {
     }
 
     private function topFactionMenu(array $top) : SimpleForm {
-        var_dump($top);
         $menu = new SimpleForm($this->call());
         $menu->setTitle(Utils::getText($this->UserEntity->name, "TOP_FACTION_TITLE"));
         $content = '';

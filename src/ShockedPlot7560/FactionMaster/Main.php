@@ -117,7 +117,6 @@ class Main extends PluginBase implements Listener{
 
         if(!PacketHooker::isRegistered()) PacketHooker::register($this);
         $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", "FactionMaster command", ["f", "fac"]));
-        var_dump($this->getServer()->getResourcePackManager()->getPackIdList());
     }
 
     private function loadConfig() : void {
