@@ -44,64 +44,64 @@ use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
 use ShockedPlot7560\FactionMaster\Database\Table\HomeTable;
 use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
+use ShockedPlot7560\FactionMaster\Main;
 
 class SyncServerTask extends Task {
 
-    public function onRun(int $currentTick): void {
-        $db = MainAPI::$PDO;
-        $data = [];
-        
-        $query = $db->prepare("SELECT * FROM " . FactionTable::TABLE_NAME);
-        $query->execute();
-        $query->setFetchMode(PDO::FETCH_CLASS, FactionEntity::class);
-        $data["faction"] = $query->fetchAll();
-        
-        $query = $db->prepare("SELECT * FROM " . InvitationTable::TABLE_NAME);
-        $query->execute();
-        $query->setFetchMode(PDO::FETCH_CLASS, InvitationEntity::class);
-        $data["invitation"] = $query->fetchAll();
-        
-        $query = $db->prepare("SELECT * FROM " . UserTable::TABLE_NAME);
-        $query->execute();
-        $query->setFetchMode(PDO::FETCH_CLASS, UserEntity::class);
-        $data["user"] = $query->fetchAll();
-        
-        $query = $db->prepare("SELECT * FROM " . HomeTable::TABLE_NAME);
-        $query->execute();
-        $query->setFetchMode(PDO::FETCH_CLASS, HomeEntity::class);
-        $data["home"] = $query->fetchAll();
+    private $main;
 
-        foreach ($data as $type => $data2) {
-            switch ($type) {
-                case 'faction':
-                    if (count($data2) > 0) MainAPI::$factions = [];
-                    break;
-                case "invitation":
-                    if (count($data2) > 0) MainAPI::$invitation = [];
-                    break;
-                case "user":
-                    if (count($data2) > 0) MainAPI::$users = [];
-                    break;
-                case "home":
-                    if (count($data2) > 0) MainAPI::$home = [];
-                    break;
-            }
-            foreach ($data2 as $dat) {
-                switch ($type) {
-                    case 'faction':
-                        if ($dat instanceof FactionEntity) MainAPI::$factions[$dat->name] = $dat;
-                        break;
-                    case "invitation":
-                        if ($dat instanceof InvitationEntity) MainAPI::$invitation[$dat->sender . "|" . $dat->receiver] = $dat;
-                        break;
-                    case "user":
-                        if ($dat instanceof UserEntity) MainAPI::$users[$dat->name] = $dat;
-                        break;
-                    case "home":
-                        if ($dat instanceof HomeEntity) MainAPI::$home[$dat->faction][$dat->name] = $dat;
-                        break;
-                }            
-            }
-        }
+    public function __construct(Main $main) {
+       $this->main = $main; 
+    }
+
+    public function onRun(int $currentTick): void {
+
+        Main::getInstance()->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
+            "SELECT * FROM " . FactionTable::TABLE_NAME,
+            [],
+            function (array $result) {
+                if (count($result) > 0) MainAPI::$factions = [];
+                foreach ($result as $faction) {
+                    if ($faction instanceof FactionEntity) MainAPI::$factions[$faction->name] = $faction;
+                }
+            },
+            FactionEntity::class
+        ));
+
+        Main::getInstance()->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
+            "SELECT * FROM " . InvitationTable::TABLE_NAME,
+            [],
+            function (array $result) {
+                if (count($result) > 0) MainAPI::$invitation = [];
+                foreach ($result as $invitation) {
+                    if ($invitation instanceof InvitationEntity) MainAPI::$invitation[$invitation->sender . "|" . $invitation->receiver] = $invitation;
+                }
+            },
+            InvitationEntity::class
+        ));
+        
+        Main::getInstance()->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
+            "SELECT * FROM " . UserTable::TABLE_NAME,
+            [],
+            function (array $result) {
+                if (count($result) > 0) MainAPI::$users = [];
+                foreach ($result as $user) {
+                    if ($user instanceof UserEntity) MainAPI::$users[$user->name] = $user;
+                }
+            },
+            UserEntity::class
+        ));
+
+        Main::getInstance()->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
+            "SELECT * FROM " . HomeTable::TABLE_NAME,
+            [],
+            function (array $result) {
+                if (count($result) > 0) MainAPI::$home = [];
+                foreach ($result as $home) {
+                    if ($home instanceof HomeEntity) MainAPI::$home[$home->faction][$home->name] = $home;
+                }
+            },
+            HomeEntity::class
+        ));
     }
 }

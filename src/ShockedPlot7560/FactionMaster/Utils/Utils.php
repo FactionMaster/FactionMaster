@@ -35,6 +35,7 @@ namespace ShockedPlot7560\FactionMaster\Utils;
 use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use pocketmine\plugin\PluginLogger;
+use pocketmine\scheduler\AsyncTask;
 use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
@@ -193,5 +194,9 @@ class Utils {
 
     public static function getDataFolder(): string {
         return Main::getInstance()->getDataFolder();
+    }
+
+    public static function submitAsyncTask(AsyncTask $task): void {
+        Main::getInstance()->getServer()->getAsyncPool($task);
     }
 }

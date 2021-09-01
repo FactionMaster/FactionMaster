@@ -98,7 +98,7 @@ class Main extends PluginBase implements Listener{
             $langConfig[$extension->getExtensionName()] = $extension->getLangConfig();
         }
         $this->getServer()->getAsyncPool()->submitTask(new InitTranslationFile($langConfig, $this->getDataFolder(), self::$logger));
-        $this->getScheduler()->scheduleRepeatingTask(new SyncServerTask(), (int) Utils::getConfig("sync-time"));
+        $this->getScheduler()->scheduleRepeatingTask(new SyncServerTask($this), (int) Utils::getConfig("sync-time"));
     }
 
     private function init() {
