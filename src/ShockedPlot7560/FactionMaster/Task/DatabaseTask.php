@@ -36,6 +36,7 @@ use PDO;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use ShockedPlot7560\FactionMaster\Database\Database;
+use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class DatabaseTask extends AsyncTask {
@@ -60,27 +61,27 @@ class DatabaseTask extends AsyncTask {
                 break;
             
             case Database::SQLITE_PROVIDER:
-                $this->db = array(Utils::getDataFolder() . Utils::getConfig("SQLITE_database")["name"] . ".db");
+                $this->db = Utils::getConfig("SQLITE_database")["name"];
                 break;
         }
     }
 
     public function onRun(): void {
         $provider = $this->provider;
-
+        $db = (array) $this->db;
         switch ($provider) {
             case Database::MYSQL_PROVIDER:
                 $db = new PDO(
-                    "mysql:host=" . $this->db[0] . ";dbname=" . $this->db[3], 
-                    $this->db[1], 
-                    $this->db[2]
+                    "mysql:host=" . $db[0] . ";dbname=" . $db[3], 
+                    $db[1], 
+                    $db[2]
                 );
                 break;
             case Database::SQLITE_PROVIDER:
-                $db = new PDO("sqlite:".$this->db[3].".sqlite");
+                $db = new PDO("sqlite:".$db[0].".sqlite");
                 break;
             default:
-                $db = new PDO("sqlite:".$this->db[3].".sqlite");
+                $db = new PDO("sqlite:".$db[0].".sqlite");
                 break;
         }
         $query = $db->prepare($this->query);
