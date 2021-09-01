@@ -3,6 +3,12 @@
 
 **WARNING, As long as the plugin is in alpha version, it may not be fully stable, so be aware that when installing it it is important to report any issues.**
 
+## Use image
+* Download factionMaster texture pack available [here](https://github.com/ShockedPlot7560/FactionMaster/blob/master/FactionMaster.zip)
+* Install it on your server as a mandatory Texture pack
+* Put the line : ``active-image`` to true in ``config.yml`` file
+* Stop and start your serve
+
 ## Contributing
 For developers who want to participate, please open a Pull Request and describe why and how this change is made
 
