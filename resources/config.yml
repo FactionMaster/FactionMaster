@@ -27,7 +27,10 @@
  #
 
 # Use only SQLITE or MYSQL
-PROVIDER: "MYSQL"
+#
+# To enabled Multiple server support
+# please use MYSQL for PROVIDER, give the good information and restart the server
+PROVIDER: "SQLITE"
 MYSQL_database:
   host: "localhost"
   name: "FactionMaster"
