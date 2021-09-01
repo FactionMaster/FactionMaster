@@ -195,8 +195,4 @@ class Utils {
     public static function getDataFolder(): string {
         return Main::getInstance()->getDataFolder();
     }
-
-    public static function submitAsyncTask(AsyncTask $task): void {
-        Main::getInstance()->getServer()->getAsyncPool($task);
-    }
 }
