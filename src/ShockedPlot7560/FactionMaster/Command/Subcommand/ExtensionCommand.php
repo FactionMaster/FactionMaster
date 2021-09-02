@@ -49,7 +49,6 @@ class ExtensionCommand extends BaseSubCommand {
         $extensions = Main::getInstance()->getExtensionManager()->getExtensions();
         $string = "";
         foreach ($extensions as $extension) {
-            $extension->execute();
             $string .= "§a" . $extension->getExtensionName() . "§f, ";
         }
         $sender->sendMessage("FactionMaster is enabled with this extension: " . $string);
