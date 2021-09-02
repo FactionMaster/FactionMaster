@@ -10,7 +10,8 @@ class MigrationManager {
 
     public static function init() {
         self::$list = [
-            "2.1.2-alpha" => function () {}
+            "2.1.2-alpha" => function () {},
+            "2.1.3-alpha" => function () {}
         ];
     }
     
