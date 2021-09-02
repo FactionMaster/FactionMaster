@@ -48,6 +48,7 @@ use ShockedPlot7560\FactionMaster\Database\Table\HomeTable;
 use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\Extension\ExtensionManager;
+use ShockedPlot7560\FactionMaster\Migration\MigrationManager;
 use ShockedPlot7560\FactionMaster\Permission\PermissionManager;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
@@ -71,6 +72,8 @@ class Main extends PluginBase implements Listener{
     public $FormUI;
     /** @var Config */
     public $levelConfig;
+    /** @var Config */
+    public $version;
     /** @var Config */
     public $translation;
     /** @var ExtensionManager */
@@ -99,6 +102,11 @@ class Main extends PluginBase implements Listener{
                 $this->config->set("active-image", false);
                 $this->config->save();
             }
+        }
+
+        if (version_compare($this->getDescription()->getVersion(), $this->version->get("migrate-version")) == 1) {
+            MigrationManager::init();
+            MigrationManager::migrate($this->version->get("migrate-version"));
         }
 
         RouterFactory::init();
@@ -135,10 +143,13 @@ class Main extends PluginBase implements Listener{
         $this->saveResource('config.yml');
         $this->saveResource('translation.yml');
         $this->saveResource('level.yml');
+        $this->saveResource('version.yml');
 
         $this->config = new Config($this->getDataFolder() . "config.yml");
         $this->levelConfig = new Config($this->getDataFolder() . "level.yml");
         $this->translation = new Config($this->getDataFolder() . "translation.yml");
+
+        $this->version = new Config($this->getDataFolder() . "version.yml");
 
         foreach ($this->translation->get("languages") as $key => $language) {
             $this->saveResource("Translation/$language.yml");
