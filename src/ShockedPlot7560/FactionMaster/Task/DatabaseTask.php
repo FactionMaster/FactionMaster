@@ -5,12 +5,12 @@
  *      ______           __  _                __  ___           __
  *     / ____/___ ______/ /_(_)___  ____     /  |/  /___ ______/ /____  _____
  *    / /_  / __ `/ ___/ __/ / __ \/ __ \   / /|_/ / __ `/ ___/ __/ _ \/ ___/
- *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /  
- *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/ 
+ *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /
+ *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/
  *
  * FactionMaster - A Faction plugin for PocketMine-MP
  * This file is part of FactionMaster
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -24,11 +24,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * @author ShockedPlot7560 
+ * @author ShockedPlot7560
  * @link https://github.com/ShockedPlot7560
- * 
  *
-*/
+ *
+ */
 
 namespace ShockedPlot7560\FactionMaster\Task;
 
@@ -36,7 +36,6 @@ use PDO;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use ShockedPlot7560\FactionMaster\Database\Database;
-use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class DatabaseTask extends AsyncTask {
@@ -59,7 +58,7 @@ class DatabaseTask extends AsyncTask {
                 $databaseConfig = Utils::getConfig("MYSQL_database");
                 $this->db = array($databaseConfig['host'], $databaseConfig['user'], $databaseConfig['pass'], $databaseConfig['name']);
                 break;
-            
+
             case Database::SQLITE_PROVIDER:
                 $this->db = Utils::getConfig("SQLITE_database")["name"];
                 break;
@@ -72,16 +71,16 @@ class DatabaseTask extends AsyncTask {
         switch ($provider) {
             case Database::MYSQL_PROVIDER:
                 $db = new PDO(
-                    "mysql:host=" . $db[0] . ";dbname=" . $db[3], 
-                    $db[1], 
+                    "mysql:host=" . $db[0] . ";dbname=" . $db[3],
+                    $db[1],
                     $db[2]
                 );
                 break;
             case Database::SQLITE_PROVIDER:
-                $db = new PDO("sqlite:".$db[0].".sqlite");
+                $db = new PDO("sqlite:" . $db[0] . ".sqlite");
                 break;
             default:
-                $db = new PDO("sqlite:".$db[0].".sqlite");
+                $db = new PDO("sqlite:" . $db[0] . ".sqlite");
                 break;
         }
         $query = $db->prepare($this->query);
@@ -94,9 +93,6 @@ class DatabaseTask extends AsyncTask {
         $this->setResult($results);
     }
 
-    /**
-     * @param Server $server
-     */
     public function onCompletion(Server $server): void {
         call_user_func($this->callable, $this->getResult());
     }

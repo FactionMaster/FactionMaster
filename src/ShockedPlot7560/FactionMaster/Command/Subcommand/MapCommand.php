@@ -5,12 +5,12 @@
  *      ______           __  _                __  ___           __
  *     / ____/___ ______/ /_(_)___  ____     /  |/  /___ ______/ /____  _____
  *    / /_  / __ `/ ___/ __/ / __ \/ __ \   / /|_/ / __ `/ ___/ __/ _ \/ ___/
- *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /  
- *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/ 
+ *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /
+ *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/
  *
  * FactionMaster - A Faction plugin for PocketMine-MP
  * This file is part of FactionMaster
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -24,11 +24,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * @author ShockedPlot7560 
+ * @author ShockedPlot7560
  * @link https://github.com/ShockedPlot7560
- * 
  *
-*/
+ *
+ */
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
@@ -42,7 +42,7 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 class MapCommand extends BaseSubCommand {
 
     const SYMBOL = [
-        "/","\\","#","$","?","%","=","&","^","$"
+        "/", "\\", "#", "$", "?", "%", "=", "&", "^", "$",
     ];
 
     const DIRECTION = [
@@ -54,7 +54,7 @@ class MapCommand extends BaseSubCommand {
         "SW" => '/',
         "W" => 'W',
         "NW" => '\\',
-        "NONE" => '+'
+        "NONE" => '+',
     ];
 
     const PLAYER_SYMBOL = "+";
@@ -74,14 +74,18 @@ class MapCommand extends BaseSubCommand {
 
     protected function prepare(): void {}
 
-    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
-    {
-        if (!$sender instanceof Player) return;
+    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
+        if (!$sender instanceof Player) {
+            return;
+        }
+
         $Player = $sender->getPlayer();
         $UserEntity = MainAPI::getUser($Player->getName());
-        if (!$UserEntity instanceof UserEntity) return;
+        if (!$UserEntity instanceof UserEntity) {
+            return;
+        }
+
         $CentralChunk = $Player->getLevel()->getChunkAtPosition($Player);
-        $map = [];
         $SymbolData = self::SYMBOL;
         $SymbolCursor = 0;
         $ClaimData = [];
@@ -91,65 +95,67 @@ class MapCommand extends BaseSubCommand {
         $ChunkFaction = MainAPI::getFactionClaim($Player->getLevel()->getName(), $CentralChunk->getX(), $CentralChunk->getZ());
         if ($ChunkFaction instanceof ClaimEntity && $ChunkFaction->faction === $UserEntity->faction) {
             $FactionLabelColor = self::CLAIM_OWN_COLOR;
-        }elseif ($ChunkFaction instanceof ClaimEntity && MainAPI::isAlly($UserEntity->faction, $ChunkFaction->faction)) {
+        } elseif ($ChunkFaction instanceof ClaimEntity && MainAPI::isAlly($UserEntity->faction, $ChunkFaction->faction)) {
             $FactionLabelColor = self::CLAIM_ALLIES_COLOR;
-        }else{
+        } else {
             $FactionLabelColor = self::CLAIM_ENNEMIE_COLOR;
         }
-        $FactionLabel = $ChunkFaction instanceof ClaimEntity ? $FactionLabelColor .$ChunkFaction->faction : "§5" . "Wilderness";
+        $FactionLabel = $ChunkFaction instanceof ClaimEntity ? $FactionLabelColor . $ChunkFaction->faction : "§5" . "Wilderness";
         $middleString = ".[ §2($X,$Z) " . $FactionLabel . " §6].";
         $lenMiddle = \strlen($middleString) - 3;
         $bottom = "";
-        for ($i=0; $i < \floor((48 - $lenMiddle) / 2); $i++) { 
+        for ($i = 0; $i < \floor((48 - $lenMiddle) / 2); $i++) {
             $bottom .= "_";
         }
         $Player->sendMessage("§6$bottom" . "$middleString" . "$bottom");
-        for ($mZ=0; $mZ < self::HEIGHT; $mZ++) { 
+        for ($mZ = 0; $mZ < self::HEIGHT; $mZ++) {
             $lign = "";
-            for ($mX=0; $mX < self::WIDTH; $mX++) { 
+            for ($mX = 0; $mX < self::WIDTH; $mX++) {
                 $X = $CentralChunk->getX() + $mX - (self::WIDTH / 2);
                 $Z = $CentralChunk->getZ() + $mZ - (self::HEIGHT / 2);
 
                 if ($CentralChunk->getX() == $X && $CentralChunk->getZ() == $Z) {
                     $lign .= self::PLAYER_COLOR . self::PLAYER_SYMBOL;
                     continue;
-                }else{
+                } else {
                     $Faction = MainAPI::getFactionClaim($Player->getLevel()->getName(), $X, $Z);
                     if ($Faction instanceof ClaimEntity) {
                         if (!isset($ClaimData[$Faction->faction])) {
                             if (!isset($SymbolData[$SymbolCursor])) {
                                 $lign .= self::CLAIM_COLOR . self::NO_SYMBOL;
                                 continue;
-                            }else{
+                            } else {
                                 if ($UserEntity->faction !== null) {
                                     if (MainAPI::isAlly($UserEntity->faction, $Faction->faction)) {
                                         $color = self::CLAIM_ALLIES_COLOR;
-                                    }elseif ($Faction->faction === $UserEntity->faction) {
+                                    } elseif ($Faction->faction === $UserEntity->faction) {
                                         $color = self::CLAIM_OWN_COLOR;
-                                    }else{
+                                    } else {
                                         $color = self::CLAIM_COLOR;
                                     }
-                                }else{
+                                } else {
                                     $color = self::CLAIM_COLOR;
                                 }
                                 $ClaimData[$Faction->faction] = [
                                     "SYMBOL" => $SymbolData[$SymbolCursor],
                                     "COLOR" => $color,
-                                    "FACTION" => $Faction
+                                    "FACTION" => $Faction,
                                 ];
                                 $SymbolCursor++;
                             }
                         }
                         $Data = $ClaimData[$Faction->faction];
                         $lign .= $Data['COLOR'] . $Data['SYMBOL'];
-                    }else{
+                    } else {
                         $lign .= self::WILDERNESS_COLOR . self::WILDERNESS_SYMBOL;
                     }
                 }
             }
             if ($mZ <= 2) {
                 $degrees = ($Player->getYaw() - 157) % 360;
-                if ($degrees < 0) $degrees += 360;
+                if ($degrees < 0) {
+                    $degrees += 360;
+                }
 
                 $Direction = array_keys(self::DIRECTION)[intval(floor($degrees / 45))];
                 $Compass = [["NW", "N", "NE"], ["W", "NONE", "E"], ["SW", "S", "SE"]];
@@ -158,7 +164,7 @@ class MapCommand extends BaseSubCommand {
                     foreach ($DirectionsData as $DirectionData) {
                         if ($Direction === $DirectionData) {
                             $text .= "§c";
-                        }else{
+                        } else {
                             $text .= "§e";
                         }
                         $text .= self::DIRECTION[$DirectionData];
@@ -175,7 +181,7 @@ class MapCommand extends BaseSubCommand {
             if (\strlen($text . $newString) > 48) {
                 $Player->sendMessage($text . $newString);
                 $text = "";
-            }else{
+            } else {
                 $text .= $newString;
             }
         }

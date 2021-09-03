@@ -50,9 +50,7 @@ class RankPermissionManage implements Route {
 
     const SLUG = "rankPermissionManage";
 
-    public $PermissionNeed = [
-        PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS
-    ];
+    public $PermissionNeed = [PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS];
     public $backMenu;
     /** @var UserEntity */
     private $UserEntity;
@@ -69,22 +67,15 @@ class RankPermissionManage implements Route {
     private $Faction;
     private $rank;
 
-    public function getSlug(): string
-    {
+    public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->backMenu = RouterFactory::get(ChangePermissionMain::SLUG);
     }
 
-    /**
-     * @param Player $player
-     * @param array|null $params Give to first item the message to print if wanted
-     */
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
-    {
+    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
         $this->UserEntity = $User;
         if (!isset($params[0]) || !\is_int($params[0])) throw new InvalidArgumentException("Please give the rank id in the first item of the \$params");
         $this->rank = $params[0];

@@ -5,12 +5,12 @@
  *      ______           __  _                __  ___           __
  *     / ____/___ ______/ /_(_)___  ____     /  |/  /___ ______/ /____  _____
  *    / /_  / __ `/ ___/ __/ / __ \/ __ \   / /|_/ / __ `/ ___/ __/ _ \/ ___/
- *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /  
- *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/ 
+ *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /
+ *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/
  *
  * FactionMaster - A Faction plugin for PocketMine-MP
  * This file is part of FactionMaster
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -24,11 +24,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * @author ShockedPlot7560 
+ * @author ShockedPlot7560
  * @link https://github.com/ShockedPlot7560
- * 
  *
-*/
+ *
+ */
 
 namespace ShockedPlot7560\FactionMaster;
 
@@ -68,12 +68,11 @@ class EventListener implements Listener {
     /** @var Main */
     private $Main;
 
-    public function __construct(Main $Main)
-    {
+    public function __construct(Main $Main) {
         $this->Main = $Main;
     }
 
-    public function onBreak(BlockBreakEvent $event) {
+    public function onBreak(BlockBreakEvent $event): void {
         $Block = $event->getBlock();
         $level = $Block->getLevel();
         $Chunk = $level->getChunkAtPosition(new Vector3($Block->getX(), $Block->getY(), $Block->getZ()));
@@ -88,7 +87,7 @@ class EventListener implements Listener {
         }
     }
 
-    public function onPlace(BlockPlaceEvent $event) {
+    public function onPlace(BlockPlaceEvent $event): void {
         $Block = $event->getBlock();
         $level = $Block->getLevel();
         $Chunk = $level->getChunkAtPosition(new Vector3($Block->getX(), $Block->getY(), $Block->getZ()));
@@ -103,7 +102,7 @@ class EventListener implements Listener {
         }
     }
 
-    public function onDamage(EntityDamageByEntityEvent $event) {
+    public function onDamage(EntityDamageByEntityEvent $event): void {
         $Victim = $event->getEntity();
         $Damager = $event->getDamager();
         if ($Victim instanceof Player && $Damager instanceof Player) {
@@ -117,12 +116,12 @@ class EventListener implements Listener {
             if ($DamagerFaction instanceof FactionEntity && $VictimFaction instanceof FactionEntity && MainAPI::isAlly($DamagerFaction->name, $VictimFaction->name)) {
                 $event->setCancelled(true);
             }
-        }else{
-            return true;
+        } else {
+            return;
         }
     }
 
-    public function onDeath(PlayerDeathEvent $event) {
+    public function onDeath(PlayerDeathEvent $event): void {
         $Entity = $event->getEntity();
         $cause = $Entity->getLastDamageCause();
         $config = Main::getInstance()->config;
@@ -136,9 +135,12 @@ class EventListener implements Listener {
                     if ($victimInventoryArmor->getHelmet()->getId() == ItemIds::AIR
                         && $victimInventoryArmor->getChestplate()->getId() == ItemIds::AIR
                         && $victimInventoryArmor->getLeggings()->getId() == ItemIds::AIR
-                        && $victimInventoryArmor->getBoots()->getId() == ItemIds::AIR) return;
+                        && $victimInventoryArmor->getBoots()->getId() == ItemIds::AIR) {
+                        return;
+                    }
+
                 }
-                
+
                 $DamagerName = $Damager->getPlayer()->getName();
                 $VictimName = $Entity->getPlayer()->getName();
 
@@ -148,48 +150,60 @@ class EventListener implements Listener {
                     if ($VictimFaction instanceof FactionEntity) {
                         $PowerDamager = $config->get("power-win-per-kill") * $config->get("faction-multiplicator");
                         $PowerVictim = $config->get('power-loose-per-kill') * -1 * $config->get("faction-multiplicator");
-                    }else{
+                    } else {
                         $PowerDamager = $config->get("power-win-per-kill");
                     }
-                }elseif ($VictimFaction instanceof FactionEntity) {
+                } elseif ($VictimFaction instanceof FactionEntity) {
                     $PowerVictim = $config->get("power-loose-per-death") * -1;
                 }
-                if (isset($PowerDamager) && $DamagerFaction instanceof FactionEntity) MainAPI::changePower($DamagerFaction->name, $PowerDamager);
-                if (isset($PowerVictim) && $VictimFaction instanceof FactionEntity) MainAPI::changePower($VictimFaction->name, $PowerVictim);
-                if ($DamagerFaction instanceof FactionEntity) MainAPI::addXP($DamagerFaction->name, 1);
+                if (isset($PowerDamager) && $DamagerFaction instanceof FactionEntity) {
+                    MainAPI::changePower($DamagerFaction->name, $PowerDamager);
+                }
+
+                if (isset($PowerVictim) && $VictimFaction instanceof FactionEntity) {
+                    MainAPI::changePower($VictimFaction->name, $PowerVictim);
+                }
+
+                if ($DamagerFaction instanceof FactionEntity) {
+                    MainAPI::addXP($DamagerFaction->name, 1);
+                }
+
             }
         }
     }
 
-    public function onInteract(PlayerInteractEvent $event) {
+    public function onInteract(PlayerInteractEvent $event): void {
         $Block = $event->getBlock();
         $Item = $event->getItem();
         $Player = $event->getPlayer();
         $level = $Player->getLevel();
         $Chunk = $level->getChunkAtPosition(new Vector3($Block->getX(), $Block->getY(), $Block->getZ()));
 
-        if (!$Chunk instanceof Chunk) return;
+        if (!$Chunk instanceof Chunk) {
+            return;
+        }
+
         if ($Item instanceof Hoe || $Item instanceof Shovel || $Item instanceof Bucket ||
-            $Block instanceof Chest || $Block instanceof Door || $Block instanceof Trapdoor || 
+            $Block instanceof Chest || $Block instanceof Door || $Block instanceof Trapdoor ||
             $Block instanceof FenceGate || $Block instanceof Furnace || $Block instanceof ItemFrame) {
-                if (($faction = MainAPI::getFactionClaim($level->getName(), $Chunk->getX(), $Chunk->getZ())) !== null) {
-                    $factionPlayer = MainAPI::getFactionOfPlayer($event->getPlayer()->getName());
-                    if (!$factionPlayer instanceof FactionEntity || ($factionPlayer instanceof FactionEntity && $faction->faction !== $factionPlayer->name)) {
-                        $event->setCancelled(true);
-                        $event->getPlayer()->sendMessage(Utils::getText($Player->getName(), "CANT_INTERACT_CLAIM"));
-                        return;
-                    }
+            if (($faction = MainAPI::getFactionClaim($level->getName(), $Chunk->getX(), $Chunk->getZ())) !== null) {
+                $factionPlayer = MainAPI::getFactionOfPlayer($event->getPlayer()->getName());
+                if (!$factionPlayer instanceof FactionEntity || ($factionPlayer instanceof FactionEntity && $faction->faction !== $factionPlayer->name)) {
+                    $event->setCancelled(true);
+                    $event->getPlayer()->sendMessage(Utils::getText($Player->getName(), "CANT_INTERACT_CLAIM"));
+                    return;
                 }
+            }
         }
     }
 
-    public function onJoin(PlayerLoginEvent $event) {
+    public function onJoin(PlayerLoginEvent $event): void {
         $playerName = $event->getPlayer()->getName();
         $UserEntity = MainAPI::getUser($playerName);
         if ($UserEntity === null) {
             MainAPI::$languages[$playerName] = Utils::getConfigLang("default-language");
             MainAPI::addUser($playerName);
-        }else{
+        } else {
             MainAPI::$languages[$playerName] = $UserEntity->language;
         }
         Utils::newMenuSendTask(new MenuSendTask(
@@ -201,24 +215,24 @@ class EventListener implements Listener {
                 if ($user->faction !== null) {
                     Main::getInstance()->getServer()->getAsyncPool()->submitTask(
                         new DatabaseTask(
-                            "SELECT * FROM " . FactionTable::TABLE_NAME . " WHERE name = :name", 
+                            "SELECT * FROM " . FactionTable::TABLE_NAME . " WHERE name = :name",
                             [
-                                "name" => $user->faction
+                                "name" => $user->faction,
                             ],
                             function ($result) use ($user) {
                                 $faction = $result[0];
                                 MainAPI::$factions[$user->faction] = $faction;
                             },
                             FactionEntity::class
-                    ));                    
+                        ));
                 }
                 Main::getInstance()->getServer()->getAsyncPool()->submitTask(
                     new DatabaseTask(
-                        "SELECT * FROM " . InvitationTable::TABLE_NAME . " WHERE sender = :name OR receiver = :name" . ($user->faction !== null ? " OR sender = :factionName OR receiver = :factionName" : ""), 
+                        "SELECT * FROM " . InvitationTable::TABLE_NAME . " WHERE sender = :name OR receiver = :name" . ($user->faction !== null ? " OR sender = :factionName OR receiver = :factionName" : ""),
                         ($user->faction !== null ? [
                             "name" => $playerName,
-                            "factionName" => $user->faction
-                        ]:[
+                            "factionName" => $user->faction,
+                        ] : [
                             "name" => $playerName,
                         ]),
                         function ($result) {
@@ -227,18 +241,18 @@ class EventListener implements Listener {
                             }
                         },
                         InvitationEntity::class
-                ));
+                    ));
                 Main::getInstance()->getServer()->getAsyncPool()->submitTask(
                     new DatabaseTask(
-                        "SELECT * FROM " . UserTable::TABLE_NAME . " WHERE name = :name", 
+                        "SELECT * FROM " . UserTable::TABLE_NAME . " WHERE name = :name",
                         [
-                            "name" => $playerName
+                            "name" => $playerName,
                         ],
                         function ($result) use ($playerName) {
                             MainAPI::$users[$playerName] = $result[0];
                         },
                         UserEntity::class
-                ));  
+                    ));
             },
             function () use ($event) {
                 $event->getPlayer()->kick(Utils::getText($event->getPlayer()->getName(), "ERROR_DATA_SAVING"), false);

@@ -5,12 +5,12 @@
  *      ______           __  _                __  ___           __
  *     / ____/___ ______/ /_(_)___  ____     /  |/  /___ ______/ /____  _____
  *    / /_  / __ `/ ___/ __/ / __ \/ __ \   / /|_/ / __ `/ ___/ __/ _ \/ ___/
- *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /  
- *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/ 
+ *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /
+ *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/
  *
  * FactionMaster - A Faction plugin for PocketMine-MP
  * This file is part of FactionMaster
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -24,11 +24,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * @author ShockedPlot7560 
+ * @author ShockedPlot7560
  * @link https://github.com/ShockedPlot7560
- * 
  *
-*/
+ *
+ */
 
 namespace ShockedPlot7560\FactionMaster\Button\Collection;
 
@@ -39,8 +39,9 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Collection {
 
-    /** @var \ShockedPlot7560\FactionMaster\Button\Button[] */
+    /** @var Button[] */
     protected $ButtonsList;
+    /** @var string */
     protected $slug;
     /** @var callable[] */
     protected $processFunction;
@@ -53,34 +54,34 @@ class Collection {
         $this->processFunction[$slug] = $callable;
     }
 
-    public function register(Button $Button, ?int $index = null, bool $override = false) {
+    public function register(Button $Button, ?int $index = null, bool $override = false): void {
         if ($index === null) {
             $this->ButtonsList[] = $Button;
-        }else {
+        } else {
             if ($override) {
                 $this->ButtonsList[$index] = $Button;
-            }else{
+            } else {
                 $newElement = $Button;
-                for ($i=$index; $i < count($this->ButtonsList) ; $i++) { 
+                for ($i = $index; $i < count($this->ButtonsList); $i++) {
                     $oldElement = $this->ButtonsList[$i];
                     $this->ButtonsList[$i] = $newElement;
                     $newElement = $oldElement;
                 }
-                $this->ButtonsList[$i+1] = $newElement;
+                $this->ButtonsList[$i + 1] = $newElement;
                 $this->ButtonsList = \array_values($this->ButtonsList);
             }
         }
     }
 
-    public function generateButtons(SimpleForm $Form, string $playerName) : SimpleForm {
+    public function generateButtons(SimpleForm $Form, string $playerName): SimpleForm {
         foreach ($this->ButtonsList as $key => $Button) {
             if ($Button->hasAccess($playerName)) {
                 if (Utils::getConfig("active-image") && $Button->getImgPath() !== "") {
                     $Form->addButton($Button->getContent($playerName), $Button->getImgType(), $Button->getImgPath());
-                }else{
+                } else {
                     $Form->addButton($Button->getContent($playerName));
                 }
-            }else{
+            } else {
                 unset($this->ButtonsList[$key]);
             }
         }
@@ -88,15 +89,15 @@ class Collection {
         return $Form;
     }
 
-    public function process(int $keyButtonPress, Player $Player){
+    public function process(int $keyButtonPress, Player $Player): void {
         $this->ButtonsList[$keyButtonPress]->call($Player);
     }
 
-    public function getSlug() : string {
+    public function getSlug(): string {
         return $this->slug;
     }
 
-    public function init(... $parameter) : self {
+    public function init(...$parameter): self {
         $this->ButtonsList = [];
         foreach ($this->processFunction as $callable) {
             call_user_func_array($callable, $parameter);

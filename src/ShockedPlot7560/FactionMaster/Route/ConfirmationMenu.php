@@ -5,12 +5,12 @@
  *      ______           __  _                __  ___           __
  *     / ____/___ ______/ /_(_)___  ____     /  |/  /___ ______/ /____  _____
  *    / /_  / __ `/ ___/ __/ / __ \/ __ \   / /|_/ / __ `/ ___/ __/ _ \/ ___/
- *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /  
- *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/ 
+ *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /
+ *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/
  *
  * FactionMaster - A Faction plugin for PocketMine-MP
  * This file is part of FactionMaster
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -24,11 +24,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * @author ShockedPlot7560 
+ * @author ShockedPlot7560
  * @link https://github.com/ShockedPlot7560
- * 
  *
-*/
+ *
+ */
 
 namespace ShockedPlot7560\FactionMaster\Route;
 
@@ -44,27 +44,19 @@ class ConfirmationMenu implements Route {
 
     public $PermissionNeed = [];
     public $backMenu;
-    
+
     /** @var UserEntity */
     private $UserEntity;
 
-    public function getSlug(): string
-    {
+    public function getSlug(): string {
         return self::SLUG;
     }
 
-    /**
-     * @param Player $player 
-     * @param array|null $params 
-     *      Give to first item of the list, a callable to call when the confirmation are send
-     *      At the second, the title
-     *      At the third, the content
-     *      (Optionnal) at the fourth, array with for the first item -> message for positive answer and second the negative
-     */
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
-    {
+    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
         $this->UserEntity = $User;
-        if (!isset($params[0])) throw new InvalidArgumentException("First item must be set");
+        if (!isset($params[0])) {
+            throw new InvalidArgumentException("First item must be set");
+        }
 
         $this->backMenu = $params[0];
 
@@ -77,7 +69,7 @@ class ConfirmationMenu implements Route {
         return $this->backMenu;
     }
 
-    private function confirmationMenu(array $params) : ModalForm {
+    private function confirmationMenu(array $params): ModalForm {
         $menu = new ModalForm($this->call());
         $menu->setTitle($params[1]);
         $menu->setContent($params[2]);

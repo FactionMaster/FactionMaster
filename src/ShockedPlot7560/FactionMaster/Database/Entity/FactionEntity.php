@@ -5,12 +5,12 @@
  *      ______           __  _                __  ___           __
  *     / ____/___ ______/ /_(_)___  ____     /  |/  /___ ______/ /____  _____
  *    / /_  / __ `/ ___/ __/ / __ \/ __ \   / /|_/ / __ `/ ___/ __/ _ \/ ___/
- *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /  
- *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/ 
+ *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /
+ *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/
  *
  * FactionMaster - A Faction plugin for PocketMine-MP
  * This file is part of FactionMaster
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -24,11 +24,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * @author ShockedPlot7560 
+ * @author ShockedPlot7560
  * @link https://github.com/ShockedPlot7560
- * 
  *
-*/
+ *
+ */
 
 namespace ShockedPlot7560\FactionMaster\Database\Entity;
 
@@ -70,18 +70,18 @@ class FactionEntity {
     public $date;
 
     public function __construct() {
-        if (isset($this->members) && $this->members !== null && is_string($this->members)){
+        if (isset($this->members) && $this->members !== null && is_string($this->members)) {
             $this->members = unserialize(\base64_decode($this->members));
         }
-        if (isset($this->ally) && is_string($this->ally)){
+        if (isset($this->ally) && is_string($this->ally)) {
             $this->ally = unserialize(\base64_decode($this->ally));
         }
-        if (isset($this->permissions) && is_string($this->permissions)){
+        if (isset($this->permissions) && is_string($this->permissions)) {
             $this->permissions = unserialize(\base64_decode($this->permissions));
         }
     }
 
-    public function getAllyInstance() : array {
+    public function getAllyInstance(): array{
         $array = [];
         foreach ($this->ally as $key => $Ally) {
             $array[] = MainAPI::getFaction($Ally);

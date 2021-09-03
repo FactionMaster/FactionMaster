@@ -5,12 +5,12 @@
  *      ______           __  _                __  ___           __
  *     / ____/___ ______/ /_(_)___  ____     /  |/  /___ ______/ /____  _____
  *    / /_  / __ `/ ___/ __/ / __ \/ __ \   / /|_/ / __ `/ ___/ __/ _ \/ ___/
- *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /  
- *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/ 
+ *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /
+ *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/
  *
  * FactionMaster - A Faction plugin for PocketMine-MP
  * This file is part of FactionMaster
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -24,11 +24,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * @author ShockedPlot7560 
+ * @author ShockedPlot7560
  * @link https://github.com/ShockedPlot7560
- * 
  *
-*/
+ *
+ */
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
@@ -46,8 +46,7 @@ class InfoCommand extends BaseSubCommand {
         $this->registerArgument(0, new RawStringArgument("name"));
     }
 
-    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
-    {
+    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
         if (!isset($args['name'])) {
             $this->sendUsage();
             return;
@@ -60,10 +59,10 @@ class InfoCommand extends BaseSubCommand {
         $middleString = ".[ §a" . $Faction->name . " §6].";
         $lenMiddle = \strlen($middleString) - 4;
         $bottom = "";
-        for ($i=0; $i < \floor((48 - $lenMiddle) / 2); $i++) { 
+        for ($i = 0; $i < \floor((48 - $lenMiddle) / 2); $i++) {
             $bottom .= "_";
         }
-        $sender->sendMessage("§6" . $bottom . $middleString . $bottom );
+        $sender->sendMessage("§6" . $bottom . $middleString . $bottom);
         $description = ($Faction->description === "" ? Utils::getText($sender->getName(), "COMMAND_NO_DESCRIPTION") : $Faction->description);
         $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_INFO_DESCRIPTION", ['description' => $description]));
         switch ($Faction->visibility) {
@@ -86,7 +85,7 @@ class InfoCommand extends BaseSubCommand {
         foreach ($Faction->ally as $key => $ally) {
             if ($key == \count($Faction->ally) - 1) {
                 $Ally .= $ally;
-            }else{
+            } else {
                 $Ally .= $ally . ", ";
             }
         }

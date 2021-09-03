@@ -5,12 +5,12 @@
  *      ______           __  _                __  ___           __
  *     / ____/___ ______/ /_(_)___  ____     /  |/  /___ ______/ /____  _____
  *    / /_  / __ `/ ___/ __/ / __ \/ __ \   / /|_/ / __ `/ ___/ __/ _ \/ ___/
- *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /  
- *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/ 
+ *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /
+ *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/
  *
  * FactionMaster - A Faction plugin for PocketMine-MP
  * This file is part of FactionMaster
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -24,11 +24,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * @author ShockedPlot7560 
+ * @author ShockedPlot7560
  * @link https://github.com/ShockedPlot7560
- * 
  *
-*/
+ *
+ */
 
 namespace ShockedPlot7560\FactionMaster\Route;
 
@@ -49,36 +49,39 @@ class CreateFactionPanel implements Route {
 
     public $PermissionNeed = [];
     public $backMenu;
-    
+
     /** @var UserEntity */
     private $UserEntity;
 
-    public function getSlug(): string
-    {
+    public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->backMenu = RouterFactory::get(MainPanel::SLUG);
     }
 
     /**
      * @param array|null $params Give to first item the message to print if wanted
      */
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
-    {
+    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
         $this->UserEntity = $User;
         $message = "";
-        if (isset($params[0]) && \is_string($params[0])) $message = $params[0];
+        if (isset($params[0]) && \is_string($params[0])) {
+            $message = $params[0];
+        }
+
         $menu = $this->createFactionMenu($message);
-        $player->sendForm($menu);;
+        $player->sendForm($menu);
     }
 
-    public function call() : callable{
+    public function call(): callable {
         $backRoute = $this->backMenu;
         return function (Player $Player, $data) use ($backRoute) {
-            if ($data === null) return;
+            if ($data === null) {
+                return;
+            }
+
             $factionName = $data[1];
             $FactionRequest = MainAPI::getFaction($factionName);
             if ($factionName !== "") {
@@ -98,25 +101,25 @@ class CreateFactionPanel implements Route {
                                 Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
                             }
                         ));
-                    }else{
+                    } else {
                         $menu = $this->createFactionMenu(Utils::getText($this->UserEntity->name, "MAX_MIN_REACH_NAME", ["min" => Utils::getConfig("min-faction-name-length"), "max" => Utils::getConfig("max-faction-name-length")]));
                         $Player->sendForm($menu);
                     }
-                }else{
+                } else {
                     $menu = $this->createFactionMenu(Utils::getText($this->UserEntity->name, "FACTION_NAME_ALREADY_EXIST"));
                     $Player->sendForm($menu);
-                } 
-            }else{
+                }
+            } else {
                 Utils::processMenu($backRoute, $Player);
 
             }
         };
     }
 
-    private function createFactionMenu(string $message = "") : CustomForm {
+    private function createFactionMenu(string $message = ""): CustomForm {
         $menu = new CustomForm($this->call());
         $menu->setTitle(Utils::getText($this->UserEntity->name, "CREATE_FACTION_PANEL_TITLE"));
-        $menu->addLabel(Utils::getText($this->UserEntity->name, "CREATE_FACTION_PANEL_CONTENT") . "\n".$message);
+        $menu->addLabel(Utils::getText($this->UserEntity->name, "CREATE_FACTION_PANEL_CONTENT") . "\n" . $message);
         $menu->addInput(Utils::getText($this->UserEntity->name, "CREATE_FACTION_PANEL_INPUT_CONTENT"));
         return $menu;
     }

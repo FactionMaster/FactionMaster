@@ -5,12 +5,12 @@
  *      ______           __  _                __  ___           __
  *     / ____/___ ______/ /_(_)___  ____     /  |/  /___ ______/ /____  _____
  *    / /_  / __ `/ ___/ __/ / __ \/ __ \   / /|_/ / __ `/ ___/ __/ _ \/ ___/
- *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /  
- *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/ 
+ *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /
+ *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/
  *
  * FactionMaster - A Faction plugin for PocketMine-MP
  * This file is part of FactionMaster
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -24,11 +24,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * @author ShockedPlot7560 
+ * @author ShockedPlot7560
  * @link https://github.com/ShockedPlot7560
- * 
  *
-*/
+ *
+ */
 
 namespace ShockedPlot7560\FactionMaster\Database;
 
@@ -45,12 +45,11 @@ use ShockedPlot7560\FactionMaster\Main;
 class Database {
 
     const MYSQL_PROVIDER = "MYSQL";
-    const SQLITE_PROVIDER  = "SQLITE";
+    const SQLITE_PROVIDER = "SQLITE";
 
-    /** @var \PDO */
     private $PDO;
 
-    /** @var \ShockedPlot7560\FactionMaster\Database\Table\TableInterface[] */
+    /** @var TableInterface[] */
     private $tables;
 
     public function __construct(Main $Main) {
@@ -59,22 +58,22 @@ class Database {
             case self::MYSQL_PROVIDER:
                 $databaseConfig = $Main->config->get("MYSQL_database");
                 $db = new PDO(
-                    "mysql:host=" . $databaseConfig['host'] . ";dbname=" . $databaseConfig['name'], 
-                    $databaseConfig['user'], 
+                    "mysql:host=" . $databaseConfig['host'] . ";dbname=" . $databaseConfig['name'],
+                    $databaseConfig['user'],
                     $databaseConfig['pass']
                 );
                 break;
-            
+
             case self::SQLITE_PROVIDER:
                 $databaseConfig = $Main->config->get("SQLITE_database");
-                $db = new PDO("sqlite:".$databaseConfig['name'].".sqlite");
+                $db = new PDO("sqlite:" . $databaseConfig['name'] . ".sqlite");
                 break;
             default:
                 $Main::$logger->alert("Please give a valid PROVIDER in config.yml, use only : " . self::MYSQL_PROVIDER . " or " . self::SQLITE_PROVIDER);
                 $Main->getServer()->getPluginManager()->disablePlugin($Main);
                 return;
         }
-        
+
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->PDO = $db;
 
@@ -82,17 +81,17 @@ class Database {
         $this->initTable();
     }
 
-    public function getPDO() : PDO {
+    public function getPDO(): PDO {
         return $this->PDO;
     }
 
-    private function initTable() : void {
+    private function initTable(): void {
         $tables = [
             new FactionTable($this->getPDO()),
             new UserTable($this->getPDO()),
             new InvitationTable($this->getPDO()),
             new ClaimTable($this->getPDO()),
-            new HomeTable($this->getPDO())
+            new HomeTable($this->getPDO()),
         ];
         foreach ($tables as $key => $table) {
             $table = $table->init();
@@ -100,11 +99,11 @@ class Database {
         }
     }
 
-    public function getTables() : array {
+    public function getTables(): array{
         return $this->tables;
     }
 
-    public function getTable(string $slug) : ?TableInterface {
+    public function getTable(string $slug): ?TableInterface {
         return $this->getTables()[$slug] ?? null;
     }
 

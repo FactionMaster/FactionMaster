@@ -5,12 +5,12 @@
  *      ______           __  _                __  ___           __
  *     / ____/___ ______/ /_(_)___  ____     /  |/  /___ ______/ /____  _____
  *    / /_  / __ `/ ___/ __/ / __ \/ __ \   / /|_/ / __ `/ ___/ __/ _ \/ ___/
- *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /  
- *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/ 
+ *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /
+ *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/
  *
  * FactionMaster - A Faction plugin for PocketMine-MP
  * This file is part of FactionMaster
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -24,11 +24,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * @author ShockedPlot7560 
+ * @author ShockedPlot7560
  * @link https://github.com/ShockedPlot7560
- * 
  *
-*/
+ *
+ */
 
 namespace ShockedPlot7560\FactionMaster;
 
@@ -36,9 +36,9 @@ use CortexPE\Commando\PacketHooker;
 use pocketmine\event\Listener;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginBase;
+use pocketmine\plugin\PluginLogger;
 use pocketmine\resourcepacks\ResourcePack;
 use pocketmine\utils\Config;
-use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Command\FactionCommand;
 use ShockedPlot7560\FactionMaster\Database\Database;
@@ -53,22 +53,21 @@ use ShockedPlot7560\FactionMaster\Permission\PermissionManager;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Task\InitTranslationFile;
-use ShockedPlot7560\FactionMaster\Task\LoadCacheTask;
 use ShockedPlot7560\FactionMaster\Task\SyncServerTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class Main extends PluginBase implements Listener{
+class Main extends PluginBase implements Listener {
 
-    /** @var \pocketmine\plugin\PluginLogger */
+    /** @var PluginLogger */
     public static $logger;
-    /** @var \ShockedPlot7560\FactionMaster\Main */
+    /** @var Main */
     private static $instance;
-    /** @var \pocketmine\utils\Config */
+    /** @var Config */
     public $config;
-    /** @var \ShockedPlot7560\FactionMaster\Database\Database */
+    /** @var Database */
     public $Database;
-    /** @var \pocketmine\plugin\Plugin */
+    /** @var Plugin */
     public $FormUI;
     /** @var Config */
     public $levelConfig;
@@ -85,8 +84,7 @@ class Main extends PluginBase implements Listener{
     private static $tableQuery;
     private static $topFactionQuery;
 
-    public function onLoad()
-    {
+    public function onLoad(): void {
         self::$topFactionQuery = "SELECT * FROM " . FactionTable::TABLE_NAME . " ORDER BY level DESC, xp DESC, power DESC LIMIT 10";
         self::$instance = $this;
         self::$logger = $this->getLogger();
@@ -94,7 +92,7 @@ class Main extends PluginBase implements Listener{
         $this->loadConfig();
         $this->loadTableInitQuery();
         $this->Database = new Database($this);
-        
+
         if (Utils::getConfig("active-image") == true) {
             $pack = $this->getServer()->getResourcePackManager()->getPackById("6ac63fa8-b4d3-4cf6-b64f-1e88ab50f57f");
             if (!$pack instanceof ResourcePack) {
@@ -114,8 +112,7 @@ class Main extends PluginBase implements Listener{
         CollectionFactory::init();
     }
 
-    public function onEnable()
-    {
+    public function onEnable(): void {
         $this->init();
         $this->getPermissionManager();
         $this->getExtensionManager()->load();
@@ -127,15 +124,53 @@ class Main extends PluginBase implements Listener{
         $this->getScheduler()->scheduleRepeatingTask(new SyncServerTask($this), (int) Utils::getConfig("sync-time"));
     }
 
-    private function init() {
+    public static function getTableInitQuery(string $class): ?string {
+        return self::$tableQuery[$class] ?? null;
+    }
 
+    public static function setTableInitQuery(string $class, string $query): void {
+        self::$tableQuery[$class] = $query;
+    }
+
+    public static function getInstance(): self {
+        return self::$instance;
+    }
+
+    public function getExtensionManager(): ?ExtensionManager {
+        if ($this->ExtensionManager === null) {
+            $this->ExtensionManager = new ExtensionManager();
+        }
+
+        return $this->ExtensionManager;
+    }
+
+    public function getPermissionManager(): ?PermissionManager {
+        if ($this->PermissionManager === null) {
+            $this->PermissionManager = new PermissionManager();
+        }
+
+        return $this->PermissionManager;
+    }
+
+    public static function getTopQuery(): string {
+        return self::$topFactionQuery;
+    }
+
+    public static function setTopQuery(string $query): void {
+        self::$topFactionQuery = $query;
+    }
+
+    private function init(): void {
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
 
-        if(!PacketHooker::isRegistered()) PacketHooker::register($this);
+        if (!PacketHooker::isRegistered()) {
+            PacketHooker::register($this);
+        }
+
         $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", "FactionMaster command", ["f", "fac"]));
     }
 
-    private function loadConfig() : void {
+    private function loadConfig(): void {
         @mkdir($this->getDataFolder());
         @mkdir($this->getDataFolder() . "Translation/");
 
@@ -154,90 +189,59 @@ class Main extends PluginBase implements Listener{
         foreach ($this->translation->get("languages") as $key => $language) {
             $this->saveResource("Translation/$language.yml");
         }
-
-    }
-    
-    public static function getTableInitQuery(string $class): ?string {
-        return self::$tableQuery[$class] ?? null;
-    }
-
-    public static function setTableInitQuery(string $class, string $query) {
-        self::$tableQuery[$class] = $query;
     }
 
     private function loadTableInitQuery(): void {
         $auto_increment = $this->config->get("PROVIDER") === Database::MYSQL_PROVIDER ? "AUTO_INCREMENT" : "AUTOINCREMENT";
         self::$tableQuery = [
-            FactionTable::class => "CREATE TABLE IF NOT EXISTS `". FactionTable::TABLE_NAME ."` ( 
-                `id` INTEGER NOT NULL PRIMARY KEY $auto_increment, 
-                `name` VARCHAR(22) NOT NULL, 
-                `members` VARCHAR(255) NOT NULL DEFAULT '". base64_encode(serialize([]))."',
+            FactionTable::class => "CREATE TABLE IF NOT EXISTS `" . FactionTable::TABLE_NAME . "` (
+                `id` INTEGER NOT NULL PRIMARY KEY $auto_increment,
+                `name` VARCHAR(22) NOT NULL,
+                `members` VARCHAR(255) NOT NULL DEFAULT '" . base64_encode(serialize([])) . "',
                 `visibility` INT(11) DEFAULT " . Ids::PRIVATE_VISIBILITY . ",
                 `xp` INT(11) NOT NULL DEFAULT '0',
                 `level` INT(11) NOT NULL DEFAULT '1',
-                `description` TEXT, 
+                `description` TEXT,
                 `messageFaction` TEXT,
-                `ally` VARCHAR(255) NOT NULL DEFAULT '". base64_encode(serialize([]))."',
-                `max_player` INT(11) NOT NULL DEFAULT '". $this->config->get("default-member-limit") . "',
-                `max_ally` INT(11) NOT NULL DEFAULT '". $this->config->get("default-ally-limit") . "',
-                `max_claim` INT(11) NOT NULL DEFAULT '". $this->config->get("default-claim-limit") . "',
-                `max_home` INT(11) NOT NULL DEFAULT '". $this->config->get("default-home-limit") . "',
-                `power` INT(11) NOT NULL DEFAULT '". $this->config->get("default-power") . "',
+                `ally` VARCHAR(255) NOT NULL DEFAULT '" . base64_encode(serialize([])) . "',
+                `max_player` INT(11) NOT NULL DEFAULT '" . $this->config->get("default-member-limit") . "',
+                `max_ally` INT(11) NOT NULL DEFAULT '" . $this->config->get("default-ally-limit") . "',
+                `max_claim` INT(11) NOT NULL DEFAULT '" . $this->config->get("default-claim-limit") . "',
+                `max_home` INT(11) NOT NULL DEFAULT '" . $this->config->get("default-home-limit") . "',
+                `power` INT(11) NOT NULL DEFAULT '" . $this->config->get("default-power") . "',
                 `permissions` TEXT,
                 `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
             )",
-            ClaimTable::class => "CREATE TABLE IF NOT EXISTS `". ClaimTable::TABLE_NAME ."` ( 
-                `id` INTEGER NOT NULL PRIMARY KEY $auto_increment , 
-                `faction` VARCHAR(255) NOT NULL , 
-                `x` INT(11) NOT NULL , 
+            ClaimTable::class => "CREATE TABLE IF NOT EXISTS `" . ClaimTable::TABLE_NAME . "` (
+                `id` INTEGER NOT NULL PRIMARY KEY $auto_increment ,
+                `faction` VARCHAR(255) NOT NULL ,
+                `x` INT(11) NOT NULL ,
                 `z` INT(11) NOT NULL,
                 `world` VARCHAR(255) NOT NULL
             )",
-            HomeTable::class => "CREATE TABLE IF NOT EXISTS `". HomeTable::TABLE_NAME ."` ( 
-                `id` INTEGER NOT NULL PRIMARY KEY $auto_increment , 
-                `name` VARCHAR(255) NOT NULL , 
-                `faction` VARCHAR(255) NOT NULL , 
+            HomeTable::class => "CREATE TABLE IF NOT EXISTS `" . HomeTable::TABLE_NAME . "` (
+                `id` INTEGER NOT NULL PRIMARY KEY $auto_increment ,
+                `name` VARCHAR(255) NOT NULL ,
+                `faction` VARCHAR(255) NOT NULL ,
                 `x` INT(11) NOT NULL,
                 `y` INT(11) NOT NULL,
                 `z` INT(11) NOT NULL,
                 `world` VARCHAR(255) NOT NULL
             )",
-            InvitationTable::class => "CREATE TABLE IF NOT EXISTS `". InvitationTable::TABLE_NAME ."` ( 
-                `id` INTEGER NOT NULL PRIMARY KEY $auto_increment, 
-                `sender` VARCHAR(255) NOT NULL, 
+            InvitationTable::class => "CREATE TABLE IF NOT EXISTS `" . InvitationTable::TABLE_NAME . "` (
+                `id` INTEGER NOT NULL PRIMARY KEY $auto_increment,
+                `sender` VARCHAR(255) NOT NULL,
                 `receiver` VARCHAR(255) NOT NULL,
                 `type` VARCHAR(255) NOT NULL,
                 `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
             )",
-            UserTable::class => "CREATE TABLE IF NOT EXISTS `". UserTable::TABLE_NAME ."` ( 
-                `name` VARCHAR(22) NOT NULL, 
+            UserTable::class => "CREATE TABLE IF NOT EXISTS `" . UserTable::TABLE_NAME . "` (
+                `name` VARCHAR(22) NOT NULL,
                 `faction` VARCHAR(255) DEFAULT NULL,
                 `rank` INT(11) DEFAULT NULL,
-                `language` VARCHAR(255) NOT NULL DEFAULT '". Utils::getConfigLang("default-language") ."',
+                `language` VARCHAR(255) NOT NULL DEFAULT '" . Utils::getConfigLang("default-language") . "',
                 PRIMARY KEY (`name`)
             )"
         ];
-    }
-
-    public static function getInstance() : self {
-        return self::$instance;
-    }
-
-    public function getExtensionManager() : ?ExtensionManager {
-        if($this->ExtensionManager === null) $this->ExtensionManager = new ExtensionManager();
-        return $this->ExtensionManager;
-    }
-
-    public function getPermissionManager() : ?PermissionManager {
-        if($this->PermissionManager === null) $this->PermissionManager = new PermissionManager();
-        return $this->PermissionManager;
-    }
-
-    public static function getTopQuery(): string {
-        return self::$topFactionQuery;
-    }
-
-    public static function setTopQuery(string $query) {
-        self::$topFactionQuery = $query;
     }
 }

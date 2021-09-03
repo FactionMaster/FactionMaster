@@ -5,12 +5,12 @@
  *      ______           __  _                __  ___           __
  *     / ____/___ ______/ /_(_)___  ____     /  |/  /___ ______/ /____  _____
  *    / /_  / __ `/ ___/ __/ / __ \/ __ \   / /|_/ / __ `/ ___/ __/ _ \/ ___/
- *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /  
- *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/ 
+ *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /
+ *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/
  *
  * FactionMaster - A Faction plugin for PocketMine-MP
  * This file is part of FactionMaster
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -24,11 +24,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * @author ShockedPlot7560 
+ * @author ShockedPlot7560
  * @link https://github.com/ShockedPlot7560
- * 
  *
-*/
+ *
+ */
 
 namespace ShockedPlot7560\FactionMaster\Event;
 
@@ -42,22 +42,21 @@ class MemberChangeRankEvent extends Event {
     private $Target;
     private $oldRank;
 
-    public function __construct(Player $Player, UserEntity $Target, int $oldRank)
-    {
+    public function __construct(Player $Player, UserEntity $Target, int $oldRank) {
         $this->Player = $Player;
         $this->Target = $Target;
         $this->oldRank = $oldRank;
     }
 
-    public function getPlayer() : Player {
+    public function getPlayer(): Player {
         return $this->Player;
     }
 
-    public function getTarget() : UserEntity{
+    public function getTarget(): UserEntity {
         return $this->Target;
     }
 
-    public function getOldRank() : int {
+    public function getOldRank(): int {
         return $this->oldRank;
     }
 }

@@ -5,12 +5,12 @@
  *      ______           __  _                __  ___           __
  *     / ____/___ ______/ /_(_)___  ____     /  |/  /___ ______/ /____  _____
  *    / /_  / __ `/ ___/ __/ / __ \/ __ \   / /|_/ / __ `/ ___/ __/ _ \/ ___/
- *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /  
- *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/ 
+ *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /
+ *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/
  *
  * FactionMaster - A Faction plugin for PocketMine-MP
  * This file is part of FactionMaster
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -24,11 +24,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * @author ShockedPlot7560 
+ * @author ShockedPlot7560
  * @link https://github.com/ShockedPlot7560
- * 
  *
-*/
+ *
+ */
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
@@ -54,8 +54,7 @@ class Button {
     private $imgPath;
     private $imgType;
 
-    public function __construct(string $slug, callable $content, callable $callable, array $permissions = [], string $imgPath = "", int $imgType = SimpleForm::IMAGE_TYPE_URL)
-    {
+    public function __construct(string $slug, callable $content, callable $callable, array $permissions = [], string $imgPath = "", int $imgType = SimpleForm::IMAGE_TYPE_URL) {
         $this->slug = $slug;
         $this->content = $content;
         $this->permissions = $permissions;
@@ -64,34 +63,43 @@ class Button {
         $this->imgType = $imgType;
     }
 
-    public function getSlug() : string {
+    public function getSlug(): string {
         return $this->slug;
     }
 
-    public function getContent(string $playerName) : string {
-        return \call_user_func($this->content, $playerName);
+    public function getContent(string $playerName): string {
+        return call_user_func($this->content, $playerName);
     }
 
-    public function getPermissions() : array {
+    public function getPermissions(): array{
         return $this->permissions;
     }
 
-    public function hasAccess(string $playerName) : bool {
-        if (count($this->permissions) == 0) return true;
+    public function hasAccess(string $playerName): bool {
+        if (count($this->permissions) == 0) {
+            return true;
+        }
+
         $User = MainAPI::getUser($playerName);
-        if ($User->rank == Ids::OWNER_ID) return true;
+        if ($User->rank == Ids::OWNER_ID) {
+            return true;
+        }
+
         $PermissionsPlayer = MainAPI::getMemberPermission($playerName);
         foreach ($this->getPermissions() as $Permission) {
             if (!is_array($Permission) && $PermissionsPlayer !== null) {
-                if (isset($PermissionsPlayer[$Permission]) && $PermissionsPlayer[$Permission]) return true;
-            }elseif (is_array($Permission) && $Permission[0] === Utils::POCKETMINE_PERMISSIONS_CONSTANT) {
+                if (isset($PermissionsPlayer[$Permission]) && $PermissionsPlayer[$Permission]) {
+                    return true;
+                }
+
+            } elseif (is_array($Permission) && $Permission[0] === Utils::POCKETMINE_PERMISSIONS_CONSTANT) {
                 return Main::getInstance()->getServer()->getPlayerExact($playerName)->hasPermission($Permission[1]);
             }
         }
         return false;
     }
 
-    public function getCallable() : callable {
+    public function getCallable(): callable {
         return $this->callable;
     }
 

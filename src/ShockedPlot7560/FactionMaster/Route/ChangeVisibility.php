@@ -5,12 +5,12 @@
  *      ______           __  _                __  ___           __
  *     / ____/___ ______/ /_(_)___  ____     /  |/  /___ ______/ /____  _____
  *    / /_  / __ `/ ___/ __/ / __ \/ __ \   / /|_/ / __ `/ ___/ __/ _ \/ ___/
- *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /  
- *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/ 
+ *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /
+ *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/
  *
  * FactionMaster - A Faction plugin for PocketMine-MP
  * This file is part of FactionMaster
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -24,18 +24,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * @author ShockedPlot7560 
+ * @author ShockedPlot7560
  * @link https://github.com/ShockedPlot7560
- * 
  *
-*/
+ *
+ */
 
 namespace ShockedPlot7560\FactionMaster\Route;
 
 use jojoe77777\FormAPI\CustomForm;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\VisibilityChangeEvent;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
@@ -49,7 +49,7 @@ class ChangeVisibility implements Route {
     const SLUG = "changeVisibility";
 
     public $PermissionNeed = [
-        PermissionIds::PERMISSION_CHANGE_FACTION_VISIBILITY
+        PermissionIds::PERMISSION_CHANGE_FACTION_VISIBILITY,
     ];
     public $backMenu;
 
@@ -60,26 +60,23 @@ class ChangeVisibility implements Route {
     /** @var UserEntity */
     private $UserEntity;
 
-    public function getSlug(): string
-    {
+    public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->backMenu = RouterFactory::get(ManageFactionMain::SLUG);
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
-    {
+    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
         $this->UserEntity = $User;
         $this->sliderData = [
             Ids::PUBLIC_VISIBILITY => Utils::getText($this->UserEntity->name, "PUBLIC_VISIBILITY_NAME"),
             Ids::PRIVATE_VISIBILITY => Utils::getText($this->UserEntity->name, "PRIVATE_VISIBILITY_NAME"),
-            Ids::INVITATION_VISIBILITY => Utils::getText($this->UserEntity->name, "INVITATION_VISIBILITY_NAME")
+            Ids::INVITATION_VISIBILITY => Utils::getText($this->UserEntity->name, "INVITATION_VISIBILITY_NAME"),
         ];
         $this->Faction = MainAPI::getFactionOfPlayer($player->getName());
-        
+
         $menu = $this->changeVisibility();
         $player->sendForm($menu);
     }
@@ -89,7 +86,10 @@ class ChangeVisibility implements Route {
         $backMenu = $this->backMenu;
         $Faction = $this->Faction;
         return function (Player $Player, $data) use ($backMenu, $Faction) {
-            if ($data === null) return;
+            if ($data === null) {
+                return;
+            }
+
             $Faction = $this->Faction;
             $visibility = $data[0];
             MainAPI::changeVisibility($Faction->name, $visibility);
@@ -108,7 +108,7 @@ class ChangeVisibility implements Route {
         };
     }
 
-    private function changeVisibility() : CustomForm {
+    private function changeVisibility(): CustomForm {
         $menu = new CustomForm($this->call());
         $menu->addStepSlider(Utils::getText($this->UserEntity->name, "CHANGE_VISIBILITY_STEP"), $this->sliderData, $this->Faction->visibility);
         $menu->addLabel(Utils::getText($this->UserEntity->name, "CHANGE_VISIBILITY_EXPLICATION"));

@@ -5,12 +5,12 @@
  *      ______           __  _                __  ___           __
  *     / ____/___ ______/ /_(_)___  ____     /  |/  /___ ______/ /____  _____
  *    / /_  / __ `/ ___/ __/ / __ \/ __ \   / /|_/ / __ `/ ___/ __/ _ \/ ___/
- *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /  
- *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/ 
+ *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /
+ *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/
  *
  * FactionMaster - A Faction plugin for PocketMine-MP
  * This file is part of FactionMaster
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -24,11 +24,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * @author ShockedPlot7560 
+ * @author ShockedPlot7560
  * @link https://github.com/ShockedPlot7560
- * 
  *
-*/
+ *
+ */
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
@@ -50,9 +50,11 @@ class SethomeCommand extends BaseSubCommand {
         $this->registerArgument(0, new RawStringArgument("name", false));
     }
 
-    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
-    {
-        if (!$sender instanceof Player) return;
+    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
+        if (!$sender instanceof Player) {
+            return;
+        }
+
         if (!isset($args["name"])) {
             $this->sendUsage();
             return;
@@ -69,7 +71,7 @@ class SethomeCommand extends BaseSubCommand {
                 $Faction = MainAPI::getFaction($UserEntity->faction);
                 if (count(MainAPI::getFactionHomes($UserEntity->faction)) < $Faction->max_home) {
                     $Chunk = $Player->getLevel()->getChunkAtPosition($Player);
-                    if (Main::getInstance()->config->get("allow-home-ennemy-claim") && MainAPI::getFactionClaim($Player->getLevel()->getName(), $Chunk->getX(), $Chunk->getZ())  === null) {
+                    if (Main::getInstance()->config->get("allow-home-ennemy-claim") && MainAPI::getFactionClaim($Player->getLevel()->getName(), $Chunk->getX(), $Chunk->getZ()) === null) {
                         MainAPI::addHome($Player, $UserEntity->faction, $args['name']);
                         Utils::newMenuSendTask(new MenuSendTask(
                             function () use ($UserEntity, $args) {
@@ -84,19 +86,19 @@ class SethomeCommand extends BaseSubCommand {
                             }
                         ));
                         return;
-                    }else{
+                    } else {
                         $sender->sendMessage(Utils::getText($sender->getName(), "CANT_SETHOME_ENNEMY_CLAIM"));
                         return;
                     }
-                }else{
+                } else {
                     $sender->sendMessage(Utils::getText($sender->getName(), "MAX_HOME_REACH"));
                     return;
                 }
-            }else{
+            } else {
                 $sender->sendMessage(Utils::getText($sender->getName(), "ALREADY_HOME_NAME"));
                 return;
             }
-        }else{
+        } else {
             $sender->sendMessage(Utils::getText($sender->getName(), "DONT_PERMISSION"));
             return;
         }

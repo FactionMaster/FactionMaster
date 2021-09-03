@@ -5,12 +5,12 @@
  *      ______           __  _                __  ___           __
  *     / ____/___ ______/ /_(_)___  ____     /  |/  /___ ______/ /____  _____
  *    / /_  / __ `/ ___/ __/ / __ \/ __ \   / /|_/ / __ `/ ___/ __/ _ \/ ___/
- *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /  
- *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/ 
+ *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /
+ *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/
  *
  * FactionMaster - A Faction plugin for PocketMine-MP
  * This file is part of FactionMaster
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -24,17 +24,16 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * @author ShockedPlot7560 
+ * @author ShockedPlot7560
  * @link https://github.com/ShockedPlot7560
- * 
  *
-*/
+ *
+ */
 
 namespace ShockedPlot7560\FactionMaster\Route;
 
 use jojoe77777\FormAPI\CustomForm;
 use pocketmine\Player;
-use pocketmine\Server;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
@@ -50,40 +49,40 @@ class NewAllianceInvitation implements Route {
 
     const SLUG = "allianceInvitationCreate";
 
-    public $PermissionNeed = [
-        PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION
-    ];
+    public $PermissionNeed = [PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION];
     public $backMenu;
     /** @var UserEntity */
     private $UserEntity;
     /** @var FactionEntity */
     private $Faction;
 
-    public function getSlug(): string
-    {
+    public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->backMenu = RouterFactory::get(AllianceMainMenu::SLUG);
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null)
-    {
+    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
         $this->UserEntity = $User;
         $this->Faction = MainAPI::getFactionOfPlayer($player->getName());
 
         $message = "";
-        if (isset($params[0]) && \is_string($params[0])) $message = $params[0];
+        if (isset($params[0]) && \is_string($params[0])) {
+            $message = $params[0];
+        }
+
         $menu = $this->createInvitationMenu($message);
         $player->sendForm($menu);
     }
 
-    public function call() : callable{
+    public function call(): callable {
         $backMenu = $this->backMenu;
         return function (Player $Player, $data) use ($backMenu) {
-            if ($data === null) return;
+            if ($data === null) {
+                return;
+            }
 
             if ($data[1] !== "") {
                 $targetName = $data[1];
@@ -120,7 +119,7 @@ class NewAllianceInvitation implements Route {
                                         Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
                                     }
                                 ));
-                            }elseif (!MainAPI::areInInvitation($Faction->name, $targetName, InvitationSendEvent::ALLIANCE_TYPE)) {
+                            } elseif (!MainAPI::areInInvitation($Faction->name, $targetName, InvitationSendEvent::ALLIANCE_TYPE)) {
                                 MainAPI::makeInvitation($Faction->name, $targetName, InvitationSendEvent::ALLIANCE_TYPE);
                                 Utils::newMenuSendTask(new MenuSendTask(
                                     function () use ($Faction, $targetName) {
@@ -128,35 +127,35 @@ class NewAllianceInvitation implements Route {
                                     },
                                     function () use ($Faction, $Player, $targetName, $backMenu, $data) {
                                         (new InvitationSendEvent($Player, $Faction->name, $targetName, InvitationSendEvent::ALLIANCE_TYPE))->call();
-                                        Utils::processMenu($backMenu, $Player, [Utils::getText($Player->getName(), "SUCCESS_SEND_INVITATION", ['name' => $data[1]])] );
+                                        Utils::processMenu($backMenu, $Player, [Utils::getText($Player->getName(), "SUCCESS_SEND_INVITATION", ['name' => $data[1]])]);
                                     },
                                     function () use ($Player) {
                                         Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
                                     }
                                 ));
-                            }else{
+                            } else {
                                 $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "ALREADY_PENDING_INVITATION"));
                                 $Player->sendForm($menu);
                             }
-                        }else{
+                        } else {
                             $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "MAX_ALLY_REACH_OTHER"));
                             $Player->sendForm($menu);
                         }
-                    }else{
+                    } else {
                         $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "MAX_ALLY_REACH"));
                         $Player->sendForm($menu);
                     }
-                }else{
+                } else {
                     $menu = $this->createInvitationMenu(Utils::getText($this->UserEntity->name, "FACTION_DONT_EXIST"));
                     $Player->sendForm($menu);
-                } 
-            }else{
+                }
+            } else {
                 Utils::processMenu($backMenu, $Player);
             }
         };
     }
 
-    private function createInvitationMenu(string $message = "") : CustomForm {
+    private function createInvitationMenu(string $message = ""): CustomForm {
         $menu = new CustomForm($this->call());
         $menu->setTitle(Utils::getText($this->UserEntity->name, "SEND_INVITATION_PANEL_TITLE"));
         $menu->addLabel(Utils::getText($this->UserEntity->name, "SEND_INVITATION_PANEL_CONTENT") . "\n§r" . $message);
