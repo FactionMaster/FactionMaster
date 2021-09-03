@@ -49,6 +49,7 @@ use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\Extension\ExtensionManager;
 use ShockedPlot7560\FactionMaster\Migration\MigrationManager;
+use ShockedPlot7560\FactionMaster\Migration\SyncServerManager;
 use ShockedPlot7560\FactionMaster\Permission\PermissionManager;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
@@ -90,9 +91,11 @@ class Main extends PluginBase implements Listener {
         self::$logger = $this->getLogger();
 
         $this->loadConfig();
+        MigrationManager::init();
+        SyncServerManager::init();
         $this->loadTableInitQuery();
         $this->Database = new Database($this);
-
+        
         if (Utils::getConfig("active-image") == true) {
             $pack = $this->getServer()->getResourcePackManager()->getPackById("6ac63fa8-b4d3-4cf6-b64f-1e88ab50f57f");
             if (!$pack instanceof ResourcePack) {
@@ -103,7 +106,6 @@ class Main extends PluginBase implements Listener {
         }
 
         if (version_compare($this->getDescription()->getVersion(), $this->version->get("migrate-version")) == 1) {
-            MigrationManager::init();
             MigrationManager::migrate($this->version->get("migrate-version"));
         }
 
@@ -113,6 +115,7 @@ class Main extends PluginBase implements Listener {
     }
 
     public function onEnable(): void {
+        MigrationManager::updateConfigDb();
         $this->init();
         $this->getPermissionManager();
         $this->getExtensionManager()->load();
