@@ -45,6 +45,7 @@ use ShockedPlot7560\FactionMaster\Route\AllianceMainMenu;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\ManageAlliance;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageAllianceCollection extends Collection {
@@ -68,13 +69,19 @@ class ManageAllianceCollection extends Collection {
                             }
 
                             if ($data === true) {
-                                $message = Utils::getText($Player->getName(), "SUCCESS_BREAK_ALLIANCE", ['name' => $Ally->name]);
-                                if (!MainAPI::removeAlly($Faction->name, $Ally->name)) {
-                                    $message = Utils::getText($Player->getName(), "ERROR");
-                                }
-
-                                (new AllianceBreakEvent($Player, $Faction->name, $Ally->name))->call();
-                                Utils::processMenu(RouterFactory::get(AllianceMainMenu::SLUG), $Player, [$message]);
+                                MainAPI::removeAlly($Faction->name, $Ally->name);
+                                Utils::newMenuSendTask(new MenuSendTask(
+                                    function () use ($Faction, $Ally) {
+                                        return MainAPI::isAlly($Faction->name, $Ally->name);
+                                    },
+                                    function () use ($Player, $Faction, $Ally) {
+                                        (new AllianceBreakEvent($Player, $Faction->name, $Ally->name))->call();
+                                        Utils::processMenu(RouterFactory::get(AllianceMainMenu::SLUG), $Player, [Utils::getText($Player->getName(), "SUCCESS_BREAK_ALLIANCE", ['name' => $Ally->name])]);
+                                    },
+                                    function () use ($Player) {
+                                        Utils::processMenu(RouterFactory::get(AllianceMainMenu::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                    }
+                                ));
                             } else {
                                 Utils::processMenu(RouterFactory::get(ManageAlliance::SLUG), $Player, [$Ally]);
                             }

@@ -106,7 +106,10 @@ class RankPermissionManage implements Route {
                 $this->Faction->permissions[$this->rank][$permissionDa->getId()] = $data[$i];
                 $i++;
             }
-            if ($this->Faction->permissions === $oldPermission) return Utils::processMenu($backMenu, $Player);
+            if ($this->Faction->permissions === $oldPermission) {
+                Utils::processMenu($backMenu, $Player);
+                return;
+            }
             $Faction = $this->Faction;
             MainAPI::updatePermissionFaction($Faction->name, $Faction->permissions);
             Utils::newMenuSendTask(new MenuSendTask(

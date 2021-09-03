@@ -57,6 +57,7 @@ class ManageDemand implements Route {
     private $invitation;
     /** @var Collection */
     private $Collection;
+    private $backMenu;
 
     public function getSlug(): string {
         return self::SLUG;
