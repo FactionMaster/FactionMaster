@@ -84,20 +84,14 @@ class DatabaseTask extends AsyncTask {
                 $db = new PDO("sqlite:" . $db[0] . ".sqlite");
                 break;
         }
-        $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);  
-        try{
-            $query = $db->prepare($this->query);
-            $query->execute((array) $this->args);
-            $results = "";
-            if ($this->class !== null) {
-                $query->setFetchMode(PDO::FETCH_CLASS, $this->class);
-                $results = $query->fetchAll();
-            }
-            $this->setResult($results);
-        } catch(PDOException $e) {
-            echo "Impossible to access in the SQLite database : ".$e->getMessage();
+        $query = $db->prepare($this->query);
+        $query->execute((array) $this->args);
+        $results = "";
+        if ($this->class !== null) {
+            $query->setFetchMode(PDO::FETCH_CLASS, $this->class);
+            $results = $query->fetchAll();
         }
+        $this->setResult($results);
     }
 
     public function onCompletion(Server $server): void {
