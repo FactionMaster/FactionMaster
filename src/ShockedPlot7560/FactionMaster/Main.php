@@ -33,7 +33,10 @@
 namespace ShockedPlot7560\FactionMaster;
 
 use CortexPE\Commando\PacketHooker;
+use pocketmine\entity\Entity;
 use pocketmine\event\Listener;
+use pocketmine\level\Level;
+use pocketmine\level\Position;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginBase;
 use pocketmine\plugin\PluginLogger;
@@ -47,6 +50,7 @@ use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
 use ShockedPlot7560\FactionMaster\Database\Table\HomeTable;
 use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
+use ShockedPlot7560\FactionMaster\Entity\ScoreboardEntity;
 use ShockedPlot7560\FactionMaster\Extension\ExtensionManager;
 use ShockedPlot7560\FactionMaster\Migration\MigrationManager;
 use ShockedPlot7560\FactionMaster\Migration\SyncServerManager;
@@ -172,6 +176,12 @@ class Main extends PluginBase implements Listener {
         }
 
         $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", "FactionMaster command", ["f", "fac"]));
+
+        if (Utils::getConfig("faction-scoreboard") === true 
+                && Utils::getConfig("faction-scoreboard-position") !== false 
+                && Utils::getConfig("faction-scoreboard-position") !== "") {
+            self::placeScoreboard();
+        }
     }
 
     private function loadConfig(): void {
@@ -247,5 +257,26 @@ class Main extends PluginBase implements Listener {
                 PRIMARY KEY (`name`)
             )"
         ];
+    }
+
+    public static function placeScoreboard(): void {
+        Entity::registerEntity(ScoreboardEntity::class, true);
+        $coordinates = Utils::getConfig("faction-scoreboard-position");
+        if ($coordinates !== false && $coordinates !== "") {
+            $coordinates = explode("|", $coordinates);
+            if (count($coordinates) == 4) {
+                $levelName = $coordinates[3];
+                $level = self::getInstance()->getServer()->getLevelByName($levelName);
+                if ($level instanceof Level) {
+                    $level->loadChunk((float)$coordinates[0] >> 4, (float)$coordinates[2] >> 4);
+                    $nbt = Entity::createBaseNBT(new Position((float)$coordinates[0], (float)$coordinates[1], (float)$coordinates[2], $level));
+                    $scoreboard = Entity::createEntity("ScoreboardEntity", $level, $nbt);
+                    $scoreboard->spawnToAll();
+                } else {
+                    self::getInstance()->getLogger()->notice("An unknow world was set on config.yml, can't load faction scoreboard");
+                }            
+            }
+        }
+        
     }
 }

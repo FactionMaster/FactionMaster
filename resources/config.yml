@@ -98,7 +98,7 @@ sync-time: 200
 # If it set to false, image will be disabled
 active-image: true
 
-# Set this to false if you want to display on player's screen the message when entering a claim
+# Set this to true if you want to display on player's screen the message when entering a claim
 message-alert: true
 # The following line define which message will be print
 # on the screen of players when entering a claim chunk
@@ -108,4 +108,17 @@ message-alert-title: "{factionName}"
 message-alert-subtitle: ""
 # Defines the time that will be applied before the message is displayed again
 message-alert-cooldown: 10
+
+# set this to true if you want to enable this scoreboard
+faction-scoreboard: false
+# This is the scoreboard header, display on the top
+faction-scoreboard-header: "- Top 10 faction -"
+# Lign patern for each faction
+# you can use this parameter : 
+# {factionName} / {level} / {power}
+# to purpose a parameter suggestion, please open an issue on github
+faction-scoreboard-lign: "{factionName}: Level {level}"
+# This is the coordonnate to display the scoreboard
+# for a better handling, use the /f scoreboard command in game
+faction-scoreboard-position: "0|100|0|world"
 ...

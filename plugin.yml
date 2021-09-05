@@ -5,3 +5,8 @@ api: 3.17.7
 main: ShockedPlot7560\FactionMaster\Main
 description: "Full configurable and modulable faction plugin"
 virions: ["Commando", "libFormAPI"]
+
+permissions:
+  factionmaster.scoreboard.place:
+    description: "Allow the player to place scoreboard"
+    default: "op"

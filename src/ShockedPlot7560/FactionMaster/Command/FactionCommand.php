@@ -47,6 +47,7 @@ use ShockedPlot7560\FactionMaster\Command\Subcommand\HomeCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\HomeTpCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\InfoCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\MapCommand;
+use ShockedPlot7560\FactionMaster\Command\Subcommand\PlaceScoreboard;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\SethomeCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\UnclaimCommand;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
@@ -70,6 +71,7 @@ class FactionCommand extends BaseCommand {
         $this->registerSubCommand(new InfoCommand("info", Utils::getText("", "COMMAND_INFO_DESCRIPTION")));
         $this->registerSubCommand(new ClaimInfoCommand("claiminfo", Utils::getText("", "COMMAND_CLAIM_INFO_DESCRIPTION")));
         $this->registerSubCommand(new ExtensionCommand("extension", Utils::getText("", "COMMAND_EXTENSION_DESCRIPTION")));
+        $this->registerSubCommand(new PlaceScoreboard("scoreboard", "Place scoreboard"));
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
