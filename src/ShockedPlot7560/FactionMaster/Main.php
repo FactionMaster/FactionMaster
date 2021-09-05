@@ -170,6 +170,9 @@ class Main extends PluginBase implements Listener {
 
     private function init(): void {
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
+        if ($this->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
+            $this->getServer()->getPluginManager()->registerEvents(new ScoreHudListener($this), $this);
+        }
 
         if (!PacketHooker::isRegistered()) {
             PacketHooker::register($this);

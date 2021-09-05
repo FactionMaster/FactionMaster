@@ -44,6 +44,10 @@ use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
 use ShockedPlot7560\FactionMaster\Database\Table\HomeTable;
 use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
+use ShockedPlot7560\FactionMaster\Event\FactionLevelChangeEvent;
+use ShockedPlot7560\FactionMaster\Event\FactionPowerEvent;
+use ShockedPlot7560\FactionMaster\Event\FactionXPChangeEvent;
+use ShockedPlot7560\FactionMaster\Event\MemberChangeRankEvent;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Reward\RewardInterface;
@@ -194,6 +198,7 @@ class MainAPI {
                         $user->faction = null;
                         $user->rank = null;
                         MainAPI::$users[$name] = $user;
+                        (new MemberChangeRankEvent($user))->call();
                     }
                 }
             )
@@ -273,6 +278,7 @@ class MainAPI {
                 ],
                 function () use ($playerName, $user) {
                     MainAPI::$users[$playerName] = $user;
+                    (new MemberChangeRankEvent($user))->call();
                 }
             )
         );
@@ -308,6 +314,7 @@ class MainAPI {
                 ],
                 function () use ($playerName, $user) {
                     MainAPI::$users[$playerName] = $user;
+                    (new MemberChangeRankEvent($user))->call();
                 }
             )
         );
@@ -344,6 +351,7 @@ class MainAPI {
                 ],
                 function () use ($factionName, $Faction) {
                     MainAPI::$factions[$factionName] = $Faction;
+                    (new FactionXPChangeEvent($Faction))->call();
                 }
             )
         );
@@ -368,6 +376,7 @@ class MainAPI {
                 ],
                 function () use ($factionName, $Faction) {
                     MainAPI::$factions[$factionName] = $Faction;
+                    (new FactionLevelChangeEvent($Faction))->call();
                 }
             )
         );
@@ -395,8 +404,9 @@ class MainAPI {
                     'power' => $totalPower,
                     'name' => $factionName,
                 ],
-                function () use ($factionName, $Faction) {
+                function () use ($factionName, $Faction, $power) {
                     MainAPI::$factions[$factionName] = $Faction;
+                    (new FactionPowerEvent($Faction, $power))->call();
                 }
             )
         );
@@ -440,7 +450,6 @@ class MainAPI {
         if (!$f2 instanceof FactionEntity) {
             return false;
         }
-
         return in_array($factionName1, $f2->ally);
     }
 
@@ -543,6 +552,7 @@ class MainAPI {
                 ],
                 function () use ($user) {
                     MainAPI::$users[$user->name] = $user;
+                    (new MemberChangeRankEvent($user))->call();
                 }
             )
         );

@@ -67,6 +67,8 @@ class TransferProperty extends Button {
                                 function () use ($Player, $Member) {
                                     $user = MainAPI::getUser($Player->getName());
                                     $user2 = MainAPI::getUser($Member->name);
+                                    var_dump($user);
+                                    var_dump($user2);
                                     return $user->rank === Ids::COOWNER_ID && $user2->rank === Ids::OWNER_ID;
                                 },
                                 function () use ($Player, $Member, $message) {

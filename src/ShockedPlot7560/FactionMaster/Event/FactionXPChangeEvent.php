@@ -33,17 +33,17 @@
 namespace ShockedPlot7560\FactionMaster\Event;
 
 use pocketmine\event\Event;
-use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
-class MemberChangeRankEvent extends Event {
+class FactionXPChangeEvent extends Event {
 
-    private $Target;
+    private $faction;
 
-    public function __construct(UserEntity $Target) {
-        $this->Target = $Target;
+    public function __construct(FactionEntity $faction) {
+        $this->faction = $faction;
     }
 
-    public function getPlayer(): UserEntity {
-        return $this->Target;
+    public function getFaction(): FactionEntity {
+        return $this->faction;
     }
 }

@@ -93,7 +93,7 @@ class MemberChangeRank implements Route {
 
             MainAPI::changeRank($this->victim->name, $data[0]);
             $this->victim->rank = $data[0];
-            (new MemberChangeRankEvent($player, $this->victim, $this->victim->rank))->call();
+            (new MemberChangeRankEvent($this->victim))->call();
             Utils::processMenu($backMenu, $player, [$this->victim]);
         };
     }

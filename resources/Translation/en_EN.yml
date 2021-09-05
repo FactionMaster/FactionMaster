@@ -228,3 +228,5 @@ REWARD_MEMBER_LIMIT_NAME: "Member limit"
 REWARD_HOME_LIMIT_NAME: "Home limit"
 REWARD_CLAIM_LIMIT_NAME: "Claim limit"
 REWARD_ALLY_LIMIT_NAME: "Alliance limit"
+
+NO_FACTION_TAG: "No faction"

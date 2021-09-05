@@ -43,4 +43,13 @@ interface Ids {
     const PRIVATE_VISIBILITY = 1;
     const INVITATION_VISIBILITY = 2;
 
+    const HUD_FACTIONMASTER_FACTION_NAME = "factionmaster.faction.name";
+    const HUD_FACTIONMASTER_FACTION_POWER = "factionmaster.faction.power";
+    const HUD_FACTIONMASTER_FACTION_LEVEL = "factionmaster.faction.level";
+    const HUD_FACTIONMASTER_FACTION_XP = "factionmaster.faction.xp";
+    const HUD_FACTIONMASTER_FACTION_MESSAGE = "factionmaster.faction.message";
+    const HUD_FACTIONMASTER_FACTION_DESCRIPTION = "factionmaster.faction.description";
+    const HUD_FACTIONMASTER_FACTION_VISIBILITY = "factionmaster.faction.visibility";
+    const HUD_FACTIONMASTER_PLAYER_RANK = "factionmaster.player.rank";
+
 }

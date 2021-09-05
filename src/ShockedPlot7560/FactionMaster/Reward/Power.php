@@ -60,6 +60,7 @@ class Power extends Reward implements RewardInterface {
         if (($Faction->power - $this->getValue()) < 0) {
             return "NO_ENOUGH_POWER";
         }
+        MainAPI::changePower($Faction->name, $this->value * -1);
         return true;
     }
 
