@@ -49,6 +49,8 @@ class MigrationManager {
         self::$list = [
             "2.1.2-alpha" => function () {},
             "2.1.3-alpha" => function () {},
+            "2.1.4-alpha" => function () {},
+            "2.2.0" => function () {}
         ];
         $config = new Config(Main::getInstance()->getDataFolder() . "config.yml", Config::YAML);
         self::$configDbToCheck = [
