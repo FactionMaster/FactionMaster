@@ -45,7 +45,7 @@ use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 
 class SyncServerManager {
 
-    /** @var DatabaseTask[] */
+    /** @var array */
     private static $list;
 
     public static function init(): void {

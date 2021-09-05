@@ -48,9 +48,6 @@ class QueryBuildeur {
         switch ($mode) {
             case self::AND_MODE:
                 foreach ($conditions as $key => $value) {
-                    if (!\is_int($key) && !\is_string($key)) {
-                        throw new InvalidArgumentException();
-                    }
                     if (\count($conditions) > 1) {
                         $conditionsString .= "$key = :$key AND ";
                         unset($conditions[$key]);
@@ -69,9 +66,6 @@ class QueryBuildeur {
     public static function buildInsert(array $data, int $mode = self::SIMPLE_INSERT_MODE) : string {
         $insertString = "";
         foreach ($data as $key => $value) {
-            if (!\is_int($key) && !\is_string($key)) {
-                throw new InvalidArgumentException();
-            }
             switch ($mode) {
                 case self::SIMPLE_INSERT_MODE:
                     if (\count($data) > 1) {
@@ -103,9 +97,6 @@ class QueryBuildeur {
         switch ($mode) {
             case self::SET_MODE:
                 foreach ($data as $key => $value) {
-                    if (!\is_int($key) && !\is_string($key)) {
-                        throw new InvalidArgumentException();
-                    }
                     if (\count($data) > 1) {
                         $setString .= "$key = :$key, ";
                         unset($data[$key]);
