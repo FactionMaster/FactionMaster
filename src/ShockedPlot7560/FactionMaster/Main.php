@@ -76,6 +76,7 @@ class Main extends PluginBase implements Listener {
     public $version;
     /** @var Config */
     public $translation;
+    public static $activeTitle;
     /** @var ExtensionManager */
     private $ExtensionManager;
     /** @var PermissionManager */

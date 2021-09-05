@@ -45,6 +45,7 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerLoginEvent;
+use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\item\Bucket;
 use pocketmine\item\Hoe;
 use pocketmine\item\ItemIds;
@@ -53,6 +54,7 @@ use pocketmine\level\format\Chunk;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
@@ -259,5 +261,25 @@ class EventListener implements Listener {
             }
         ));
         return;
+    }
+
+    public function onMove(PlayerMoveEvent $event): void {
+        if (Utils::getConfig("message-alert") === true) {
+            if (!isset(Main::$activeTitle[$event->getPlayer()->getName()]) 
+                    || (time() - Main::$activeTitle[$event->getPlayer()->getName()]) > (int)Utils::getConfig("message-alert-cooldown")) {
+                $to = $event->getTo();
+                $claim = $to->getLevel()->getChunkAtPosition(new Vector3($to->getX(), $to->getY(), $to->getZ()));
+                $claim = MainAPI::getFactionClaim($to->getLevel()->getName(), $claim->getX(), $claim->getZ());
+                if ($claim instanceof ClaimEntity) {
+                    $title = str_replace("{factionName}", $claim->faction, Utils::getConfig("message-alert-title"));
+                    $subtitle = str_replace("{factionName}", $claim->faction, Utils::getConfig("message-alert-subtitle"));
+                    $event->getPlayer()->sendTitle(
+                        $title,
+                        $subtitle
+                    );
+                    Main::$activeTitle[$event->getPlayer()->getName()] = time();
+                }                
+            }
+        }
     }
 }

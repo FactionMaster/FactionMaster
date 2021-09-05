@@ -97,4 +97,9 @@ sync-time: 200
 # If it set to true, image will be display near button
 # If it set to false, image will be disabled
 active-image: true
+
+message-alert: false
+message-alert-title: "{factionName}"
+message-alert-subtitle: ""
+message-alert-cooldown: 10
 ...
