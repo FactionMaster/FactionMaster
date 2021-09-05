@@ -145,11 +145,11 @@ class Utils {
 
     public static function getText(string $playerName, string $slug, array $args = []): string {
         $Playerlang = MainAPI::getPlayerLang($playerName);
-        $FileName = self::getConfigLang("languages")[$Playerlang];
+        $FileName = self::getConfigLang("languages")[$Playerlang] ?? self::getConfigLang("languages")["EN"];
         $Config = new Config(Main::getInstance()->getDataFolder() . "Translation/$FileName.yml", Config::YAML);
         $textNoReplace = $Config->get($slug);
         if ($textNoReplace === false) {
-            $Config = new Config(Main::getInstance()->getDataFolder() . "Translation/fr_FR.yml", Config::YAML);
+            $Config = new Config(Main::getInstance()->getDataFolder() . "Translation/en_EN.yml", Config::YAML);
             $textNoReplace = $Config->get($slug);
         }
         $Text = self::replaceParams($textNoReplace, $args);

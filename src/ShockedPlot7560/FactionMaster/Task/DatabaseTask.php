@@ -33,6 +33,7 @@
 namespace ShockedPlot7560\FactionMaster\Task;
 
 use PDO;
+use PDOException;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use ShockedPlot7560\FactionMaster\Database\Database;
@@ -83,14 +84,20 @@ class DatabaseTask extends AsyncTask {
                 $db = new PDO("sqlite:" . $db[0] . ".sqlite");
                 break;
         }
-        $query = $db->prepare($this->query);
-        $query->execute((array) $this->args);
-        $results = "";
-        if ($this->class !== null) {
-            $query->setFetchMode(PDO::FETCH_CLASS, $this->class);
-            $results = $query->fetchAll();
+        $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);  
+        try{
+            $query = $db->prepare($this->query);
+            $query->execute((array) $this->args);
+            $results = "";
+            if ($this->class !== null) {
+                $query->setFetchMode(PDO::FETCH_CLASS, $this->class);
+                $results = $query->fetchAll();
+            }
+            $this->setResult($results);
+        } catch(PDOException $e) {
+            echo "Impossible to access in the SQLite database : ".$e->getMessage();
         }
-        $this->setResult($results);
     }
 
     public function onCompletion(Server $server): void {
