@@ -30,11 +30,8 @@
  *
  */
 
-namespace ShockedPlot7560\FactionMaster;
+namespace ShockedPlot7560\FactionMaster\Listener;
 
-use Ifera\ScoreHud\event\PlayerTagUpdateEvent;
-use Ifera\ScoreHud\event\TagsResolveEvent;
-use Ifera\ScoreHud\scoreboard\ScoreTag;
 use pocketmine\block\Chest;
 use pocketmine\block\Door;
 use pocketmine\block\FenceGate;
@@ -64,20 +61,9 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
 use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
-use ShockedPlot7560\FactionMaster\Event\DescriptionChangeEvent;
-use ShockedPlot7560\FactionMaster\Event\FactionCreateEvent;
-use ShockedPlot7560\FactionMaster\Event\FactionDeleteEvent;
-use ShockedPlot7560\FactionMaster\Event\FactionLeaveEvent;
-use ShockedPlot7560\FactionMaster\Event\FactionLevelChangeEvent;
-use ShockedPlot7560\FactionMaster\Event\FactionLevelUpEvent;
-use ShockedPlot7560\FactionMaster\Event\FactionPowerEvent;
-use ShockedPlot7560\FactionMaster\Event\FactionXPChangeEvent;
-use ShockedPlot7560\FactionMaster\Event\MemberChangeRankEvent;
-use ShockedPlot7560\FactionMaster\Event\MessageChangeEvent;
-use ShockedPlot7560\FactionMaster\Event\VisibilityChangeEvent;
+use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class EventListener implements Listener {

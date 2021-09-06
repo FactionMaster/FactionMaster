@@ -52,6 +52,9 @@ use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\Entity\ScoreboardEntity;
 use ShockedPlot7560\FactionMaster\Extension\ExtensionManager;
+use ShockedPlot7560\FactionMaster\Listener\BroadcastMessageListener;
+use ShockedPlot7560\FactionMaster\Listener\EventListener;
+use ShockedPlot7560\FactionMaster\Listener\ScoreHudListener;
 use ShockedPlot7560\FactionMaster\Migration\MigrationManager;
 use ShockedPlot7560\FactionMaster\Migration\SyncServerManager;
 use ShockedPlot7560\FactionMaster\Permission\PermissionManager;
@@ -170,6 +173,7 @@ class Main extends PluginBase implements Listener {
 
     private function init(): void {
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
+        $this->getServer()->getPluginManager()->registerEvents(new BroadcastMessageListener($this), $this);
         if ($this->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
             $this->getServer()->getPluginManager()->registerEvents(new ScoreHudListener($this), $this);
         }
