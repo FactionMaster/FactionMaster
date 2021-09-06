@@ -102,7 +102,7 @@ class Main extends PluginBase implements Listener {
         $this->Database = new Database($this);
         
         if (Utils::getConfig("active-image") == true) {
-            $pack = $this->getServer()->getResourcePackManager()->getPackById("6ac63fa8-b4d3-4cf6-b64f-1e88ab50f57f");
+            $pack = $this->getServer()->getResourcePackManager()->getPackById("6682bde3-ece8-4f22-8d6b-d521efc9325d");
             if (!$pack instanceof ResourcePack) {
                 self::$logger->warning("To enable FactionMaster images and a better player experience, please download the dedicated FactionMaster pack. Then reactivate the images once this is done.");
                 $this->config->set("active-image", false);
@@ -204,6 +204,8 @@ class Main extends PluginBase implements Listener {
         $this->version = new Config($this->getDataFolder() . "version.yml");
 
         foreach ($this->translation->get("languages") as $key => $language) {
+            var_dump($language);
+            var_dump($key);
             $this->saveResource("Translation/$language.yml");
         }
     }
