@@ -155,6 +155,9 @@ class ScoreHudListener implements Listener {
                             case Ids::OWNER_ID:
                                 $rank = Utils::getText($player->getName(), "OWNER_RANK_NAME");
                                 break;
+                            default: 
+                                $rank = "Unknow";
+                                break;
                         }
                         $tag->setValue($rank);                    
                     } else {
@@ -236,6 +239,9 @@ class ScoreHudListener implements Listener {
                 case Ids::OWNER_ID:
                     $rank = Utils::getText($player->getName(), "OWNER_RANK_NAME");
                     break;
+                default: 
+                    $rank = "Unknow";
+                    break;
             }
             $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                 Ids::HUD_FACTIONMASTER_PLAYER_RANK,
@@ -266,6 +272,9 @@ class ScoreHudListener implements Listener {
             case Ids::OWNER_ID:
                 $rank = Utils::getText($event->getPlayer()->getName(), "OWNER_RANK_NAME");
                 break;
+            default: 
+                $rank = "Unknow";
+                break;
         }
         $ev = new PlayerTagUpdateEvent($event->getPlayer(), new ScoreTag(
             Ids::HUD_FACTIONMASTER_PLAYER_RANK,
@@ -286,6 +295,9 @@ class ScoreHudListener implements Listener {
                 break;
             case Ids::OWNER_ID:
                 $rank = Utils::getText($event->getPlayer()->getName(), "OWNER_RANK_NAME");
+                break;
+            default: 
+                $rank = "Unknow";
                 break;
         }
         $ev = new PlayerTagUpdateEvent($targetPlayer, new ScoreTag(
@@ -367,6 +379,9 @@ class ScoreHudListener implements Listener {
                     break;
                 case Ids::OWNER_ID:
                     $rank = Utils::getText($player->getName(), "OWNER_RANK_NAME");
+                    break;
+                default: 
+                    $rank = "Unknow";
                     break;
             }
             $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
@@ -505,6 +520,9 @@ class ScoreHudListener implements Listener {
                         break;
                     case Ids::OWNER_ID:
                         $rank = Utils::getText($player->getName(), "OWNER_RANK_NAME");
+                        break;
+                    default: 
+                        $rank = "Unknow";
                         break;
                 }
                 $ev = new PlayerTagUpdateEvent($player, new ScoreTag(

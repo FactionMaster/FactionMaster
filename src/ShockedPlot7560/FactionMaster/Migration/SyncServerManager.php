@@ -174,6 +174,9 @@ class SyncServerManager {
                                     case Ids::OWNER_ID:
                                         $rank = Utils::getText($user->name, "OWNER_RANK_NAME");
                                         break;
+                                    default: 
+                                        $rank = "Unknow";
+                                        break;
                                 }
                                 $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                                     Ids::HUD_FACTIONMASTER_PLAYER_RANK,

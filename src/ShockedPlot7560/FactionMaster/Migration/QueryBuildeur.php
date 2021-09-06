@@ -56,9 +56,6 @@ class QueryBuildeur {
                     }
                 }                
                 break;
-            default:
-                throw new InvalidArgumentException();
-                break;
         }
         return $conditionsString;
     }
@@ -81,9 +78,6 @@ class QueryBuildeur {
                         $patern = ":$key";
                     }              
                     break;
-                default:
-                    throw new InvalidArgumentException();
-                    break;
             }
             $insertString .= $patern;
             unset($data[$key]);
@@ -104,9 +98,6 @@ class QueryBuildeur {
                         $setString .= "$key = :$key";
                     }
                 }                
-                break;
-            default:
-                throw new InvalidArgumentException();
                 break;
         }
         return $setString;
