@@ -1,8 +1,9 @@
-[![](https://poggit.pmmp.io/shield.state/FactionMaster)](https://poggit.pmmp.io/p/FactionMaster)
+[![](https://poggit.pmmp.io/shield.state/FactionMaster)](https://poggit.pmmp.io/p/FactionMaster) [![](https://poggit.pmmp.io/shield.dl.total/FactionMaster)](https://poggit.pmmp.io/p/FactionMaster)
+
+# FactionMaster
 
 ### For using PureChat with FactionMaster, you must use my PureChat fork and download the last release : https://github.com/ShockedPlot7560/PureChat/releases/tag/v1.4.1
 
-# FactionMaster
 FactionMaster is a new faction plugin that aims at flexibility and customization of the plugin by the user and the developers. It includes all the basic functionality of a faction plugin and data storage in MySQL or SQLITE. This is done by adding an extension system and a translation system. FactionMaster has a will of accessibility to the players and especially not to have to remember a lot of commands to play, all is done via interface.
 
 The PVP Faction mode is a game mode that consists of creating your faction and growing it. You can ally with other factions, fight and even request territories. All the available features will be listed in another section.
@@ -34,6 +35,17 @@ FactionMaster have multiple server support, see the Installation section for mor
 | ``Claim title`` | ✔ | ❌ | ❌ | ✔ |
 | ``Scoreboard faction top`` | ✔ | ❌ | ❌ | ✔ |
 
+## Additionnal plugin
+* ``ScoreHUD v6.0.0``: FactionMaster support this plugin and implements all this tags :
+  - *factionmaster.faction.name*
+  - *factionmaster.faction.power*
+  - *factionmaster.faction.level*
+  - *factionmaster.faction.xp*
+  - *factionmaster.faction.message*
+  - *factionmaster.faction.description*
+  - *factionmaster.faction.visibility*
+  - *factionmaster.player.rank*
+* ``PureChat``: To use PureChat tags, download our fork of it [here](https://github.com/ShockedPlot7560/PureChat/releases/tag/v1.4.1)
 
 ## Installation
 * If you just want to use it on the same machine, no special installation is required, just download the .phar plugin and put it in the plugins folder.
@@ -69,13 +81,14 @@ Extensions, a new way to customize your plugin to your liking. You just have to 
 All extensions made by the FactionMaster team and those approved by the FactionMaster team, which are accessible via poggit will be listed here.
 
 ## Translators
-To participate in the translation of FactionMaster and probably see yourself here, create a Pull Request on the FactionMaster [GitHub](https://github.com/ShockedPlot7560/FactionMaster/). Once the language has been translated on the main plugin and on all the extensions listed in the ``Extension'' section, it will be added and all its contributors thanked.
+To participate in the translation of FactionMaster and probably see yourself here, create a Pull Request on the FactionMaster [GitHub](https://github.com/ShockedPlot7560/FactionMaster/). Once the language has been translated on the main plugin and on all the extensions listed in the ``Extension`` section, it will be added and all its contributors thanked.
 
-* **French** (fr_Fr): @ShockedPlot7560, @uyaz
+* **French** (fr_Fr): @ShockedPlot7560
 * **English** (en_EN): @ShockedPlot7560
+* **Spanish** (es_SPA): @MrBlasyMSK
 
 ## Developpers
-Adding and modifying extensions is rather simple and explained on the README.md of the [GitHub](https://github.com/ShockedPlot7560/FactionMaster/) repository with a doumentation for the handling of the API.
+Adding and modifying extensions is rather simple and explained on the README.md of the [GitHub](https://github.com/ShockedPlot7560/FactionMaster/) repository with a documentation for the handling of the API.
 Many extensions will be made and approved by the FactionMaster team to allow users to modulate the plugin to their choice.
 All approved extensions will have a line in the README and and listed in the ``Extension`` section .
 
@@ -108,6 +121,8 @@ All approved extensions will have a line in the README and and listed in the ``E
  # @link https://github.com/ShockedPlot7560
  #
 
+# --------------------- DATABASE --------------------------
+
 # Use only SQLITE or MYSQL
 #
 # To enabled Multiple server support
@@ -120,6 +135,8 @@ MYSQL_database:
   pass: ""
 SQLITE_database: 
   name: "FactionMaster"
+
+# --------------------- GLOBAL CONFIGURATION --------------------------
 
 xp-win-per-kill: 1
 power-win-per-kill: 2
@@ -134,6 +151,24 @@ default-claim-limit: 2
 default-member-limit: 2
 default-ally-limit: 2
 default-power: 0
+
+min-faction-name-length: 3
+max-faction-name-length: 20
+
+# If it set to true, image will be display near button
+# If it set to false, image will be disabled
+active-image: true
+# ------------------ BROADCAST MESSAGE CONFIGURATION ---------------------
+
+broadcast-faction-create: false
+broadcast-faction-create-message: "{playerName} has created the faction {factionName}"
+broadcast-faction-delete: false
+broadcast-faction-delete-message: "{playerName} has deleted the faction {factionName}"
+broadcast-faction-transferProperty: false
+broadcast-faction-transferProperty-message: "{playerName} transferred the property to {targetName} of the faction {factionName}"
+
+
+# --------------------- CLAIM CONFIGURATION --------------------------
 
 claim-cost:
   # the type is the same type as level reward, you can put :
@@ -160,25 +195,7 @@ decrease-factor: 100
 # If set to false, the player cant /f sethome in a ennemy claim
 allow-home-ennemy-claim: true
 
-min-faction-name-length: 3
-max-faction-name-length: 20
-
-# Change this value only if you are sure of what you are doing, 
-# reducing it may break some functionality of the plugin, 
-# increasing it may reduce the players experience.
-# Default: 60
-timeout-task: 60
-
-# Change this value only if you are sure of what you are doing, 
-# reducing it may break some functionality of the plugin, 
-# increasing it may reduce the players experience.
-# Default: 200
-# It will determine ow much time Database synchronisation will be done
-sync-time: 200
-
-# If it set to true, image will be display near button
-# If it set to false, image will be disabled
-active-image: true
+# --------------------- TITLE CONFIGURATION --------------------------
 
 # Set this to true if you want to display on player's screen the message when entering a claim
 message-alert: true
@@ -190,6 +207,8 @@ message-alert-title: "{factionName}"
 message-alert-subtitle: ""
 # Defines the time that will be applied before the message is displayed again
 message-alert-cooldown: 10
+
+# -------------- TOP FACTION'S SCOREBOARD CONFIGURATION -----------------
 
 # set this to true if you want to enable this scoreboard
 faction-scoreboard: false
@@ -203,4 +222,20 @@ faction-scoreboard-lign: "{factionName}: Level {level}"
 # This is the coordonnate to display the scoreboard
 # for a better handling, use the /f scoreboard command in game
 faction-scoreboard-position: "0|100|0|world"
+
+# --------------------- PLUGIN CONFIGURATION --------------------------
+#       DONT CHANGE IF YOU DONT KNOW WHAT YOU ARE DOING
+
+# Change this value only if you are sure of what you are doing, 
+# reducing it may break some functionality of the plugin, 
+# increasing it may reduce the players experience.
+# Default: 60
+timeout-task: 60
+
+# Change this value only if you are sure of what you are doing, 
+# reducing it may break some functionality of the plugin, 
+# increasing it may reduce the players experience.
+# Default: 200
+# It will determine ow much time Database synchronisation will be done
+sync-time: 200
 ```
