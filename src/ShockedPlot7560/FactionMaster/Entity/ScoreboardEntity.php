@@ -47,6 +47,8 @@ class ScoreboardEntity extends Entity {
     public $height = 0.01;
     public $width = 0.01;
 
+    private $tick;
+
     const NETWORK_ID = EntityIds::NPC;
 
     public function getName(): string {
@@ -63,24 +65,29 @@ class ScoreboardEntity extends Entity {
     public function tryChangeMovement(): void {}
 
     public function onUpdate(int $currentTick): bool {
-        $id = $this->getId();
-        $level = $this->getLevel();
-        if ($level instanceof Level) {
-            $levelName = $level->getName();
-            Main::getInstance()->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
-                Main::getTopQuery(),
-                [],
-                function (array $result) use ($levelName, $id) {
-                    $nametag = Utils::getConfig("faction-scoreboard-header") . "\n";
-                    foreach ($result as $faction) {
-                        $newLine = Utils::getConfig("faction-scoreboard-lign");
-                        $newLine = str_replace(["{factionName}", "{level}", "{power}"], [$faction->name, $faction->level, $faction->power], $newLine);
-                        $nametag .= $newLine . "\n";
-                    }
-                    Main::getInstance()->getServer()->getLevelByName($levelName)->getEntity($id)->setNameTag($nametag);
-                },
-                FactionEntity::class
-            ));        
+        if ($this->tick > 200) {
+            $id = $this->getId();
+            $level = $this->getLevel();
+            if ($level instanceof Level) {
+                $levelName = $level->getName();
+                Main::getInstance()->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
+                    Main::getTopQuery(),
+                    [],
+                    function (array $result) use ($levelName, $id) {
+                        $nametag = Utils::getConfig("faction-scoreboard-header") . "\n";
+                        foreach ($result as $faction) {
+                            $newLine = Utils::getConfig("faction-scoreboard-lign");
+                            $newLine = str_replace(["{factionName}", "{level}", "{power}"], [$faction->name, $faction->level, $faction->power], $newLine);
+                            $nametag .= $newLine . "\n";
+                        }
+                        Main::getInstance()->getServer()->getLevelByName($levelName)->getEntity($id)->setNameTag($nametag);
+                    },
+                    FactionEntity::class
+                ));        
+            }
+            $this->tick = 0;
+        }else{
+            $this->tick++;
         }
         return parent::onUpdate($currentTick);
     }
