@@ -208,8 +208,6 @@ class Main extends PluginBase implements Listener {
         $this->version = new Config($this->getDataFolder() . "version.yml");
 
         foreach ($this->translation->get("languages") as $key => $language) {
-            var_dump($language);
-            var_dump($key);
             $this->saveResource("Translation/$language.yml");
         }
     }
