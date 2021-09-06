@@ -35,11 +35,16 @@ namespace ShockedPlot7560\FactionMaster\Button;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
+use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\Event\FactionPropertyTransferEvent;
+use ShockedPlot7560\FactionMaster\Event\MemberChangeRankEvent;
+use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
 use ShockedPlot7560\FactionMaster\Route\ManageMember as MembersManageMember;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -61,24 +66,54 @@ class TransferProperty extends Button {
 
                         if ($data) {
                             $message = Utils::getText($Player->getName(), "SUCCESS_TRANSFER_PROPERTY", ['playerName' => $Member->name]);
-                            MainAPI::changeRank($Player->getName(), Ids::COOWNER_ID);
-                            MainAPI::changeRank($Member->name, Ids::OWNER_ID);
-                            Utils::newMenuSendTask(new MenuSendTask(
-                                function () use ($Player, $Member) {
-                                    $user = MainAPI::getUser($Player->getName());
-                                    $user2 = MainAPI::getUser($Member->name);
-                                    var_dump($user);
-                                    var_dump($user2);
-                                    return $user->rank === Ids::COOWNER_ID && $user2->rank === Ids::OWNER_ID;
-                                },
-                                function () use ($Player, $Member, $message) {
-                                    (new FactionPropertyTransferEvent($Player, $Member, $Player->getName()))->call();
-                                    Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [$message]);
-                                },
-                                function () use ($Player) {
-                                    Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
-                                }
-                            ));
+                            $Faction = MainAPI::getFactionOfPlayer($Player->getName());
+                            $Faction->members[$Player->getName()] = Ids::COOWNER_ID;
+                            $Faction->members[$Member->name] = Ids::OWNER_ID;
+                            Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+                                new DatabaseTask(
+                                    "UPDATE " . FactionTable::TABLE_NAME . " SET members = :members WHERE name = :name",
+                                    [
+                                        'members' => \base64_encode(\serialize($Faction->members)),
+                                        'name' => $Faction->name,
+                                    ],
+                                    function () use ($Faction) {
+                                        MainAPI::$factions[$Faction->name] = $Faction;
+                                    }
+                                )
+                            );
+                            $user = MainAPI::getUser($Player->getName());
+                            $user->rank = Ids::COOWNER_ID;
+                            Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+                                new DatabaseTask(
+                                    "UPDATE " . UserTable::TABLE_NAME . " SET rank = :rank WHERE name = :name",
+                                    [
+                                        'rank' => Ids::COOWNER_ID,
+                                        'name' => $user->name,
+                                    ],
+                                    function () use ($user) {
+                                        MainAPI::$users[$user->name] = $user;
+                                        (new MemberChangeRankEvent($user))->call();
+                                    }
+                                )
+                            );
+                            $userj = MainAPI::getUser($Member->name);
+                            $userj->rank = Ids::OWNER_ID;
+                            Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+                                new DatabaseTask(
+                                    "UPDATE " . UserTable::TABLE_NAME . " SET rank = :rank WHERE name = :name",
+                                    [
+                                        'rank' => Ids::OWNER_ID,
+                                        'name' => $userj->name,
+                                    ],
+                                    function () use ($userj, $user, $Player, $Member, $message) {
+                                        MainAPI::$users[$userj->name] = $userj;
+                                        MainAPI::$users[$user->name] = $user;
+                                        (new MemberChangeRankEvent($userj))->call();
+                                        (new FactionPropertyTransferEvent($Player, $Member, $Player->getName()))->call();
+                                        Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [$message]);
+                                    }
+                                )
+                            );
                         } else {
                             Utils::processMenu(RouterFactory::get(MembersManageMember::SLUG), $Player, [$Member]);
                         }

@@ -33,7 +33,6 @@
 namespace ShockedPlot7560\FactionMaster\Task;
 
 use PDO;
-use PDOException;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use ShockedPlot7560\FactionMaster\Database\Database;
