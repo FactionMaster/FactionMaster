@@ -26,6 +26,8 @@
  # @link https://github.com/ShockedPlot7560
  #
 
+# --------------------- DATABASE --------------------------
+
 # Use only SQLITE or MYSQL
 #
 # To enabled Multiple server support
@@ -38,6 +40,8 @@ MYSQL_database:
   pass: ""
 SQLITE_database: 
   name: "FactionMaster"
+
+# --------------------- GLOBAL CONFIGURATION --------------------------
 
 xp-win-per-kill: 1
 power-win-per-kill: 2
@@ -52,6 +56,15 @@ default-claim-limit: 2
 default-member-limit: 2
 default-ally-limit: 2
 default-power: 0
+
+min-faction-name-length: 3
+max-faction-name-length: 20
+
+# If it set to true, image will be display near button
+# If it set to false, image will be disabled
+active-image: true
+
+# --------------------- CLAIM CONFIGURATION --------------------------
 
 claim-cost:
   # the type is the same type as level reward, you can put :
@@ -78,25 +91,7 @@ decrease-factor: 100
 # If set to false, the player cant /f sethome in a ennemy claim
 allow-home-ennemy-claim: true
 
-min-faction-name-length: 3
-max-faction-name-length: 20
-
-# Change this value only if you are sure of what you are doing, 
-# reducing it may break some functionality of the plugin, 
-# increasing it may reduce the players experience.
-# Default: 60
-timeout-task: 60
-
-# Change this value only if you are sure of what you are doing, 
-# reducing it may break some functionality of the plugin, 
-# increasing it may reduce the players experience.
-# Default: 200
-# It will determine ow much time Database synchronisation will be done
-sync-time: 200
-
-# If it set to true, image will be display near button
-# If it set to false, image will be disabled
-active-image: true
+# --------------------- TITLE CONFIGURATION --------------------------
 
 # Set this to true if you want to display on player's screen the message when entering a claim
 message-alert: true
@@ -108,6 +103,8 @@ message-alert-title: "{factionName}"
 message-alert-subtitle: ""
 # Defines the time that will be applied before the message is displayed again
 message-alert-cooldown: 10
+
+# -------------- TOP FACTION'S SCOREBOARD CONFIGURATION -----------------
 
 # set this to true if you want to enable this scoreboard
 faction-scoreboard: false
@@ -121,4 +118,20 @@ faction-scoreboard-lign: "{factionName}: Level {level}"
 # This is the coordonnate to display the scoreboard
 # for a better handling, use the /f scoreboard command in game
 faction-scoreboard-position: "0|100|0|world"
+
+# --------------------- PLUGIN CONFIGURATION --------------------------
+#       DONT CHANGE IF YOU DONT KNOW WHAT YOU ARE DOING
+
+# Change this value only if you are sure of what you are doing, 
+# reducing it may break some functionality of the plugin, 
+# increasing it may reduce the players experience.
+# Default: 60
+timeout-task: 60
+
+# Change this value only if you are sure of what you are doing, 
+# reducing it may break some functionality of the plugin, 
+# increasing it may reduce the players experience.
+# Default: 200
+# It will determine ow much time Database synchronisation will be done
+sync-time: 200
 ...
