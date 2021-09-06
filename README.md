@@ -1,4 +1,7 @@
 [![](https://poggit.pmmp.io/shield.state/FactionMaster)](https://poggit.pmmp.io/p/FactionMaster)
+
+### For using PureChat with FactionMaster, you must use my PureChat fork and download the last release : https://github.com/ShockedPlot7560/PureChat/releases/tag/v1.4.1
+
 # FactionMaster
 FactionMaster is a new faction plugin that aims at flexibility and customization of the plugin by the user and the developers. It includes all the basic functionality of a faction plugin and data storage in MySQL or SQLITE. This is done by adding an extension system and a translation system. FactionMaster has a will of accessibility to the players and especially not to have to remember a lot of commands to play, all is done via interface.
 
