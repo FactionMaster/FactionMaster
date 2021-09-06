@@ -3,7 +3,9 @@ default-language: EN
 languages:
   "FR": "fr_FR"
   "EN": "en_EN"
+  "SPA": "es_SPA"
 
 languages-name:
   "FR": "Français"
   "EN": "English"
+  "SPA": "Español"
