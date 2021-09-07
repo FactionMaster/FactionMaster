@@ -36,6 +36,7 @@ use pocketmine\entity\Entity;
 use pocketmine\entity\EntityIds;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\level\Level;
+use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
@@ -47,7 +48,7 @@ class ScoreboardEntity extends Entity {
     public $height = 0.01;
     public $width = 0.01;
 
-    private $tick;
+    private $tick = 200;
 
     const NETWORK_ID = EntityIds::NPC;
 
@@ -64,8 +65,10 @@ class ScoreboardEntity extends Entity {
 
     public function tryChangeMovement(): void {}
 
+    public function onCollideWithPlayer(Player $player): void { }
+
     public function onUpdate(int $currentTick): bool {
-        if ($this->tick > 200) {
+        if ($this->tick == 200) {
             $id = $this->getId();
             $level = $this->getLevel();
             if ($level instanceof Level) {
@@ -80,14 +83,19 @@ class ScoreboardEntity extends Entity {
                             $newLine = str_replace(["{factionName}", "{level}", "{power}"], [$faction->name, $faction->level, $faction->power], $newLine);
                             $nametag .= $newLine . "\n";
                         }
-                        Main::getInstance()->getServer()->getLevelByName($levelName)->getEntity($id)->setNameTag($nametag);
+                        $entity = Main::getInstance()->getServer()->getLevelByName($levelName)->getEntity($id);
+                        if ($entity !== null) {
+                            $entity->setNameTag($nametag);
+                        }
                     },
                     FactionEntity::class
                 ));        
             }
-            $this->tick = 0;
+            $this->tick--;
+        }elseif ($this->tick == 0) {
+            $this->tick = 200;
         }else{
-            $this->tick++;
+            $this->tick--;
         }
         return parent::onUpdate($currentTick);
     }

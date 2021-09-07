@@ -37,6 +37,7 @@ use pocketmine\entity\Entity;
 use pocketmine\event\Listener;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
+use pocketmine\math\Vector3;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginBase;
 use pocketmine\plugin\PluginLogger;
@@ -84,6 +85,7 @@ class Main extends PluginBase implements Listener {
     /** @var Config */
     public $translation;
     public static $activeTitle;
+    public static $scoreboardEntity;
     /** @var ExtensionManager */
     private $ExtensionManager;
     /** @var PermissionManager */
@@ -184,6 +186,17 @@ class Main extends PluginBase implements Listener {
 
         $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", "FactionMaster command", ["f", "fac"]));
 
+        $coordinates = explode("|", Utils::getConfig("faction-scoreboard-position"));
+        if (count($coordinates) == 4) {
+            $entities = $this->getServer()->getLevelByName($coordinates[3])->getEntities();
+            foreach ($entities as $entity) {
+                if ($entity instanceof ScoreboardEntity) {
+                    $entity->flagForDespawn();
+                    $entity->despawnFromAll();
+                }
+            }
+        }
+
         if (Utils::getConfig("faction-scoreboard") === true 
                 && Utils::getConfig("faction-scoreboard-position") !== false 
                 && Utils::getConfig("faction-scoreboard-position") !== "") {
@@ -279,11 +292,20 @@ class Main extends PluginBase implements Listener {
                     $nbt = Entity::createBaseNBT(new Position((float)$coordinates[0], (float)$coordinates[1], (float)$coordinates[2], $level));
                     $scoreboard = Entity::createEntity("ScoreboardEntity", $level, $nbt);
                     $scoreboard->spawnToAll();
+                    self::$scoreboardEntity = [$scoreboard->getId(), $level->getName()];
                 } else {
                     self::getInstance()->getLogger()->notice("An unknow world was set on config.yml, can't load faction scoreboard");
                 }            
             }
         }
         
+    }
+
+    public function onDisable() {
+        $entity =$this->getServer()->getLevelByName(self::$scoreboardEntity[1])->getEntity(self::$scoreboardEntity[0]);
+        if ($entity instanceof Entity) {
+            $entity->flagForDespawn();
+            $entity->despawnFromAll();
+        }
     }
 }

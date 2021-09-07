@@ -36,7 +36,9 @@ use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use pocketmine\utils\Config;
+use ShockedPlot7560\FactionMaster\Entity\ScoreboardEntity;
 use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class PlaceScoreboard extends BaseSubCommand {
 
@@ -56,7 +58,18 @@ class PlaceScoreboard extends BaseSubCommand {
                 ]));
                 $config->set("faction-scoreboard", true);
                 $config->save();
-                Main::placeScoreboard();            
+                $coordinates = explode("|", Utils::getConfig("faction-scoreboard-position"));
+                if (count($coordinates) == 4) {
+                    $entities = Main::getInstance()->getServer()->getLevelByName($coordinates[3])->getEntities();
+                    foreach ($entities as $entity) {
+                        if ($entity instanceof ScoreboardEntity) {
+                            $entity->flagForDespawn();
+                            $entity->despawnFromAll();
+                        }
+                    }
+                }
+                Main::placeScoreboard();
+                $sender->sendMessage(" §a>> §2Position scoreboard updated !");
             }else{
                 $sender->sendMessage(" §c>> §4No permission");
             }
