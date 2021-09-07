@@ -37,21 +37,24 @@ use CortexPE\Commando\BaseSubCommand;
 use DateTime;
 use pocketmine\command\CommandSender;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class InfoCommand extends BaseSubCommand {
 
     protected function prepare(): void {
-        $this->registerArgument(0, new RawStringArgument("name"));
+        $this->registerArgument(0, new RawStringArgument("name", true));
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-        if (!isset($args['name'])) {
+        $Faction = MainAPI::getFactionOfPlayer($sender->getName());
+        if (!isset($args['name']) && !$Faction instanceof FactionEntity) {
             $this->sendUsage();
             return;
+        }elseif (isset($args['name'])){
+            $Faction = MainAPI::getFaction($args['name']);
         }
-        $Faction = MainAPI::getFaction($args['name']);
         if ($Faction === null) {
             $sender->sendMessage(Utils::getText($sender->getName(), "FACTION_DONT_EXIST"));
             return;
