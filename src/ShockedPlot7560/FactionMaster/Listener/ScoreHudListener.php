@@ -260,52 +260,56 @@ class ScoreHudListener implements Listener {
 
     public function onPropertyTransfer(FactionPropertyTransferEvent $event): void {
         $originUser = MainAPI::getUser($event->getPlayer()->getName());
-        switch ($originUser->rank) {
-            case Ids::RECRUIT_ID:
-                $rank = Utils::getText($event->getPlayer()->getName(), "RECRUIT_RANK_NAME");
-                break;
-            case Ids::MEMBER_ID:
-                $rank = Utils::getText($event->getPlayer()->getName(), "MEMBER_RANK_NAME");
-                break;
-            case Ids::COOWNER_ID:
-                $rank = Utils::getText($event->getPlayer()->getName(), "COOWNER_RANK_NAME");
-                break;
-            case Ids::OWNER_ID:
-                $rank = Utils::getText($event->getPlayer()->getName(), "OWNER_RANK_NAME");
-                break;
-            default: 
-                $rank = "Unknow";
-                break;
+        if ($originUser->rank !== null) {
+            switch ($originUser->rank) {
+                case Ids::RECRUIT_ID:
+                    $rank = Utils::getText($event->getPlayer()->getName(), "RECRUIT_RANK_NAME");
+                    break;
+                case Ids::MEMBER_ID:
+                    $rank = Utils::getText($event->getPlayer()->getName(), "MEMBER_RANK_NAME");
+                    break;
+                case Ids::COOWNER_ID:
+                    $rank = Utils::getText($event->getPlayer()->getName(), "COOWNER_RANK_NAME");
+                    break;
+                case Ids::OWNER_ID:
+                    $rank = Utils::getText($event->getPlayer()->getName(), "OWNER_RANK_NAME");
+                    break;
+                default: 
+                    $rank = "Unknow";
+                    break;
+            }       
+            $ev = new PlayerTagUpdateEvent($event->getPlayer(), new ScoreTag(
+                Ids::HUD_FACTIONMASTER_PLAYER_RANK,
+                $rank
+            ));        
+            $ev->call(); 
         }
-        $ev = new PlayerTagUpdateEvent($event->getPlayer(), new ScoreTag(
-            Ids::HUD_FACTIONMASTER_PLAYER_RANK,
-            $rank
-        ));        
-        $ev->call();
         $targetPlayer = Main::getInstance()->getServer()->getPlayer($event->getTarget()->name);
         if (!$targetPlayer instanceof Player) return;
-        switch ($event->getTarget()->rank) {
-            case Ids::RECRUIT_ID:
-                $rank = Utils::getText($targetPlayer->getName(), "RECRUIT_RANK_NAME");
-                break;
-            case Ids::MEMBER_ID:
-                $rank = Utils::getText($targetPlayer->getName(), "MEMBER_RANK_NAME");
-                break;
-            case Ids::COOWNER_ID:
-                $rank = Utils::getText($targetPlayer->getName(), "COOWNER_RANK_NAME");
-                break;
-            case Ids::OWNER_ID:
-                $rank = Utils::getText($event->getPlayer()->getName(), "OWNER_RANK_NAME");
-                break;
-            default: 
-                $rank = "Unknow";
-                break;
+        if ($event->getTarget()->rank !== null) {
+            switch ($event->getTarget()->rank) {
+                case Ids::RECRUIT_ID:
+                    $rank = Utils::getText($targetPlayer->getName(), "RECRUIT_RANK_NAME");
+                    break;
+                case Ids::MEMBER_ID:
+                    $rank = Utils::getText($targetPlayer->getName(), "MEMBER_RANK_NAME");
+                    break;
+                case Ids::COOWNER_ID:
+                    $rank = Utils::getText($targetPlayer->getName(), "COOWNER_RANK_NAME");
+                    break;
+                case Ids::OWNER_ID:
+                    $rank = Utils::getText($event->getPlayer()->getName(), "OWNER_RANK_NAME");
+                    break;
+                default: 
+                    $rank = "Unknow";
+                    break;
+            }      
+            $ev = new PlayerTagUpdateEvent($targetPlayer, new ScoreTag(
+                Ids::HUD_FACTIONMASTER_PLAYER_RANK,
+                $rank
+            ));        
+            $ev->call();  
         }
-        $ev = new PlayerTagUpdateEvent($targetPlayer, new ScoreTag(
-            Ids::HUD_FACTIONMASTER_PLAYER_RANK,
-            $rank
-        ));        
-        $ev->call();
     }
 
     public function onFactionJoin(FactionJoinEvent $event): void {

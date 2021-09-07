@@ -161,28 +161,30 @@ class SyncServerManager {
                         if (Main::getInstance()->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
                             $player = Main::getInstance()->getServer()->getPlayer($user->name);
                             if ($player instanceof Player) {
-                                switch ($user->rank) {
-                                    case Ids::RECRUIT_ID:
-                                        $rank = Utils::getText($user->name, "RECRUIT_RANK_NAME");
-                                        break;
-                                    case Ids::MEMBER_ID:
-                                        $rank = Utils::getText($user->name, "MEMBER_RANK_NAME");
-                                        break;
-                                    case Ids::COOWNER_ID:
-                                        $rank = Utils::getText($user->name, "COOWNER_RANK_NAME");
-                                        break;
-                                    case Ids::OWNER_ID:
-                                        $rank = Utils::getText($user->name, "OWNER_RANK_NAME");
-                                        break;
-                                    default: 
-                                        $rank = "Unknow";
-                                        break;
+                                if ($user->rank !== null && $user->faction !== null) {
+                                    switch ($user->rank) {
+                                        case Ids::RECRUIT_ID:
+                                            $rank = Utils::getText($user->name, "RECRUIT_RANK_NAME");
+                                            break;
+                                        case Ids::MEMBER_ID:
+                                            $rank = Utils::getText($user->name, "MEMBER_RANK_NAME");
+                                            break;
+                                        case Ids::COOWNER_ID:
+                                            $rank = Utils::getText($user->name, "COOWNER_RANK_NAME");
+                                            break;
+                                        case Ids::OWNER_ID:
+                                            $rank = Utils::getText($user->name, "OWNER_RANK_NAME");
+                                            break;
+                                        default: 
+                                            $rank = "Unknow";
+                                            break;
+                                    }   
+                                    $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+                                        Ids::HUD_FACTIONMASTER_PLAYER_RANK,
+                                        $rank
+                                    ));                             
+                                    $ev->call();
                                 }
-                                $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
-                                    Ids::HUD_FACTIONMASTER_PLAYER_RANK,
-                                    $rank
-                                ));                         
-                                $ev->call();
                             }
                         }
                     }
