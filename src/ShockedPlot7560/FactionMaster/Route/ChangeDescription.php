@@ -97,6 +97,7 @@ class ChangeDescription implements Route {
                         return MainAPI::getFaction($Faction->name)->description === $description;
                     },
                     function () use ($Player, $Faction, $description, $backMenu) {
+                        $Faction->description = $description;
                         (new DescriptionChangeEvent($Player, $Faction, $description))->call();
                         Utils::processMenu($backMenu, $Player, [Utils::getText($Player->getName(), "SUCCESS_DESCRIPTION_UPDATE")]);
                     },

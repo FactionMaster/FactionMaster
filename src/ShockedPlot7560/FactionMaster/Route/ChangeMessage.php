@@ -97,6 +97,7 @@ class ChangeMessage implements Route {
                         return MainAPI::getFaction($Faction->name)->messageFaction === $message;
                     },
                     function () use ($Player, $Faction, $message, $backMenu) {
+                        $Faction->messageFaction = $message;
                         (new MessageChangeEvent($Player, $Faction, $message))->call();
                         Utils::processMenu($backMenu, $Player, [Utils::getText($Player->getName(), "SUCCESS_MESSAGE_UPDATE")]);
                     },
