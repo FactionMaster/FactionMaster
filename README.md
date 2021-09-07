@@ -139,6 +139,9 @@ SQLITE_database:
 
 # --------------------- GLOBAL CONFIGURATION --------------------------
 
+# If you want to disable this feature, empty this array and reload your server
+banned-faction-name: ["op", "staff", "admin", "fuck", "shit"]
+
 xp-win-per-kill: 1
 power-win-per-kill: 2
 power-loose-per-death: 2
@@ -159,6 +162,14 @@ max-faction-name-length: 20
 # If it set to true, image will be display near button
 # If it set to false, image will be disabled
 active-image: true
+
+faction-chat-active: false
+faction-chat-symbol: "$"
+faction-chat-message: "[{factionName}] {playerName}: {message}"
+ally-chat-active: false
+ally-chat-symbol: "%"
+ally-chat-message: "[{factionName}] {playerName}: {message}"
+
 # ------------------ BROADCAST MESSAGE CONFIGURATION ---------------------
 
 broadcast-faction-create: false
