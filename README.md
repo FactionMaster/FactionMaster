@@ -27,12 +27,14 @@ FactionMaster have multiple server support, see the Installation section for mor
 | ``Async Queries`` | ✔ | ❌ | ✔ | ✔ |
 | ``Faction level`` | ✔ | ❌ | ❌ | ❌ |
 | ``Custom level reward`` | ✔ | ❌ | ❌ | ❌ |
+| ``Faction/ally chat`` | ✔ | ✔ | ✔ | ✔ |
 | ``Awaiting invitation`` | ✔ | ❌ | ❌ | ❌ |
 | ``Faction visibility`` | ✔ | ❌ | ❌ | ❌ |
 | ``Editable message`` | ✔ | ❌ | ✔ | ✔ |
 | ``Custom event`` | ✔ | ❌ | ✔ | ❌ |
 | ``Claim title`` | ✔ | ❌ | ❌ | ✔ |
 | ``Scoreboard faction top`` | ✔ | ❌ | ❌ | ✔ |
+| ``Banned faction name`` | ✔ | ✔ | ✔ | ✔ |
 
 ## Additionnal plugin
 * ``ScoreHUD v6.0.0``: FactionMaster support this plugin and implements all this tags :
