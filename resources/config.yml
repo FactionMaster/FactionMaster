@@ -63,6 +63,14 @@ max-faction-name-length: 20
 # If it set to true, image will be display near button
 # If it set to false, image will be disabled
 active-image: true
+
+faction-chat-active: false
+faction-chat-symbol: "$"
+faction-chat-message: "[{factionName}] {playerName}: {message}"
+ally-chat-active: false
+ally-chat-symbol: "%"
+ally-chat-message: "[{factionName}] {playerName}: {message}"
+
 # ------------------ BROADCAST MESSAGE CONFIGURATION ---------------------
 
 broadcast-faction-create: false

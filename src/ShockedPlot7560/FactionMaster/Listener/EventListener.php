@@ -42,6 +42,7 @@ use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerLoginEvent;
@@ -280,6 +281,53 @@ class EventListener implements Listener {
                     );
                     Main::$activeTitle[$event->getPlayer()->getName()] = time();
                 }                
+            }
+        }
+    }
+
+    public function onChat(PlayerChatEvent $event): void {
+        if (mb_substr(trim($event->getMessage()), 0, 1) === Utils::getConfig("faction-chat-symbol") && Utils::getConfig("faction-chat-active") === true) {
+            $Faction = MainAPI::getFactionOfPlayer($event->getPlayer()->getName());
+            if ($Faction instanceof FactionEntity) {
+                $message = str_replace(
+                    [ "{factionName}", "{playerName}", "{message}" ],
+                    [ $Faction->name, $event->getPlayer()->getName(), substr(trim($event->getMessage()), 1, strlen(trim($event->getMessage())))],
+                    Utils::getConfig("faction-chat-message")
+                );
+                foreach ($Faction->members as $name => $rank) {
+                    $player = $this->Main->getServer()->getPlayer($name);
+                    if ($player instanceof Player) {
+                        $player->sendMessage($message);
+                    }
+                }
+                $event->setCancelled(true);
+            }
+        }elseif (mb_substr(trim($event->getMessage()), 0, 1) === Utils::getConfig("ally-chat-symbol") && Utils::getConfig("ally-chat-active") === true) {
+            $Faction = MainAPI::getFactionOfPlayer($event->getPlayer()->getName());
+            if ($Faction instanceof FactionEntity) {
+                $message = str_replace(
+                    [ "{factionName}", "{playerName}", "{message}" ],
+                    [ $Faction->name, $event->getPlayer()->getName(), substr(trim($event->getMessage()), 1, strlen(trim($event->getMessage())))],
+                    Utils::getConfig("ally-chat-message")
+                );
+                foreach ($Faction->ally as $Name) {
+                    $ally = MainAPI::getFaction($Name);
+                    if ($ally instanceof FactionEntity) {
+                        foreach ($ally->members as $name => $rank) {
+                            $player = $this->Main->getServer()->getPlayer($name);
+                            if ($player instanceof Player) {
+                                $player->sendMessage($message);
+                            }
+                        }
+                    }
+                }
+                foreach ($Faction->members as $name => $rank) {
+                    $player = $this->Main->getServer()->getPlayer($name);
+                    if ($player instanceof Player) {
+                        $player->sendMessage($message);
+                    }
+                }
+                $event->setCancelled(true);
             }
         }
     }
