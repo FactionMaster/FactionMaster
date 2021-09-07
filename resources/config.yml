@@ -43,6 +43,9 @@ SQLITE_database:
 
 # --------------------- GLOBAL CONFIGURATION --------------------------
 
+# If you want to disable this feature, empty this array and reload your server
+banned-faction-name: ["op", "staff", "admin", "fuck", "shit"]
+
 xp-win-per-kill: 1
 power-win-per-kill: 2
 power-loose-per-death: 2

@@ -87,20 +87,24 @@ class CreateFactionPanel implements Route {
             if ($factionName !== "") {
                 if (!$FactionRequest instanceof FactionEntity) {
                     if (\strlen($factionName) >= Main::getInstance()->config->get("min-faction-name-length")
-                        && \strlen($factionName) <= Main::getInstance()->config->get("max-faction-name-length")) {
-                        MainAPI::addFaction($factionName, $Player->getName());
-                        Utils::newMenuSendTask(new MenuSendTask(
-                            function () use ($factionName) {
-                                return MainAPI::getFaction($factionName) instanceof FactionEntity;
-                            },
-                            function () use ($factionName, $Player, $backRoute) {
-                                (new FactionCreateEvent($Player, $factionName))->call();
-                                Utils::processMenu($backRoute, $Player, [Utils::getText($Player->getName(), "SUCCESS_CREATE_FACTION")]);
-                            },
-                            function () use ($Player) {
-                                Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
-                            }
-                        ));
+                            && \strlen($factionName) <= Main::getInstance()->config->get("max-faction-name-length")) {
+                        if (!in_array($factionName, (array) Utils::getConfig("banned-faction-name"))) {
+                            MainAPI::addFaction($factionName, $Player->getName());
+                            Utils::newMenuSendTask(new MenuSendTask(
+                                function () use ($factionName) {
+                                    return MainAPI::getFaction($factionName) instanceof FactionEntity;
+                                },
+                                function () use ($factionName, $Player, $backRoute) {
+                                    (new FactionCreateEvent($Player, $factionName))->call();
+                                    Utils::processMenu($backRoute, $Player, [Utils::getText($Player->getName(), "SUCCESS_CREATE_FACTION")]);
+                                },
+                                function () use ($Player) {
+                                    Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                }
+                            ));                        
+                        } else {
+                            Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "CREATE_FACTION_PANEL_CONTENT_BANNED")]);
+                        }
                     } else {
                         $menu = $this->createFactionMenu(Utils::getText($this->UserEntity->name, "MAX_MIN_REACH_NAME", ["min" => Utils::getConfig("min-faction-name-length"), "max" => Utils::getConfig("max-faction-name-length")]));
                         $Player->sendForm($menu);
