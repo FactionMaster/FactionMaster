@@ -30,7 +30,6 @@ FactionMaster have multiple server support, see the Installation section for mor
 | ``Awaiting invitation`` | ✔ | ❌ | ❌ | ❌ |
 | ``Faction visibility`` | ✔ | ❌ | ❌ | ❌ |
 | ``Editable message`` | ✔ | ❌ | ✔ | ✔ |
-| ``Multiple faction home`` | ✔ | ❌ | ❌ | ❌ |
 | ``Custom event`` | ✔ | ❌ | ✔ | ❌ |
 | ``Claim title`` | ✔ | ❌ | ❌ | ✔ |
 | ``Scoreboard faction top`` | ✔ | ❌ | ❌ | ✔ |
