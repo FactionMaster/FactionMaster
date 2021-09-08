@@ -36,7 +36,7 @@ FactionMaster have multiple server support, see the Installation section for mor
 | ``Scoreboard faction top`` | ✔ | ❌ | ❌ | ✔ |
 | ``Banned faction name`` | ✔ | ✔ | ✔ | ✔ |
 
-## Additionnal plugin
+## Additionnal plugins
 * ``ScoreHUD v6.0.0``: FactionMaster support this plugin and implements all this tags :
   - *factionmaster.faction.name*
   - *factionmaster.faction.power*
@@ -52,7 +52,7 @@ FactionMaster have multiple server support, see the Installation section for mor
 * If you just want to use it on the same machine, no special installation is required, just download the .phar plugin and put it in the plugins folder.
 * If you wish to use FactionMaster on more than one server at a time, please modify the ``config.yml`` after starting your server for the first time with FactionMaster on it and change the ``PROVIDER: "SQLITE"`` with MYSQL. Enter your database connection details and restart your server.
 
-## Use image
+## Use resource pack
 * Download factionMaster texture pack available [here](https://github.com/ShockedPlot7560/FactionMaster/blob/v2.1.3-alpha/FactionMaster.zip)
 * Install it on your server as a mandatory Texture pack
 * Put the line : active-image to true in ``config.yml`` file
@@ -76,7 +76,7 @@ FactionMaster have multiple server support, see the Installation section for mor
 * ``/f extension``: Display extensions enabled *For op only*
 * ``/f scoreboard``: Set the location to spawn top faction scoreboard
 
-## Extension
+## Extensions
 Extensions, a new way to customize your plugin to your liking. You just have to download the plugin corresponding to the desired extension and place it in the corresponding folder on your server. If you have an urge to stop using the functionality, delete the plugin from your server and the changes will be gone! You can use those approved by the FactionMaster team or do it yourself (*refer to the GitHub*) and submit it to us if you feel like it.
 
 All extensions made by the FactionMaster team and those approved by the FactionMaster team, which are accessible via poggit will be listed here.
@@ -88,7 +88,7 @@ To participate in the translation of FactionMaster and probably see yourself her
 * **English** (en_EN): @ShockedPlot7560
 * **Spanish** (es_SPA): @MrBlasyMSK
 
-## Developpers
+## Developers
 Adding and modifying extensions is rather simple and explained on the README.md of the [GitHub](https://github.com/ShockedPlot7560/FactionMaster/) repository with a documentation for the handling of the API.
 Many extensions will be made and approved by the FactionMaster team to allow users to modulate the plugin to their choice.
 All approved extensions will have a line in the README and and listed in the ``Extension`` section .
@@ -220,23 +220,23 @@ message-alert-subtitle: ""
 # Defines the time that will be applied before the message is displayed again
 message-alert-cooldown: 10
 
-# -------------- TOP FACTION'S SCOREBOARD CONFIGURATION -----------------
+# ------------ TOP FACTION'S LEADERBOARD CONFIGURATION ---------------
 
-# set this to true if you want to enable this scoreboard
+# set this to true if you want to enable this leaderboard
 faction-scoreboard: false
-# This is the scoreboard header, display on the top
+# This is the leaderboard header, display on the top
 faction-scoreboard-header: "- Top 10 faction -"
 # Lign patern for each faction
 # you can use this parameter : 
 # {factionName} / {level} / {power}
 # to purpose a parameter suggestion, please open an issue on github
 faction-scoreboard-lign: "{factionName}: Level {level}"
-# This is the coordonnate to display the scoreboard
-# for a better handling, use the /f scoreboard command in game
+# This is the coordonnate to display the leaderboard
+# for a better handling, use the /f leaderboard command in game
 faction-scoreboard-position: "0|100|0|world"
 
 # --------------------- PLUGIN CONFIGURATION --------------------------
-#       DONT CHANGE IF YOU DONT KNOW WHAT YOU ARE DOING
+#       DONT CHANGE THIS IF YOU DONT KNOW WHAT YOU ARE DOING
 
 # Change this value only if you are sure of what you are doing, 
 # reducing it may break some functionality of the plugin, 
