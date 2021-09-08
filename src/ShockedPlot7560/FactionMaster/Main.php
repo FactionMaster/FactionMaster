@@ -304,12 +304,14 @@ class Main extends PluginBase implements Listener {
     }
 
     public function onDisable() {
-        $level = $this->getServer()->getLevelByName(self::$scoreboardEntity[1]);
-        if ($level instanceof Level) {
-            $entity = $level->getEntity(self::$scoreboardEntity[0]);
-            if ($entity instanceof Entity) {
-                $entity->flagForDespawn();
-                $entity->despawnFromAll();
+        if (isset(self::$scoreboardEntity[1])) {
+            $level = $this->getServer()->getLevelByName(self::$scoreboardEntity[1]);
+            if ($level instanceof Level) {
+                $entity = $level->getEntity(self::$scoreboardEntity[0]);
+                if ($entity instanceof Entity) {
+                    $entity->flagForDespawn();
+                    $entity->despawnFromAll();
+                }
             }
         }
     }
