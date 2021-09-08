@@ -33,6 +33,7 @@
 namespace ShockedPlot7560\FactionMaster;
 
 use CortexPE\Commando\PacketHooker;
+use JackMD\UpdateNotifier\UpdateNotifier;
 use pocketmine\entity\Entity;
 use pocketmine\event\Listener;
 use pocketmine\level\Level;
@@ -174,6 +175,8 @@ class Main extends PluginBase implements Listener {
     }
 
     private function init(): void {
+        UpdateNotifier::checkUpdate($this->getDescription()->getName(), $this->getDescription()->getVersion());
+        
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
         $this->getServer()->getPluginManager()->registerEvents(new BroadcastMessageListener($this), $this);
         if ($this->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
