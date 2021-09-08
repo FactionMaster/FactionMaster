@@ -177,6 +177,7 @@ COMMAND_HELP_DESCRIPTION: "Affiche les commandes"
 COMMAND_INFO_DESCRIPTION_GLOBAL: "Affiche les informations sur une faction"
 COMMAND_CLAIM_INFO_DESCRIPTION: "Affiche les informations sur un chunk"
 COMMAND_EXTENSION_DESCRIPTION: "Affiche la liste des extensions actives"
+COMMAND_SCOREBOARD_DESCRIPTION: "Déplace/active le Leaderboard et donne les données à enregistrer"
 
 NEED_FACTION: " §c>> §4Tu as besoin d'une faction pour utiliser cela"
 SUCCESS_CLAIM: " §a>> §2Chunk claim avec succès"
@@ -224,6 +225,9 @@ COMMAND_INFO_MEMBER_COOWNER: "§7**§oCo-Leader {{name}}"
 COMMAND_INFO_MEMBER_MEMBER: "§7*§oMembre {{name}}"
 COMMAND_INFO_MEMBER_RECRUIT: "§7§oRecrue {{name}}"
 COMMAND_INFO_DATE: "§eCrée-le {{date}}"
+
+COMMAND_SCOREBOARD_SUCCESS: " §a>> §2Position du Leaderboard mis à jours jusqu'au prochain redémarrage !"
+COMMAND_SCOREBOARD_SUCCESS_COMPLEMENT: "§2Pour garder vos changement, veuillez modifier la ligne §6'faction-scoreboard-position'§2 dans votre config.yml à §6'{{data}}'§2 et activer le Leaderboard si cela n'est pas déjà fait !"
 
 REWARD_POWER_NAME: "Puissance de faction"
 REWARD_MEMBER_LIMIT_NAME: "Limite de membre"

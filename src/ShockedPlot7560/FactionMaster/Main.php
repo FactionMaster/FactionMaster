@@ -33,6 +33,7 @@
 namespace ShockedPlot7560\FactionMaster;
 
 use CortexPE\Commando\PacketHooker;
+use JackMD\ConfigUpdater\ConfigUpdater;
 use JackMD\UpdateNotifier\UpdateNotifier;
 use pocketmine\entity\Entity;
 use pocketmine\event\Listener;
@@ -69,6 +70,8 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Main extends PluginBase implements Listener {
 
+    private const CONFIG_VERSION = 3;
+
     /** @var PluginLogger */
     public static $logger;
     /** @var Main */
@@ -95,6 +98,7 @@ class Main extends PluginBase implements Listener {
     /** @var array */
     private static $tableQuery;
     private static $topFactionQuery;
+    public static $activeImage;
 
     public function onLoad(): void {
         self::$topFactionQuery = "SELECT * FROM " . FactionTable::TABLE_NAME . " ORDER BY level DESC, xp DESC, power DESC LIMIT 10";
@@ -111,9 +115,12 @@ class Main extends PluginBase implements Listener {
             $pack = $this->getServer()->getResourcePackManager()->getPackById("6682bde3-ece8-4f22-8d6b-d521efc9325d");
             if (!$pack instanceof ResourcePack) {
                 self::$logger->warning("To enable FactionMaster images and a better player experience, please download the dedicated FactionMaster pack. Then reactivate the images once this is done.");
-                $this->config->set("active-image", false);
-                $this->config->save();
+                self::$activeImage = false;
+            }else{
+                self::$activeImage = true;
             }
+        }else{
+            self::$activeImage = false;
         }
 
         if (version_compare($this->getDescription()->getVersion(), $this->version->get("migrate-version")) == 1) {
@@ -214,7 +221,7 @@ class Main extends PluginBase implements Listener {
         @mkdir($this->getDataFolder() . "Translation/");
 
         $this->saveDefaultConfig();
-        $this->saveResource('config.yml');
+
         $this->saveResource('translation.yml');
         $this->saveResource('level.yml');
         $this->saveResource('version.yml');
@@ -222,8 +229,9 @@ class Main extends PluginBase implements Listener {
         $this->config = new Config($this->getDataFolder() . "config.yml");
         $this->levelConfig = new Config($this->getDataFolder() . "level.yml");
         $this->translation = new Config($this->getDataFolder() . "translation.yml");
-
         $this->version = new Config($this->getDataFolder() . "version.yml");
+
+        ConfigUpdater::checkUpdate($this, $this->getConfig(), "config-version", self::CONFIG_VERSION);
 
         foreach ($this->translation->get("languages") as $key => $language) {
             $this->saveResource("Translation/$language.yml");

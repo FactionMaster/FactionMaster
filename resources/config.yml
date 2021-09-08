@@ -26,6 +26,10 @@
  # @link https://github.com/ShockedPlot7560
  #
 
+# DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
+config-version: 3
+# DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
+
 # --------------------- DATABASE --------------------------
 
 # Use only SQLITE or MYSQL

@@ -54,30 +54,7 @@ class MigrationManager {
             "2.2.0" => function () {},
             "2.3.0" => function () {},
             "2.3.1" => function () use ($config) {
-                Main::$logger->notice("New version detected, config.yml upgrade");
-                Main::$logger->notice("Some translation slug have change, please delete Translation folder in your plugin_data folder and reload the server to apply the change");
-                if (Utils::getConfig("faction-chat-active") === false) {
-                    $config->set("faction-chat-active", false);
-                }
-                if (Utils::getConfig("faction-chat-symbol") === false) {
-                    $config->set("faction-chat-symbol", "$");
-                }
-                if (Utils::getConfig("faction-chat-message") === false) {
-                    $config->set("faction-chat-message", "[{factionName}] {playerName}: {message}");
-                }
-                if (Utils::getConfig("ally-chat-active") === false) {
-                    $config->set("ally-chat-active", false);
-                }
-                if (Utils::getConfig("ally-chat-symbol") === false) {
-                    $config->set("ally-chat-symbol", "%");
-                }
-                if (Utils::getConfig("ally-chat-message") === false) {
-                    $config->set("ally-chat-message", "[{factionName}] {playerName}: {message}");
-                }
-                if (Utils::getConfig("banned-faction-name") === false) {
-                    $config->set("banned-faction-name", ["op", "staff", "admin", "fuck", "shit"]);
-                }
-                $config->save();
+                Main::$logger->notice("Some translation slug have change due to version change, please delete Translation folder in your plugin_data folder and reload the server to apply the change");
             }
         ];
         self::$configDbToCheck = [

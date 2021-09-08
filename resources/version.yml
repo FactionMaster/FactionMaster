@@ -2,5 +2,5 @@
 # NOT TO BE DELETED, 
 # 
 # OTHERWISE THE PLUGIN WILL NOT WORK ANYMORE AND YOU WILL HAVE TO REINSTALL IT
-migrate-version: ""
+migrate-version: 2.3.1
 ...

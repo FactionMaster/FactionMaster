@@ -35,7 +35,6 @@ namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
-use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\Entity\ScoreboardEntity;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -49,15 +48,6 @@ class PlaceScoreboard extends BaseSubCommand {
         if ($sender instanceof Player) {
             if ($sender->hasPermission("factionmaster.scoreboard.place")) {
                 $position = $sender->getPosition();
-                $config = new Config(Main::getInstance()->getDataFolder() . "config.yml", Config::YAML);
-                $config->set("faction-scoreboard-position", join("|", [
-                    $position->getX(),
-                    $position->getY(),
-                    $position->getZ(),
-                    $position->getLevel()->getName()
-                ]));
-                $config->set("faction-scoreboard", true);
-                $config->save();
                 $coordinates = explode("|", Utils::getConfig("faction-scoreboard-position"));
                 if (count($coordinates) == 4) {
                     $entities = Main::getInstance()->getServer()->getLevelByName($coordinates[3])->getEntities();
@@ -69,12 +59,17 @@ class PlaceScoreboard extends BaseSubCommand {
                     }
                 }
                 Main::placeScoreboard();
-                $sender->sendMessage(" §a>> §2Position scoreboard updated !");
+                $coord = join("|", [
+                    $position->getX(),
+                    $position->getY(),
+                    $position->getZ(),
+                    $position->getLevel()->getName()
+                ]);
+                $sender->sendMessage(Utils::getText("", "COMMAND_SCOREBOARD_SUCCESS"));
+                $sender->sendMessage(Utils::getText("", "COMMAND_SCOREBOARD_SUCCESS_COMPLEMENT", ["data" => $coord]));
             }else{
-                $sender->sendMessage(" §c>> §4No permission");
+                $sender->sendMessage(Utils::getText("", "DONT_PERMISSION"));
             }
-        }else{
-            $sender->sendMessage(" §c>> §4Please, execute this command in game");
         }
     }
 
