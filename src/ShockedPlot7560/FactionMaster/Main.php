@@ -188,11 +188,13 @@ class Main extends PluginBase implements Listener {
 
         $coordinates = explode("|", Utils::getConfig("faction-scoreboard-position"));
         if (count($coordinates) == 4) {
-            $entities = $this->getServer()->getLevelByName($coordinates[3])->getEntities();
-            foreach ($entities as $entity) {
-                if ($entity instanceof ScoreboardEntity) {
-                    $entity->flagForDespawn();
-                    $entity->despawnFromAll();
+            foreach ($this->getServer()->getLevels() as $level) {
+                $entities = $level->getEntities();
+                foreach ($entities as $entity) {
+                    if ($entity instanceof ScoreboardEntity) {
+                        $entity->flagForDespawn();
+                        $entity->despawnFromAll();
+                    }
                 }
             }
         }
@@ -302,10 +304,13 @@ class Main extends PluginBase implements Listener {
     }
 
     public function onDisable() {
-        $entity =$this->getServer()->getLevelByName(self::$scoreboardEntity[1])->getEntity(self::$scoreboardEntity[0]);
-        if ($entity instanceof Entity) {
-            $entity->flagForDespawn();
-            $entity->despawnFromAll();
+        $level = $this->getServer()->getLevelByName(self::$scoreboardEntity[1]);
+        if ($level instanceof Level) {
+            $entity = $level->getEntity(self::$scoreboardEntity[0]);
+            if ($entity instanceof Entity) {
+                $entity->flagForDespawn();
+                $entity->despawnFromAll();
+            }
         }
     }
 }
