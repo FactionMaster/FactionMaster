@@ -44,6 +44,7 @@ use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginBase;
 use pocketmine\plugin\PluginLogger;
 use pocketmine\resourcepacks\ResourcePack;
+use pocketmine\scheduler\ClosureTask;
 use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Command\FactionCommand;

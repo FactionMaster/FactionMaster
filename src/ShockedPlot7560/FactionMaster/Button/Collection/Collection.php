@@ -77,7 +77,7 @@ class Collection {
     public function generateButtons(SimpleForm $Form, string $playerName): SimpleForm {
         foreach ($this->ButtonsList as $key => $Button) {
             if ($Button->hasAccess($playerName)) {
-                if (Main::$activeTitle === true && $Button->getImgPath() !== "") {
+                if (Main::$activeImage === true && $Button->getImgPath() !== "") {
                     $Form->addButton($Button->getContent($playerName), $Button->getImgType(), $Button->getImgPath());
                 } else {
                     $Form->addButton($Button->getContent($playerName));
