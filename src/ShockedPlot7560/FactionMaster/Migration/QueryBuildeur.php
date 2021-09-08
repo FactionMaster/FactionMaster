@@ -78,6 +78,9 @@ class QueryBuildeur {
                         $patern = ":$key";
                     }              
                     break;
+                default:
+                    $patern = "";
+                    break;
             }
             $insertString .= $patern;
             unset($data[$key]);
