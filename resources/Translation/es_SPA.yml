@@ -176,6 +176,7 @@ COMMAND_HELP_DESCRIPTION: "Muestra los pedidos"
 COMMAND_INFO_DESCRIPTION_GLOBAL: "Muestra información sobre una facción."
 COMMAND_CLAIM_INFO_DESCRIPTION: "Muestra información sobre un territorio"
 COMMAND_EXTENSION_DESCRIPTION: "Extensiones de display habilitadas"
+COMMAND_SCOREBOARD_DESCRIPTION: "Mueve/habilita la tabla de clasificación y da los datos que se deben ingresar para guardarlos"
 
 NEED_FACTION: " §c>> §4Necesitas una facción para usar esto"
 SUCCESS_CLAIM: " §a>> §2Reclamación de territorio completado con éxito"
@@ -223,6 +224,9 @@ COMMAND_INFO_MEMBER_COOWNER: "§7**§oCo-Líder {{name}}"
 COMMAND_INFO_MEMBER_MEMBER: "§7*§oMiembro {{name}}"
 COMMAND_INFO_MEMBER_RECRUIT: "§7§oRecluta {{name}}"
 COMMAND_INFO_DATE: "§eCreado en {{date}}"
+
+COMMAND_SCOREBOARD_SUCCESS: " §a>> §2La tabla de clasificación sera actualizada cuando se reinicie el servidor!"
+COMMAND_SCOREBOARD_SUCCESS_COMPLEMENT: "§2Para mantener tus cambios permanentes, por favor actualiza la línea §6'faction-scoreboard-position'§2 en tu config.yml para §6'{{data}}'§2 y configura la tabla de clasifiación como habilitada si aún no lo has hecho!"
 
 REWARD_POWER_NAME: "Poder de facción"
 REWARD_MEMBER_LIMIT_NAME: "Límite de miembros"
