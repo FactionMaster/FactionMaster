@@ -225,8 +225,8 @@ COMMAND_INFO_MEMBER_MEMBER: "§7*§oMember {{name}}"
 COMMAND_INFO_MEMBER_RECRUIT: "§7§oRecruit {{name}}"
 COMMAND_INFO_DATE: "§eCreated on {{date}}"
 
-COMMAND_SCOREBOARD_SUCCESS: " §a>> §2Position scoreboard updated until the next restart !"
-COMMAND_SCOREBOARD_SUCCESS_COMPLEMENT: "§2To keep your changes permanent, please update the line §6'faction-scoreboard-position'§2 in your config.yml to §6'{{data}}'§2 and set scoreboard to enabled if not already done yet !"
+COMMAND_SCOREBOARD_SUCCESS: " §a>> §2Position scoreboard updated until the next restart!"
+COMMAND_SCOREBOARD_SUCCESS_COMPLEMENT: "§2To keep your changes permanent, please update the line §6'faction-scoreboard-position'§2 in your config.yml to §6'{{data}}'§2 and set scoreboard to enabled if not already done yet!"
 
 REWARD_POWER_NAME: "Faction power"
 REWARD_MEMBER_LIMIT_NAME: "Member limit"
