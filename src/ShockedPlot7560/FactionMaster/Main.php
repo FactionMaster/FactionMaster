@@ -320,7 +320,7 @@ class Main extends PluginBase implements Listener {
             $level = $this->getServer()->getLevelByName(self::$scoreboardEntity[1]);
             if ($level instanceof Level) {
                 $entity = $level->getEntity(self::$scoreboardEntity[0]);
-                if ($entity instanceof Entity) {
+                if ($entity instanceof ScoreboardEntity) {
                     $entity->flagForDespawn();
                     $entity->despawnFromAll();
                 }
