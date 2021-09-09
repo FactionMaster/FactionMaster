@@ -32,40 +32,13 @@
 
 namespace ShockedPlot7560\FactionMaster\Database\Entity;
 
-use DateTime;
+abstract class EntityDatabase {
 
-class InvitationEntity extends EntityDatabase {
+    /** @var int */
+    protected $id;
 
-    public const MEMBER_INVITATION = "member";
-    public const ALLIANCE_INVITATION = "alliance";
-
-    /** @var string */
-    protected $sender;
-    /** @var string */
-    protected $receiver;
-    /** @var string */
-    protected $type;
-    /** @var string */
-    protected $date;
-
-    public function getSenderString(): string {
-        return $this->sender;
-    }
-
-    public function getReceiverString(): string {
-        return $this->receiver;
-    }
-
-    public function getType(): string {
-        return $this->type;
-    }
-
-    public function getDateString(): string {
-        return $this->date;
-    }
-
-    public function getDate(): DateTime {
-        return new DateTime($this->date);
+    public function getId(): int {
+        return $this->id;
     }
 
 }

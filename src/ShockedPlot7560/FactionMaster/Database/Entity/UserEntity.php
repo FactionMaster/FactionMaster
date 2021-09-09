@@ -32,15 +32,28 @@
 
 namespace ShockedPlot7560\FactionMaster\Database\Entity;
 
-class UserEntity {
+class UserEntity extends EntityDatabase {
+
+    use FactionUtils;
 
     /** @var string */
-    public $name;
+    protected $name;
     /** @var string */
-    public $faction;
+    protected $faction;
     /** @var int */
-    public $rank;
+    protected $rank;
     /** @var string */
-    public $language;
+    protected $language;
 
+    public function getName(): string {
+        return $this->name;
+    }
+
+    public function getRank(): int {
+        return $this->rank;
+    }
+
+    public function getLanguage(): string {
+        return $this->language;
+    }
 }

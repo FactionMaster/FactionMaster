@@ -32,31 +32,70 @@
 
 namespace ShockedPlot7560\FactionMaster\Database\Entity;
 
+use pocketmine\level\Level;
+use pocketmine\level\Position;
+use pocketmine\math\Vector3;
+use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class HomeEntity {
+class HomeEntity extends EntityDatabase {
 
-    /** @var int */
-    public $id;
-    /** @var string */
-    public $faction;
-    /** @var string */
-    public $name;
-    /** @var int */
-    public $x;
-    /** @var int */
-    public $y;
-    /** @var int */
-    public $z;
-    /** @var string */
-    public $world;
+    use FactionUtils;
 
-    public function getToString(): string {
+    /** @var string */
+    protected $faction;
+    /** @var string */
+    protected $name;
+    /** @var int */
+    protected $x;
+    /** @var int */
+    protected $y;
+    /** @var int */
+    protected $z;
+    /** @var string */
+    protected $world;
+
+    public function getName(): string {
+        return $this->name;
+    }
+
+    public function getLevelName(): string {
+        return $this->world;
+    }
+
+    public function getLevel(): ?Level {
+        return Main::getInstance()->getServer()->getLevelByName($this->getLevelName());
+    }
+
+    public function toString(): string {
         return Utils::homeToString($this->x, $this->y, $this->z, $this->world);
     }
 
-    public function getToArray(): array{
+    public function __toString(): string{
+        return $this->toString();
+    }
+
+    public function toArray(): array {
         return Utils::homeToArray($this->x, $this->y, $this->z, $this->world);
     }
 
+    public function getX(): int {
+        return $this->x;
+    }
+
+    public function getY(): int {
+        return $this->y;
+    }
+
+    public function getZ(): int {
+        return $this->z;
+    }
+
+    public function getVector(): Vector3 {
+        return new Vector3($this->getX(), $this->getY(), $this->getZ());
+    }
+
+    public function getPosition(): Position {
+        return new Position($this->getX(), $this->getY(), $this->getZ(), $this->getLevel());
+    }
 }

@@ -32,23 +32,27 @@
 
 namespace ShockedPlot7560\FactionMaster\Database\Entity;
 
+use pocketmine\math\Vector2;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class ClaimEntity {
+class ClaimEntity extends EntityDatabase {
 
-    /** @var int */
-    public $id;
+    use FactionUtils;
+
     /** @var string */
-    public $faction;
-    /** @var int */
-    public $x;
-    /** @var int */
-    public $z;
+    protected $faction;
     /** @var string */
-    public $world;
+    protected $x;
+    /** @var string */
+    protected $z;
+    /** @var string */
+    protected $world;
 
     public function getToString(): string {
         return Utils::claimToString($this->x, $this->z, $this->world);
     }
 
+    public function getVector(): Vector2 {
+        return new Vector2($this->x, $this->z);
+    }
 }

@@ -32,56 +32,129 @@
 
 namespace ShockedPlot7560\FactionMaster\Database\Entity;
 
+use DateTime;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 
-class FactionEntity {
+class FactionEntity extends EntityDatabase {
 
-    /** @var int */
-    public $id;
     /** @var string */
-    public $name;
+    protected $name;
     /** @var array|string|null */
-    public $members;
+    protected $members;
     /** @var int */
-    public $visibility;
+    protected $visibility;
     /** @var int */
-    public $xp;
+    protected $xp;
     /** @var int */
-    public $level;
-    /** @var string|null */
-    public $description;
-    /** @var string|null */
-    public $messageFaction;
-    /** @var array|string */
-    public $ally;
-    /** @var int */
-    public $max_player;
-    /** @var int */
-    public $max_ally;
-    /** @var int */
-    public $max_claim;
-    /** @var int */
-    public $max_home;
-    /** @var int */
-    public $power;
-    /** @var string|array */
-    public $permissions;
+    protected $level;
     /** @var string */
-    public $date;
+    protected $description;
+    /** @var string */
+    protected $messageFaction;
+    /** @var array|string */
+    protected $ally;
+    /** @var int */
+    protected $max_player;
+    /** @var int */
+    protected $max_ally;
+    /** @var int */
+    protected $max_claim;
+    /** @var int */
+    protected $max_home;
+    /** @var int */
+    protected $power;
+    /** @var string|array */
+    protected $permissions;
+    /** @var string */
+    protected $date;
 
     public function __construct() {
         if (isset($this->members) && $this->members !== null && is_string($this->members)) {
-            $this->members = unserialize(\base64_decode($this->members));
+            $this->members = unserialize(base64_decode($this->members));
         }
         if (isset($this->ally) && is_string($this->ally)) {
-            $this->ally = unserialize(\base64_decode($this->ally));
+            $this->ally = unserialize(base64_decode($this->ally));
         }
         if (isset($this->permissions) && is_string($this->permissions)) {
-            $this->permissions = unserialize(\base64_decode($this->permissions));
+            $this->permissions = unserialize(base64_decode($this->permissions));
         }
     }
 
-    public function getAllyInstance(): array{
+    public function getName(): int {
+        return $this->name;
+    }
+
+    /**
+     * @return array|string|null
+     */
+    public function getMembers() {
+        return $this->members;
+    }
+
+    public function getVisibilityId(): int {
+        return $this->visibility;
+    }
+
+    public function getXP(): int {
+        return $this->xp;
+    }
+
+    public function getLevel(): int {
+        return $this->level;
+    }
+
+    public function getDescription(): string {
+        return $this->description;
+    }
+
+    public function getMessage(): string {
+        return $this->messageFaction;
+    }
+
+    public function getAlly(): array {
+        return $this->ally;
+    }
+
+    public function getMaxPlayer(): int {
+        return $this->max_player;
+    }
+
+    public function getMaxAlly(): int {
+        return $this->max_ally;
+    }
+
+    public function haveMaxAlly(): bool {
+        return count($this->getAlly()) >= $this->getMaxAlly();
+    }
+
+    public function getMaxClaim(): int {
+        return $this->max_claim;
+    }
+
+    public function getMaxHome(): int {
+        return $this->max_home;
+    }
+
+    public function getPower(): int {
+        return $this->power;
+    }
+
+    public function getPermissions(): array {
+        return $this->permissions;
+    }
+
+    public function getDateString(): string {
+        return $this->date;
+    }
+
+    public function getDate(): DateTime {
+        return new DateTime($this->getDateString());
+    }
+
+    /**
+     * @return FactionEntity[]
+     */
+    public function getAllyInstance(): array {
         $array = [];
         foreach ($this->ally as $key => $Ally) {
             $array[] = MainAPI::getFaction($Ally);
