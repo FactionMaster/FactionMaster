@@ -1,3 +1,5 @@
+config-version: 1
+
 BUTTON_JOIN_FACTION: "Join a faction"
 BUTTON_CREATE_FACTION: "Create a faction"
 BUTTON_TOP_FACTION: "Top faction"

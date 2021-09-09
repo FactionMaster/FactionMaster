@@ -72,6 +72,11 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 class Main extends PluginBase implements Listener {
 
     private const CONFIG_VERSION = 3;
+    private const CONFIG_VERSION_TRANSLATION = [
+        "fr_FR" => 1,
+        "es_SPA" => 1,
+        "en_EN" => 1
+    ];
 
     /** @var PluginLogger */
     public static $logger;
@@ -183,6 +188,8 @@ class Main extends PluginBase implements Listener {
     }
 
     private function init(): void {
+        Entity::registerEntity(ScoreboardEntity::class, true);
+
         UpdateNotifier::checkUpdate($this->getDescription()->getName(), $this->getDescription()->getVersion());
         
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
@@ -234,7 +241,8 @@ class Main extends PluginBase implements Listener {
 
         ConfigUpdater::checkUpdate($this, $this->getConfig(), "config-version", self::CONFIG_VERSION);
 
-        foreach ($this->translation->get("languages") as $key => $language) {
+        foreach ($this->translation->get("languages") as $language) {
+            ConfigUpdater::checkUpdate($this, new Config(Main::getInstance()->getDataFolder() . "Translation/$language.yml", Config::YAML), "config-version", self::CONFIG_VERSION_TRANSLATION[$language]);
             $this->saveResource("Translation/$language.yml");
         }
     }
@@ -294,7 +302,6 @@ class Main extends PluginBase implements Listener {
     }
 
     public static function placeScoreboard(): void {
-        Entity::registerEntity(ScoreboardEntity::class, true);
         $coordinates = Utils::getConfig("faction-scoreboard-position");
         if ($coordinates !== false && $coordinates !== "") {
             $coordinates = explode("|", $coordinates);
