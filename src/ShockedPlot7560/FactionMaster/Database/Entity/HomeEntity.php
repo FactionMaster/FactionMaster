@@ -41,6 +41,7 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 class HomeEntity extends EntityDatabase {
 
     use FactionUtils;
+    use ServerIp;
 
     /** @var string */
     protected $faction;
@@ -64,6 +65,7 @@ class HomeEntity extends EntityDatabase {
     }
 
     public function getLevel(): ?Level {
+        if (!$this->isActive()) return null;
         return Main::getInstance()->getServer()->getLevelByName($this->getLevelName());
     }
 

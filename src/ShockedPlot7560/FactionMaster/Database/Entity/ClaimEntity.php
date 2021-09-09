@@ -32,12 +32,16 @@
 
 namespace ShockedPlot7560\FactionMaster\Database\Entity;
 
+use pocketmine\level\Level;
 use pocketmine\math\Vector2;
+use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ClaimEntity extends EntityDatabase {
 
     use FactionUtils;
+    use ServerIp;
 
     /** @var string */
     protected $faction;
@@ -46,13 +50,59 @@ class ClaimEntity extends EntityDatabase {
     /** @var string */
     protected $z;
     /** @var string */
-    protected $world;
+    protected $level;
+    /** @var string */
+    protected $server;
+    /** @var int|null */
+    protected $flag;
 
-    public function getToString(): string {
-        return Utils::claimToString($this->x, $this->z, $this->world);
+    public function getFactionName(): string {
+        if ($this->getFlag() === null) {
+            return $this->faction;
+        } else {
+            // TODO: implements flags
+        }
+    }
+
+    public function getFactionEntity(): ?FactionEntity {
+        if ($this->getFlag() === null) {
+            if ($this->getFactionName() === "") return null;
+            return MainAPI::getFaction($this->getFactionName());
+        } else {
+            return null;
+        }
+    }
+
+    public function getX(): int {
+        return $this->x;
+    }
+
+    public function getZ(): int {
+        return $this->z;
+    }
+
+    public function getLevelName(): string {
+        return $this->level;
+    }
+
+    public function getLevel(): ?Level {
+        if (!$this->isActive()) return null;
+        return Main::getInstance()->getServer()->getLevelByName($this->getLevelName());
+    }
+
+    public function getFlag(): ?int {
+        return $this->flag;
+    }
+
+    public function toString(): string {
+        return Utils::claimToString($this->getX(), $this->getZ(), $this->getLevelName());
+    }
+
+    public function __toString() {
+        return $this->toString();
     }
 
     public function getVector(): Vector2 {
-        return new Vector2($this->x, $this->z);
+        return new Vector2($this->getX(), $this->getZ());
     }
 }
