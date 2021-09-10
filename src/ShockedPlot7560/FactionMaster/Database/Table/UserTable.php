@@ -33,17 +33,25 @@
 namespace ShockedPlot7560\FactionMaster\Database\Table;
 
 use PDO;
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class UserTable implements TableInterface {
 
+    /** @var PDO */
     private $PDO;
 
-    const TABLE_NAME = "user";
-    const SLUG = "user";
+    const TABLE_NAME = "factionmaster_user";
+    const SLUG = "factionmaster_user";
 
     public function init(): self {
-        $this->PDO->query(Main::getTableInitQuery(__CLASS__));
+        $tableName = self::TABLE_NAME;
+        $dftLang = Utils::getConfigLang("default-language");
+        $this->PDO->query("CREATE TABLE `$tableName` ( 
+            `id` BIGINT UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, 
+            `name` TEXT NOT NULL, 
+            `rank` TINYINT UNSIGNED NOT NULL, 
+            `language` VARCHAR NOT NULL DEFAULT '$dftLang', 
+            PRIMARY KEY (`id`))");
         return $this;
     }
 

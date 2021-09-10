@@ -33,17 +33,27 @@
 namespace ShockedPlot7560\FactionMaster\Database\Table;
 
 use PDO;
-use ShockedPlot7560\FactionMaster\Main;
 
 class HomeTable implements TableInterface {
 
+    /** @var PDO */
     private $PDO;
 
-    const TABLE_NAME = "fhome";
-    const SLUG = "fhome";
+    const TABLE_NAME = "factionmaster_home";
+    const SLUG = "factionmaster_home";
 
     public function init(): self {
-        $this->PDO->query(Main::getTableInitQuery(__CLASS__));
+        $tableName = self::TABLE_NAME;
+        $this->PDO->query("CREATE TABLE `$tableName` ( 
+            `id` INT UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, 
+            `faction` TEXT NOT NULL, 
+            `name` TEXT NOT NULL, 
+            `x` INT NOT NULL, 
+            `y` INT NOT NULL, 
+            `z` INT NOT NULL, 
+            `world` VARCHAR NOT NULL, 
+            `server` VARCHAR NOT NULL, 
+            PRIMARY KEY (`id`))");
         return $this;
     }
 
