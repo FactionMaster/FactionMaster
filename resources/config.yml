@@ -27,7 +27,7 @@
  #
 
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
-config-version: 3
+file-version: 3
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
 
 # --------------------- DATABASE --------------------------
@@ -60,8 +60,11 @@ allow-no-stuff: false
 
 default-home-limit: 2
 default-claim-limit: 2
-default-member-limit: 2
+default-player-limit: 2
 default-ally-limit: 2
+# PUBLIC: 0  /  PRIVATE: 1  /  INVITATION: 2
+default-faction-visibility: 0
+default-faction-xp: 0
 default-power: 0
 
 min-faction-name-length: 3

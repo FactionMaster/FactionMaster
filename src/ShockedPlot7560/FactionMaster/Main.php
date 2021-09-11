@@ -46,6 +46,7 @@ use pocketmine\plugin\PluginLogger;
 use pocketmine\resourcepacks\ResourcePack;
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\utils\Config;
+use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Command\FactionCommand;
 use ShockedPlot7560\FactionMaster\Database\Database;
@@ -72,23 +73,29 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 class Main extends PluginBase implements Listener {
 
     private const CONFIG_VERSION = 3;
+    private const LEVEL_VERSION = 0;
+    private const TRANSLATION_VERSION = 0;
+    private const LANG_FILE_VERSION = [
+        "en_EN" => 0,
+        "fr_FR" => 0,
+        "es_SPA" => 0
+    ];
 
     /** @var PluginLogger */
     public static $logger;
     /** @var Main */
     private static $instance;
     /** @var Config */
-    public $config;
+    private $config;
     /** @var Database */
     public $Database;
     /** @var Plugin */
     public $FormUI;
     /** @var Config */
-    public $levelConfig;
+    private $levelConfig;
     /** @var Config */
-    public $version;
-    /** @var Config */
-    public $translation;
+    private $translation;
+    
     public static $activeTitle;
     public static $scoreboardEntity;
     /** @var ExtensionManager */
@@ -101,29 +108,32 @@ class Main extends PluginBase implements Listener {
     private static $topFactionQuery;
     public static $activeImage;
 
+    public function getFMConfig(): Config {
+        return $this->config;
+    }
+
+    public function getLevelConfig(): Config {
+        return $this->levelConfig;
+    }
+
+    public function getTranslationConfig(): Config {
+        return $this->translation;
+    }
+
     public function onLoad(): void {
-        self::$topFactionQuery = "SELECT * FROM " . FactionTable::TABLE_NAME . " ORDER BY level DESC, xp DESC, power DESC LIMIT 10";
+        $factionTable = FactionTable::TABLE_NAME;
+
+        self::$topFactionQuery = "SELECT * FROM $factionTable ORDER BY level DESC, xp DESC, power DESC LIMIT 10";
         self::$instance = $this;
         self::$logger = $this->getLogger();
 
         $this->loadConfig();
         MigrationManager::init();
         SyncServerManager::init();
-        $this->loadTableInitQuery();
         $this->Database = new Database($this);
-        
-        if (Utils::getConfig("active-image") == true) {
-            $pack = $this->getServer()->getResourcePackManager()->getPackById("6682bde3-ece8-4f22-8d6b-d521efc9325d");
-            if (!$pack instanceof ResourcePack) {
-                self::$logger->warning("To enable FactionMaster images and a better player experience, please download the dedicated FactionMaster pack. Then reactivate the images once this is done.");
-                self::$activeImage = false;
-            }else{
-                self::$activeImage = true;
-            }
-        }else{
-            self::$activeImage = false;
-        }
 
+        $this->initImage();
+        
         if (version_compare($this->getDescription()->getVersion(), $this->version->get("migrate-version")) == 1) {
             MigrationManager::migrate($this->version->get("migrate-version"));
         }
@@ -135,15 +145,31 @@ class Main extends PluginBase implements Listener {
 
     public function onEnable(): void {
         MigrationManager::updateConfigDb();
+
         $this->init();
         $this->getPermissionManager();
         $this->getExtensionManager()->load();
-        $langConfig = [];
+
+        $langConfigExtension = [];
         foreach ($this->getExtensionManager()->getExtensions() as $extension) {
-            $langConfig[$extension->getExtensionName()] = $extension->getLangConfig();
+            $langConfigExtension[$extension->getExtensionName()] = $extension->getLangConfig();
         }
-        $this->getServer()->getAsyncPool()->submitTask(new InitTranslationFile($langConfig, $this->getDataFolder(), self::$logger));
+
+        $this->initTranslationExtension();
         $this->getScheduler()->scheduleRepeatingTask(new SyncServerTask($this), (int) Utils::getConfig("sync-time"));
+    }
+
+    public function onDisable() {
+        if (isset(self::$scoreboardEntity[1])) {
+            $level = $this->getServer()->getLevelByName(self::$scoreboardEntity[1]);
+            if ($level instanceof Level) {
+                $entity = $level->getEntity(self::$scoreboardEntity[0]);
+                if ($entity instanceof ScoreboardEntity) {
+                    $entity->flagForDespawn();
+                    $entity->despawnFromAll();
+                }
+            }
+        }
     }
 
     public static function getTableInitQuery(string $class): ?string {
@@ -182,6 +208,28 @@ class Main extends PluginBase implements Listener {
         self::$topFactionQuery = $query;
     }
 
+    public static function placeScoreboard(): void {
+        Entity::registerEntity(ScoreboardEntity::class, true);
+        $coordinates = Utils::getConfig("faction-scoreboard-position");
+        if ($coordinates !== false && $coordinates !== "") {
+            $coordinates = explode("|", $coordinates);
+            if (count($coordinates) == 4) {
+                $levelName = $coordinates[3];
+                $level = self::getInstance()->getServer()->getLevelByName($levelName);
+                if ($level instanceof Level) {
+                    $level->loadChunk((float)$coordinates[0] >> 4, (float)$coordinates[2] >> 4);
+                    $nbt = Entity::createBaseNBT(new Position((float)$coordinates[0], (float)$coordinates[1], (float)$coordinates[2], $level));
+                    $scoreboard = Entity::createEntity("ScoreboardEntity", $level, $nbt);
+                    $scoreboard->spawnToAll();
+                    self::$scoreboardEntity = [$scoreboard->getId(), $level->getName()];
+                } else {
+                    self::getInstance()->getLogger()->notice("An unknow world was set on config.yml, can't load faction scoreboard");
+                }            
+            }
+        }
+        
+    }
+
     private function init(): void {
         UpdateNotifier::checkUpdate($this->getDescription()->getName(), $this->getDescription()->getVersion());
         
@@ -195,7 +243,7 @@ class Main extends PluginBase implements Listener {
             PacketHooker::register($this);
         }
 
-        $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", "FactionMaster command", ["f", "fac"]));
+        $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", Utils::getText("", "COMMAND_FACTION_DESCRIPTION"), ["f", "fac"]));
 
         $coordinates = explode("|", Utils::getConfig("faction-scoreboard-position"));
         if (count($coordinates) == 4) {
@@ -219,110 +267,55 @@ class Main extends PluginBase implements Listener {
 
     private function loadConfig(): void {
         @mkdir($this->getDataFolder());
-        @mkdir($this->getDataFolder() . "Translation/");
+        @mkdir(Utils::getLangFile());
 
         $this->saveDefaultConfig();
-
         $this->saveResource('translation.yml');
         $this->saveResource('level.yml');
-        $this->saveResource('version.yml');
 
-        $this->config = new Config($this->getDataFolder() . "config.yml");
-        $this->levelConfig = new Config($this->getDataFolder() . "level.yml");
-        $this->translation = new Config($this->getDataFolder() . "translation.yml");
-        $this->version = new Config($this->getDataFolder() . "version.yml");
+        $this->config = Utils::getConfigFile("config");
+        $this->levelConfig = Utils::getConfigFile("level");
+        $this->translation = Utils::getConfigFile("translation");
 
-        ConfigUpdater::checkUpdate($this, $this->getConfig(), "config-version", self::CONFIG_VERSION);
+        ConfigUpdater::checkUpdate($this, $this->getConfig(), "file-version", self::CONFIG_VERSION);
+        ConfigUpdater::checkUpdate($this, $this->getConfig("level"), "file-version", self::LEVEL_VERSION);
+        ConfigUpdater::checkUpdate($this, $this->getConfig("translation"), "file-version", self::TRANSLATION_VERSION);
 
-        foreach ($this->translation->get("languages") as $key => $language) {
+        foreach ($this->getTranslationConfig()->get("languages") as $key => $language) {
+            ConfigUpdater::checkUpdate($this, Utils::getConfigLangFile($language), "file-version", self::LANG_FILE_VERSION[$language]);
             $this->saveResource("Translation/$language.yml");
         }
     }
 
-    private function loadTableInitQuery(): void {
-        $auto_increment = $this->config->get("PROVIDER") === Database::MYSQL_PROVIDER ? "AUTO_INCREMENT" : "AUTOINCREMENT";
-        self::$tableQuery = [
-            FactionTable::class => "CREATE TABLE IF NOT EXISTS `" . FactionTable::TABLE_NAME . "` (
-                `id` INTEGER NOT NULL PRIMARY KEY $auto_increment,
-                `name` VARCHAR(22) NOT NULL,
-                `members` VARCHAR(255) NOT NULL DEFAULT '" . base64_encode(serialize([])) . "',
-                `visibility` INT(11) DEFAULT " . Ids::PRIVATE_VISIBILITY . ",
-                `xp` INT(11) NOT NULL DEFAULT '0',
-                `level` INT(11) NOT NULL DEFAULT '1',
-                `description` TEXT,
-                `messageFaction` TEXT,
-                `ally` VARCHAR(255) NOT NULL DEFAULT '" . base64_encode(serialize([])) . "',
-                `max_player` INT(11) NOT NULL DEFAULT '" . $this->config->get("default-member-limit") . "',
-                `max_ally` INT(11) NOT NULL DEFAULT '" . $this->config->get("default-ally-limit") . "',
-                `max_claim` INT(11) NOT NULL DEFAULT '" . $this->config->get("default-claim-limit") . "',
-                `max_home` INT(11) NOT NULL DEFAULT '" . $this->config->get("default-home-limit") . "',
-                `power` INT(11) NOT NULL DEFAULT '" . $this->config->get("default-power") . "',
-                `permissions` TEXT,
-                `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-            )",
-            ClaimTable::class => "CREATE TABLE IF NOT EXISTS `" . ClaimTable::TABLE_NAME . "` (
-                `id` INTEGER NOT NULL PRIMARY KEY $auto_increment ,
-                `faction` VARCHAR(255) NOT NULL ,
-                `x` INT(11) NOT NULL ,
-                `z` INT(11) NOT NULL,
-                `world` VARCHAR(255) NOT NULL
-            )",
-            HomeTable::class => "CREATE TABLE IF NOT EXISTS `" . HomeTable::TABLE_NAME . "` (
-                `id` INTEGER NOT NULL PRIMARY KEY $auto_increment ,
-                `name` VARCHAR(255) NOT NULL ,
-                `faction` VARCHAR(255) NOT NULL ,
-                `x` INT(11) NOT NULL,
-                `y` INT(11) NOT NULL,
-                `z` INT(11) NOT NULL,
-                `world` VARCHAR(255) NOT NULL
-            )",
-            InvitationTable::class => "CREATE TABLE IF NOT EXISTS `" . InvitationTable::TABLE_NAME . "` (
-                `id` INTEGER NOT NULL PRIMARY KEY $auto_increment,
-                `sender` VARCHAR(255) NOT NULL,
-                `receiver` VARCHAR(255) NOT NULL,
-                `type` VARCHAR(255) NOT NULL,
-                `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-            )",
-            UserTable::class => "CREATE TABLE IF NOT EXISTS `" . UserTable::TABLE_NAME . "` (
-                `name` VARCHAR(22) NOT NULL,
-                `faction` VARCHAR(255) DEFAULT NULL,
-                `rank` INT(11) DEFAULT NULL,
-                `language` VARCHAR(255) NOT NULL DEFAULT '" . Utils::getConfigLang("default-language") . "',
-                PRIMARY KEY (`name`)
-            )"
-        ];
-    }
-
-    public static function placeScoreboard(): void {
-        Entity::registerEntity(ScoreboardEntity::class, true);
-        $coordinates = Utils::getConfig("faction-scoreboard-position");
-        if ($coordinates !== false && $coordinates !== "") {
-            $coordinates = explode("|", $coordinates);
-            if (count($coordinates) == 4) {
-                $levelName = $coordinates[3];
-                $level = self::getInstance()->getServer()->getLevelByName($levelName);
-                if ($level instanceof Level) {
-                    $level->loadChunk((float)$coordinates[0] >> 4, (float)$coordinates[2] >> 4);
-                    $nbt = Entity::createBaseNBT(new Position((float)$coordinates[0], (float)$coordinates[1], (float)$coordinates[2], $level));
-                    $scoreboard = Entity::createEntity("ScoreboardEntity", $level, $nbt);
-                    $scoreboard->spawnToAll();
-                    self::$scoreboardEntity = [$scoreboard->getId(), $level->getName()];
-                } else {
-                    self::getInstance()->getLogger()->notice("An unknow world was set on config.yml, can't load faction scoreboard");
-                }            
+    private function initImage(): void {
+        if (Utils::getConfig("active-image") == true) {
+            $pack = $this->getServer()->getResourcePackManager()->getPackById("6682bde3-ece8-4f22-8d6b-d521efc9325d");
+            if (!$pack instanceof ResourcePack) {
+                self::$logger->warning("To enable FactionMaster images and a better player experience, please download the dedicated FactionMaster pack. Then reactivate the images once this is done.");
+                self::$activeImage = false;
+            }else{
+                self::$activeImage = true;
             }
+        }else{
+            self::$activeImage = false;
         }
-        
     }
 
-    public function onDisable() {
-        if (isset(self::$scoreboardEntity[1])) {
-            $level = $this->getServer()->getLevelByName(self::$scoreboardEntity[1]);
-            if ($level instanceof Level) {
-                $entity = $level->getEntity(self::$scoreboardEntity[0]);
-                if ($entity instanceof ScoreboardEntity) {
-                    $entity->flagForDespawn();
-                    $entity->despawnFromAll();
+    private function initTranslationExtension(): void {
+        $langConfigExtension = [];
+        foreach ($this->getExtensionManager()->getExtensions() as $extension) {
+            $langConfigExtension[$extension->getExtensionName()] = $extension->getLangConfig();
+        }
+        foreach ($langConfigExtension as $extensionName => $langConfig) {
+            foreach ($langConfig as $langSlug => $langConfigFile) {
+                if (!$langConfigFile instanceof Config) {
+                    $this->getLogger()->warning("Loading the translate files of : $extensionName, check the return value of the function getLangConfig() and verify its key and value. If you are not the author of this extension, please inform him");
+                } else {
+                    $langMain = new Config($this->mainFolder . "Translation/$langSlug.yml", Config::YAML);
+                    foreach ($langConfigFile->getAll() as $key => $value) {
+                        $langMain->__set($key, $value);
+                    }
+                    $langMain->save();
                 }
             }
         }

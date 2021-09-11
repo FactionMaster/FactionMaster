@@ -34,7 +34,6 @@ namespace ShockedPlot7560\FactionMaster\Utils;
 
 use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
-use pocketmine\plugin\PluginLogger;
 use pocketmine\scheduler\TaskHandler;
 use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
@@ -55,46 +54,43 @@ class Utils {
         return $Form;
     }
 
-    /**
-     * Used to process the Route given for the player
-     */
-    public static function processMenu(Route $route, Player $Player, ?array $params = null): void {
-        $UserEntity = MainAPI::getUser($Player->getName());
-        $UserPermissions = MainAPI::getMemberPermission($Player->getName());
-        if ($UserPermissions === null) {
-            $UserPermissions = [];
+    public static function processMenu(Route $route, Player $player, ?array $params = null): void {
+        $userEntity = MainAPI::getUser($player->getName());
+        $userPermissions = MainAPI::getMemberPermission($player->getName());
+        if ($userPermissions === null) {
+            $userPermissions = [];
         }
-        if ($UserEntity instanceof UserEntity && isset($route->PermissionNeed)) {
+        if ($userEntity instanceof UserEntity && isset($route->PermissionNeed)) {
             $good = false;
-            foreach ($route->PermissionNeed as $Permission) {
-                if (is_string($Permission)) {
-                    if (self::haveAccess($UserPermissions, $UserEntity, $Permission)) {
+            foreach ($route->PermissionNeed as $permission) {
+                if (is_string($permission)) {
+                    if (self::haveAccess($userPermissions, $userEntity, $permission)) {
                         $good = true;
                     }
-                } elseif (is_array($Permission) && $Permission[0] === self::POCKETMINE_PERMISSIONS_CONSTANT) {
-                    if ($Player->hasPermission($Permission[1])) {
+                } elseif (is_array($permission) && $permission[0] === self::POCKETMINE_PERMISSIONS_CONSTANT) {
+                    if ($player->hasPermission($permission[1])) {
                         $good = true;
                     }
                 }
             }
-            if ($good === true) {
-                $ev = new MenuOpenEvent($Player, $route);
+            if ($good) {
+                $ev = new MenuOpenEvent($player, $route);
                 $ev->call();
                 if ($ev->isCancelled()) {
                     return;
                 }
 
-                $route($Player, $UserEntity, $UserPermissions, $params);
+                $route($player, $userEntity, $userPermissions, $params);
                 return;
             }
         }
-        $ev = new MenuOpenEvent($Player, $route);
+        $ev = new MenuOpenEvent($player, $route);
         $ev->call();
         if ($ev->isCancelled()) {
             return;
         }
 
-        $route($Player, $UserEntity, $UserPermissions, $params);
+        $route($player, $userEntity, $userPermissions, $params);
     }
 
     public static function replaceParams(string $string, array $data): string {
@@ -105,68 +101,68 @@ class Utils {
     }
 
     /**
-     * @return string The formated string like X|Z|world
+     * @return string The formated string like x|z|world
      */
-    public static function claimToString($X, $Z, $World): string {
-        return $X . "|" . $Z . "|" . $World;
+    public static function claimToString($x, $z, $world): string {
+        return join("|", [$x, $z, $world]);
     }
 
     /**
-     * @return string The formated string like X|Y|Z|world
+     * @return string The formated string like x|y|z|world
      */
-    public static function homeToString($X, $Y, $Z, $World): string {
-        return $X . "|" . $Y . "|" . $Z . "|" . $World;
+    public static function homeToString($x, $y, $z, $world): string {
+        return join("|", [$x, $y, $z, $world]);
     }
 
-    public static function homeToArray($X, $Y, $Z, $World): array {
-        return [
-            "x" => $X,
-            "y" => $Y,
-            "z" => $Z,
-            "world" => $World,
-        ];
+    public static function homeToArray($x, $y, $z, $world): array {
+        return compact([$x, $y, $z, $world]);
     }
 
     /**
      * @return bool|mixed
      */
     public static function getConfig(string $key) {
-        $Config = new Config(Main::getInstance()->getDataFolder() . "config.yml", Config::YAML);
-        return $Config->get($key);
+        return self::getConfigFile()->get($key);
+    }
+
+    public static function getConfigFile(string $fileName = "config", string $folderPath = self::getDataFolder()): Config {
+        return new Config($folderPath . "$fileName.yml", Config::YAML);
     }
 
     /**
      * @return bool|mixed
      */
     public static function getConfigLang(string $key) {
-        $Config = new Config(Main::getInstance()->getDataFolder() . "translation.yml", Config::YAML);
-        return $Config->get($key);
+        return self::getConfigFile("translation")->get($key);
     }
 
     public static function getText(string $playerName, string $slug, array $args = []): string {
-        $Playerlang = MainAPI::getPlayerLang($playerName);
-        $FileName = self::getConfigLang("languages")[$Playerlang] ?? self::getConfigLang("languages")["EN"];
-        $Config = new Config(Main::getInstance()->getDataFolder() . "Translation/$FileName.yml", Config::YAML);
-        $textNoReplace = $Config->get($slug);
+        $playerLang = MainAPI::getPlayerLang($playerName);
+        $fileName = self::getConfigLang("languages")[$playerLang] ?? self::getConfigLang("languages")["EN"];
+        $config = self::getConfigLangFile($fileName);
+        $textNoReplace = $config->get($slug);
         if ($textNoReplace === false) {
-            $Config = new Config(Main::getInstance()->getDataFolder() . "Translation/en_EN.yml", Config::YAML);
-            $textNoReplace = $Config->get($slug);
+            $config = self::getConfigLangFile("en_EN");
+            $textNoReplace = $config->get($slug);
         }
-        $Text = self::replaceParams($textNoReplace, $args);
-        return $Text;
+        return self::replaceParams($textNoReplace, $args);
+    }
+
+    public static function getConfigLangFile(string $fileName): Config {
+        return self::getConfigFile($fileName, self::getLangFile());
     }
 
     public static function getXpLevel(int $level): int {
         return 1000 * pow(1.09, $level);
     }
 
-    public static function haveAccess(array $permission, UserEntity $UserEntity, int $id): bool {
-        if ((int) $UserEntity->rank === Ids::OWNER_ID) {
+    public static function haveAccess(array $permission, UserEntity $userEntity, int $id): bool {
+        if ($userEntity->getRank() == Ids::OWNER_ID) {
             return true;
         }
 
-        $PermissionManager = Main::getInstance()->getPermissionManager();
-        if (!$PermissionManager->isRegister($id)) {
+        $permissionManager = Main::getInstance()->getPermissionManager();
+        if (!$permissionManager->isRegister($id)) {
             return false;
         }
 
@@ -179,5 +175,9 @@ class Utils {
 
     public static function getDataFolder(): string {
         return Main::getInstance()->getDataFolder();
+    }
+
+    public static function getLangFile(): string {
+        return self::getDataFolder() . "lang/";
     }
 }
