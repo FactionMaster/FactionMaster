@@ -32,9 +32,9 @@
 
 namespace ShockedPlot7560\FactionMaster;
 
-use CortexPE\Commando\PacketHooker;
-use JackMD\ConfigUpdater\ConfigUpdater;
-use JackMD\UpdateNotifier\UpdateNotifier;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\PacketHooker;
+use ShockedPlot7560\FactionMaster\libs\JackMD\ConfigUpdater\ConfigUpdater;
+use ShockedPlot7560\FactionMaster\libs\JackMD\UpdateNotifier\UpdateNotifier;
 use pocketmine\entity\Entity;
 use pocketmine\event\Listener;
 use pocketmine\level\Level;

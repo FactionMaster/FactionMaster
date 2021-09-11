@@ -32,7 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Command;
 
-use CortexPE\Commando\BaseCommand;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\ClaimCommand;
