@@ -80,6 +80,7 @@ FactionMaster have multiple server support, see the Installation section for mor
 Extensions, a new way to customize your plugin to your liking. You just have to download the plugin corresponding to the desired extension and place it in the corresponding folder on your server. If you have an urge to stop using the functionality, delete the plugin from your server and the changes will be gone! You can use those approved by the FactionMaster team or do it yourself (*refer to the GitHub*) and submit it to us if you feel like it.
 
 All extensions made by the FactionMaster team and those approved by the FactionMaster team, which are accessible via poggit will be listed here.
+* **Bank system** : [here](https://poggit.pmmp.io/p/FactionMasterBank) *by FactionMaster*
 
 ## Translators
 To participate in the translation of FactionMaster and probably see yourself here, create a Pull Request on the FactionMaster [GitHub](https://github.com/ShockedPlot7560/FactionMaster/). Once the language has been translated on the main plugin and on all the extensions listed in the ``Extension`` section, it will be added and all its contributors thanked.
