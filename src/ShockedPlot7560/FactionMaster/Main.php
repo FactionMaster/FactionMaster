@@ -39,101 +39,63 @@ use pocketmine\entity\Entity;
 use pocketmine\event\Listener;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
-use pocketmine\math\Vector3;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginBase;
-use pocketmine\plugin\PluginLogger;
 use pocketmine\resourcepacks\ResourcePack;
-use pocketmine\scheduler\ClosureTask;
 use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Command\FactionCommand;
-use ShockedPlot7560\FactionMaster\Database\Database;
-use ShockedPlot7560\FactionMaster\Database\Table\ClaimTable;
 use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
-use ShockedPlot7560\FactionMaster\Database\Table\HomeTable;
-use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
-use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\Entity\ScoreboardEntity;
-use ShockedPlot7560\FactionMaster\Extension\ExtensionManager;
 use ShockedPlot7560\FactionMaster\Listener\BroadcastMessageListener;
 use ShockedPlot7560\FactionMaster\Listener\EventListener;
 use ShockedPlot7560\FactionMaster\Listener\ScoreHudListener;
-use ShockedPlot7560\FactionMaster\Migration\MigrationManager;
-use ShockedPlot7560\FactionMaster\Migration\SyncServerManager;
-use ShockedPlot7560\FactionMaster\Permission\PermissionManager;
+use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
+use ShockedPlot7560\FactionMaster\Manager\DatabaseManager;
+use ShockedPlot7560\FactionMaster\Manager\ExtensionManager;
+use ShockedPlot7560\FactionMaster\Manager\MigrationManager;
+use ShockedPlot7560\FactionMaster\Manager\PermissionManager;
+use ShockedPlot7560\FactionMaster\Manager\SyncServerManager;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
-use ShockedPlot7560\FactionMaster\Task\InitTranslationFile;
 use ShockedPlot7560\FactionMaster\Task\SyncServerTask;
-use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Main extends PluginBase implements Listener {
 
-    private const CONFIG_VERSION = 3;
-    private const LEVEL_VERSION = 0;
-    private const TRANSLATION_VERSION = 0;
-    private const LANG_FILE_VERSION = [
-        "en_EN" => 0,
-        "fr_FR" => 0,
-        "es_SPA" => 0
-    ];
-
-    /** @var PluginLogger */
-    public static $logger;
-    /** @var Main */
-    private static $instance;
-    /** @var Config */
-    private $config;
-    /** @var Database */
-    public $Database;
     /** @var Plugin */
-    public $FormUI;
-    /** @var Config */
-    private $levelConfig;
-    /** @var Config */
-    private $translation;
-    
+    public $formUI;
+    /** @var int[] */
     public static $activeTitle;
-    public static $scoreboardEntity;
-    /** @var ExtensionManager */
-    private $ExtensionManager;
-    /** @var PermissionManager */
-    private $PermissionManager;
-
     /** @var array */
-    private static $tableQuery;
-    private static $topFactionQuery;
+    public static $scoreboardEntity;
+    /** @var boolean */
     public static $activeImage;
 
-    public function getFMConfig(): Config {
-        return $this->config;
-    }
-
-    public function getLevelConfig(): Config {
-        return $this->levelConfig;
-    }
-
-    public function getTranslationConfig(): Config {
-        return $this->translation;
-    }
+    /** @var Main */
+    private static $instance;
+    /** @var array */
+    private static $tableQuery;
+    /** @var string */
+    private static $topFactionQuery;
 
     public function onLoad(): void {
         $factionTable = FactionTable::TABLE_NAME;
 
         self::$topFactionQuery = "SELECT * FROM $factionTable ORDER BY level DESC, xp DESC, power DESC LIMIT 10";
         self::$instance = $this;
-        self::$logger = $this->getLogger();
 
-        $this->loadConfig();
-        MigrationManager::init();
-        SyncServerManager::init();
-        $this->Database = new Database($this);
+        ConfigManager::init($this);
+        SyncServerManager::init($this);
+        DatabaseManager::init($this);
+        MainAPI::init(DatabaseManager::getPDO());
+
+        PermissionManager::init();
 
         $this->initImage();
         
+        MigrationManager::init($this);
         if (version_compare($this->getDescription()->getVersion(), $this->version->get("migrate-version")) == 1) {
             MigrationManager::migrate($this->version->get("migrate-version"));
         }
@@ -144,14 +106,11 @@ class Main extends PluginBase implements Listener {
     }
 
     public function onEnable(): void {
-        MigrationManager::updateConfigDb();
-
         $this->init();
-        $this->getPermissionManager();
-        $this->getExtensionManager()->load();
+        ExtensionManager::load();
 
         $langConfigExtension = [];
-        foreach ($this->getExtensionManager()->getExtensions() as $extension) {
+        foreach (ExtensionManager::getExtensions() as $extension) {
             $langConfigExtension[$extension->getExtensionName()] = $extension->getLangConfig();
         }
 
@@ -182,22 +141,6 @@ class Main extends PluginBase implements Listener {
 
     public static function getInstance(): self {
         return self::$instance;
-    }
-
-    public function getExtensionManager(): ?ExtensionManager {
-        if ($this->ExtensionManager === null) {
-            $this->ExtensionManager = new ExtensionManager();
-        }
-
-        return $this->ExtensionManager;
-    }
-
-    public function getPermissionManager(): ?PermissionManager {
-        if ($this->PermissionManager === null) {
-            $this->PermissionManager = new PermissionManager();
-        }
-
-        return $this->PermissionManager;
     }
 
     public static function getTopQuery(): string {
@@ -277,12 +220,12 @@ class Main extends PluginBase implements Listener {
         $this->levelConfig = Utils::getConfigFile("level");
         $this->translation = Utils::getConfigFile("translation");
 
-        ConfigUpdater::checkUpdate($this, $this->getConfig(), "file-version", self::CONFIG_VERSION);
-        ConfigUpdater::checkUpdate($this, $this->getConfig("level"), "file-version", self::LEVEL_VERSION);
-        ConfigUpdater::checkUpdate($this, $this->getConfig("translation"), "file-version", self::TRANSLATION_VERSION);
+        ConfigUpdater::checkUpdate($this, $this->getConfig(), "file-version", ConfigManager::CONFIG_VERSION);
+        ConfigUpdater::checkUpdate($this, $this->getConfig("level"), "file-version", ConfigManager::LEVEL_VERSION);
+        ConfigUpdater::checkUpdate($this, $this->getConfig("translation"), "file-version", ConfigManager::TRANSLATION_VERSION);
 
-        foreach ($this->getTranslationConfig()->get("languages") as $key => $language) {
-            ConfigUpdater::checkUpdate($this, Utils::getConfigLangFile($language), "file-version", self::LANG_FILE_VERSION[$language]);
+        foreach (ConfigManager::getTranslationConfig()->get("languages") as $key => $language) {
+            ConfigUpdater::checkUpdate($this, Utils::getConfigLangFile($language), "file-version", ConfigManager::LANG_FILE_VERSION[$language]);
             $this->saveResource("Translation/$language.yml");
         }
     }
@@ -291,7 +234,7 @@ class Main extends PluginBase implements Listener {
         if (Utils::getConfig("active-image") == true) {
             $pack = $this->getServer()->getResourcePackManager()->getPackById("6682bde3-ece8-4f22-8d6b-d521efc9325d");
             if (!$pack instanceof ResourcePack) {
-                self::$logger->warning("To enable FactionMaster images and a better player experience, please download the dedicated FactionMaster pack. Then reactivate the images once this is done.");
+                $this->getLogger()->warning("To enable FactionMaster images and a better player experience, please download the dedicated FactionMaster pack. Then reactivate the images once this is done.");
                 self::$activeImage = false;
             }else{
                 self::$activeImage = true;
@@ -303,7 +246,7 @@ class Main extends PluginBase implements Listener {
 
     private function initTranslationExtension(): void {
         $langConfigExtension = [];
-        foreach ($this->getExtensionManager()->getExtensions() as $extension) {
+        foreach (ExtensionManager::getExtensions() as $extension) {
             $langConfigExtension[$extension->getExtensionName()] = $extension->getLangConfig();
         }
         foreach ($langConfigExtension as $extensionName => $langConfig) {

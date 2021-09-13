@@ -30,23 +30,27 @@
  *
  */
 
-namespace ShockedPlot7560\FactionMaster\Migration;
+namespace ShockedPlot7560\FactionMaster\Manager;
 
 use pocketmine\utils\Config;
-use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Database;
 use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Utils\QueryBuildeur;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class MigrationManager {
 
+    /** @var callable[] */
     private static $list = [];
     private static $configDbToCheck = [];
+    /** @var Main */
+    private static $main;
 
-    public static function init() {
-        $config = new Config(Main::getInstance()->getDataFolder() . "config.yml", Config::YAML);
+    public static function init(Main $main) {
+        self::$main = $main;
+        $config = new Config(Utils::getDataFolder() . "config.yml", Config::YAML);
         self::$list = [
             "2.1.2-alpha" => function () {},
             "2.1.3-alpha" => function () {},
@@ -54,7 +58,7 @@ class MigrationManager {
             "2.2.0" => function () {},
             "2.3.0" => function () {},
             "2.3.1" => function () {
-                Main::$logger->notice("Some translation slug have change due to version change, please delete Translation folder in your plugin_data folder and reload the server to apply the change");
+                self::$main->getLogger()->notice("Some translation slug have change due to version change, please delete Translation folder in your plugin_data folder and reload the server to apply the change");
             }
         ];
         self::$configDbToCheck = [
@@ -89,7 +93,7 @@ class MigrationManager {
                 "COLUMN_NAME" => "power",
                 "TABLE_CLASS" => FactionTable::class
             ], [
-                "CONFIG_INST" => new Config(Main::getInstance()->getDataFolder() . "translation.yml", Config::YAML),
+                "CONFIG_INST" => new Config(Utils::getDataFolder() . "translation.yml", Config::YAML),
                 "CONFIG_NAME" => "default-language",
                 "TABLE_NAME" => UserTable::TABLE_NAME,
                 "COLUMN_NAME" => "language",
@@ -103,17 +107,18 @@ class MigrationManager {
         foreach (self::$list as $versionName => $callable) {
             if (version_compare($version, $versionName, "<")) {
                 $actualVersion = $versionName;
-                Main::getInstance()->getLogger()->debug("Starting migration from $versionName");
+                self::$main->getLogger()->debug("Starting migration from $versionName");
                 call_user_func($callable);
-                Main::getInstance()->getLogger()->debug("Migration from $versionName finish");
+                self::$main->getLogger()->debug("Migration from $versionName finish");
             }
         }
-        Main::getInstance()->version->set("migrate-version", $actualVersion);
-        Main::getInstance()->version->save();
+        $config = ConfigManager::getConfig("version");
+        $config->set("migrate-version", $actualVersion);
+        $config->save();
     }
 
     public static function updateConfigDb(): void {
-        $pdo = MainAPI::$PDO;
+        $pdo = DatabaseManager::getPDO();
         $provider = Utils::getConfig("PROVIDER");
         switch ($provider) {
             case Database::MYSQL_PROVIDER:

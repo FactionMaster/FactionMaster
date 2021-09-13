@@ -40,6 +40,7 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\MenuOpenEvent;
 use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Manager\PermissionManager;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 
@@ -125,7 +126,8 @@ class Utils {
         return self::getConfigFile()->get($key);
     }
 
-    public static function getConfigFile(string $fileName = "config", string $folderPath = self::getDataFolder()): Config {
+    public static function getConfigFile(string $fileName = "config", string $folderPath = null): Config {
+        if ($folderPath === null) $folderPath = self::getDataFolder();
         return new Config($folderPath . "$fileName.yml", Config::YAML);
     }
 
@@ -161,8 +163,7 @@ class Utils {
             return true;
         }
 
-        $permissionManager = Main::getInstance()->getPermissionManager();
-        if (!$permissionManager->isRegister($id)) {
+        if (!PermissionManager::isRegister($id)) {
             return false;
         }
 

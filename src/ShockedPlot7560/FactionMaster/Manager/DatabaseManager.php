@@ -30,10 +30,9 @@
  *
  */
 
-namespace ShockedPlot7560\FactionMaster\Database;
+namespace ShockedPlot7560\FactionMaster\Manager;
 
 use PDO;
-use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Table\ClaimTable;
 use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
 use ShockedPlot7560\FactionMaster\Database\Table\HomeTable;
@@ -41,70 +40,69 @@ use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
 use ShockedPlot7560\FactionMaster\Database\Table\TableInterface;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 
-class Database {
+class DatabaseManager {
 
     const MYSQL_PROVIDER = "MYSQL";
     const SQLITE_PROVIDER = "SQLITE";
 
-    private $PDO;
-
+    /** @var PDO|null */
+    private static $pdo;
     /** @var TableInterface[] */
-    private $tables;
+    private static $tables;
 
-    public function __construct(Main $Main) {
-        $PROVIDER = $Main->config->get('PROVIDER');
+    public static function init(Main $Main): void {
+        $PROVIDER = ConfigManager::getConfig()->get('PROVIDER');
         switch ($PROVIDER) {
             case self::MYSQL_PROVIDER:
-                $databaseConfig = $Main->config->get("MYSQL_database");
+                $databaseConfig = ConfigManager::getConfig()->get("MYSQL_database");
                 $db = new PDO(
                     "mysql:host=" . $databaseConfig['host'] . ";dbname=" . $databaseConfig['name'],
                     $databaseConfig['user'],
                     $databaseConfig['pass']
                 );
                 break;
-
             case self::SQLITE_PROVIDER:
-                $databaseConfig = $Main->config->get("SQLITE_database");
+                $databaseConfig = ConfigManager::getConfig()->get("SQLITE_database");
                 $db = new PDO("sqlite:" . $databaseConfig['name'] . ".sqlite");
                 break;
             default:
-                $Main::$logger->alert("Please give a valid PROVIDER in config.yml, use only : " . self::MYSQL_PROVIDER . " or " . self::SQLITE_PROVIDER);
+                $Main->getLogger()->alert("Please give a valid PROVIDER in config.yml, use only : " . self::MYSQL_PROVIDER . " or " . self::SQLITE_PROVIDER);
                 $Main->getServer()->getPluginManager()->disablePlugin($Main);
                 return;
         }
 
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $this->PDO = $db;
-
-        MainAPI::init($db);
-        $this->initTable();
+        self::$pdo = $db;
+        self::initTable();
     }
 
-    public function getPDO(): PDO {
-        return $this->PDO;
+    public static function getPDO(): ?PDO {
+        return self::$pdo;
     }
 
-    private function initTable(): void {
+    /** @return TableInterface[] */
+    public static function getTables(): array{
+        return self::$tables;
+    }
+
+    public static function getTable(string $slug): ?TableInterface {
+        return self::getTables()[$slug] ?? null;
+    }
+
+    private static function initTable(): void {
         $tables = [
-            new FactionTable($this->getPDO()),
-            new UserTable($this->getPDO()),
-            new InvitationTable($this->getPDO()),
-            new ClaimTable($this->getPDO()),
-            new HomeTable($this->getPDO()),
+            FactionTable::class,
+            UserTable::class,
+            InvitationTable::class,
+            ClaimTable::class,
+            HomeTable::class,
         ];
-        foreach ($tables as $key => $table) {
-            $table = $table->init();
-            $this->tables[$table::SLUG] = $table;
+        foreach ($tables as $table) {
+            $table = (new $table(self::getPDO()))->init();
+            self::$tables[$table::SLUG] = $table;
         }
-    }
-
-    public function getTables(): array{
-        return $this->tables;
-    }
-
-    public function getTable(string $slug): ?TableInterface {
-        return $this->getTables()[$slug] ?? null;
     }
 
 }

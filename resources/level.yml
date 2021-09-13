@@ -1,4 +1,3 @@
----
 # DO NOT EDIT THIS LINE 
 file-version: 0
 # DO NOT EDIT THIS LINE
@@ -8,16 +7,16 @@ file-version: 0
 #In type field, allow :
 # power / allyLimit / claimLimit / homeLimit / memberLimit
 # to make your own reward, please read the documentation
-- type: homeLimit 
-  value: 2 #quantity
-  cost:
-    #if level up is free, put nothing here
-    #To have more than 1 cost item, copy paste : 
-    - type: power 
-      value: 100
-- type: memberLimit 
-  value: 3
-  cost:
-    - type: power 
-      value: 100
-...
+levels:
+  - type: "homeLimit" 
+    value: 2 #quantity
+    cost:
+      #if level up is free, put nothing here
+      #To have more than 1 cost item, copy paste : 
+      - type: "power" 
+        value: 100
+  - type: "memberLimit" 
+    value: 3
+    cost:
+      - type: "power" 
+        value: 100

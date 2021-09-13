@@ -30,7 +30,7 @@
  *
  */
 
-namespace ShockedPlot7560\FactionMaster\Migration;
+namespace ShockedPlot7560\FactionMaster\Manager;
 
 use Ifera\ScoreHud\event\PlayerTagUpdateEvent;
 use Ifera\ScoreHud\scoreboard\ScoreTag;
@@ -54,9 +54,11 @@ class SyncServerManager {
 
     /** @var array */
     private static $list;
+    /** @var Main */
+    private static $main;
 
-    public static function init(): void {
-
+    public static function init(Main $main): void {
+        self::$main = $main;
         self::addItem(
             "SELECT * FROM " . FactionTable::TABLE_NAME, 
             [],
@@ -68,8 +70,8 @@ class SyncServerManager {
                 foreach ($result as $faction) {
                     if ($faction instanceof FactionEntity) {
                         MainAPI::$factions[$faction->name] = $faction;
-                        if (Main::getInstance()->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
-                            $server = Main::getInstance()->getServer();
+                        if (self::$main->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
+                            $server = self::$main->getServer();
                             foreach ($faction->members as $name => $rank) {
                                 $player = $server->getPlayer($name);
                                 if ($player instanceof Player) {
@@ -158,8 +160,8 @@ class SyncServerManager {
                 foreach ($result as $user) {
                     if ($user instanceof UserEntity) {
                         MainAPI::$users[$user->name] = $user;
-                        if (Main::getInstance()->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
-                            $player = Main::getInstance()->getServer()->getPlayer($user->name);
+                        if (self::$main->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
+                            $player = self::$main->getServer()->getPlayer($user->name);
                             if ($player instanceof Player) {
                                 if ($user->rank !== null && $user->faction !== null) {
                                     switch ($user->rank) {

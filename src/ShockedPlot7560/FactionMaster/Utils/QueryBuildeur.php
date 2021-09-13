@@ -30,9 +30,7 @@
  *
  */
 
-namespace ShockedPlot7560\FactionMaster\Migration;
-
-use InvalidArgumentException;
+namespace ShockedPlot7560\FactionMaster\Utils;
 
 class QueryBuildeur {
 
