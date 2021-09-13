@@ -265,4 +265,8 @@ class FactionEntity extends EntityDatabase {
         }
         return $array;
     }
+
+    public function isAlly(string $allyName): bool {
+        return in_array($allyName, $this->getAlly());
+    }
 }

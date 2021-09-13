@@ -57,7 +57,7 @@ class FactionTable implements TableInterface {
         var_dump(Utils::getConfig("PROVIDER"));
         $this->PDO->query("CREATE TABLE IF NOT EXISTS `$tableName` ( 
             `id` INTEGER PRIMARY KEY $auto_increment, 
-            `name` TEXT NOT NULL UNIQUE, 
+            `name` TEXT NOT NULL, 
             `members` JSON NOT NULL, 
             `visibility` TINYINT UNSIGNED NOT NULL DEFAULT '$visibility', 
             `xp` SMALLINT UNSIGNED NOT NULL DEFAULT '$xp', 

@@ -36,7 +36,7 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 
 trait FactionUtils {
 
-    public function getFactionName(): string {
+    public function getFactionName(): ?string {
         return $this->faction;
     }
 

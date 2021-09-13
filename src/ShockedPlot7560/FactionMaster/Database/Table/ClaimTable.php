@@ -52,8 +52,8 @@ class ClaimTable implements TableInterface {
             `faction` TEXT NOT NULL, 
             `x` INT NOT NULL, 
             `z` INT NOT NULL, 
-            `world` VARCHAR NOT NULL, 
-            `server` VARCHAR NOT NULL, 
+            `world` VARCHAR(255) NOT NULL, 
+            `server` VARCHAR(255) NOT NULL, 
             `flags` TINYINT UNSIGNED NULL DEFAULT NULL)
         ");
         return $this;

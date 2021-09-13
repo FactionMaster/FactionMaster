@@ -54,8 +54,8 @@ class HomeTable implements TableInterface {
             `x` INT NOT NULL, 
             `y` INT NOT NULL, 
             `z` INT NOT NULL, 
-            `world` VARCHAR NOT NULL, 
-            `server` VARCHAR NOT NULL)");
+            `world` VARCHAR(255) NOT NULL, 
+            `server` VARCHAR(255) NOT NULL)");
         return $this;
     }
 

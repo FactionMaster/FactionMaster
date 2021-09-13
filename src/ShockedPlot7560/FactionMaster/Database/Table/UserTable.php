@@ -50,9 +50,11 @@ class UserTable implements TableInterface {
         $dftLang = Utils::getConfigLang("default-language");
         $this->PDO->query("CREATE TABLE IF NOT EXISTS `$tableName` ( 
             `id` INTEGER PRIMARY KEY $auto_increment, 
-            `name` TEXT NOT NULL, 
+            `name` VARCHAR(255) NOT NULL, 
+            `faction` TEXT DEFAULT NULL,
             `rank` TINYINT UNSIGNED NOT NULL, 
-            `language` VARCHAR NOT NULL DEFAULT '$dftLang')");
+            `language` VARCHAR(255) NOT NULL DEFAULT '$dftLang'
+        )");
         return $this;
     }
 

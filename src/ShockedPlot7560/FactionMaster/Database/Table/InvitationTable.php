@@ -41,8 +41,8 @@ class InvitationTable implements TableInterface {
     /** @var PDO */
     private $PDO;
 
-    const TABLE_NAME = "invitation";
-    const SLUG = "invitation";
+    const TABLE_NAME = "factionmaster_invitation";
+    const SLUG = "factionmaster_invitation";
 
     public function init(): self {
         $tableName = self::TABLE_NAME;
@@ -51,7 +51,7 @@ class InvitationTable implements TableInterface {
             `id` INTEGER PRIMARY KEY $auto_increment, 
             `sender` TEXT NOT NULL, 
             `receiver` TEXT NOT NULL, 
-            `type` VARCHAR NOT NULL, 
+            `type` VARCHAR(255) NOT NULL, 
             `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)");
         return $this;
     }
