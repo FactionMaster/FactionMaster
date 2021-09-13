@@ -33,7 +33,7 @@
 namespace ShockedPlot7560\FactionMaster\Database\Table;
 
 use PDO;
-use ShockedPlot7560\FactionMaster\Database\Database;
+use ShockedPlot7560\FactionMaster\Manager\DatabaseManager;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class FactionTable implements TableInterface {
@@ -46,7 +46,7 @@ class FactionTable implements TableInterface {
 
     public function init(): self {
         $tableName = self::TABLE_NAME;
-        $auto_increment = Utils::getConfig("PROVIDER") === Database::MYSQL_PROVIDER ? "AUTO_INCREMENT" : "AUTOINCREMENT";
+        $auto_increment = Utils::getConfig("PROVIDER") === DatabaseManager::MYSQL_PROVIDER ? "AUTO_INCREMENT" : "AUTOINCREMENT";
         $visibility = Utils::getConfig("default-faction-visibility");
         $xp = Utils::getConfig("default-faction-xp");
         $maxPlayer = Utils::getConfig("default-player-limit");
@@ -54,9 +54,11 @@ class FactionTable implements TableInterface {
         $maxClaim = Utils::getConfig("default-claim-limit");
         $maxHome = Utils::getConfig("default-home-limit");
         $power = Utils::getConfig("default-power");
-        $this->PDO->query("CREATE TABLE `$tableName` ( 
-            `id` BIGINT UNSIGNED ZEROFILL NOT NULL $auto_increment, 
-            `name` TEXT NOT NULL , `members` JSON NOT NULL, 
+        var_dump(Utils::getConfig("PROVIDER"));
+        $this->PDO->query("CREATE TABLE IF NOT EXISTS `$tableName` ( 
+            `id` INTEGER PRIMARY KEY $auto_increment, 
+            `name` TEXT NOT NULL UNIQUE, 
+            `members` JSON NOT NULL, 
             `visibility` TINYINT UNSIGNED NOT NULL DEFAULT '$visibility', 
             `xp` SMALLINT UNSIGNED NOT NULL DEFAULT '$xp', 
             `level` TINYINT UNSIGNED NOT NULL, 
@@ -69,8 +71,7 @@ class FactionTable implements TableInterface {
             `maxHome` TINYINT UNSIGNED NOT NULL DEFAULT '$maxHome', 
             `power` SMALLINT UNSIGNED NOT NULL DEFAULT '$power', 
             `permissions` JSON NOT NULL, 
-            `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
-            PRIMARY KEY (`id`), UNIQUE (`name`))");
+            `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)");
         return $this;
     }
 

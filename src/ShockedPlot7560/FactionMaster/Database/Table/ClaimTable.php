@@ -33,7 +33,7 @@
 namespace ShockedPlot7560\FactionMaster\Database\Table;
 
 use PDO;
-use ShockedPlot7560\FactionMaster\Database\Database;
+use ShockedPlot7560\FactionMaster\Manager\DatabaseManager;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ClaimTable implements TableInterface {
@@ -46,16 +46,15 @@ class ClaimTable implements TableInterface {
 
     public function init(): self {
         $tableName = self::TABLE_NAME;
-        $auto_increment = Utils::getConfig("PROVIDER") === Database::MYSQL_PROVIDER ? "AUTO_INCREMENT" : "AUTOINCREMENT";
-        $this->PDO->query("CREATE TABLE `$tableName` ( 
-            `id` BIGINT UNSIGNED ZEROFILL NOT NULL $auto_increment, 
+        $auto_increment = Utils::getConfig("PROVIDER") === DatabaseManager::MYSQL_PROVIDER ? "AUTO_INCREMENT" : "AUTOINCREMENT";
+        $this->PDO->query("CREATE TABLE IF NOT EXISTS `$tableName` ( 
+            `id` INTEGER PRIMARY KEY $auto_increment, 
             `faction` TEXT NOT NULL, 
             `x` INT NOT NULL, 
             `z` INT NOT NULL, 
             `world` VARCHAR NOT NULL, 
             `server` VARCHAR NOT NULL, 
-            `flags` TINYINT UNSIGNED NULL DEFAULT NULL, 
-            PRIMARY KEY (`id`))
+            `flags` TINYINT UNSIGNED NULL DEFAULT NULL)
         ");
         return $this;
     }

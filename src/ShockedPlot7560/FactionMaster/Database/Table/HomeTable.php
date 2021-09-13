@@ -33,6 +33,8 @@
 namespace ShockedPlot7560\FactionMaster\Database\Table;
 
 use PDO;
+use ShockedPlot7560\FactionMaster\Manager\DatabaseManager;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class HomeTable implements TableInterface {
 
@@ -44,16 +46,16 @@ class HomeTable implements TableInterface {
 
     public function init(): self {
         $tableName = self::TABLE_NAME;
-        $this->PDO->query("CREATE TABLE `$tableName` ( 
-            `id` INT UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, 
+        $auto_increment = Utils::getConfig("PROVIDER") === DatabaseManager::MYSQL_PROVIDER ? "AUTO_INCREMENT" : "AUTOINCREMENT";
+        $this->PDO->query("CREATE TABLE IF NOT EXISTS `$tableName` ( 
+            `id` INTEGER PRIMARY KEY $auto_increment, 
             `faction` TEXT NOT NULL, 
             `name` TEXT NOT NULL, 
             `x` INT NOT NULL, 
             `y` INT NOT NULL, 
             `z` INT NOT NULL, 
             `world` VARCHAR NOT NULL, 
-            `server` VARCHAR NOT NULL, 
-            PRIMARY KEY (`id`))");
+            `server` VARCHAR NOT NULL)");
         return $this;
     }
 

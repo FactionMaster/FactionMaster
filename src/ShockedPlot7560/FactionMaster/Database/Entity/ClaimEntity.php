@@ -44,17 +44,17 @@ class ClaimEntity extends EntityDatabase {
     use ServerIp;
 
     /** @var string */
-    protected $faction;
+    public $faction;
     /** @var string */
-    protected $x;
+    public $x;
     /** @var string */
-    protected $z;
+    public $z;
     /** @var string */
-    protected $level;
+    public $level;
     /** @var string */
-    protected $server;
+    public $server;
     /** @var int|null */
-    protected $flag;
+    public $flag;
 
     public function getFactionName(): string {
         if ($this->getFlag() === null) {

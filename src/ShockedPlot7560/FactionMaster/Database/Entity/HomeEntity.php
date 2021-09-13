@@ -44,17 +44,17 @@ class HomeEntity extends EntityDatabase {
     use ServerIp;
 
     /** @var string */
-    protected $faction;
+    public $faction;
     /** @var string */
-    protected $name;
+    public $name;
     /** @var int */
-    protected $x;
+    public $x;
     /** @var int */
-    protected $y;
+    public $y;
     /** @var int */
-    protected $z;
+    public $z;
     /** @var string */
-    protected $world;
+    public $world;
 
     public function getName(): string {
         return $this->name;

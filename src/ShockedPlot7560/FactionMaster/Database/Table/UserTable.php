@@ -33,6 +33,7 @@
 namespace ShockedPlot7560\FactionMaster\Database\Table;
 
 use PDO;
+use ShockedPlot7560\FactionMaster\Manager\DatabaseManager;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class UserTable implements TableInterface {
@@ -45,13 +46,13 @@ class UserTable implements TableInterface {
 
     public function init(): self {
         $tableName = self::TABLE_NAME;
+        $auto_increment = Utils::getConfig("PROVIDER") === DatabaseManager::MYSQL_PROVIDER ? "AUTO_INCREMENT" : "AUTOINCREMENT";
         $dftLang = Utils::getConfigLang("default-language");
-        $this->PDO->query("CREATE TABLE `$tableName` ( 
-            `id` BIGINT UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, 
+        $this->PDO->query("CREATE TABLE IF NOT EXISTS `$tableName` ( 
+            `id` INTEGER PRIMARY KEY $auto_increment, 
             `name` TEXT NOT NULL, 
             `rank` TINYINT UNSIGNED NOT NULL, 
-            `language` VARCHAR NOT NULL DEFAULT '$dftLang', 
-            PRIMARY KEY (`id`))");
+            `language` VARCHAR NOT NULL DEFAULT '$dftLang')");
         return $this;
     }
 

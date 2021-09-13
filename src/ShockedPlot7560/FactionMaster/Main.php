@@ -208,28 +208,6 @@ class Main extends PluginBase implements Listener {
         }
     }
 
-    private function loadConfig(): void {
-        @mkdir($this->getDataFolder());
-        @mkdir(Utils::getLangFile());
-
-        $this->saveDefaultConfig();
-        $this->saveResource('translation.yml');
-        $this->saveResource('level.yml');
-
-        $this->config = Utils::getConfigFile("config");
-        $this->levelConfig = Utils::getConfigFile("level");
-        $this->translation = Utils::getConfigFile("translation");
-
-        ConfigUpdater::checkUpdate($this, $this->getConfig(), "file-version", ConfigManager::CONFIG_VERSION);
-        ConfigUpdater::checkUpdate($this, $this->getConfig("level"), "file-version", ConfigManager::LEVEL_VERSION);
-        ConfigUpdater::checkUpdate($this, $this->getConfig("translation"), "file-version", ConfigManager::TRANSLATION_VERSION);
-
-        foreach (ConfigManager::getTranslationConfig()->get("languages") as $key => $language) {
-            ConfigUpdater::checkUpdate($this, Utils::getConfigLangFile($language), "file-version", ConfigManager::LANG_FILE_VERSION[$language]);
-            $this->saveResource("Translation/$language.yml");
-        }
-    }
-
     private function initImage(): void {
         if (Utils::getConfig("active-image") == true) {
             $pack = $this->getServer()->getResourcePackManager()->getPackById("6682bde3-ece8-4f22-8d6b-d521efc9325d");

@@ -37,13 +37,13 @@ class UserEntity extends EntityDatabase {
     use FactionUtils;
 
     /** @var string */
-    protected $name;
+    public $name;
     /** @var string */
-    protected $faction;
+    public $faction;
     /** @var int */
-    protected $rank;
+    public $rank;
     /** @var string */
-    protected $language;
+    public $language;
 
     public function getName(): string {
         return $this->name;

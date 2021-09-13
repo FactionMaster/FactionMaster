@@ -38,35 +38,35 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 class FactionEntity extends EntityDatabase {
 
     /** @var string */
-    protected $name;
+    public $name;
     /** @var array|string|null */
-    protected $members;
+    public $members;
     /** @var int */
-    protected $visibility;
+    public $visibility;
     /** @var int */
-    protected $xp;
+    public $xp;
     /** @var int */
-    protected $level;
+    public $level;
     /** @var string */
-    protected $description;
+    public $description;
     /** @var string */
-    protected $messageFaction;
+    public $messageFaction;
     /** @var array|string */
-    protected $ally;
+    public $ally;
     /** @var int */
-    protected $max_player;
+    public $max_player;
     /** @var int */
-    protected $max_ally;
+    public $max_ally;
     /** @var int */
-    protected $max_claim;
+    public $max_claim;
     /** @var int */
-    protected $max_home;
+    public $max_home;
     /** @var int */
-    protected $power;
+    public $power;
     /** @var string|array */
-    protected $permissions;
+    public $permissions;
     /** @var string */
-    protected $date;
+    public $date;
 
     public function __construct() {
         if (isset($this->members) && $this->members !== null && is_string($this->members)) {

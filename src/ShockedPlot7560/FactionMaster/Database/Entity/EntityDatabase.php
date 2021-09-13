@@ -35,7 +35,7 @@ namespace ShockedPlot7560\FactionMaster\Database\Entity;
 abstract class EntityDatabase {
 
     /** @var int */
-    protected $id;
+    public $id;
 
     public function getId(): int {
         return $this->id;
