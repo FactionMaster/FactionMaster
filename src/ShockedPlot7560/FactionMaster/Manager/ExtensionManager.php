@@ -83,4 +83,24 @@ class ExtensionManager {
             }
         }
     }
+
+    public static function initTranslationExtension():void {
+        $langConfigExtension = [];
+        foreach (self::getExtensions() as $extension) {
+            $langConfigExtension[$extension->getExtensionName()] = $extension->getLangConfig();
+        }
+        foreach ($langConfigExtension as $extensionName => $langConfig) {
+            foreach ($langConfig as $langSlug => $langConfigFile) {
+                if (!$langConfigFile instanceof Config) {
+                    Main::getInstance()->getLogger()->warning("Loading the translate files of : $extensionName, check the return value of the function getLangConfig() and verify its key and value. If you are not the author of this extension, please inform him");
+                } else {
+                    $langMain = Utils::getConfigLangFile($langSlug);
+                    foreach ($langConfigFile->getAll() as $key => $value) {
+                        $langMain->__set($key, $value);
+                    }
+                    $langMain->save();
+                }
+            }
+        }
+    }
 }
