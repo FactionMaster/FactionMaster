@@ -53,11 +53,11 @@ class DatabaseManager {
     private static $tables;
 
     public static function init(Main $Main): void {
-        $PROVIDER = ConfigManager::getConfig()->get('PROVIDER');
-        switch ($PROVIDER) {
+        $provider = ConfigManager::getConfig()->get('PROVIDER');
+        switch ($provider) {
             case self::MYSQL_PROVIDER:
                 $databaseConfig = ConfigManager::getConfig()->get("MYSQL_database");
-                $db = new PDO(
+                $pdo = new PDO(
                     "mysql:host=" . $databaseConfig['host'] . ";dbname=" . $databaseConfig['name'],
                     $databaseConfig['user'],
                     $databaseConfig['pass']
@@ -65,7 +65,7 @@ class DatabaseManager {
                 break;
             case self::SQLITE_PROVIDER:
                 $databaseConfig = ConfigManager::getConfig()->get("SQLITE_database");
-                $db = new PDO("sqlite:" . $databaseConfig['name'] . ".sqlite");
+                $pdo = new PDO("sqlite:" . $databaseConfig['name'] . ".sqlite");
                 break;
             default:
                 $Main->getLogger()->alert("Please give a valid PROVIDER in config.yml, use only : " . self::MYSQL_PROVIDER . " or " . self::SQLITE_PROVIDER);
@@ -73,8 +73,8 @@ class DatabaseManager {
                 return;
         }
 
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        self::$pdo = $db;
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        self::$pdo = $pdo;
         self::initTable();
     }
 

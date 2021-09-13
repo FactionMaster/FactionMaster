@@ -34,10 +34,7 @@ namespace ShockedPlot7560\FactionMaster;
 
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\PacketHooker;
 use ShockedPlot7560\FactionMaster\libs\JackMD\UpdateNotifier\UpdateNotifier;
-use pocketmine\entity\Entity;
 use pocketmine\event\Listener;
-use pocketmine\level\Level;
-use pocketmine\level\Position;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginBase;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
@@ -128,8 +125,6 @@ class Main extends PluginBase implements Listener {
         foreach (ExtensionManager::getExtensions() as $extension) {
             $langConfigExtension[$extension->getExtensionName()] = $extension->getLangConfig();
         }
-
-        ExtensionManager::initTranslationExtension();
         $this->getScheduler()->scheduleRepeatingTask(new SyncServerTask($this), (int) Utils::getConfig("sync-time"));
     }
 

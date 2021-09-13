@@ -121,7 +121,7 @@ class MigrationManager {
         $pdo = DatabaseManager::getPDO();
         $provider = Utils::getConfig("PROVIDER");
         switch ($provider) {
-            case Database::MYSQL_PROVIDER:
+            case DatabaseManager::MYSQL_PROVIDER:
                 foreach (self::$configDbToCheck as $configDB) {
                     $configValue = $configDB["CONFIG_INST"]->get($configDB["CONFIG_NAME"]);
                     $query = $pdo->prepare("SHOW COLUMNS FROM " . $configDB["TABLE_NAME"]);
@@ -129,7 +129,7 @@ class MigrationManager {
                     foreach ($query->fetchAll() as $columnData) {
                         if ($columnData["Field"] === $configDB["COLUMN_NAME"]) {
                             if ($configValue != $columnData["Default"]) {
-                                Main::getInstance()->getLogger()->notice("Changing the configuration of '" . $configDB["CONFIG_NAME"] . "' detected, change the value for $configValue");
+                                self::$main->getLogger()->notice("Changing the configuration of '" . $configDB["CONFIG_NAME"] . "' detected, change the value for $configValue");
                                 $query = $pdo->prepare("ALTER TABLE " . $configDB["TABLE_NAME"] . " ALTER COLUMN " . $configDB["COLUMN_NAME"] . " SET DEFAULT '" . $configValue . "'");
                                 $query->execute();
                             }
@@ -150,7 +150,7 @@ class MigrationManager {
                         foreach (self::$configDbToCheck as $conf) {
                             $value = $conf["CONFIG_INST"]->get($conf["CONFIG_NAME"]);
                             if ($columnData["name"] == $conf["COLUMN_NAME"] && $dflt_value != $value) {
-                                Main::getInstance()->getLogger()->notice("Changing the configuration of '" . $conf["CONFIG_NAME"] . "' detected, change the value for $value");
+                                self::$main->getLogger()->notice("Changing the configuration of '" . $conf["CONFIG_NAME"] . "' detected, change the value for $value");
                             }
                         }
                         if ($columnData["name"] == $configDB["COLUMN_NAME"]) {

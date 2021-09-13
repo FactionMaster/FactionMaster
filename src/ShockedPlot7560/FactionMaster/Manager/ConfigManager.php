@@ -41,6 +41,7 @@ class ConfigManager {
 
     const CONFIG_VERSION = 3;
     const LEVEL_VERSION = 0;
+    const VERSION_VERSION = 0;
     const TRANSLATION_VERSION = 0;
     const LANG_FILE_VERSION = [
         "en_EN" => 0,
@@ -54,10 +55,12 @@ class ConfigManager {
     private static $level;
     /** @var Config */
     private static $translation;
+    /** @var Config */
+    private static $version;
     /** @var Config[] */
     private static $lang;
 
-    public static function init(Main $main) {
+    public static function init(Main $main): void {
         @mkdir(Utils::getDataFolder());
         @mkdir(Utils::getLangFile());
 
@@ -68,20 +71,26 @@ class ConfigManager {
         self::$config = Utils::getConfigFile("config");
         self::$level = Utils::getConfigFile("level");
         self::$translation = Utils::getConfigFile("translation");
+        self::$version = Utils::getConfigFile("version");
 
         ConfigUpdater::checkUpdate($main, self::getConfig(), "file-version", self::CONFIG_VERSION);
+        ConfigUpdater::checkUpdate($main, self::getVersionConfig(), "file-version", self::VERSION_VERSION);
         ConfigUpdater::checkUpdate($main, self::getLevelConfig(), "file-version", self::LEVEL_VERSION);
         ConfigUpdater::checkUpdate($main, self::getTranslationConfig(), "file-version", self::TRANSLATION_VERSION);
 
-        foreach (self::getTranslationConfig()->get("languages") as $key => $language) {
+        foreach (self::getTranslationConfig()->get("languages") as $language) {
+            $main->saveResource("lang/$language.yml");
             ConfigUpdater::checkUpdate($main, Utils::getConfigLangFile($language), "file-version", self::LANG_FILE_VERSION[$language]);
             self::$lang[$language] = Utils::getConfigLangFile($language);
-            $main->saveResource("lang/$language.yml");
         }
     }
 
     public static function getConfig(): ?Config {
         return self::$config;
+    }
+
+    public static function getVersionConfig(): ?Config {
+        return self::$version;
     }
 
     public static function getLevelConfig(): ?Config {

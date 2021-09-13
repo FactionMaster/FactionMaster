@@ -34,7 +34,7 @@ namespace ShockedPlot7560\FactionMaster\Task;
 
 use pocketmine\scheduler\Task;
 use ShockedPlot7560\FactionMaster\Main;
-use ShockedPlot7560\FactionMaster\Migration\SyncServerManager;
+use ShockedPlot7560\FactionMaster\Manager\SyncServerManager;
 
 class SyncServerTask extends Task {
 
@@ -46,7 +46,7 @@ class SyncServerTask extends Task {
 
     public function onRun(int $currentTick): void {
         foreach (SyncServerManager::getAll() as $task) {
-            Main::getInstance()->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
+            $this->main->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
                 $task[0],
                 $task[1],
                 $task[2],
