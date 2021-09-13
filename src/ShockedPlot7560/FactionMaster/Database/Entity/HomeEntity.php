@@ -56,6 +56,32 @@ class HomeEntity extends EntityDatabase {
     /** @var string */
     public $world;
 
+    public function setName(string $name): void {
+        $this->name = $name;
+    }
+
+    public function setX(int $x): void {
+        $this->x = $x;
+    }
+
+    public function setY(int $y): void {
+        $this->y = $y;
+    }
+
+    public function setZ(int $z): void {
+        $this->z = $z;
+    }
+
+    public function setWorldName(string $worldName): void {
+        $this->world = $worldName;
+    }
+
+    public function setVector(Vector3 $vector): void {
+        $this->setX($vector->getX());
+        $this->setY($vector->getY());
+        $this->setX($vector->getX());
+    }
+
     public function getName(): string {
         return $this->name;
     }

@@ -45,6 +45,18 @@ class UserEntity extends EntityDatabase {
     /** @var string */
     public $language;
 
+    public function setName(string $name): void {
+        $this->name = $name;
+    }
+
+    public function setRank(?int $rank): void {
+        $this->rank = $rank;
+    }
+
+    public function setLanguage(string $slug): void {
+        $this->language = $slug;
+    }
+
     public function getName(): string {
         return $this->name;
     }

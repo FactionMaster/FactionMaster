@@ -40,6 +40,10 @@ trait ServerIp {
         return $this->server;
     }
 
+    public function setServer(string $serverIp): void {
+        $this->server = $serverIp;
+    }
+
     /**
      * Return true if is on the good server, else return false
      * This check is based on the ip of the server in question.

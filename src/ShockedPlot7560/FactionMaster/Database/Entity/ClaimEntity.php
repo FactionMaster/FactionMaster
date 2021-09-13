@@ -34,6 +34,7 @@ namespace ShockedPlot7560\FactionMaster\Database\Entity;
 
 use pocketmine\level\Level;
 use pocketmine\math\Vector2;
+use pocketmine\math\Vector3;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -45,9 +46,9 @@ class ClaimEntity extends EntityDatabase {
 
     /** @var string */
     public $faction;
-    /** @var string */
+    /** @var int */
     public $x;
-    /** @var string */
+    /** @var int */
     public $z;
     /** @var string */
     public $level;
@@ -55,6 +56,35 @@ class ClaimEntity extends EntityDatabase {
     public $server;
     /** @var int|null */
     public $flag;
+
+    public function setX(int $x): void {
+        $this->x = $x;
+    }
+
+    public function setZ(int $z): void {
+        $this->z = $z;
+    }
+
+    public function setLevelName(string $levelName): void {
+        $this->level = $levelName;
+    }
+
+    public function setFlag(?int $flag): void {
+        $this->flag = $flag;
+    }
+
+    /**
+     * @param Vector2|Vector3 $vector
+     */
+    public function setVector($vector): void {
+        if ($vector instanceof Vector2) {
+            $this->setX($vector->getX());
+            $this->setZ($vector->getY());
+        } elseif ($vector instanceof Vector3) {
+            $this->setX($vector->getX());
+            $this->setZ($vector->getZ());
+        }
+    }
 
     public function getFactionName(): string {
         if ($this->getFlag() === null) {

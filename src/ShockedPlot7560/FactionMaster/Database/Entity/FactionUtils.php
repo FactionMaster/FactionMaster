@@ -40,6 +40,10 @@ trait FactionUtils {
         return $this->faction;
     }
 
+    public function setFactionName(?string $factionName): void {
+        $this->faction = $factionName;
+    }
+
     public function getFactionEntity(): ?FactionEntity {
         if ($this->getFactionName() === "") return null;
         return MainAPI::getFaction($this->getFactionName());

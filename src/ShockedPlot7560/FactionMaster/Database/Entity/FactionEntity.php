@@ -68,6 +68,110 @@ class FactionEntity extends EntityDatabase {
     /** @var string */
     public $date;
 
+    public function setName(string $name): void {
+        $this->name = $name;
+    }
+
+    public function setMembers(array $members): void {
+        $this->members = $members;
+    }
+
+    public function removeMember(string $memberName): void {
+        if (isset($this->getMembers()[$memberName])) {
+            unset($this->members[$memberName]);
+        }
+    }
+
+    public function addMember(string $memberName, int $rank): void {
+        $this->members[$memberName] = $rank;
+    }
+
+    public function setMemberRank(string $memberName, int $rank): void {
+        if (isset($this->getMembers()[$memberName])) {
+            $this->members[$memberName] = $rank;
+        }
+    }
+
+    public function setVisibility(int $visibility): void {
+        $this->visibility = $visibility;
+    }
+
+    public function setXp(float $xp): void {
+        $this->xp = $xp;
+    }
+
+    public function setLevel(int $level): void {
+        $this->level = $level;
+    }
+
+    public function setDescription(string $description): void {
+        $this->description = $description;
+    }
+
+    public function setMessage(string $message): void {
+        $this->messageFaction = $message;
+    }
+
+    public function setAlly(array $ally): void {
+        $this->ally = $ally;
+    }
+
+    public function addAlly(string $factionName): void {
+        if (!in_array($factionName, $this->getAlly())) {
+            $this->ally[] = $factionName;
+        }
+    }
+
+    public function removeAlly(string $factionName): void {
+        if (in_array($factionName, $this->getAlly())) {
+            unset($this->ally[array_search($factionName, $this->getAlly())]);
+        }
+    }
+
+    public function setMaxPlayer(int $max): void {
+        $this->max_player = $max;
+    }
+
+    public function setMaxAlly(int $max): void {
+        $this->max_ally = $max;
+    }
+
+    public function setMaxClaim(int $max): void {
+        $this->max_claim = $max;
+    }
+
+    public function setMaxHome(int $max): void {
+        $this->max_home = $max;
+    }
+
+    public function setPower(int $power): void {
+        $this->power = $power;
+    }
+
+    public function addPower(int $power): void {
+        $this->power += $power;
+    }
+
+    public function removePower(int $power): void {
+        $this->addPower($power * -1);
+    }
+
+    public function setPermissions(array $permissions): void {
+        $this->permissions = $permissions;
+    }
+
+    public function setPermission(int $rank, array $permission): void {
+        $this->permissions[$rank] = $permission;
+    }
+
+    public function setDate(string $date): void {
+        $this->date = $date;
+    }
+
+    public function setDatetime(DateTime $date): void {
+        $this->setDate($date->format("Y-m-d H:i:s"));
+    }
+
     public function __construct() {
         if (isset($this->members) && $this->members !== null && is_string($this->members)) {
             $this->members = unserialize(base64_decode($this->members));
