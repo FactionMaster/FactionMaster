@@ -52,7 +52,7 @@ class UserTable implements TableInterface {
             `id` INTEGER PRIMARY KEY $auto_increment, 
             `name` VARCHAR(255) NOT NULL, 
             `faction` TEXT DEFAULT NULL,
-            `rank` TINYINT UNSIGNED NOT NULL, 
+            `rank` TINYINT UNSIGNED DEFAULT NULL, 
             `language` VARCHAR(255) NOT NULL DEFAULT '$dftLang'
         )");
         return $this;

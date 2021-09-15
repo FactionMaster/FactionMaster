@@ -41,7 +41,6 @@ class ConfigManager {
 
     const CONFIG_VERSION = 3;
     const LEVEL_VERSION = 0;
-    const VERSION_VERSION = 0;
     const TRANSLATION_VERSION = 0;
     const LANG_FILE_VERSION = [
         "en_EN" => 0,
@@ -74,7 +73,6 @@ class ConfigManager {
         self::$version = Utils::getConfigFile("version");
 
         ConfigUpdater::checkUpdate($main, self::getConfig(), "file-version", self::CONFIG_VERSION);
-        ConfigUpdater::checkUpdate($main, self::getVersionConfig(), "file-version", self::VERSION_VERSION);
         ConfigUpdater::checkUpdate($main, self::getLevelConfig(), "file-version", self::LEVEL_VERSION);
         ConfigUpdater::checkUpdate($main, self::getTranslationConfig(), "file-version", self::TRANSLATION_VERSION);
 

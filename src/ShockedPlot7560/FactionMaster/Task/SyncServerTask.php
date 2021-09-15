@@ -33,6 +33,7 @@
 namespace ShockedPlot7560\FactionMaster\Task;
 
 use pocketmine\scheduler\Task;
+use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Manager\SyncServerManager;
 

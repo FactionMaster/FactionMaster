@@ -49,6 +49,7 @@ use ShockedPlot7560\FactionMaster\Event\FactionPowerEvent;
 use ShockedPlot7560\FactionMaster\Event\FactionXPChangeEvent;
 use ShockedPlot7560\FactionMaster\Event\MemberChangeRankEvent;
 use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Reward\RewardInterface;
 use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
@@ -72,7 +73,11 @@ class MainAPI {
     /** @var string[] */
     public static $languages = [];
 
-    public static function init(PDO $PDO): void {
+    /** @var Main */
+    private static $main;
+
+    public static function init(PDO $PDO, Main $main): void {
+        self::$main = $main;
         self::$PDO = $PDO;
         self::initClaim();
         self::initFaction();
@@ -81,84 +86,87 @@ class MainAPI {
         self::initUser();
     }
 
-    private static function initInvitation(): bool {
+    private static function initInvitation(): void {
         try {
             $query = self::$PDO->prepare("SELECT * FROM " . InvitationTable::TABLE_NAME);
             $query->execute();
             $query->setFetchMode(PDO::FETCH_CLASS, InvitationEntity::class);
+            /** @var InvitationEntity[] */
             $result = $query->fetchAll();
             foreach ($result as $invitation) {
-                self::$invitation[$invitation->sender . "|" . $invitation->receiver] = $invitation;
+                self::$invitation[$invitation->getSenderString() . "|" . $invitation->getReceiverString()] = $invitation;
             }
-            return true;
         } catch (\PDOException $Exception) {
-            return false;
+            self::$main->getLogger()->alert("An occured in the server synchronisation, please open an issue on GitHub with this error : " . $Exception->getMessage());
         }
     }
 
-    private static function initHome(): bool {
+    private static function initHome(): void {
         try {
             $query = self::$PDO->prepare("SELECT * FROM " . HomeTable::TABLE_NAME);
             $query->execute();
             $query->setFetchMode(PDO::FETCH_CLASS, HomeEntity::class);
+            /** @var HomeEntity[] */
             $result = $query->fetchAll();
             foreach ($result as $home) {
-                if (!isset(self::$home[$home->faction])) {
-                    self::$home[$home->faction] = [$home];
+                if (!isset(self::$home[$home->getFactionName()])) {
+                    self::$home[$home->getFactionName()] = [$home];
                 } else {
-                    self::$home[$home->faction][] = $home;
+                    self::$home[$home->getFactionName()][] = $home;
                 }
             }
-            return true;
         } catch (\PDOException $Exception) {
-            return false;
+            self::$main->getLogger()->alert("An occured in the server synchronisation, please open an issue on GitHub with this error : " . $Exception->getMessage());
         }
     }
 
-    private static function initClaim(): bool {
+    private static function initClaim(): void {
         try {
             $query = self::$PDO->prepare("SELECT * FROM " . ClaimTable::TABLE_NAME);
             $query->execute();
             $query->setFetchMode(PDO::FETCH_CLASS, ClaimEntity::class);
+            /** @var ClaimEntity[] */
             $result = $query->fetchAll();
             foreach ($result as $claim) {
-                if (!isset(self::$claim[$claim->faction])) {
-                    self::$claim[$claim->faction] = [$claim];
+                if (!$claim->isActive()) continue;
+                if (!isset(self::$claim[$claim->getFactionName()])) {
+                    self::$claim[$claim->getFactionName()] = [$claim];
                 } else {
-                    self::$claim[$claim->faction][] = $claim;
+                    self::$claim[$claim->getFactionName()][] = $claim;
                 }
             }
-            return true;
         } catch (\PDOException $Exception) {
-            return false;
+            self::$main->getLogger()->alert("An occured in the server synchronisation, please open an issue on GitHub with this error : " . $Exception->getMessage());
         }
     }
 
-    private static function initFaction(): bool {
+    private static function initFaction(): void {
         try {
             $query = self::$PDO->prepare("SELECT * FROM " . FactionTable::TABLE_NAME);
             $query->execute();
             $query->setFetchMode(PDO::FETCH_CLASS, FactionEntity::class);
-            foreach ($query->fetchAll() as $faction) {
-                self::$factions[$faction->name] = $faction;
+            /** @var FactionEntity[] */
+            $result = $query->fetchAll();
+            foreach ($result as $faction) {
+                self::$factions[$faction->getName()] = $faction;
             }
-            return true;
         } catch (\PDOException $Exception) {
-            return false;
+            self::$main->getLogger()->alert("An occured in the server synchronisation, please open an issue on GitHub with this error : " . $Exception->getMessage());
         }
     }
 
-    private static function initUser(): bool {
+    private static function initUser(): void {
         try {
             $query = self::$PDO->prepare("SELECT * FROM " . UserTable::TABLE_NAME);
             $query->execute();
             $query->setFetchMode(PDO::FETCH_CLASS, UserEntity::class);
-            foreach ($query->fetchAll() as $user) {
-                self::$users[$user->name] = $user;
+            /** @var UserEntity[] */
+            $result = $query->fetchAll();
+            foreach ($result as $user) {
+                self::$users[$user->getName()] = $user;
             }
-            return true;
         } catch (\PDOException $Exception) {
-            return false;
+            self::$main->getLogger()->alert("An occured in the server synchronisation, please open an issue on GitHub with this error : " . $Exception->getMessage());
         }
     }
 
@@ -179,7 +187,7 @@ class MainAPI {
 
     public static function removeFaction(string $factionName): void {
         $faction = MainAPI::$factions[$factionName];
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "DELETE FROM " . FactionTable::TABLE_NAME . " WHERE name = :name",
                 ["name" => $factionName],
@@ -188,15 +196,15 @@ class MainAPI {
                 }
             )
         );
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "UPDATE " . UserTable::TABLE_NAME . " SET faction = NULL, rank = NULL WHERE faction = :faction",
                 ['faction' => $factionName],
                 function () use ($faction) {
                     foreach ($faction->members as $name => $rank) {
                         $user = MainAPI::getUser($name);
-                        $user->faction = null;
-                        $user->rank = null;
+                        $user->setFactionName(null);
+                        $user->setRank(null);
                         MainAPI::$users[$name] = $user;
                         (new MemberChangeRankEvent($user))->call();
                     }
@@ -206,7 +214,7 @@ class MainAPI {
     }
 
     public static function addFaction(string $factionName, string $ownerName): void {
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "INSERT INTO " . FactionTable::TABLE_NAME . " (name, members, ally, permissions) VALUES (:name, :members, :ally, :permissions)",
                 [
@@ -218,7 +226,7 @@ class MainAPI {
                     'permissions' => \base64_encode(\serialize([[], [], [], []])),
                 ],
                 function () use ($factionName, $ownerName) {
-                    Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+                    self::submitDatabaseTask(
                         new DatabaseTask(
                             "SELECT * FROM " . FactionTable::TABLE_NAME . " WHERE name = :name",
                             ["name" => $factionName],
@@ -238,37 +246,36 @@ class MainAPI {
      * @return array Format : [name => rankId]
      */
     public static function getMembers(string $factionName): array{
-        $Faction = self::getFaction($factionName);
-        if (!$Faction instanceof FactionEntity) {
+        $faction = self::getFaction($factionName);
+        if (!$faction instanceof FactionEntity) {
             return [];
         }
-
-        return $Faction->members;
+        return $faction->getMembers();
     }
 
     public static function addMember(string $factionName, string $playerName, int $rankId = Ids::RECRUIT_ID) {
-        $Faction = self::getFaction($factionName);
-        if (!$Faction instanceof FactionEntity) {
+        $faction = self::getFaction($factionName);
+        if (!$faction instanceof FactionEntity) {
             return false;
         }
 
-        $Faction->members[$playerName] = $rankId;
+        $faction->addMember($playerName, $rankId);
         $user = self::getUser($playerName);
-        $user->faction = $factionName;
-        $user->rank = $rankId;
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        $user->setFactionName($factionName);
+        $user->setRank($rankId);
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "UPDATE " . FactionTable::TABLE_NAME . " SET members = :members WHERE name = :name",
                 [
-                    'members' => \base64_encode(\serialize($Faction->members)),
+                    'members' => \base64_encode(\serialize($faction->getMembers())),
                     'name' => $factionName,
                 ],
-                function () use ($factionName, $Faction) {
-                    MainAPI::$factions[$factionName] = $Faction;
+                function () use ($factionName, $faction) {
+                    MainAPI::$factions[$factionName] = $faction;
                 }
             )
         );
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "UPDATE " . UserTable::TABLE_NAME . " SET faction = :faction, rank = :rank WHERE name = :name",
                 [
@@ -285,28 +292,28 @@ class MainAPI {
     }
 
     public static function removeMember(string $factionName, string $playerName) {
-        $Faction = self::getFaction($factionName);
-        if (!$Faction instanceof FactionEntity) {
+        $faction = self::getFaction($factionName);
+        if (!$faction instanceof FactionEntity) {
             return false;
         }
 
-        unset($Faction->members[$playerName]);
+        $faction->removeMember($playerName);
         $user = self::getUser($playerName);
-        $user->faction = null;
-        $user->rank = null;
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        $user->setFactionName(null);
+        $user->setRank(null);
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "UPDATE " . FactionTable::TABLE_NAME . " SET members = :members WHERE name = :name",
                 [
-                    'members' => \base64_encode(\serialize($Faction->members)),
+                    'members' => \base64_encode(\serialize($faction->getMembers())),
                     'name' => $factionName,
                 ],
-                function () use ($factionName, $Faction) {
-                    MainAPI::$factions[$factionName] = $Faction;
+                function () use ($factionName, $faction) {
+                    MainAPI::$factions[$factionName] = $faction;
                 }
             )
         );
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "UPDATE " . UserTable::TABLE_NAME . " SET faction = NULL, rank = NULL WHERE name = :name",
                 [
@@ -324,14 +331,14 @@ class MainAPI {
      * Add a quantity of XP to the faction, *If the total xp of the level are exceeded, it will be set to this limit*
      */
     public static function addXP(string $factionName, int $xp): void {
-        $Faction = self::getFaction($factionName);
-        if (!$Faction instanceof FactionEntity) {
+        $faction = self::getFaction($factionName);
+        if (!$faction instanceof FactionEntity) {
             return;
         }
 
-        $level = $Faction->level;
+        $level = $faction->getLevel();
         $XPneedLevel = 1000 * pow(1.09, $level);
-        $newXP = $Faction->xp + $xp;
+        $newXP = $faction->getXP() + $xp;
         if ($newXP > $XPneedLevel) {
             $xp = $newXP - $XPneedLevel;
             $level++;
@@ -339,9 +346,9 @@ class MainAPI {
             $xp = $newXP;
         }
 
-        $Faction->level = $level;
-        $Faction->xp = $xp;
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        $faction->setLevel($level);
+        $faction->setXp($xp);
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "UPDATE " . FactionTable::TABLE_NAME . " SET xp = :xp, level = :level WHERE name = :name",
                 [
@@ -349,9 +356,9 @@ class MainAPI {
                     'level' => $level,
                     'name' => $factionName,
                 ],
-                function () use ($factionName, $Faction) {
-                    MainAPI::$factions[$factionName] = $Faction;
-                    (new FactionXPChangeEvent($Faction))->call();
+                function () use ($factionName, $faction) {
+                    MainAPI::$factions[$factionName] = $faction;
+                    (new FactionXPChangeEvent($faction))->call();
                 }
             )
         );
@@ -361,22 +368,22 @@ class MainAPI {
      * Change the faction level and reset xp to 0
      */
     public static function changeLevel(string $factionName, int $level): void {
-        $Faction = self::getFaction($factionName);
-        if (!$Faction instanceof FactionEntity) {
+        $faction = self::getFaction($factionName);
+        if (!$faction instanceof FactionEntity) {
             return;
         }
 
-        $Faction->level = $level;
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        $faction->setLevel($level);
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "UPDATE " . FactionTable::TABLE_NAME . " SET level = level + :level, xp = 0 WHERE name = :name",
                 [
                     'level' => $level,
                     'name' => $factionName,
                 ],
-                function () use ($factionName, $Faction) {
-                    MainAPI::$factions[$factionName] = $Faction;
-                    (new FactionLevelChangeEvent($Faction))->call();
+                function () use ($factionName, $faction) {
+                    MainAPI::$factions[$factionName] = $faction;
+                    (new FactionLevelChangeEvent($faction))->call();
                 }
             )
         );
@@ -386,27 +393,27 @@ class MainAPI {
      * @param int $power The power to change, it allow negative integer to substract
      */
     public static function changePower(string $factionName, int $power) {
-        $Faction = self::getFaction($factionName);
-        if (!$Faction instanceof FactionEntity) {
+        $faction = self::getFaction($factionName);
+        if (!$faction instanceof FactionEntity) {
             return false;
         }
 
-        $actualPower = $Faction->power;
+        $actualPower = $faction->getPower();
         if (($totalPower = $actualPower + $power) < 0) {
             $totalPower = 0;
         }
 
-        $Faction->power = $totalPower;
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        $faction->setPower($totalPower);
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "UPDATE " . FactionTable::TABLE_NAME . " SET power = :power WHERE name = :name",
                 [
                     'power' => $totalPower,
                     'name' => $factionName,
                 ],
-                function () use ($factionName, $Faction, $power) {
-                    MainAPI::$factions[$factionName] = $Faction;
-                    (new FactionPowerEvent($Faction, $power))->call();
+                function () use ($factionName, $faction, $power) {
+                    MainAPI::$factions[$factionName] = $faction;
+                    (new FactionPowerEvent($faction, $power))->call();
                 }
             )
         );
@@ -414,11 +421,10 @@ class MainAPI {
 
     public static function getFactionOfPlayer(string $playerName): ?FactionEntity{
         $user = self::getUser($playerName);
-        if (!$user instanceof UserEntity || $user->faction === null) {
+        if (!$user instanceof UserEntity) {
             return null;
         }
-
-        return self::getFaction($user->faction);
+        return $user->getFactionEntity();
     }
 
     public static function isInFaction(string $playerName): bool {
@@ -450,39 +456,40 @@ class MainAPI {
         if (!$f2 instanceof FactionEntity) {
             return false;
         }
-        return in_array($factionName1, $f2->ally);
+        return $f2->isAlly($factionName1);
     }
 
     public static function setAlly(string $factionName1, string $factionName2): void {
-        $Faction1 = self::getFaction($factionName1);
-        $Faction2 = self::getFaction($factionName2);
-        if (count($Faction1->ally) >= (int) $Faction1->max_ally || count($Faction2->ally) >= (int) $Faction2->max_ally) {
+        $faction1 = self::getFaction($factionName1);
+        $faction2 = self::getFaction($factionName2);
+        if ($faction1->haveMaxAlly() || $faction2->haveMaxAlly()) {
             return;
         }
-        $Faction1->ally[] = $factionName2;
-        $Faction2->ally[] = $factionName1;
 
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        $faction1->addAlly($factionName2);
+        $faction2->addAlly($factionName1);
+
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "UPDATE " . FactionTable::TABLE_NAME . " SET ally = :ally WHERE name = :name",
                 [
-                    'ally' => \base64_encode(\serialize($Faction1->ally)),
+                    'ally' => \base64_encode(\serialize($faction1->getAlly())),
                     'name' => $factionName1,
                 ],
-                function () use ($factionName1, $Faction1) {
-                    MainAPI::$factions[$factionName1] = $Faction1;
+                function () use ($factionName1, $faction1) {
+                    MainAPI::$factions[$factionName1] = $faction1;
                 }
             )
         );
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "UPDATE " . FactionTable::TABLE_NAME . " SET ally = :ally WHERE name = :name",
                 [
-                    'ally' => \base64_encode(\serialize($Faction2->ally)),
+                    'ally' => \base64_encode(\serialize($faction2->getAlly())),
                     'name' => $factionName2,
                 ],
-                function () use ($factionName2, $Faction2) {
-                    MainAPI::$factions[$factionName2] = $Faction2;
+                function () use ($factionName2, $faction2) {
+                    MainAPI::$factions[$factionName2] = $faction2;
                 }
             )
         );
@@ -493,27 +500,30 @@ class MainAPI {
             return;
         }
 
-        $Faction1 = self::getFaction($faction1);
-        $Faction2 = self::getFaction($faction2);
-        if (!$Faction1 instanceof FactionEntity || !$Faction2 instanceof FactionEntity) {
+        $faction1 = self::getFaction($faction1);
+        $faction2 = self::getFaction($faction2);
+        if (!$faction1 instanceof FactionEntity || !$faction2 instanceof FactionEntity) {
             return;
         }
-
-        foreach ([$Faction1, $Faction2] as $key => $Faction) {
-            foreach ($Faction->ally as $key => $alliance) {
-                if (in_array($alliance, [$faction1, $faction2])) {
-                    unset($Faction->ally[$key]);
-                }
+        $array = [$faction1, $faction2];
+        foreach ($array as $key => $faction) {
+            switch ($key) {
+                case 0:
+                    $faction->removeAlly($array[1]->getName());
+                    break;
+                case 1:
+                    $faction->removeAlly($array[0]->getName());
+                    break;
             }
-            Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+            self::submitDatabaseTask(
                 new DatabaseTask(
                     "UPDATE " . FactionTable::TABLE_NAME . " SET ally = :ally WHERE name = :name",
                     [
-                        'ally' => \base64_encode(\serialize($Faction->ally)),
-                        'name' => $Faction->name,
+                        'ally' => \base64_encode(\serialize($faction->getAlly())),
+                        'name' => $faction->getName(),
                     ],
-                    function () use ($Faction) {
-                        MainAPI::$factions[$Faction->name] = $Faction;
+                    function () use ($faction) {
+                        MainAPI::$factions[$faction->getName()] = $faction;
                     }
                 )
             );
@@ -521,29 +531,29 @@ class MainAPI {
     }
 
     public static function changeRank(string $playerName, int $rank) {
-        $Faction = self::getFactionOfPlayer($playerName);
-        if (!$Faction instanceof FactionEntity) {
+        $faction = self::getFactionOfPlayer($playerName);
+        if (!$faction instanceof FactionEntity) {
             return false;
         }
 
-        $Faction->members[$playerName] = $rank;
+        $faction->setMemberRank($playerName, $rank);
 
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "UPDATE " . FactionTable::TABLE_NAME . " SET members = :members WHERE name = :name",
                 [
-                    'members' => \base64_encode(\serialize($Faction->members)),
-                    'name' => $Faction->name,
+                    'members' => \base64_encode(\serialize($faction->getMembers())),
+                    'name' => $faction->getName(),
                 ],
-                function () use ($Faction) {
-                    MainAPI::$factions[$Faction->name] = $Faction;
+                function () use ($faction) {
+                    MainAPI::$factions[$faction->getName()] = $faction;
                 }
             )
         );
         $user = self::getUser($playerName);
-        $user->faction = null;
-        $user->rank = null;
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        $user->setFactionName(null);
+        $user->setRank(null);
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "UPDATE " . UserTable::TABLE_NAME . " SET rank = :rank WHERE name = :name",
                 [
@@ -551,7 +561,7 @@ class MainAPI {
                     'name' => $playerName,
                 ],
                 function () use ($user) {
-                    MainAPI::$users[$user->name] = $user;
+                    MainAPI::$users[$user->getName()] = $user;
                     (new MemberChangeRankEvent($user))->call();
                 }
             )
@@ -559,80 +569,83 @@ class MainAPI {
     }
 
     public static function changeVisibility(string $factionName, int $visibilityType) {
-        $Faction = self::getFaction($factionName);
-        if (!$Faction instanceof FactionEntity) {
+        $faction = self::getFaction($factionName);
+        if (!$faction instanceof FactionEntity) {
             return false;
         }
 
-        $Faction->visibility = $visibilityType;
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        $faction->setVisibility($visibilityType);
+
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "UPDATE " . FactionTable::TABLE_NAME . " SET visibility = :visibility WHERE name = :name",
                 [
                     'visibility' => $visibilityType,
                     'name' => $factionName,
                 ],
-                function () use ($Faction) {
-                    MainAPI::$factions[$Faction->name] = $Faction;
+                function () use ($faction) {
+                    MainAPI::$factions[$faction->getName()] = $faction;
                 }
             )
         );
     }
 
     public static function changeMessage(string $factionName, string $message) {
-        $Faction = self::getFaction($factionName);
-        if (!$Faction instanceof FactionEntity) {
+        $faction = self::getFaction($factionName);
+        if (!$faction instanceof FactionEntity) {
             return false;
         }
 
-        $Faction->messageFaction = $message;
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        $faction->setMessage($message);
+
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "UPDATE " . FactionTable::TABLE_NAME . " SET messageFaction = :message WHERE name = :name",
                 [
                     'message' => $message,
                     'name' => $factionName,
                 ],
-                function () use ($Faction) {
-                    MainAPI::$factions[$Faction->name] = $Faction;
+                function () use ($faction) {
+                    MainAPI::$factions[$faction->getName()] = $faction;
                 }
             )
         );
     }
 
     public static function changeDescription(string $factionName, string $description) {
-        $Faction = self::getFaction($factionName);
-        if (!$Faction instanceof FactionEntity) {
+        $faction = self::getFaction($factionName);
+        if (!$faction instanceof FactionEntity) {
             return false;
         }
 
-        $Faction->description = $description;
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        $faction->setDescription($description);
+        
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "UPDATE " . FactionTable::TABLE_NAME . " SET description = :description WHERE name = :name",
                 [
                     'description' => $description,
                     'name' => $factionName,
                 ],
-                function () use ($Faction) {
-                    MainAPI::$factions[$Faction->name] = $Faction;
+                function () use ($faction) {
+                    MainAPI::$factions[$faction->getName()] = $faction;
                 }
             )
         );
     }
 
     public static function getMemberPermission(string $playerName): ?array{
-        $Faction = self::getFactionOfPlayer($playerName);
-        if (!$Faction instanceof FactionEntity) {
+        $faction = self::getFactionOfPlayer($playerName);
+        if (!$faction instanceof FactionEntity) {
             return [];
         }
 
         $user = self::getUser($playerName);
-        return $Faction->permissions[$user->rank];
+        return $faction->getPermissions()[$user->getRank()];
     }
 
     public static function makeInvitation(string $sender, string $receiver, string $type): void {
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "INSERT INTO " . InvitationTable::TABLE_NAME . " (sender, receiver, type) VALUES (:sender, :receiver, :type)",
                 [
@@ -641,7 +654,7 @@ class MainAPI {
                     'type' => $type,
                 ],
                 function () use ($sender, $receiver, $type) {
-                    Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+                    self::submitDatabaseTask(
                         new DatabaseTask(
                             "SELECT * FROM " . InvitationTable::TABLE_NAME . " WHERE sender = :sender AND receiver = :receiver AND type = :type",
                             [
@@ -664,12 +677,11 @@ class MainAPI {
         if (!$invitation instanceof InvitationEntity) {
             return false;
         }
-
-        return $invitation->type === $type;
+        return $invitation->getType() === $type;
     }
 
     public static function removeInvitation(string $sender, string $receiver, string $type): void {
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "DELETE FROM " . InvitationTable::TABLE_NAME . " WHERE sender = :sender AND receiver = :receiver AND type = :type",
                 [
@@ -691,7 +703,7 @@ class MainAPI {
         $inv = [];
         foreach (self::$invitation as $key => $invitation) {
             $array = explode("|", $key);
-            if ($array[0] === $sender && $invitation->type === $type) {
+            if ($array[0] === $sender && $invitation->getType() === $type) {
                 $inv[] = $invitation;
             }
 
@@ -706,7 +718,7 @@ class MainAPI {
         $inv = [];
         foreach (self::$invitation as $key => $invitation) {
             $array = explode("|", $key);
-            if ($array[1] === $receiver && $invitation->type === $type) {
+            if ($array[1] === $receiver && $invitation->getType() === $type) {
                 $inv[] = $invitation;
             }
 
@@ -719,35 +731,36 @@ class MainAPI {
      *                          where each index of sub array are a permission's ids
      */
     public static function updatePermissionFaction(string $factionName, array $permissions) {
-        $Faction = self::getFaction($factionName);
-        if (!$Faction instanceof FactionEntity) {
+        $faction = self::getFaction($factionName);
+        if (!$faction instanceof FactionEntity) {
             return false;
         }
 
-        $Faction->permissions = $permissions;
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        $faction->setPermissions($permissions);
+
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "UPDATE " . FactionTable::TABLE_NAME . " SET permissions = :permissions WHERE name = :name",
                 [
                     'permissions' => \base64_encode(\serialize($permissions)),
                     'name' => $factionName,
                 ],
-                function () use ($Faction) {
-                    MainAPI::$factions[$Faction->name] = $Faction;
+                function () use ($faction) {
+                    MainAPI::$factions[$faction->getName()] = $faction;
                 }
             )
         );
     }
 
     public static function addUser(string $playerName): void {
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "INSERT INTO " . UserTable::TABLE_NAME . " (`name`) VALUES (:user)",
                 [
                     'user' => $playerName,
                 ],
                 function () use ($playerName) {
-                    Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+                    self::submitDatabaseTask(
                         new DatabaseTask(
                             "SELECT * FROM " . UserTable::TABLE_NAME . " WHERE name = :name",
                             [
@@ -772,28 +785,28 @@ class MainAPI {
     }
 
     public static function addClaim(Player $player, string $factionName): void {
-        $Chunk = $player->getLevel()->getChunkAtPosition($player);
-        $X = $Chunk->getX();
-        $Z = $Chunk->getZ();
-        $World = $player->getLevel()->getName();
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        $chunk = $player->getLevel()->getChunkAtPosition($player);
+        $x = $chunk->getX();
+        $z = $chunk->getZ();
+        $world = $player->getLevel()->getName();
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "INSERT INTO " . ClaimTable::TABLE_NAME . " (x, z, world, faction) VALUES (:x, :z, :world, :faction)",
                 [
-                    "x" => $X,
-                    "z" => $Z,
-                    "world" => $World,
+                    "x" => $x,
+                    "z" => $z,
+                    "world" => $world,
                     "faction" => $factionName,
                 ],
-                function () use ($factionName, $World, $X, $Z) {
-                    Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+                function () use ($factionName, $world, $x, $z) {
+                    self::submitDatabaseTask(
                         new DatabaseTask(
                             "SELECT * FROM " . ClaimTable::TABLE_NAME . " WHERE x = :x AND z = :z AND world = :world AND faction = :faction",
                             [
-                                'x' => $X,
-                                'z' => $Z,
+                                'x' => $x,
+                                'z' => $z,
                                 'faction' => $factionName,
-                                'world' => $World,
+                                'world' => $world,
                             ],
                             function ($result) use ($factionName) {
                                 MainAPI::$claim[$factionName][] = $result[0];
@@ -806,14 +819,14 @@ class MainAPI {
         );
     }
 
-    public static function isClaim(string $World, int $X, int $Z): bool {
-        return self::getFactionClaim($World, $X, $Z) instanceof ClaimEntity;
+    public static function isClaim(string $world, int $x, int $z): bool {
+        return self::getFactionClaim($world, $x, $z) instanceof ClaimEntity;
     }
 
-    public static function getFactionClaim(string $World, int $X, int $Z): ?ClaimEntity {
-        foreach (self::$claim as $factionName => $factionClaim) {
+    public static function getFactionClaim(string $world, int $x, int $z): ?ClaimEntity {
+        foreach (self::$claim as $factionClaim) {
             foreach ($factionClaim as $claim) {
-                if ($claim->x == $X && $claim->z == $Z && $claim->world == $World) {
+                if ($claim->getX() == $x && $claim->getZ() == $z && $claim->getLevelName() == $world) {
                     return $claim;
                 }
 
@@ -823,27 +836,27 @@ class MainAPI {
     }
 
     public static function removeClaim(Player $player, string $factionName): void {
-        $Chunk = $player->getLevel()->getChunkAtPosition($player);
-        $X = $Chunk->getX();
-        $Z = $Chunk->getZ();
-        $World = $player->getLevel()->getName();
-        $claim = self::getFactionClaim($World, $X, $Z);
+        $chunk = $player->getLevel()->getChunkAtPosition($player);
+        $x = $chunk->getX();
+        $z = $chunk->getZ();
+        $world = $player->getLevel()->getName();
+        $claim = self::getFactionClaim($world, $x, $z);
         if (!$claim instanceof ClaimEntity) {
             return;
         }
 
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "DELETE FROM " . ClaimTable::TABLE_NAME . " WHERE x = :x AND z = :z AND world = :world AND faction = :faction",
                 [
-                    "x" => $X,
-                    "z" => $Z,
-                    "world" => $World,
+                    "x" => $x,
+                    "z" => $z,
+                    "world" => $world,
                     "faction" => $factionName,
                 ],
-                function () use ($factionName, $X, $Z, $World) {
+                function () use ($factionName, $x, $z, $world) {
                     foreach (MainAPI::$claim[$factionName] as $key => $claim) {
-                        if ($claim->x == $X && $claim->z == $Z && $claim->world == $World) {
+                        if ($claim->getX() == $x && $claim->getZ() == $z && $claim->getLevelName() == $world) {
                             unset(MainAPI::$claim[$factionName][$key]);
                         }
                     }
@@ -875,7 +888,7 @@ class MainAPI {
             return false;
         }
 
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "DELETE FROM " . HomeTable::TABLE_NAME . " WHERE faction = :faction AND name = :name",
                 [
@@ -890,7 +903,7 @@ class MainAPI {
     }
 
     public static function addHome(Player $player, string $factionName, string $name): void {
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "INSERT INTO " . HomeTable::TABLE_NAME . " (x, y, z, world, faction, name) VALUES (:x, :y, :z, :world, :faction, :name)",
                 [
@@ -902,7 +915,7 @@ class MainAPI {
                     "name" => $name,
                 ],
                 function () use ($player, $factionName, $name) {
-                    Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+                    self::submitDatabaseTask(
                         new DatabaseTask(
                             "SELECT * FROM " . HomeTable::TABLE_NAME . " WHERE x = :x AND z = :z AND y = :y AND world = :world AND faction = :faction AND name = :name",
                             [
@@ -929,7 +942,7 @@ class MainAPI {
     }
 
     public static function changeLanguage(string $playerName, string $slug): void {
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "UPDATE " . UserTable::TABLE_NAME . " SET language = :lang WHERE name = :name",
                 [
@@ -944,37 +957,41 @@ class MainAPI {
     }
 
     public static function getLevelReward(int $level): ?RewardInterface {
-        $Data = self::getLevelRewardData($level);
-        $Reward = RewardFactory::get($Data['type']);
-        if ($Reward !== null) {
-            $Reward->setValue($Data['value']);
+        $data = self::getLevelRewardData($level);
+        $reward = RewardFactory::get($data['type']);
+        if ($reward !== null) {
+            $reward->setValue($data['value']);
         }
 
-        return $Reward;
+        return $reward;
     }
 
     public static function getLevelRewardData(int $level): array {
-        return Main::getInstance()->levelConfig->__get($level - 2);
+        return ConfigManager::getLevelConfig()->__get("levels")[$level - 2];
     }
 
     public static function updateFactionOption(string $factionName, string $option, int $value) {
-        $Faction = self::getFaction($factionName);
-        if (!$Faction instanceof FactionEntity) {
+        $faction = self::getFaction($factionName);
+        if (!$faction instanceof FactionEntity) {
             return false;
         }
 
-        $Faction->$value = $value;
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+        $faction->$value = $value;
+        self::submitDatabaseTask(
             new DatabaseTask(
                 "UPDATE " . FactionTable::TABLE_NAME . " SET " . $option . " = " . $option . " + :option WHERE name = :name",
                 [
                     'option' => $value,
                     'name' => $factionName,
                 ],
-                function () use ($Faction) {
-                    MainAPI::$factions[$Faction->name] = $Faction;
+                function () use ($faction) {
+                    MainAPI::$factions[$faction->getName()] = $faction;
                 }
             )
         );
+    }
+
+    private static function submitDatabaseTask(DatabaseTask $task): void {
+        self::$main->getServer()->getAsyncPool()->submitTask($task);
     }
 }

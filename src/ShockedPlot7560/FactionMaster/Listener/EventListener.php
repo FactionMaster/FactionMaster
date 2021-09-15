@@ -216,16 +216,16 @@ class EventListener implements Listener {
             },
             function () use ($playerName) {
                 $user = MainAPI::getUser($playerName);
-                if ($user->faction !== null) {
+                if ($user->getFactionName() !== null) {
                     Main::getInstance()->getServer()->getAsyncPool()->submitTask(
                         new DatabaseTask(
                             "SELECT * FROM " . FactionTable::TABLE_NAME . " WHERE name = :name",
                             [
-                                "name" => $user->faction,
+                                "name" => $user->getFactionName(),
                             ],
                             function ($result) use ($user) {
                                 $faction = $result[0];
-                                MainAPI::$factions[$user->faction] = $faction;
+                                MainAPI::$factions[$user->getFactionName()] = $faction;
                             },
                             FactionEntity::class
                         ));

@@ -54,7 +54,6 @@ class FactionTable implements TableInterface {
         $maxClaim = Utils::getConfig("default-claim-limit");
         $maxHome = Utils::getConfig("default-home-limit");
         $power = Utils::getConfig("default-power");
-        var_dump(Utils::getConfig("PROVIDER"));
         $this->PDO->query("CREATE TABLE IF NOT EXISTS `$tableName` ( 
             `id` INTEGER PRIMARY KEY $auto_increment, 
             `name` TEXT NOT NULL, 
