@@ -44,17 +44,41 @@ class ClaimEntity extends EntityDatabase {
     use FactionUtils;
     use ServerIp;
 
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getFactionName(), getFactionEntity()
+     * @var string
+    */
     public $faction;
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getX()
+     * @var int
+    */
     public $x;
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getZ()
+     * @var int
+    */
     public $z;
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getLevel(), getLevelName()
+     * @var string
+    */
     public $level;
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getServerIp()
+     * @var string
+    */
     public $server;
-    /** @var int|null */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getFlag()
+     * @var int|null
+    */
     public $flag;
 
     public function setX(int $x): void {

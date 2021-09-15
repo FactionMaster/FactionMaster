@@ -43,17 +43,41 @@ class HomeEntity extends EntityDatabase {
     use FactionUtils;
     use ServerIp;
 
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getFactionName(), getfactionEntity
+     * @var string
+    */
     public $faction;
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getName()
+     * @var string
+    */
     public $name;
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getX()
+     * @var int
+    */
     public $x;
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getY()
+     * @var int
+    */
     public $y;
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getZ()
+     * @var int
+    */
     public $z;
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getLevelName(), getLevel()
+     * @var string
+    */
     public $world;
 
     public function setName(string $name): void {

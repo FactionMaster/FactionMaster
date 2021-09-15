@@ -39,13 +39,29 @@ class InvitationEntity extends EntityDatabase {
     public const MEMBER_INVITATION = "member";
     public const ALLIANCE_INVITATION = "alliance";
 
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getSenderString()
+     * @var string
+    */
     public $sender;
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getReceiverString()
+     * @var string
+    */
     public $receiver;
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getType()
+     * @var string
+    */
     public $type;
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getDate(), getDateString()
+     * @var string
+    */
     public $date;
 
     public function setSenderString(string $sender): void {

@@ -37,35 +37,95 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 
 class FactionEntity extends EntityDatabase {
 
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getName()
+     * @var string
+    */
     public $name;
-    /** @var array|string|null */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getMembers()
+     * @var array|string|null
+    */
     public $members;
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getVisibilityId()
+     * @var int
+    */
     public $visibility;
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getXP()
+     * @var int
+    */
     public $xp;
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getLevel()
+     * @var int
+    */
     public $level;
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getDescription()
+     * @var string
+    */
     public $description;
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getMessage()
+     * @var string
+    */
     public $messageFaction;
-    /** @var array|string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getAlly(), getAllyInstance()
+     * @var array|string
+    */
     public $ally;
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getMaxPlayer()
+     * @var int
+    */
     public $max_player;
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getMaxAlly()
+     * @var int
+    */
     public $max_ally;
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getMaxClaim()
+     * @var int
+    */
     public $max_claim;
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getMaxHome()
+     * @var int
+    */
     public $max_home;
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getPower()
+     * @var int
+    */
     public $power;
-    /** @var string|array */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getPermissions()
+     * @var array|string
+    */
     public $permissions;
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getDate(), getDateString()
+     * @var string
+    */
     public $date;
 
     public function setName(string $name): void {

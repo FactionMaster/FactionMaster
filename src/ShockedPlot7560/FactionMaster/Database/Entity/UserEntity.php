@@ -36,13 +36,29 @@ class UserEntity extends EntityDatabase {
 
     use FactionUtils;
 
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getName()
+     * @var string
+    */
     public $name;
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getFactionName(), getFactionEntity()
+     * @var string
+    */
     public $faction;
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getRank()
+     * @var int
+    */
     public $rank;
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getLanguage()
+     * @var string
+    */
     public $language;
 
     public function setName(string $name): void {

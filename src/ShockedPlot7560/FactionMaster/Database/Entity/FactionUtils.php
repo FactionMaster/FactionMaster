@@ -45,7 +45,7 @@ trait FactionUtils {
     }
 
     public function getFactionEntity(): ?FactionEntity {
-        if ($this->getFactionName() === "") return null;
+        if ($this->getFactionName() === "" || $this->getFactionName() === null) return null;
         return MainAPI::getFaction($this->getFactionName());
     }
 

@@ -34,7 +34,11 @@ namespace ShockedPlot7560\FactionMaster\Database\Entity;
 
 abstract class EntityDatabase {
 
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getId()
+     * @var int
+    */
     public $id;
 
     public function getId(): int {
