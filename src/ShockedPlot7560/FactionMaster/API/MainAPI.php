@@ -214,18 +214,6 @@ class MainAPI {
     }
 
     public static function addFaction(string $factionName, string $ownerName): void {
-        var_dump("okkkkkkkkzodjifduhbfhuijokvndijzosk");
-        var_dump([
-            'name' => $factionName,
-            "level" => ConfigManager::getConfig()->get("default-faction-level"),
-            "description" => ConfigManager::getConfig()->get("default-faction-description"),
-            "message" => ConfigManager::getConfig()->get("default-faction-message"),
-            'members' => json_encode([
-                $ownerName => Ids::OWNER_ID,
-            ]),
-            'ally' => json_encode([]),
-            'permissions' => json_encode([[], [], [], []]),
-        ]);
         self::submitDatabaseTask(
             new DatabaseTask(
                 "INSERT INTO " . FactionTable::TABLE_NAME . " (name, level, description, message, members, ally, permissions) VALUES (:name, :level, :description, :message, :members, :ally, :permissions)",
