@@ -47,7 +47,7 @@ class MemberLimit extends Reward implements RewardInterface {
             $this->setValue($value);
         }
 
-        $result = MainAPI::updateFactionOption($factionName, 'max_player', $this->value);
+        $result = MainAPI::updateFactionOption($factionName, 'max_player', $this->getValue());
         return $result === false ? false : true;
     }
 
@@ -56,7 +56,7 @@ class MemberLimit extends Reward implements RewardInterface {
             $this->setValue($value);
         }
 
-        return MainAPI::updateFactionOption($factionName, 'max_player', $this->value * -1) === false ? "ERROR" : true;
+        return MainAPI::updateFactionOption($factionName, 'max_player', $this->getValue() * -1) === false ? "ERROR" : true;
     }
 
 }

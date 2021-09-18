@@ -61,9 +61,10 @@ class Utils {
         if ($userPermissions === null) {
             $userPermissions = [];
         }
-        if ($userEntity instanceof UserEntity && isset($route->PermissionNeed)) {
-            $good = false;
-            foreach ($route->PermissionNeed as $permission) {
+        if ($userEntity instanceof UserEntity) {
+            $good = $route->getPermissions() === [];
+            if ($userEntity->getRank() === Ids::OWNER_ID) $good = true;
+            foreach ($route->getPermissions() as $permission) {
                 if (is_string($permission)) {
                     if (self::haveAccess($userPermissions, $userEntity, $permission)) {
                         $good = true;
@@ -83,15 +84,13 @@ class Utils {
 
                 $route($player, $userEntity, $userPermissions, $params);
                 return;
+            }else{
+                if ($route->getBackRoute() instanceof Route) {
+                    $route = $route->getBackRoute();
+                    $route($player, $userEntity, $userPermissions, $params);
+                }
             }
         }
-        $ev = new MenuOpenEvent($player, $route);
-        $ev->call();
-        if ($ev->isCancelled()) {
-            return;
-        }
-
-        $route($player, $userEntity, $userPermissions, $params);
     }
 
     public static function replaceParams(string $string, array $data): string {

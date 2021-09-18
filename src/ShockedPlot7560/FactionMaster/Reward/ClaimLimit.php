@@ -47,7 +47,7 @@ class ClaimLimit extends Reward implements RewardInterface {
             $this->setValue($value);
         }
 
-        $result = MainAPI::updateFactionOption($factionName, 'max_claim', $this->value);
+        $result = MainAPI::updateFactionOption($factionName, 'max_claim', $this->getValue());
         return $result === false ? false : true;
     }
 
@@ -56,7 +56,7 @@ class ClaimLimit extends Reward implements RewardInterface {
             $this->setValue($value);
         }
 
-        return MainAPI::updateFactionOption($factionName, 'max_claim', $this->value * -1) === false ? "ERROR" : true;
+        return MainAPI::updateFactionOption($factionName, 'max_claim', $this->getValue() * -1) === false ? "ERROR" : true;
     }
 
 }

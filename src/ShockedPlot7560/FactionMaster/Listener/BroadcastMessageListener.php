@@ -63,7 +63,7 @@ class BroadcastMessageListener implements Listener {
             $message = Utils::getConfig("broadcast-faction-delete-message");
             $message = str_replace(["{playerName}", "{factionName}"], [
                 $event->getPlayer()->getName(),
-                $event->getFaction()->name
+                $event->getFaction()->getName()
             ], $message);
             $this->main->getServer()->broadcastMessage($message);
         }
@@ -74,8 +74,8 @@ class BroadcastMessageListener implements Listener {
             $message = Utils::getConfig("broadcast-faction-transferProperty-message");
             $message = str_replace(["{playerName}", "{targetName}", "{factionName}"], [
                 $event->getPlayer()->getName(),
-                $event->getTarget()->name,
-                $event->getTarget()->faction
+                $event->getTarget()->getName(),
+                $event->getTarget()->getFactionName()
             ], $message);
             $this->main->getServer()->broadcastMessage($message);
         }
