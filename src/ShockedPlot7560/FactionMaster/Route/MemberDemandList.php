@@ -35,67 +35,73 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\ManageRequestListCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class MemberDemandList implements Route {
+class MemberDemandList extends RouteBase implements Route {
 
     const SLUG = "memberDemandList";
 
-    /** @var Collection */
-    private $Collection;
     /** @var InvitationEntity[] */
-    private $Requests;
-    /** @var UserEntity */
-    private $UserEntity;
+    private $requests;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->UserEntity = $User;
-        $this->Requests = MainAPI::getInvitationsByReceiver(MainAPI::getFactionOfPlayer($player->getName())->name, "member");
-        $this->Collection = CollectionFactory::get(ManageRequestListCollection::SLUG)->init($player, $User, $this->Requests);
+    public function getPermissions(): array {
+        return [
+            PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND, 
+            PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND
+        ];
+    }
+
+    public function getBackRoute(): ?Route {
+        return RouterFactory::get(ManageMainMembers::SLUG);
+    }
+
+    /** @return InvitationEntity[] */
+    protected function getRequests(): array {
+        return $this->requests;
+    }
+
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+
+        $this->requests = MainAPI::getInvitationsByReceiver(MainAPI::getFactionOfPlayer($this->getPlayer()->getName())->getName(), InvitationEntity::MEMBER_INVITATION);
+        $this->setCollection(CollectionFactory::get(ManageRequestListCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getRequests()));
 
         $message = "";
         if (isset($params[0])) {
             $message = $params[0];
         }
-
-        if (count($this->Requests) == 0) {
-            $message .= Utils::getText($this->UserEntity->name, "NO_PENDING_REQUEST");
+        if (count($this->getRequests()) == 0) {
+            $message .= Utils::getText($this->getUserEntity()->getName(), "NO_PENDING_REQUEST");
         }
-
-        $menu = $this->memberDemandList($message);
-        $player->sendForm($menu);
+        $player->sendForm($this->getForm($message));
     }
 
-    public function call(): callable
-    {
-        $Collection = $this->Collection;
-        return function (Player $player, $data) use ($Collection) {
+    public function call(): callable {
+        return function (Player $player, $data) {
             if ($data === null) {
                 return;
             }
-
-            $Collection->process($data, $player);
+            $this->getCollection()->process($data, $player);
             return;
         };
     }
 
-    private function memberDemandList(string $message = ""): SimpleForm {
+    protected function getForm(string $message = ""): SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "MANAGE_MEMBERS_REQUEST_LIST_TITLE"));
+        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MANAGE_MEMBERS_REQUEST_LIST_TITLE"));
         if ($message !== "") {
             $menu->setContent($message);
         }
-
         return $menu;
     }
 

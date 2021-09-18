@@ -43,65 +43,63 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class MemberChangeRank implements Route {
+class MemberChangeRank extends VictimBase implements Route {
 
     const SLUG = "memberChangeRank";
 
-    public $PermissionNeed = [PermissionIds::PERMISSION_CHANGE_MEMBER_RANK];
-    public $backMenu;
-
     /** @var array */
     private $sliderData;
-    /** @var UserEntity */
-    private $victim;
-
-    /** @var UserEntity */
-    private $UserEntity;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __construct() {
-        $this->backMenu = RouterFactory::get(ManageMember::SLUG);
+    public function getPermissions(): array {
+        return [
+            PermissionIds::PERMISSION_CHANGE_MEMBER_RANK
+        ];
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->UserEntity = $User;
+    public function getBackRoute(): ?Route {
+        return RouterFactory::get(ManageMember::SLUG);
+    }
+
+    private function getSliderData(): array {
+        return $this->sliderData;
+    }
+
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
         if (!isset($params[0])) {
             throw new InvalidArgumentException("Need the target player instance");
         }
 
-        $this->victim = $params[0];
+        $this->setVictim($params[0]);
         $this->sliderData = [
-            Ids::RECRUIT_ID => Utils::getText($this->victim->name, "RECRUIT_RANK_NAME"),
-            Ids::MEMBER_ID => Utils::getText($this->victim->name, "MEMBER_RANK_NAME"),
-            Ids::COOWNER_ID => Utils::getText($this->victim->name, "COOWNER_RANK_NAME"),
+            Ids::RECRUIT_ID => Utils::getText($this->getVictim()->getName(), "RECRUIT_RANK_NAME"),
+            Ids::MEMBER_ID => Utils::getText($this->getVictim()->getName(), "MEMBER_RANK_NAME"),
+            Ids::COOWNER_ID => Utils::getText($this->getVictim()->getName(), "COOWNER_RANK_NAME"),
         ];
-
-        $menu = $this->changeRankMenu($this->victim);
-        $player->sendForm($menu);
+        $player->sendForm($this->getForm());
     }
 
-    public function call(): callable
-    {
-        $backMenu = $this->backMenu;
-        return function (Player $player, $data) use ($backMenu) {
+    public function call(): callable {
+        return function (Player $player, $data) {
             if ($data === null) {
                 return;
             }
 
-            MainAPI::changeRank($this->victim->name, $data[0]);
-            $this->victim->rank = $data[0];
-            (new MemberChangeRankEvent($this->victim))->call();
-            Utils::processMenu($backMenu, $player, [$this->victim]);
+            MainAPI::changeRank($this->getVictim()->getName(), $data[0]);
+            $this->getVictim()->setRank($data[0]);
+            (new MemberChangeRankEvent($this->getVictim()))->call();
+            Utils::processMenu($this->getBackRoute(), $player, [$this->getVictim()]);
         };
     }
 
-    private function changeRankMenu(UserEntity $Victim): CustomForm {
+    protected function getForm(): CustomForm {
         $menu = new CustomForm($this->call());
-        $menu->addStepSlider(Utils::getText($this->UserEntity->name, "MEMBER_CHANGE_RANK_PANEL_STEP"), $this->sliderData, $Victim->rank);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "MEMBER_CHANGE_RANK_PANEL_TITLE", ['playerName' => $Victim->name]));
+        $menu->addStepSlider(Utils::getText($this->getUserEntity()->getName(), "MEMBER_CHANGE_RANK_PANEL_STEP"), $this->getSliderData(), $this->getVictim()->getRank());
+        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MEMBER_CHANGE_RANK_PANEL_TITLE", ['playerName' => $this->getVictim()->getName()]));
         return $menu;
     }
 }

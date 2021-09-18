@@ -34,58 +34,61 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\ManageMembersMainCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class ManageMainMembers implements Route {
+class ManageMainMembers extends RouteBase implements Route {
 
     const SLUG = "manageMainMembers";
-
-    /** @var Collection */
-    private $Collection;
-    /** @var UserEntity */
-    private $UserEntity;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->UserEntity = $User;
-        $this->Collection = CollectionFactory::get(ManageMembersMainCollection::SLUG)->init($player, $User);
+    public function getPermissions(): array {
+        return [
+            PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND,
+            PermissionIds::PERMISSION_REFUSE_MEMBER_DEMAND,
+            PermissionIds::PERMISSION_DELETE_PENDING_MEMBER_INVITATION,
+            PermissionIds::PERMISSION_SEND_MEMBER_INVITATION
+        ];
+    }
+
+    public function getBackRoute(): ?Route {
+        return RouterFactory::get(MainPanel::SLUG);
+    }
+
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+        $this->setCollection(CollectionFactory::get(ManageMembersMainCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity()));
 
         $message = "";
         if (isset($params[0])) {
             $message = $params[0];
         }
 
-        $menu = $this->manageMainMembersMenu($message);
-        $player->sendForm($menu);
+        $player->sendForm($this->getForm($message));
     }
 
-    public function call(): callable
-    {
-        $Collection = $this->Collection;
-        return function (Player $player, $data) use ($Collection) {
+    public function call(): callable {
+        return function (Player $player, $data) {
             if ($data === null) {
                 return;
             }
-
-            $Collection->process($data, $player);
+            $this->getCollection()->process($data, $player);
         };
     }
 
-    private function manageMainMembersMenu(string $message = ""): SimpleForm {
+    protected function getForm(string $message = ""): SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "MANAGE_MEMBERS_MAIN_PANEL_TITLE"));
+        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MANAGE_MEMBERS_MAIN_PANEL_TITLE"));
         if ($message !== "") {
             $menu->setContent($message);
         }
-
         return $menu;
     }
 

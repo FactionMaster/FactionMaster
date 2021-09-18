@@ -34,61 +34,62 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\ManageAllianceMainCollection;
-use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class AllianceMainMenu implements Route {
+class AllianceMainMenu extends RouteBase implements Route {
 
     const SLUG = "allianceMain";
-
-    /** @var Collection */
-    private $Collection;
-    /** @var FactionEntity */
-    private $FactionEntity;
-    /** @var UserEntity */
-    private $UserEntity;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->FactionEntity = MainAPI::getFactionOfPlayer($player->getName());
-        $this->UserEntity = $User;
-        $this->Collection = CollectionFactory::get(ManageAllianceMainCollection::SLUG)->init($player, $User, $this->FactionEntity);
+    public function getPermissions(): array {
+        return [
+            PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
+            PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
+            PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION,
+            PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION,
+            PermissionIds::PERMISSION_BREAK_ALLIANCE
+        ];
+    }
+
+    public function getBackRoute(): ?Route {
+        return RouterFactory::get(ManageFactionMain::SLUG);
+    }
+
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+
+        $this->setCollection(CollectionFactory::get(ManageAllianceMainCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getFaction()));
 
         $message = isset($params[0]) ? $params[0] : "";
-        if (count($this->FactionEntity->ally) == 0) {
-            $message .= Utils::getText($this->UserEntity->name, "NO_ALLY");
+        if (count($this->getFaction()->getAlly()) == 0) {
+            $message .= Utils::getText($this->getUserEntity()->getName(), "NO_ALLY");
         }
-        $menu = $this->allianceMainMenu($message);
-        $player->sendForm($menu);
+        $player->sendForm($this->getForm($message));
     }
 
     public function call(): callable {
-        $Collection = $this->Collection;
-        return function (Player $Player, $data) use ($Collection) {
+        return function (Player $player, $data) {
             if ($data === null) {
                 return;
             }
-
-            $Collection->process($data, $Player);
+            $this->getCollection()->process($data, $player);
         };
     }
 
-    private function allianceMainMenu(string $message = ""): SimpleForm {
+    protected function getForm(string $message = ""): SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "MANAGE_ALLIANCE_MAIN_TITLE"));
+        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MANAGE_ALLIANCE_MAIN_TITLE"));
         if ($message !== "") {
             $menu->setContent($message);
         }
-
         return $menu;
     }
 

@@ -214,16 +214,31 @@ class MainAPI {
     }
 
     public static function addFaction(string $factionName, string $ownerName): void {
+        var_dump("okkkkkkkkzodjifduhbfhuijokvndijzosk");
+        var_dump([
+            'name' => $factionName,
+            "level" => ConfigManager::getConfig()->get("default-faction-level"),
+            "description" => ConfigManager::getConfig()->get("default-faction-description"),
+            "message" => ConfigManager::getConfig()->get("default-faction-message"),
+            'members' => json_encode([
+                $ownerName => Ids::OWNER_ID,
+            ]),
+            'ally' => json_encode([]),
+            'permissions' => json_encode([[], [], [], []]),
+        ]);
         self::submitDatabaseTask(
             new DatabaseTask(
-                "INSERT INTO " . FactionTable::TABLE_NAME . " (name, members, ally, permissions) VALUES (:name, :members, :ally, :permissions)",
+                "INSERT INTO " . FactionTable::TABLE_NAME . " (name, level, description, message, members, ally, permissions) VALUES (:name, :level, :description, :message, :members, :ally, :permissions)",
                 [
                     'name' => $factionName,
-                    'members' => \base64_encode(\serialize([
+                    "level" => ConfigManager::getConfig()->get("default-faction-level"),
+                    "description" => ConfigManager::getConfig()->get("default-faction-description"),
+                    "message" => ConfigManager::getConfig()->get("default-faction-message"),
+                    'members' => json_encode([
                         $ownerName => Ids::OWNER_ID,
-                    ])),
-                    'ally' => \base64_encode(\serialize([])),
-                    'permissions' => \base64_encode(\serialize([[], [], [], []])),
+                    ]),
+                    'ally' => json_encode([]),
+                    'permissions' => json_encode([[], [], [], []]),
                 ],
                 function () use ($factionName, $ownerName) {
                     self::submitDatabaseTask(
@@ -267,7 +282,7 @@ class MainAPI {
             new DatabaseTask(
                 "UPDATE " . FactionTable::TABLE_NAME . " SET members = :members WHERE name = :name",
                 [
-                    'members' => \base64_encode(\serialize($faction->getMembers())),
+                    'members' => json_encode($faction->getMembers()),
                     'name' => $factionName,
                 ],
                 function () use ($factionName, $faction) {
@@ -305,7 +320,7 @@ class MainAPI {
             new DatabaseTask(
                 "UPDATE " . FactionTable::TABLE_NAME . " SET members = :members WHERE name = :name",
                 [
-                    'members' => \base64_encode(\serialize($faction->getMembers())),
+                    'members' => json_encode($faction->getMembers()),
                     'name' => $factionName,
                 ],
                 function () use ($factionName, $faction) {
@@ -473,7 +488,7 @@ class MainAPI {
             new DatabaseTask(
                 "UPDATE " . FactionTable::TABLE_NAME . " SET ally = :ally WHERE name = :name",
                 [
-                    'ally' => \base64_encode(\serialize($faction1->getAlly())),
+                    'ally' => json_encode($faction1->getAlly()),
                     'name' => $factionName1,
                 ],
                 function () use ($factionName1, $faction1) {
@@ -485,7 +500,7 @@ class MainAPI {
             new DatabaseTask(
                 "UPDATE " . FactionTable::TABLE_NAME . " SET ally = :ally WHERE name = :name",
                 [
-                    'ally' => \base64_encode(\serialize($faction2->getAlly())),
+                    'ally' => json_encode($faction2->getAlly()),
                     'name' => $factionName2,
                 ],
                 function () use ($factionName2, $faction2) {
@@ -519,7 +534,7 @@ class MainAPI {
                 new DatabaseTask(
                     "UPDATE " . FactionTable::TABLE_NAME . " SET ally = :ally WHERE name = :name",
                     [
-                        'ally' => \base64_encode(\serialize($faction->getAlly())),
+                        'ally' => json_encode($faction->getAlly()),
                         'name' => $faction->getName(),
                     ],
                     function () use ($faction) {
@@ -542,7 +557,7 @@ class MainAPI {
             new DatabaseTask(
                 "UPDATE " . FactionTable::TABLE_NAME . " SET members = :members WHERE name = :name",
                 [
-                    'members' => \base64_encode(\serialize($faction->getMembers())),
+                    'members' => json_encode($faction->getMembers()),
                     'name' => $faction->getName(),
                 ],
                 function () use ($faction) {
@@ -742,7 +757,7 @@ class MainAPI {
             new DatabaseTask(
                 "UPDATE " . FactionTable::TABLE_NAME . " SET permissions = :permissions WHERE name = :name",
                 [
-                    'permissions' => \base64_encode(\serialize($permissions)),
+                    'permissions' => json_encode($permissions),
                     'name' => $factionName,
                 ],
                 function () use ($faction) {
@@ -791,12 +806,13 @@ class MainAPI {
         $world = $player->getLevel()->getName();
         self::submitDatabaseTask(
             new DatabaseTask(
-                "INSERT INTO " . ClaimTable::TABLE_NAME . " (x, z, world, faction) VALUES (:x, :z, :world, :faction)",
+                "INSERT INTO " . ClaimTable::TABLE_NAME . " (x, z, world, faction, server) VALUES (:x, :z, :world, :faction, :server)",
                 [
                     "x" => $x,
                     "z" => $z,
                     "world" => $world,
                     "faction" => $factionName,
+                    "server" => self::$main->getServer()->getIp()
                 ],
                 function () use ($factionName, $world, $x, $z) {
                     self::submitDatabaseTask(
@@ -905,7 +921,7 @@ class MainAPI {
     public static function addHome(Player $player, string $factionName, string $name): void {
         self::submitDatabaseTask(
             new DatabaseTask(
-                "INSERT INTO " . HomeTable::TABLE_NAME . " (x, y, z, world, faction, name) VALUES (:x, :y, :z, :world, :faction, :name)",
+                "INSERT INTO " . HomeTable::TABLE_NAME . " (x, y, z, world, faction, name, server) VALUES (:x, :y, :z, :world, :faction, :name, :server)",
                 [
                     "x" => floor($player->getX()),
                     "z" => floor($player->getZ()),
@@ -913,6 +929,7 @@ class MainAPI {
                     "world" => $player->getLevel()->getName(),
                     "faction" => $factionName,
                     "name" => $name,
+                    "server" => self::$main->getServer()->getIp()
                 ],
                 function () use ($player, $factionName, $name) {
                     self::submitDatabaseTask(

@@ -234,13 +234,13 @@ class FactionEntity extends EntityDatabase {
 
     public function __construct() {
         if (isset($this->members) && $this->members !== null && is_string($this->members)) {
-            $this->members = unserialize(base64_decode($this->members));
+            $this->members = json_decode($this->members, true);
         }
         if (isset($this->ally) && is_string($this->ally)) {
-            $this->ally = unserialize(base64_decode($this->ally));
+            $this->ally = json_decode($this->ally, true);
         }
         if (isset($this->permissions) && is_string($this->permissions)) {
-            $this->permissions = unserialize(base64_decode($this->permissions));
+            $this->permissions = json_decode($this->permissions, true);
         }
     }
 

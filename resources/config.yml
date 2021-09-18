@@ -27,7 +27,7 @@
  #
 
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
-file-version: 3
+file-version: 4
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
 
 # --------------------- DATABASE --------------------------
@@ -65,6 +65,9 @@ default-ally-limit: 2
 # PUBLIC: 0  /  PRIVATE: 1  /  INVITATION: 2
 default-faction-visibility: 0
 default-faction-xp: 0
+default-faction-level: 1
+default-faction-description: ""
+default-faction-message: ""
 default-power: 0
 
 min-faction-name-length: 3

@@ -35,65 +35,60 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\JoinRequestListCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class DemandList implements Route {
+class DemandList extends RouteBase implements Route {
 
     const SLUG = "demandList";
-
-    public $PermissionNeed = [];
-
-    /** @var UserEntity */
-    private $UserEntity;
-    /** @var Collection */
-    private $Collection;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->UserEntity = $User;
-        $Requests = MainAPI::getInvitationsByReceiver($player->getName(), "member");
-        $this->Collection = CollectionFactory::get(JoinRequestListCollection::SLUG)->init($player, $User, $Requests);
+    public function getPermissions(): array {
+        return [];
+    }
+
+    public function getBackRoute(): ?Route {
+        return RouterFactory::get(ManageInvitationMain::SLUG);
+    }
+
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+
+        $requests = MainAPI::getInvitationsByReceiver($this->getPlayer()->getName(), "member");
+        $this->setCollection(CollectionFactory::get(JoinRequestListCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $requests));
+        
         $message = "";
         if (isset($params[0])) {
             $message = $params[0];
         }
-
-        if (count($Requests) == 0) {
-            $message .= Utils::getText($User->name, "NO_PENDING_REQUEST");
+        if (count($requests) == 0) {
+            $message .= Utils::getText($this->getUserEntity()->getName(), "NO_PENDING_REQUEST");
         }
-
-        $menu = $this->demandList($message);
-        $player->sendForm($menu);
+        $player->sendForm($this->getForm($message));
     }
 
-    public function call(): callable
-    {
-        $Collection = $this->Collection;
-        return function (Player $Player, $data) use ($Collection) {
+    public function call(): callable {
+        return function (Player $Player, $data) {
             if ($data === null) {
                 return;
             }
-
-            $Collection->process($data, $Player);
+            $this->getCollection()->process($data, $Player);
             return;
         };
     }
 
-    private function demandList(string $message = ""): SimpleForm {
+    protected function getForm(string $message = ""): SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "REQUEST_LIST_TITLE"));
+        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "REQUEST_LIST_TITLE"));
         if ($message !== "") {
             $menu->setContent($message);
         }
-
         return $menu;
     }
 

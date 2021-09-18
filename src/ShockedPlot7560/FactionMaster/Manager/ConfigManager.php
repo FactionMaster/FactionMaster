@@ -39,7 +39,7 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ConfigManager {
 
-    const CONFIG_VERSION = 3;
+    const CONFIG_VERSION = 4;
     const LEVEL_VERSION = 0;
     const TRANSLATION_VERSION = 0;
     const LANG_FILE_VERSION = [

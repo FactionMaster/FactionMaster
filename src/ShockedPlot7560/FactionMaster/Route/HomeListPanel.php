@@ -35,68 +35,65 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\ViewHomesCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class HomeListPanel implements Route {
+class HomeListPanel extends RouteBase implements Route {
 
     const SLUG = "homeListPanel";
-
-    public $PermissionNeed = [PermissionIds::PERMISSION_TP_FACTION_HOME];
-
-    /** @var UserEntity */
-    private $UserEntity;
-    /** @var Collection */
-    private $Collection;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $message = "";
-        $this->Collection = CollectionFactory::get(ViewHomesCollection::SLUG)->init($player, $User);
-        $Homes = MainAPI::getFactionHomes($User->faction);
-        $this->UserEntity = $User;
+    public function getPermissions(): array {
+        return [
+            PermissionIds::PERMISSION_TP_FACTION_HOME
+        ];
+    }
 
+    public function getBackRoute(): ?Route {
+        return RouterFactory::get(MainPanel::SLUG);
+    }
+
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+        
+        $this->setCollection(CollectionFactory::get(ViewHomesCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity()));
+        $homes = MainAPI::getFactionHomes($this->getUserEntity()->getFactionName());
+
+        $message = "";
         if (isset($params[0])) {
             $message = $params[0];
         }
-
-        if (count($Homes) == 0) {
-            $message .= Utils::getText($User->name, "NO_HOME_SET");
+        if (count($homes) == 0) {
+            $message .= Utils::getText($this->getUserEntity()->getName(), "NO_HOME_SET");
         }
 
-        $menu = $this->manageMembersListMenu($message);
-        $player->sendForm($menu);
+        $player->sendForm($this->getForm($message));
     }
 
-    public function call(): callable
-    {
-        $Collection = $this->Collection;
-        return function (Player $Player, $data) use ($Collection) {
+    public function call(): callable {
+        return function (Player $Player, $data) {
             if ($data === null) {
                 return;
             }
-
-            $Collection->process($data, $Player);
+            $this->getCollection()->process($data, $Player);
             return;
         };
     }
 
-    private function manageMembersListMenu(string $message = ""): SimpleForm {
+    protected function getForm(string $message = ""): SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "HOME_FACTION_PANEL_TITLE"));
-        $content = Utils::getText($this->UserEntity->name, "HOME_FACTION_PANEL_CONTENT");
+        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "HOME_FACTION_PANEL_TITLE"));
+        $content = Utils::getText($this->getUserEntity()->getName(), "HOME_FACTION_PANEL_CONTENT");
         if ($message !== "") {
             $content .= ("\n§r" . $message);
         }
-
         $menu->setContent($content);
         return $menu;
     }

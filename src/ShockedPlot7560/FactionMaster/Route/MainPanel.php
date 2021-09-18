@@ -34,91 +34,86 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\MainCollectionFac;
 use ShockedPlot7560\FactionMaster\Button\Collection\MainCollectionNoFac;
+use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class MainPanel implements Route {
+class MainPanel extends RouteBase implements Route {
 
     const SLUG = "main";
 
     const NO_FACTION_TYPE = 0;
     const FACTION_TYPE = 1;
 
-    public $PermissionNeed = [];
-
-    /** @var UserEntity */
-    private $UserEntity;
     /** @var int */
     private $menuType;
-    /** @var Collection */
-    private $Collection;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __invoke(Player $Player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->UserEntity = $User;
+    public function getPermissions(): array {
+        return [];
+    }
+
+    public function getBackRoute(): ?Route {
+        return null;
+    }
+
+    protected function getMenuType(): int {
+        return $this->menuType;
+    }
+
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+
         $message = '';
         if (isset($params[0])) {
             $message = $params[0];
         }
 
-        if ($this->UserEntity->faction === null) {
-            $this->Collection = CollectionFactory::get(MainCollectionNoFac::SLUG)->init($Player, $User);
-            $this->menuType = self::NO_FACTION_TYPE;
-            $menu = $this->noFactionMenu($message);
-        } else {
-            $this->Collection = CollectionFactory::get(MainCollectionFac::SLUG)->init($Player, $User);
+        if ($this->getUserEntity()->getFactionEntity() instanceof FactionEntity) {
+            $this->setCollection(CollectionFactory::get(MainCollectionFac::SLUG)->init($this->getPlayer(), $this->getUserEntity()));
             $this->menuType = self::FACTION_TYPE;
-            $menu = $this->factionMenu($message);
+        } else {
+            $this->setCollection(CollectionFactory::get(MainCollectionNoFac::SLUG)->init($this->getPlayer(), $this->getUserEntity()));
+            $this->menuType = self::NO_FACTION_TYPE;
         }
-        $Player->sendForm($menu);
+        $this->getPlayer()->sendForm($this->getForm($message));
     }
 
     public function call(): callable {
-        $Collection = $this->Collection;
-        return function (Player $Player, $data) use ($Collection) {
+        return function (Player $Player, $data) {
             if ($data === null) {
                 return;
             }
-
-            switch ($this->menuType) {
-            case self::NO_FACTION_TYPE:
-                $Collection->process($data, $Player);
-                break;
-            case self::FACTION_TYPE:
-                $Collection->process($data, $Player);
-                break;
-            default:
-                return;
-            }
+            $this->getCollection()->process($data, $Player);
+            return;
         };
     }
 
-    private function noFactionMenu(string $message = ""): SimpleForm {
-        $menu = new SimpleForm($this->call());
-        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "MAIN_PANEL_TITLE_NO_FACTION"));
-        if ($message !== "") {
-            $menu->setContent($message);
+    protected function getForm(string $message = ""): SimpleForm {
+        switch ($this->getMenuType()) {
+            case self::FACTION_TYPE:
+                $menu = new SimpleForm($this->call());
+                $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+                $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MAIN_PANEL_TITLE_HAVE_FACTION", ["factionName" => $this->getUserEntity()->getFactionName()]));
+                if ($message !== "") {
+                    $menu->setContent($message);
+                }                
+                return $menu;
+            
+            case self::NO_FACTION_TYPE:
+                $menu = new SimpleForm($this->call());
+                $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+                $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MAIN_PANEL_TITLE_NO_FACTION"));
+                if ($message !== "") {
+                    $menu->setContent($message);
+                }
+                return $menu;
         }
-
-        return $menu;
-    }
-
-    private function factionMenu(string $message = ""): SimpleForm {
-        $menu = new SimpleForm($this->call());
-        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "MAIN_PANEL_TITLE_HAVE_FACTION", ["factionName" => $this->UserEntity->faction]));
-        if ($message !== "") {
-            $menu->setContent($message);
-        }
-
-        return $menu;
     }
 }

@@ -35,103 +35,106 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use InvalidArgumentException;
 use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\CustomForm;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\PermissionChangeEvent;
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Manager\PermissionManager;
+use ShockedPlot7560\FactionMaster\Permission\Permission;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class RankPermissionManage implements Route {
+class RankPermissionManage extends RouteBase implements Route {
 
     const SLUG = "rankPermissionManage";
 
-    public $PermissionNeed = [PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS];
-    public $backMenu;
-    /** @var UserEntity */
-    private $UserEntity;
-
-    /** @var array */
-    private $check;
-    /** @var array */
+    /** @var Permission[] */
     private $permissionsData;
-    /** @var array */
-    private $permissionsUser;
-    /** @var array */
-    private $permissionsFaction;
-    /** @var FactionEntity */
-    private $Faction;
+    /** @var int */
     private $rank;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __construct() {
-        $this->backMenu = RouterFactory::get(ChangePermissionMain::SLUG);
+    public function getPermissions(): array {
+        return [
+            PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS
+        ];
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->UserEntity = $User;
+    public function getBackRoute(): ?Route {
+        return RouterFactory::get(ChangePermissionMain::SLUG);
+    }
+
+    protected function getRank(): int {
+        return $this->rank;
+    }
+
+    /** @return Permission[] */
+    protected function getAllPermissions(): array {
+        return $this->permissionsData;
+    }
+
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+
         if (!isset($params[0]) || !\is_int($params[0])) throw new InvalidArgumentException("Please give the rank id in the first item of the \$params");
         $this->rank = $params[0];
-        $this->permissionsData = Main::getInstance()->getPermissionManager()->getAll();
-        $this->permissionsUser = $UserPermissions;
-        $this->Faction = MainAPI::getFactionOfPlayer($player->getName());
-        $this->permissionsFaction = $this->Faction->permissions[$this->rank];
+        $this->permissionsData = PermissionManager::getAll();
 
-        $this->check = [];
-        foreach ($this->permissionsData as $key => $permission) {
-            if ($User->rank == Ids::OWNER_ID || (isset($this->permissionsUser[$permission->getId()]) && $this->permissionsUser[$permission->getId()] === true)) {
-                $this->check[] = $permission->getName($player->getName());
+        $check = [];
+        foreach ($this->getAllPermissions() as $key => $permission) {
+            if ($this->getUserEntity()->getRank() == Ids::OWNER_ID || 
+                    (isset($this->getUserPermissions()[$permission->getId()]) && $this->getUserPermissions()[$permission->getId()] === true)) {
+                $check[] = $permission->getName($this->getPlayer()->getName());
             }else{
                 unset($this->permissionsData[$key]);
             }
         }
-        $menu = $this->createPermissionMenu();
-        $player->sendForm($menu);
+        $player->sendForm($this->getForm());
     }
 
     public function call() : callable{
-        $backMenu = $this->backMenu;
-        return function (Player $Player, $data) use ($backMenu) {
+        return function (Player $player, $data) {
             if ($data === null) return;
-            $i =0;
-            $oldPermission = $this->Faction->permissions;
-            foreach ($this->permissionsData as $key => $permissionDa) {
-                $this->Faction->permissions[$this->rank][$permissionDa->getId()] = $data[$i];
+            $i = 0;
+            $oldPermission = $this->getFaction()->getPermissions();
+            foreach ($this->getAllPermissions() as $permission) {
+                $newPermissions = $oldPermission[$this->getRank()];
+                $newPermissions[$permission->getId()] = $data[$i];
+                $this->getFaction()->setPermission($this->getRank(), $newPermissions);
                 $i++;
             }
-            if ($this->Faction->permissions === $oldPermission) {
-                Utils::processMenu($backMenu, $Player);
+            if ($this->getFaction()->getPermissions() === $oldPermission) {
+                Utils::processMenu($this->getBackRoute(), $player);
                 return;
             }
-            $Faction = $this->Faction;
-            MainAPI::updatePermissionFaction($Faction->name, $Faction->permissions);
+            $faction = $this->getFaction();
+            MainAPI::updatePermissionFaction($faction->getName(), $faction->getPermissions());
             Utils::newMenuSendTask(new MenuSendTask(
-                function () use ($Faction, $oldPermission) {
-                    return MainAPI::getFaction($Faction->name)->permissions !== $oldPermission;
+                function () use ($faction, $oldPermission) {
+                    return MainAPI::getFaction($faction->getName())->getPermissions() !== $oldPermission;
                 },
-                function () use ($Player, $backMenu, $Faction) {
-                    (new PermissionChangeEvent($Player, $Faction, $Faction->permissions))->call();
-                    Utils::processMenu($backMenu, $Player, [Utils::getText($Player->getName(), "SUCCESS_PERMISSION_UPDATE")]);
+                function () use ($player, $faction) {
+                    (new PermissionChangeEvent($player, $faction, $faction->getPermissions()))->call();
+                    Utils::processMenu($this->getBackRoute(), $player, [Utils::getText($player->getName(), "SUCCESS_PERMISSION_UPDATE")]);
                 },
-                function () use ($Player) {
-                    Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                function () use ($player) {
+                    Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
                 }
             ));
         };
     }
 
-    private function createPermissionMenu(string $message = "") : CustomForm {
+    protected function getForm() : CustomForm {
         $menu = new CustomForm($this->call());
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "MANAGE_PERMISSIONS_MAIN_TITLE"));
-        foreach ($this->permissionsData as $value) {
-            $menu->addToggle($value->getName($this->UserEntity->name), $this->permissionsFaction[$value->getId()] ?? false);
+        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MANAGE_PERMISSIONS_MAIN_TITLE"));
+        $rankFactionPermission = $this->getFaction()->getPermissions()[$this->getRank()];
+        foreach ($this->getAllPermissions() as $permission) {
+            $menu->addToggle($permission->getName($this->getUserEntity()->getName()), $rankFactionPermission[$permission->getId()] ?? false);
         }
         return $menu;
     }

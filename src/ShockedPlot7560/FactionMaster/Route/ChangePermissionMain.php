@@ -38,51 +38,56 @@ use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\PermissionMainCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class ChangePermissionMain implements Route {
+class ChangePermissionMain extends RouteBase implements Route {
 
     const SLUG = "changePermissionMain";
-
-    /** @var Collection */
-    private $Collection;
-    /** @var UserEntity */
-    private $UserEntity;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->UserEntity = $User;
+    public function getPermissions(): array {
+        return [
+            PermissionIds::PERMISSION_CHANGE_MEMBER_RANK
+        ];
+    }
+
+    public function getBackRoute(): ?Route {
+        return RouterFactory::get(ManageFactionMain::SLUG);
+    }
+
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+
         $message = "";
         if (isset($params[0]) && \is_string($params[0])) {
             $message = $params[0];
         }
 
-        $this->Collection = CollectionFactory::get(PermissionMainCollection::SLUG)->init($player, $User);
-        $menu = $this->changePermissionMenu($message);
-        $player->sendForm($menu);
+        $this->setCollection(CollectionFactory::get(PermissionMainCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity()));
+        $player->sendForm($this->getForm($message));
     }
 
     public function call(): callable {
-        $Collection = $this->Collection;
-        return function (Player $Player, $data) use ($Collection) {
+        return function (Player $player, $data) {
             if ($data === null) {
                 return;
             }
 
-            $Collection->process($data, $Player);
+            $this->getCollection()->process($data, $player);
         };
     }
 
-    private function changePermissionMenu(string $message = ""): SimpleForm {
+    protected function getForm(string $message = ""): SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "CHANGE_PERMISSION_TITLE"));
-        if ($this->UserEntity->rank == Ids::RECRUIT_ID) {
-            $message .= Utils::getText($this->UserEntity->name, "NO_RANK");
+        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "CHANGE_PERMISSION_TITLE"));
+        if ($this->getUserEntity()->getRank() == Ids::RECRUIT_ID) {
+            $message .= Utils::getText($this->getUserEntity()->getName(), "NO_RANK");
         }
 
         if ($message !== "") {

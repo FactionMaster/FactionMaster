@@ -35,57 +35,57 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use InvalidArgumentException;
 use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\ManageInvitationCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class ManageMemberInvitation implements Route {
+class ManageMemberInvitation extends InvitationBase implements Route {
 
     const SLUG = "manageMemberInvitation";
-
-    /** @var Collection */
-    private $Collection;
-    /** @var InvitationEntity */
-    private $invitation;
-    /** @var UserEntity */
-    private $UserEntity;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->UserEntity = $User;
+    public function getPermissions(): array {
+        return [
+            PermissionIds::PERMISSION_DELETE_PENDING_MEMBER_INVITATION
+        ];
+    }
+
+    public function getBackRoute(): ?Route {
+        return RouterFactory::get(MemberInvitationList::SLUG);
+    }
+
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+
         if (!isset($params[0]) || !$params[0] instanceof InvitationEntity) {
             throw new InvalidArgumentException("Need the invitation instance");
         }
 
-        $this->invitation = $params[0];
-        $this->Collection = CollectionFactory::get(ManageInvitationCollection::SLUG)->init($player, $User, $this->invitation);
+        $this->setInvitation($params[0]);
+        $this->setCollection(CollectionFactory::get(ManageInvitationCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getInvitation()));
 
-        $menu = $this->manageMember();
-        $player->sendForm($menu);
+        $player->sendForm($this->getForm());
     }
 
-    public function call(): callable
-    {
-        $Collection = $this->Collection;
-        return function (Player $player, $data) use ($Collection) {
+    public function call(): callable {
+        return function (Player $player, $data) {
             if ($data === null) {
                 return;
             }
-
-            $Collection->process($data, $player);
+            $this->getCollection()->process($data, $player);
         };
     }
 
-    private function manageMember(): SimpleForm {
+    protected function getForm(): SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "MANAGE_MEMBER_INVITATION_TITLE", ['name' => $this->invitation->receiver]));
+        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MANAGE_MEMBER_INVITATION_TITLE", ['name' => $this->getInvitation()->getReceiverString()]));
         return $menu;
     }
 }

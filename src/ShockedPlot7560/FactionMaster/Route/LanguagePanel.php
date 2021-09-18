@@ -34,51 +34,50 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\LanguageCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class LanguagePanel implements Route {
+class LanguagePanel extends RouteBase implements Route {
 
     const SLUG = "languagePanel";
-
-    public $PermissionNeed = [];
-
-    /** @var UserEntity */
-    private $UserEntity;
-    /** @var Collection */
-    private $Collection;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->UserEntity = $User;
-        $this->Collection = CollectionFactory::get(LanguageCollection::SLUG)->init($player, $User);
-        $menu = $this->languagesMenu();
-        $player->sendForm($menu);
+    public function getPermissions(): array {
+        return [];
     }
 
-    public function call(): callable
-    {
-        $Collection = $this->Collection;
-        return function (Player $Player, $data) use ($Collection) {
+    public function getBackRoute(): ?Route {
+        return RouterFactory::get(MainPanel::SLUG);
+    }
+
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+
+        $this->setCollection(CollectionFactory::get(LanguageCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity()));
+        
+        $player->sendForm($this->getForm());
+    }
+
+    public function call(): callable {
+        return function (Player $Player, $data) {
             if ($data === null) {
                 return;
             }
 
-            $Collection->process($data, $Player);
+            $this->getCollection()->process($data, $Player);
             return;
         };
     }
 
-    private function languagesMenu(): SimpleForm {
+    protected function getForm(): SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "CHANGE_LANGUAGE_TITLE"));
+        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "CHANGE_LANGUAGE_TITLE"));
         return $menu;
     }
 

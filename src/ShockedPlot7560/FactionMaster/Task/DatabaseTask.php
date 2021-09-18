@@ -32,6 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Task;
 
+use Exception;
 use PDO;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
@@ -83,14 +84,19 @@ class DatabaseTask extends AsyncTask {
                 $db = new PDO("sqlite:" . $db[0] . ".sqlite");
                 break;
         }
-        $query = $db->prepare($this->query);
-        $query->execute((array) $this->args);
-        $results = "";
-        if ($this->class !== null) {
-            $query->setFetchMode(PDO::FETCH_CLASS, $this->class);
-            $results = $query->fetchAll();
+        try {
+            $query = $db->prepare($this->query);
+            var_dump($query->execute((array) $this->args));
+            $results = "";
+            if ($this->class !== null) {
+                $query->setFetchMode(PDO::FETCH_CLASS, $this->class);
+                $results = $query->fetchAll();
+            }
+            $this->setResult($results);        
+        } catch (\Throwable $th) {
+            throw new Exception($th->getMessage(), 1);
         }
-        $this->setResult($results);
+        
     }
 
     public function onCompletion(Server $server): void {

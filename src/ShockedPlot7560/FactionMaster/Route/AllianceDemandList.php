@@ -36,66 +36,74 @@ use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\AllianceRequestListCollection;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class AllianceDemandList implements Route {
+class AllianceDemandList extends RouteBase implements Route {
 
     const SLUG = "allianceDemandList";
 
-    /** @var Collection */
-    private $Collection;
     /** @var InvitationEntity[] */
-    private $Invitations;
-    /** @var UserEntity */
-    private $UserEntity;
+    private $invitations;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->UserEntity = $User;
-        $this->Invitations = MainAPI::getInvitationsByReceiver(MainAPI::getFactionOfPlayer($player->getName())->name, "alliance");
-        $this->Collection = CollectionFactory::get(AllianceRequestListCollection::SLUG)->init($player, $User, $this->Invitations);
+    public function getPermissions(): array {
+        return [
+            PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
+            PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND
+        ];
+    }
+
+    public function getBackRoute(): ?Route {
+        return RouterFactory::get(AllianceMainMenu::SLUG);
+    }
+
+    /** @return InvitationEntity[] */
+    protected function getInvitations(): array {
+        return $this->invitations;
+    }
+
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+
+        $this->invitations = MainAPI::getInvitationsByReceiver($this->getFaction()->getName(), InvitationEntity::ALLIANCE_INVITATION);
+        $this->setCollection(CollectionFactory::get(AllianceRequestListCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getInvitations()));
 
         $message = "";
         if (isset($params[0])) {
             $message = $params[0];
         }
-
-        if (count($this->Invitations) == 0) {
-            $message .= Utils::getText($this->UserEntity->name, "NO_PENDING_REQUEST");
+        if (count($this->getInvitations()) == 0) {
+            $message .= Utils::getText($this->getUserEntity()->getName(), "NO_PENDING_REQUEST");
         }
 
-        $menu = $this->allianceDemandList($message);
-        $player->sendForm($menu);
+        $player->sendForm($this->getForm($message));
     }
 
     public function call(): callable
     {
-        $Collection = $this->Collection;
-        return function (Player $player, $data) use ($Collection) {
+        return function (Player $player, $data) {
             if ($data === null) {
                 return;
             }
-
-            $Collection->process($data, $player);
+            $this->getCollection()->process($data, $player);
             return;
         };
     }
 
-    private function allianceDemandList(string $message = ""): SimpleForm {
+    protected function getForm(string $message = ""): SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "REQUEST_LIST_TITLE"));
+        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "REQUEST_LIST_TITLE"));
         if ($message !== "") {
             $menu->setContent($message);
         }
-
         return $menu;
     }
 

@@ -38,52 +38,48 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class TopFactionPanel implements Route {
+class TopFactionPanel extends RouteBase implements Route {
 
     const SLUG = "topFaction";
-
-    public $PermissionNeed = [];
-    public $backMenu;
-    /** @var UserEntity */
-    private $UserEntity;
-
+    
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __construct() {
-        $this->backMenu = RouterFactory::get(MainPanel::SLUG);
+    public function getPermissions(): array {
+        return [];
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->UserEntity = $User;
-        $menu = $this->topFactionMenu($params[0]);
-        $player->sendForm($menu);
+    public function getBackRoute(): ?Route {
+        return RouterFactory::get(MainPanel::SLUG);
+    }
+    
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+        $this->getPlayer()->sendForm($this->getForm($params[0]));
     }
 
     public function call(): callable {
-        $backRoute = $this->backMenu;
-        return function (Player $Player, $data) use ($backRoute) {
+        return function (Player $player, $data) {
             if ($data === null) {
                 return;
             }
-
-            Utils::processMenu($backRoute, $Player);
+            Utils::processMenu($this->getBackRoute(), $player);
         };
     }
 
-    private function topFactionMenu(array $top): SimpleForm {
+    protected function getForm(array $top): SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "TOP_FACTION_TITLE"));
+        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "TOP_FACTION_TITLE"));
         $content = '';
-        foreach ($top as $key => $Faction) {
-            $content .= Utils::getText($this->UserEntity->name, "TOP_FACTION_LINE", [
+        foreach ($top as $key => $faction) {
+            $content .= Utils::getText($this->getUserEntity()->getName(), "TOP_FACTION_LINE", [
                 'rank' => ($key + 1),
-                'factionName' => $Faction->name,
-                'level' => $Faction->level,
+                'factionName' => $faction->getName(),
+                'level' => $faction->getName(),
             ]);
         }
-        $menu->addButton(Utils::getText($this->UserEntity->name, "BUTTON_BACK"));
+        $menu->addButton(Utils::getText($this->getUserEntity()->getName(), "BUTTON_BACK"));
         $menu->setContent($content);
         return $menu;
     }

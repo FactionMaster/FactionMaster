@@ -34,57 +34,67 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\ManageFactionMainCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class ManageFactionMain implements Route {
+class ManageFactionMain extends RouteBase implements Route {
 
     const SLUG = "manageMainFaction";
-
-    /** @var Collection */
-    private $Collection;
-    /** @var UserEntity */
-    private $UserEntity;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->UserEntity = $User;
-        $this->Collection = CollectionFactory::get(ManageFactionMainCollection::SLUG)->init($player, $User);
+    public function getPermissions(): array {
+        return [
+            PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION,
+            PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION,
+            PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
+            PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
+            PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS,
+            PermissionIds::PERMISSION_LEVEL_UP,
+            PermissionIds::PERMISSION_CHANGE_FACTION_VISIBILITY,
+            PermissionIds::PERMISSION_CHANGE_FACTION_MESSAGE,
+            PermissionIds::PERMISSION_CHANGE_FACTION_DESCRIPTION
+        ];
+    }
+
+    public function getBackRoute(): ?Route {
+        return RouterFactory::get(MainPanel::SLUG);
+    }
+
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+        $this->setCollection(CollectionFactory::get(ManageFactionMainCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity()));
+
         $message = "";
         if (isset($params[0])) {
             $message = $params[0];
         }
 
-        $menu = $this->manageMainMembersMenu($message);
-        $player->sendForm($menu);
+        $player->sendForm($this->getForm($message));
     }
 
     public function call(): callable
     {
-        $Collection = $this->Collection;
-        return function (Player $player, $data) use ($Collection) {
+        return function (Player $player, $data) {
             if ($data === null) {
                 return;
             }
-
-            $Collection->process($data, $player);
+            $this->getCollection()->process($data, $player);
         };
     }
 
-    private function manageMainMembersMenu(string $message = ""): SimpleForm {
+    protected function getForm(string $message = ""): SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "MANAGE_FACTION_MAIN_TITLE"));
+        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MANAGE_FACTION_MAIN_TITLE"));
         if ($message !== "") {
             $menu->setContent($message);
         }
-
         return $menu;
     }
 

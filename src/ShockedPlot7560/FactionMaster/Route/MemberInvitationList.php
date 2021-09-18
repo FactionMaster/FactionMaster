@@ -35,66 +35,73 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\MemberInvitationListCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class MemberInvitationList implements Route {
+class MemberInvitationList extends RouteBase implements Route {
 
     const SLUG = "memberInvitationList";
 
-    /** @var UserEntity */
-    private $UserEntity;
-    /** @var Collection */
-    private $Collection;
     /** @var InvitationEntity[] */
-    private $Invitations;
+    private $invitations;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->UserEntity = $User;
+    public function getPermissions(): array {
+        return [
+            PermissionIds::PERMISSION_DELETE_PENDING_MEMBER_INVITATION
+        ];
+    }
+
+    public function getBackRoute(): ?Route {
+        return RouterFactory::get(ManageMainMembers::SLUG);
+    }
+
+    /** @var InvitationEntity[] */
+    protected function getInvitations(): array {
+        return $this->invitations;
+    }
+
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+
+        $this->invitations = MainAPI::getInvitationsBySender($this->getFaction()->getName(), InvitationEntity::MEMBER_INVITATION);
+        $this->setCollection(CollectionFactory::get(MemberInvitationListCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getInvitations()));
+        
         $message = "";
-        $this->Invitations = MainAPI::getInvitationsBySender(MainAPI::getFactionOfPlayer($player->getName())->name, "member");
-        $this->Collection = CollectionFactory::get(MemberInvitationListCollection::SLUG)->init($player, $User, $this->Invitations);
         if (isset($params[0])) {
             $message = $params[0];
         }
-
         if (count($this->Invitations) == 0) {
-            $message .= Utils::getText($User->name, "NO_PENDING_INVITATION");
+            $message .= Utils::getText($this->getUserEntity()->getName(), "NO_PENDING_INVITATION");
         }
 
-        $menu = $this->memberInvitationList($message);
-        $player->sendForm($menu);
+        $player->sendForm($this->getForm($message));
     }
 
-    public function call(): callable
-    {
-        $Collection = $this->Collection;
-        return function (Player $player, $data) use ($Collection) {
+    public function call(): callable {
+        return function (Player $player, $data) {
             if ($data === null) {
                 return;
             }
-
-            $Collection->process($data, $player);
+            $this->getCollection()->process($data, $player);
             return;
         };
     }
 
-    private function memberInvitationList(string $message = ""): SimpleForm {
+    protected function getForm(string $message = ""): SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "MANAGE_MEMBERS_INVITATION_LIST_TITLE"));
+        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MANAGE_MEMBERS_INVITATION_LIST_TITLE"));
         if ($message !== "") {
             $menu->setContent($message);
         }
-
         return $menu;
     }
 

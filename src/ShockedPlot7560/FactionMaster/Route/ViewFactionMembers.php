@@ -35,66 +35,61 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\ViewMembersCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class ViewFactionMembers implements Route {
+class ViewFactionMembers extends RouteBase implements Route {
 
     const SLUG = "viewFactionMembers";
-
-    public $PermissionNeed = [];
-
-    /** @var Collection */
-    private $Collection;
-    /** @var UserEntity */
-    private $UserEntity;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->UserEntity = $User;
-        $Faction = MainAPI::getFactionOfPlayer($player->getName());
-        $this->Collection = CollectionFactory::get(ViewMembersCollection::SLUG)->init($player, $User, $Faction);
-        $message = "";
-        if (isset($params[0])) {
-            $message = $params[0];
-        }
-
-        if (count($Faction->members) == 0) {
-            $message .= Utils::getText($this->UserEntity->name, "NO_MEMBERS");
-        }
-
-        $menu = $this->membersListMenu($message);
-        $player->sendForm($menu);
+    public function getPermissions(): array {
+        return [];
     }
 
-    public function call(): callable
-    {
-        $Collection = $this->Collection;
-        return function (Player $player, $data) use ($Collection) {
+    public function getBackRoute(): ?Route {
+        return RouterFactory::get(MainPanel::SLUG);
+    }
+
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+
+        $faction = MainAPI::getFactionOfPlayer($this->getPlayer()->getName());
+        $this->setCollection(CollectionFactory::get(ViewMembersCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $faction));
+        
+        $message = "";
+        if (isset($this->getParams()[0])) {
+            $message = $params[0];
+        }
+        if (count($faction->getMembers()) == 0) {
+            $message .= Utils::getText($this->getUserEntity()->getName(), "NO_MEMBERS");
+        }
+        $this->getPlayer()->sendForm($this->getForm($message));
+    }
+
+    public function call(): callable {
+        return function (Player $player, $data) {
             if ($data === null) {
                 return;
             }
-
-            $Collection->process($data, $player);
+            $this->getCollection()->process($data, $player);
             return;
         };
     }
 
-    private function membersListMenu(string $message = ""): SimpleForm {
+    protected function getForm(string $message = ""): SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "MEMBERS_LIST_TITLE"));
+        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MEMBERS_LIST_TITLE"));
         if ($message !== "") {
             $menu->setContent($message);
         }
-
         return $menu;
     }
 

@@ -47,56 +47,68 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class LevelUp implements Route {
+class LevelUp extends RouteBase implements Route {
 
     const SLUG = "levelUp";
 
-    public $PermissionNeed = [
-        PermissionIds::PERMISSION_LEVEL_UP,
-    ];
-    public $backMenu;
-
     /** @var array */
-    private $buttons;
-    /** @var FactionEntity */
-    private $Faction;
+    private $buttons = [];
     /** @var RewardInterface */
-    private $Reward;
+    private $reward;
     /** @var array */
-    private $RewardData;
+    private $rewardData;
     /** @var bool */
     private $levelUpReady;
-
-    /** @var UserEntity */
-    private $UserEntity;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __construct() {
-        $this->backMenu = RouterFactory::get(ManageFactionMain::SLUG);
+    public function getPermissions(): array {
+        return [
+            PermissionIds::PERMISSION_LEVEL_UP
+        ];
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->UserEntity = $User;
-        $this->Faction = MainAPI::getFactionOfPlayer($player->getName());
+    public function getBackRoute(): ?Route {
+        return RouterFactory::get(ManageFactionMain::SLUG);
+    }
+
+    protected function getReward(): RewardInterface {
+        return $this->reward;
+    }
+
+    protected function isLevelUpReady(): bool {
+        return $this->levelUpReady;
+    }
+
+    protected function getRewardData(): array {
+        return $this->rewardData;
+    }
+
+    protected function getButtons(): array {
+        return $this->buttons;
+    }
+
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+
         $this->buttons = [];
 
-        $XpLevel = Utils::getXpLevel($this->Faction->level);
-        $Pourcent = floor((30 * $this->Faction->xp) / $XpLevel);
+        $xpLevel = Utils::getXpLevel($this->getFaction()->getLevel());
+        $pourcent = floor((15 * $this->getFaction()->getXP()) / $xpLevel);
         $advanceChar = "§l";
-        for ($i = 0; $i < $Pourcent; $i++) {
+        for ($i = 0; $i < $pourcent; $i++) {
             $advanceChar .= "§a=";
         }
-        for ($i = 0; $i < 30 - $Pourcent; $i++) {
+        for ($i = 0; $i < 15 - $pourcent; $i++) {
             $advanceChar .= "§0=";
         }
-        $this->Reward = MainAPI::getLevelReward($this->Faction->level + 1);
-        $this->RewardData = MainAPI::getLevelRewardData($this->Faction->level + 1);
+        $this->reward = MainAPI::getLevelReward($this->getFaction()->getLevel() + 1);
+        $this->rewardData = MainAPI::getLevelRewardData($this->getFaction()->getLevel() + 1);
 
         $this->levelUpReady = false;
-        if ($Pourcent >= 30) {
+        if ($pourcent >= 30) {
             $this->levelUpReady = true;
         }
 
@@ -106,18 +118,18 @@ class LevelUp implements Route {
         }
 
         $content = "";
-        if ($this->Reward !== null) {
+        if ($this->getReward() !== null) {
             $content = "";
             if ($message !== "") {
                 $content .= $message . "\n";
             }
 
-            $name = Utils::getText($player->getName(), $this->Reward->getName($player->getName()));
-            $content .= Utils::getText($player->getName(), "LEVEL_UP_CONTENT_MAIN", ['name' => $name, 'value' => $this->Reward->getValue()]);
-            if ($this->levelUpReady) {
-                $this->buttons[] = Utils::getText($player->getName(), "BUTTON_LEVEL_UP_READY", ['level' => $this->Faction->level]);
+            $name = Utils::getText($this->getPlayer()->getName(), $this->getReward()->getName($this->getPlayer()->getName()));
+            $content .= Utils::getText($this->getPlayer()->getName(), "LEVEL_UP_CONTENT_MAIN", ['name' => $name, 'value' => $this->getReward()->getValue()]);
+            if ($this->isLevelUpReady()) {
+                $this->buttons[] = Utils::getText($player->getName(), "BUTTON_LEVEL_UP_READY", ['level' => $this->getFaction()->getLevel()]);
             } else {
-                $this->buttons[] = Utils::getText($player->getName(), "BUTTON_LEVEL_UP_ADVANCE", ['advance' => $advanceChar, 'level' => $this->Faction->level]);
+                $this->buttons[] = Utils::getText($player->getName(), "BUTTON_LEVEL_UP_ADVANCE", ['advance' => $advanceChar, 'level' => $this->getFaction()->getLevel()]);
             }
         } else {
             $content = "";
@@ -125,13 +137,12 @@ class LevelUp implements Route {
                 $content .= $message . "\n";
             }
 
-            $content .= Utils::getText($player->getName(), "LEVEL_UP_CONTENT_MAIN_MAX");
-            $this->buttons[] = Utils::getText($player->getName(), "BUTTON_LEVEL_UP_MAX");
+            $content .= Utils::getText($this->getPlayer()->getName(), "LEVEL_UP_CONTENT_MAIN_MAX");
+            $this->buttons[] = Utils::getText($this->getPlayer()->getName(), "BUTTON_LEVEL_UP_MAX");
         }
-        $this->buttons[] = Utils::getText($player->getName(), "BUTTON_BACK");
+        $this->buttons[] = Utils::getText($this->getPlayer()->getName(), "BUTTON_BACK");
 
-        $menu = $this->levelUp($content);
-        $player->sendForm($menu);
+        $player->sendForm($this->getForm($content));
     }
 
     public function call(): callable
@@ -153,8 +164,8 @@ class LevelUp implements Route {
                 }
 
                 foreach ($Data['cost'] as $cost) {
-                    $Reward = RewardFactory::get($cost['type']);
-                    $content .= "\n §5>> §f" . Utils::getText($player->getName(), $Reward->getName($player->getName())) . " x" . $cost['value'];
+                    $reward = RewardFactory::get($cost['type']);
+                    $content .= "\n §5>> §f" . Utils::getText($player->getName(), $reward->getName($player->getName())) . " x" . $cost['value'];
                 }
                 if ($levelReady === true) {
                     Utils::processMenu(RouterFactory::get(ConfirmationMenu::SLUG), $player, [
@@ -173,67 +184,67 @@ class LevelUp implements Route {
         };
     }
 
-    private function levelUp(string $content = ""): SimpleForm {
+    protected function getForm(string $content = ""): SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = Utils::generateButton($menu, $this->buttons);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "LEVEL_UP_TITLE_MAIN"));
+        $menu = Utils::generateButton($menu, $this->getButtons());
+        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "LEVEL_UP_TITLE_MAIN"));
         $menu->setContent($content);
         return $menu;
     }
 
     private function callLevelUp(string $factionName): callable {
-        $rewardData = $this->RewardData;
-        return function (Player $Player, $data) use ($factionName, $rewardData) {
+        return function (Player $player, $data) use ($factionName) {
             if ($data === null) {
                 return;
             }
 
             if ($data) {
+                $rewardData = $this->getRewardData();
                 $continue = true;
                 if (!\is_array($rewardData['cost'])) {
                     $rewardData['cost'] = [];
                 }
 
                 $finish = false;
-                foreach ($rewardData['cost'] as $Cost) {
+                foreach ($rewardData['cost'] as $cost) {
                     if ($finish === true) {
                         continue;
                     }
 
-                    $CostItem = RewardFactory::get($Cost['type']);
-                    $result = $CostItem->executeCost($factionName, $Cost['value']);
+                    $costItem = RewardFactory::get($cost['type']);
+                    $result = $costItem->executeCost($factionName, $cost['value']);
                     if ($result !== true) {
-                        $continue = Utils::getText($this->UserEntity->name, $result);
+                        $continue = Utils::getText($this->getUserEntity()->getName(), $result);
                         $finish = true;
                     }
                 }
                 if ($continue !== true) {
-                    Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [$continue]);
+                    Utils::processMenu(RouterFactory::get(self::SLUG), $player, [$continue]);
                 } else {
-                    $Faction = $this->Faction;
-                    $Reward = $this->Reward;
-                    $RewardData = $this->RewardData;
-                    MainAPI::changeLevel($Faction->name, 1);
+                    $faction = $this->getFaction();
+                    $reward = $this->getReward();
+                    $rewardData = $this->getRewardData();
+                    MainAPI::changeLevel($faction->getName(), 1);
                     Utils::newMenuSendTask(new MenuSendTask(
-                        function () use ($Faction) {
-                            return MainAPI::getFaction($Faction->name)->level == $Faction->level + 1;
+                        function () use ($faction) {
+                            return MainAPI::getFaction($faction->getName())->getLevel() == $faction->getLevel() + 1;
                         },
-                        function () use ($Player, $Reward, $Faction, $RewardData, $factionName) {
-                            $result = $Reward->executeGet($Faction->name, $RewardData['value']);
+                        function () use ($player, $reward, $faction, $rewardData, $factionName) {
+                            $result = $reward->executeGet($faction->getName(), $rewardData['value']);
                             if ($result === true) {
-                                (new FactionLevelUpEvent($Player, $factionName, $Faction->level, $Reward, $RewardData['value']))->call();
-                                Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "SUCCESS_LEVEL_UP")]);
+                                (new FactionLevelUpEvent($player, $factionName, $faction->getLevel(), $reward, $rewardData['value']))->call();
+                                Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "SUCCESS_LEVEL_UP")]);
                             } else {
-                                Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
                             }
                         },
-                        function () use ($Player) {
-                            Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                        function () use ($player) {
+                            Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
                         }
                     ));
                 }
             } else {
-                Utils::processMenu(RouterFactory::get(self::SLUG), $Player);
+                Utils::processMenu(RouterFactory::get(self::SLUG), $player);
             }
         };
     }

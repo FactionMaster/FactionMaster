@@ -29,59 +29,21 @@
  *
  *
  */
+namespace ShockedPlot7560\FactionMaster\Route;
 
-namespace ShockedPlot7560\FactionMaster\Database\Entity;
+use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 
-class UserEntity extends EntityDatabase {
+abstract class InvitationBase extends RouteBase {
 
-    use FactionUtils;
+    /** @var InvitationEntity */
+    protected $invitation;
 
-    /** 
-     * DO NOT USE THIS CONSTANT
-     * @see getName()
-     * @var string
-    */
-    public $name;
-    /** 
-     * DO NOT USE THIS CONSTANT
-     * @see getFactionName(), getFactionEntity()
-     * @var string|null
-    */
-    public $faction;
-    /** 
-     * DO NOT USE THIS CONSTANT
-     * @see getRank()
-     * @var int|null
-    */
-    public $rank;
-    /** 
-     * DO NOT USE THIS CONSTANT
-     * @see getLanguage()
-     * @var string
-    */
-    public $language;
-
-    public function setName(string $name): void {
-        $this->name = $name;
+    public function getInvitation(): InvitationEntity {
+        return $this->invitation;
     }
 
-    public function setRank(?int $rank): void {
-        $this->rank = $rank;
+    public function setInvitation(InvitationEntity $invitation): void {
+        $this->invitation = $invitation;
     }
 
-    public function setLanguage(string $slug): void {
-        $this->language = $slug;
-    }
-
-    public function getName(): string {
-        return $this->name;
-    }
-
-    public function getRank(): ?int {
-        return $this->rank;
-    }
-
-    public function getLanguage(): string {
-        return $this->language;
-    }
 }

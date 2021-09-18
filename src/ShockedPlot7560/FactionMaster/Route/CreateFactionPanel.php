@@ -39,92 +39,88 @@ use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionCreateEvent;
 use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class CreateFactionPanel implements Route {
+class CreateFactionPanel extends RouteBase implements Route {
 
     const SLUG = "createFaction";
-
-    public $PermissionNeed = [];
-    public $backMenu;
-
-    /** @var UserEntity */
-    private $UserEntity;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __construct() {
-        $this->backMenu = RouterFactory::get(MainPanel::SLUG);
+    public function getPermissions(): array {
+        return [];
+    }
+
+    public function getBackRoute(): Route {
+        return RouterFactory::get(MainPanel::SLUG);
     }
 
     /**
      * @param array|null $params Give to first item the message to print if wanted
      */
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->UserEntity = $User;
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+
         $message = "";
         if (isset($params[0]) && \is_string($params[0])) {
             $message = $params[0];
         }
 
-        $menu = $this->createFactionMenu($message);
-        $player->sendForm($menu);
+        $player->sendForm($this->getForm($message));
     }
 
     public function call(): callable {
-        $backRoute = $this->backMenu;
-        return function (Player $Player, $data) use ($backRoute) {
+        return function (Player $player, $data) {
             if ($data === null) {
                 return;
             }
 
             $factionName = $data[1];
-            $FactionRequest = MainAPI::getFaction($factionName);
+            $factionRequested = MainAPI::getFaction($factionName);
             if ($factionName !== "") {
-                if (!$FactionRequest instanceof FactionEntity) {
-                    if (\strlen($factionName) >= Main::getInstance()->config->get("min-faction-name-length")
-                            && \strlen($factionName) <= Main::getInstance()->config->get("max-faction-name-length")) {
+                if (!$factionRequested instanceof FactionEntity) {
+                    if (\strlen($factionName) >= ConfigManager::getConfig()->get("min-faction-name-length")
+                            && \strlen($factionName) <= ConfigManager::getConfig()->get("max-faction-name-length")) {
                         if (!in_array($factionName, (array) Utils::getConfig("banned-faction-name"))) {
-                            MainAPI::addFaction($factionName, $Player->getName());
+                            MainAPI::addFaction($factionName, $player->getName());
                             Utils::newMenuSendTask(new MenuSendTask(
                                 function () use ($factionName) {
                                     return MainAPI::getFaction($factionName) instanceof FactionEntity;
                                 },
-                                function () use ($factionName, $Player, $backRoute) {
-                                    (new FactionCreateEvent($Player, $factionName))->call();
-                                    Utils::processMenu($backRoute, $Player, [Utils::getText($Player->getName(), "SUCCESS_CREATE_FACTION")]);
+                                function () use ($factionName, $player) {
+                                    (new FactionCreateEvent($player, $factionName))->call();
+                                    Utils::processMenu($this->getBackRoute(), $player, [Utils::getText($player->getName(), "SUCCESS_CREATE_FACTION")]);
                                 },
-                                function () use ($Player) {
-                                    Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                function () use ($player) {
+                                    Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
                                 }
                             ));                        
                         } else {
-                            Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "CREATE_FACTION_PANEL_CONTENT_BANNED")]);
+                            Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "CREATE_FACTION_PANEL_CONTENT_BANNED")]);
                         }
                     } else {
-                        $menu = $this->createFactionMenu(Utils::getText($this->UserEntity->name, "MAX_MIN_REACH_NAME", ["min" => Utils::getConfig("min-faction-name-length"), "max" => Utils::getConfig("max-faction-name-length")]));
-                        $Player->sendForm($menu);
+                        Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "MAX_MIN_REACH_NAME", ["min" => Utils::getConfig("min-faction-name-length"), "max" => Utils::getConfig("max-faction-name-length")])]);
                     }
                 } else {
-                    $menu = $this->createFactionMenu(Utils::getText($this->UserEntity->name, "FACTION_NAME_ALREADY_EXIST"));
-                    $Player->sendForm($menu);
+                    Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "FACTION_NAME_ALREADY_EXIST")]);
                 }
             } else {
-                Utils::processMenu($backRoute, $Player);
+                Utils::processMenu($this->getBackRoute(), $player);
 
             }
         };
     }
 
-    private function createFactionMenu(string $message = ""): CustomForm {
+    protected function getForm(string $message = ""): CustomForm {
         $menu = new CustomForm($this->call());
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "CREATE_FACTION_PANEL_TITLE"));
-        $menu->addLabel(Utils::getText($this->UserEntity->name, "CREATE_FACTION_PANEL_CONTENT") . "\n" . $message);
-        $menu->addInput(Utils::getText($this->UserEntity->name, "CREATE_FACTION_PANEL_INPUT_CONTENT"));
+        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "CREATE_FACTION_PANEL_TITLE"));
+        $menu->addLabel(Utils::getText($this->getUserEntity()->getName(), "CREATE_FACTION_PANEL_CONTENT") . "\n" . $message);
+        $menu->addInput(Utils::getText($this->getUserEntity()->getName(), "CREATE_FACTION_PANEL_INPUT_CONTENT"));
         return $menu;
     }
 }

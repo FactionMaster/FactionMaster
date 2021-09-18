@@ -35,7 +35,6 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\CustomForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\VisibilityChangeEvent;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
@@ -44,75 +43,68 @@ use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class ChangeVisibility implements Route {
+class ChangeVisibility extends RouteBase implements Route {
 
     const SLUG = "changeVisibility";
 
-    public $PermissionNeed = [
-        PermissionIds::PERMISSION_CHANGE_FACTION_VISIBILITY,
-    ];
-    public $backMenu;
-
     /** @var array */
     private $sliderData;
-    /** @var FactionEntity */
-    private $Faction;
-    /** @var UserEntity */
-    private $UserEntity;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __construct() {
-        $this->backMenu = RouterFactory::get(ManageFactionMain::SLUG);
-    }
-
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->UserEntity = $User;
-        $this->sliderData = [
-            Ids::PUBLIC_VISIBILITY => Utils::getText($this->UserEntity->name, "PUBLIC_VISIBILITY_NAME"),
-            Ids::PRIVATE_VISIBILITY => Utils::getText($this->UserEntity->name, "PRIVATE_VISIBILITY_NAME"),
-            Ids::INVITATION_VISIBILITY => Utils::getText($this->UserEntity->name, "INVITATION_VISIBILITY_NAME"),
+    public function getPermissions(): array {
+        return [
+            PermissionIds::PERMISSION_CHANGE_FACTION_VISIBILITY,
         ];
-        $this->Faction = MainAPI::getFactionOfPlayer($player->getName());
-
-        $menu = $this->changeVisibility();
-        $player->sendForm($menu);
     }
 
-    public function call(): callable
-    {
-        $backMenu = $this->backMenu;
-        $Faction = $this->Faction;
-        return function (Player $Player, $data) use ($backMenu, $Faction) {
+    public function getBackRoute(): ?Route {
+        return RouterFactory::get(ManageFactionMain::SLUG);
+    }
+
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+
+        $this->sliderData = [
+            Ids::PUBLIC_VISIBILITY => Utils::getText($this->getUserEntity()->getName(), "PUBLIC_VISIBILITY_NAME"),
+            Ids::PRIVATE_VISIBILITY => Utils::getText($this->getUserEntity()->getName(), "PRIVATE_VISIBILITY_NAME"),
+            Ids::INVITATION_VISIBILITY => Utils::getText($this->getUserEntity()->getName(), "INVITATION_VISIBILITY_NAME"),
+        ];
+
+        $player->sendForm($this->getForm());
+    }
+
+    public function call(): callable {
+        return function (Player $player, $data) {
             if ($data === null) {
                 return;
             }
 
-            $Faction = $this->Faction;
+            $faction = $this->getFaction();
             $visibility = $data[0];
-            MainAPI::changeVisibility($Faction->name, $visibility);
+            MainAPI::changeVisibility($faction->getName(), $visibility);
             Utils::newMenuSendTask(new MenuSendTask(
-                function () use ($Faction, $visibility) {
-                    return MainAPI::getFaction($Faction->name)->visibility == $visibility;
+                function () use ($faction, $visibility) {
+                    return MainAPI::getFaction($faction->getName())->getVisibilityId() == $visibility;
                 },
-                function () use ($Player, $Faction, $visibility, $backMenu) {
-                    (new VisibilityChangeEvent($Player, $Faction, $visibility))->call();
-                    Utils::processMenu($backMenu, $Player, [Utils::getText($Player->getName(), "SUCCESS_VISIBILITY_UPDATE")]);
+                function () use ($player, $faction, $visibility) {
+                    (new VisibilityChangeEvent($player, $faction, $visibility))->call();
+                    Utils::processMenu($this->getBackRoute(), $player, [Utils::getText($player->getName(), "SUCCESS_VISIBILITY_UPDATE")]);
                 },
-                function () use ($Player) {
-                    Utils::processMenu(RouterFactory::get(self::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                function () use ($player) {
+                    Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
                 }
             ));
         };
     }
 
-    private function changeVisibility(): CustomForm {
+    protected function getForm(): CustomForm {
         $menu = new CustomForm($this->call());
-        $menu->addStepSlider(Utils::getText($this->UserEntity->name, "CHANGE_VISIBILITY_STEP"), $this->sliderData, $this->Faction->visibility);
-        $menu->addLabel(Utils::getText($this->UserEntity->name, "CHANGE_VISIBILITY_EXPLICATION"));
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "CHANGE_VISIBILITY_TITLE"));
+        $menu->addStepSlider(Utils::getText($this->getUserEntity()->getName(), "CHANGE_VISIBILITY_STEP"), $this->sliderData, $this->getFaction()->getVisibilityId());
+        $menu->addLabel(Utils::getText($this->getUserEntity()->getName(), "CHANGE_VISIBILITY_EXPLICATION"));
+        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "CHANGE_VISIBILITY_TITLE"));
         return $menu;
     }
 }

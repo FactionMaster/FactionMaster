@@ -73,7 +73,7 @@ class TransferProperty extends Button {
                                 new DatabaseTask(
                                     "UPDATE " . FactionTable::TABLE_NAME . " SET members = :members WHERE name = :name",
                                     [
-                                        'members' => \base64_encode(\serialize($Faction->members)),
+                                        'members' => json_encode($Faction->members),
                                         'name' => $Faction->name,
                                     ],
                                     function () use ($Faction) {

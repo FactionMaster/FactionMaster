@@ -35,65 +35,61 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\JoinInvitationListCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class InvitationList implements Route {
+class InvitationList extends RouteBase implements Route {
 
     const SLUG = "invitationList";
-
-    public $PermissionNeed = [];
-
-    /** @var UserEntity */
-    private $UserEntity;
-    /** @var Collection */
-    private $Collection;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->UserEntity = $User;
-        $Invitations = MainAPI::getInvitationsBySender($player->getName(), "member");
-        $this->Collection = CollectionFactory::get(JoinInvitationListCollection::SLUG)->init($player, $User, $Invitations);
+    public function getPermissions(): array {
+        return [];
+    }
+
+    public function getBackRoute(): ?Route {
+        return RouterFactory::get(ManageInvitationMain::SLUG);
+    }
+
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+
+        $invitations = MainAPI::getInvitationsBySender($player->getName(), "member");
+        $this->setCollection(CollectionFactory::get(JoinInvitationListCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $invitations));
+        
         $message = "";
         if (isset($params[0])) {
             $message = $params[0];
         }
-
-        if (count($Invitations) == 0) {
-            $message .= Utils::getText($this->UserEntity->name, "NO_PENDING_INVITATION");
+        if (count($invitations) == 0) {
+            $message .= Utils::getText($this->getUserEntity()->getName(), "NO_PENDING_INVITATION");
         }
 
-        $menu = $this->invitationList($message);
-        $player->sendForm($menu);
+        $player->sendForm($this->getForm($message));
     }
 
-    public function call(): callable
-    {
-        $Collection = $this->Collection;
-        return function (Player $Player, $data) use ($Collection) {
+    public function call(): callable {
+        return function (Player $Player, $data) {
             if ($data === null) {
                 return;
             }
-
-            $Collection->process($data, $Player);
+            $this->getCollection()->process($data, $Player);
             return;
         };
     }
 
-    private function invitationList(string $message = ""): SimpleForm {
+    protected function getForm(string $message = ""): SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "INVITATION_LIST_TITLE"));
+        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "INVITATION_LIST_TITLE"));
         if ($message !== "") {
             $menu->setContent($message);
         }
-
         return $menu;
     }
 

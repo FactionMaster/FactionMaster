@@ -34,59 +34,56 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\JoinFactionMainCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class ManageInvitationMain implements Route {
+class ManageInvitationMain extends RouteBase implements Route {
 
     const SLUG = "joinFactionMain";
-
-    public $PermissionNeed = [];
-
-    /** @var UserEntity */
-    private $UserEntity;
-    /** @var Collection */
-    private $Collection;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->UserEntity = $User;
-        $this->Collection = CollectionFactory::get(JoinFactionMainCollection::SLUG)->init($player, $User);
+    public function getPermissions(): array {
+        return [];
+    }
+
+    public function getBackRoute(): ?Route {
+        return RouterFactory::get(MainPanel::SLUG);
+    }
+
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+        $this->setCollection(CollectionFactory::get(JoinFactionMainCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity()));
+
         $message = "";
         if (isset($params[0])) {
             $message = $params[0];
         }
 
-        $menu = $this->manageMainMenu($message);
-        $player->sendForm($menu);
+        $player->sendForm($this->getForm($message));
     }
 
     public function call(): callable
     {
-        $Collection = $this->Collection;
-        return function (Player $Player, $data) use ($Collection) {
+        return function (Player $Player, $data) {
             if ($data === null) {
                 return;
             }
-
-            $Collection->process($data, $Player);
+            $this->getCollection()->process($data, $Player);
         };
     }
 
-    private function manageMainMenu(string $message = ""): SimpleForm {
+    protected function getForm(string $message = ""): SimpleForm {
         $menu = new SimpleForm($this->call());
-        $menu = $this->Collection->generateButtons($menu, $this->UserEntity->name);
-        $menu->setTitle(Utils::getText($this->UserEntity->name, "JOIN_FACTION_PANEL"));
+        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "JOIN_FACTION_PANEL"));
         if ($message !== "") {
             $menu->setContent($message);
         }
-
         return $menu;
     }
 

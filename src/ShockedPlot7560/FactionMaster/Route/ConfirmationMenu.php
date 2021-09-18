@@ -38,43 +38,47 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class ConfirmationMenu implements Route {
+class ConfirmationMenu extends RouteBase implements Route {
 
     const SLUG = "confirmationMenu";
 
-    public $PermissionNeed = [];
+    /** @var Route */
     public $backMenu;
-
-    /** @var UserEntity */
-    private $UserEntity;
 
     public function getSlug(): string {
         return self::SLUG;
     }
 
-    public function __invoke(Player $player, UserEntity $User, array $UserPermissions, ?array $params = null) {
-        $this->UserEntity = $User;
+    public function getPermissions(): array {
+        return [];
+    }
+
+    public function getBackRoute(): ?Route {
+        return $this->backMenu;
+    }
+
+    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+        $this->init($player, $userEntity, $userPermissions, $params);
+
         if (!isset($params[0])) {
             throw new InvalidArgumentException("First item must be set");
         }
 
         $this->backMenu = $params[0];
 
-        $menu = $this->confirmationMenu($params);
-        $player->sendForm($menu);
+        $player->sendForm($this->getForm($params));
     }
 
-    public function call(): callable
-    {
+    public function call(): callable {
         return $this->backMenu;
     }
 
-    private function confirmationMenu(array $params): ModalForm {
+    protected function getForm(array $params): ModalForm {
         $menu = new ModalForm($this->call());
         $menu->setTitle($params[1]);
         $menu->setContent($params[2]);
-        $menu->setButton1(isset($params[3]) ? $params[3] : Utils::getText($this->UserEntity->name, "BUTTON_MODAL_YES"));
-        $menu->setButton2(isset($params[4]) ? $params[4] : Utils::getText($this->UserEntity->name, "BUTTON_MODAL_NO"));
+        $menu->setButton1(isset($params[3]) ? $params[3] : Utils::getText($this->getUserEntity()->getName(), "BUTTON_MODAL_YES"));
+        $menu->setButton2(isset($params[4]) ? $params[4] : Utils::getText($this->getUserEntity()->getName(), "BUTTON_MODAL_NO"));
         return $menu;
     }
 
