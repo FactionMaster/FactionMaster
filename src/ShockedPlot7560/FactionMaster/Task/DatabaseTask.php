@@ -86,6 +86,7 @@ class DatabaseTask extends AsyncTask {
         }
         try {
             $query = $db->prepare($this->query);
+            $query->execute((array) $this->args);
             $results = "";
             if ($this->class !== null) {
                 $query->setFetchMode(PDO::FETCH_CLASS, $this->class);
@@ -93,6 +94,7 @@ class DatabaseTask extends AsyncTask {
             }
             $this->setResult($results);        
         } catch (\Throwable $th) {
+            var_dump($th->getMessage());
             throw new Exception($th->getMessage(), 1);
         }
         
