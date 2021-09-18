@@ -57,19 +57,19 @@ class FactionTable implements TableInterface {
         $this->PDO->query("CREATE TABLE IF NOT EXISTS `$tableName` ( 
             `id` INTEGER PRIMARY KEY $auto_increment, 
             `name` TEXT NOT NULL, 
-            `members` JSON NOT NULL, 
+            `members` TEXT NOT NULL, 
             `visibility` TINYINT UNSIGNED NOT NULL DEFAULT '$visibility', 
             `xp` SMALLINT UNSIGNED NOT NULL DEFAULT '$xp', 
             `level` TINYINT UNSIGNED NOT NULL, 
             `description` TEXT NOT NULL, 
             `message` TEXT NOT NULL, 
-            `ally` JSON NOT NULL, 
+            `ally` TEXT NOT NULL, 
             `maxPlayer` TINYINT UNSIGNED NOT NULL DEFAULT '$maxPlayer',
             `maxAlly` TINYINT UNSIGNED NOT NULL DEFAULT '$maxAlly', 
             `maxClaim` TINYINT UNSIGNED NOT NULL DEFAULT '$maxClaim', 
             `maxHome` TINYINT UNSIGNED NOT NULL DEFAULT '$maxHome', 
             `power` SMALLINT UNSIGNED NOT NULL DEFAULT '$power', 
-            `permissions` JSON NOT NULL, 
+            `permissions` TEXT NOT NULL, 
             `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)");
         return $this;
     }
