@@ -603,7 +603,7 @@ class MainAPI {
 
         self::submitDatabaseTask(
             new DatabaseTask(
-                "UPDATE " . FactionTable::TABLE_NAME . " SET messageFaction = :message WHERE name = :name",
+                "UPDATE " . FactionTable::TABLE_NAME . " SET message = :message WHERE name = :name",
                 [
                     'message' => $message,
                     'name' => $factionName,

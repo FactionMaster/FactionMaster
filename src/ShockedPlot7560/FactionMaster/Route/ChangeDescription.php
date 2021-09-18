@@ -108,7 +108,7 @@ class ChangeDescription extends RouteBase implements Route {
     protected function getForm(string $message = ""): CustomForm {
         $menu = new CustomForm($this->call());
         $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "CHANGE_DESCRIPTION_TITLE"));
-        $menu->addLabel($message, $this->getFaction()->getMessage());
+        $menu->addLabel($message . $this->getFaction()->getDescription());
         $menu->addInput(Utils::getText($this->getUserEntity()->getName(), "CHANGE_DESCRIPTION_INPUT_CONTENT"), "", $this->getFaction()->getDescription());
         return $menu;
     }

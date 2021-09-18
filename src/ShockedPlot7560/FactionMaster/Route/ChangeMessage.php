@@ -90,7 +90,7 @@ class ChangeMessage extends RouteBase implements Route {
                         return MainAPI::getFaction($faction->getName())->getMessage() === $message;
                     },
                     function () use ($player, $faction, $message) {
-                        $faction->messageFaction = $message;
+                        $faction->setMessage($message);
                         (new MessageChangeEvent($player, $faction, $message))->call();
                         Utils::processMenu($this->getBackRoute(), $player, [Utils::getText($player->getName(), "SUCCESS_MESSAGE_UPDATE")]);
                     },
@@ -107,7 +107,7 @@ class ChangeMessage extends RouteBase implements Route {
     protected function getForm(string $message = ""): CustomForm {
         $menu = new CustomForm($this->call());
         $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "CHANGE_MESSAGE_TITLE"));
-        $menu->addLabel($message, $this->getFaction()->getMessage());
+        $menu->addLabel($message . $this->getFaction()->getMessage());
         $menu->addInput(Utils::getText($this->getUserEntity()->getName(), "CHANGE_MESSAGE_INPUT_CONTENT"), "", $this->getFaction()->getMessage());
         return $menu;
     }

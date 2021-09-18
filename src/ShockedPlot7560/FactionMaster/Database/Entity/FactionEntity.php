@@ -78,7 +78,7 @@ class FactionEntity extends EntityDatabase {
      * @see getMessage()
      * @var string
     */
-    public $messageFaction;
+    public $message;
     /** 
      * DO NOT USE THIS CONSTANT
      * @see getAlly(), getAllyInstance()
@@ -169,7 +169,7 @@ class FactionEntity extends EntityDatabase {
     }
 
     public function setMessage(string $message): void {
-        $this->messageFaction = $message;
+        $this->message = $message;
     }
 
     public function setAlly(array $ally): void {
@@ -268,11 +268,11 @@ class FactionEntity extends EntityDatabase {
     }
 
     public function getDescription(): string {
-        return $this->description;
+        return $this->description ?? "";
     }
 
     public function getMessage(): string {
-        return $this->messageFaction;
+        return $this->message ?? "";
     }
 
     public function getAlly(): array {

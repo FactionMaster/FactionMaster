@@ -101,18 +101,18 @@ class RankPermissionManage extends RouteBase implements Route {
         return function (Player $player, $data) {
             if ($data === null) return;
             $i = 0;
-            $oldPermission = $this->getFaction()->getPermissions();
+            $faction = $this->getFaction();
+            $oldPermission = $faction->getPermissions();
             foreach ($this->getAllPermissions() as $permission) {
-                $newPermissions = $oldPermission[$this->getRank()];
-                $newPermissions[$permission->getId()] = $data[$i];
-                $this->getFaction()->setPermission($this->getRank(), $newPermissions);
+                $permissions = $faction->getPermissions();
+                $permissions[$this->getRank()][$permission->getId()] = $data[$i];
+                $faction->setPermissions($permissions);
                 $i++;
             }
-            if ($this->getFaction()->getPermissions() === $oldPermission) {
+            if ($faction->getPermissions() === $oldPermission) {
                 Utils::processMenu($this->getBackRoute(), $player);
                 return;
             }
-            $faction = $this->getFaction();
             MainAPI::updatePermissionFaction($faction->getName(), $faction->getPermissions());
             Utils::newMenuSendTask(new MenuSendTask(
                 function () use ($faction, $oldPermission) {
