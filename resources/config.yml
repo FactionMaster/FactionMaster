@@ -27,7 +27,7 @@
  #
 
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
-file-version: 4
+file-version: 5
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
 
 # --------------------- DATABASE --------------------------
@@ -136,8 +136,8 @@ message-alert-cooldown: 10
 
 # -------------- TOP FACTION'S SCOREBOARD CONFIGURATION -----------------
 
-# set this to true if you want to enable this scoreboard
-faction-scoreboard: false
+# SEE leaderboard.yml to enabled and updated position of the leaderboard !
+
 # This is the scoreboard header, display on the top
 faction-scoreboard-header: "- Top 10 faction -"
 # Lign patern for each faction
@@ -145,9 +145,6 @@ faction-scoreboard-header: "- Top 10 faction -"
 # {factionName} / {level} / {power}
 # to purpose a parameter suggestion, please open an issue on github
 faction-scoreboard-lign: "{factionName}: Level {level}"
-# This is the coordonnate to display the scoreboard
-# for a better handling, use the /f scoreboard command in game
-faction-scoreboard-position: "0|100|0|world"
 
 # --------------------- PLUGIN CONFIGURATION --------------------------
 #       DONT CHANGE IF YOU DONT KNOW WHAT YOU ARE DOING

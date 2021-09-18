@@ -80,7 +80,7 @@ class ScoreboardEntity extends Entity {
                         $nametag = Utils::getConfig("faction-scoreboard-header") . "\n";
                         foreach ($result as $faction) {
                             $newLine = Utils::getConfig("faction-scoreboard-lign");
-                            $newLine = str_replace(["{factionName}", "{level}", "{power}"], [$faction->name, $faction->level, $faction->power], $newLine);
+                            $newLine = str_replace(["{factionName}", "{level}", "{power}"], [$faction->getName(), $faction->getLevel(), $faction->getPower()], $newLine);
                             $nametag .= $newLine . "\n";
                         }
                         $entity = Main::getInstance()->getServer()->getLevelByName($levelName)->getEntity($id);

@@ -39,13 +39,13 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ConfigManager {
 
-    const CONFIG_VERSION = 4;
+    const CONFIG_VERSION = 5;
     const LEVEL_VERSION = 0;
     const TRANSLATION_VERSION = 0;
     const LANG_FILE_VERSION = [
-        "en_EN" => 0,
-        "fr_FR" => 0,
-        "es_SPA" => 0
+        "en_EN" => 1,
+        "fr_FR" => 1,
+        "es_SPA" => 1
     ];
 
     /** @var Config */
@@ -58,6 +58,8 @@ class ConfigManager {
     private static $version;
     /** @var Config[] */
     private static $lang;
+    /** @var Config */
+    private static $leaderboard;
 
     public static function init(Main $main): void {
         @mkdir(Utils::getDataFolder());
@@ -66,11 +68,13 @@ class ConfigManager {
         $main->saveDefaultConfig();
         $main->saveResource('translation.yml');
         $main->saveResource('level.yml');
+        $main->saveResource('leaderboard.yml');
 
         self::$config = Utils::getConfigFile("config");
         self::$level = Utils::getConfigFile("level");
         self::$translation = Utils::getConfigFile("translation");
         self::$version = Utils::getConfigFile("version");
+        self::$leaderboard = Utils::getConfigFile("leaderboard");
 
         ConfigUpdater::checkUpdate($main, self::getConfig(), "file-version", self::CONFIG_VERSION);
         ConfigUpdater::checkUpdate($main, self::getLevelConfig(), "file-version", self::LEVEL_VERSION);
@@ -101,6 +105,10 @@ class ConfigManager {
 
     public static function getLangConfig(string $lang): ?Config {
         return self::$lang[$lang] ?? null;
+    }
+
+    public static function getLeaderboardConfig(): Config {
+        return self::$leaderboard;
     }
 
     /** @return Config[] */

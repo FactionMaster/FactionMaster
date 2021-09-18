@@ -1,5 +1,5 @@
 # DO NOT EDIT THIS LINE
-file-version: 0
+file-version: 1
 # DO NOT EDIT THIS LINE
 
 
@@ -231,8 +231,7 @@ COMMAND_INFO_MEMBER_MEMBER: "§7*§oMembre {{name}}"
 COMMAND_INFO_MEMBER_RECRUIT: "§7§oRecrue {{name}}"
 COMMAND_INFO_DATE: "§eCrée-le {{date}}"
 
-COMMAND_SCOREBOARD_SUCCESS: " §a>> §2Position du Leaderboard mis à jours jusqu'au prochain redémarrage!"
-COMMAND_SCOREBOARD_SUCCESS_COMPLEMENT: "§2Pour garder vos changement, veuillez modifier la ligne §6'faction-scoreboard-position'§2 dans votre config.yml à §6'{{data}}'§2 et activer le Leaderboard si cela n'est pas déjà fait!"
+COMMAND_SCOREBOARD_SUCCESS: " §a>> §2Position du Leaderboard mis à jours!"
 
 REWARD_POWER_NAME: "Puissance de faction"
 REWARD_MEMBER_LIMIT_NAME: "Limite de membre"

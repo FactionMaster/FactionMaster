@@ -1,5 +1,5 @@
 # DO NOT EDIT THIS LINE
-file-version: 0
+file-version: 1
 # DO NOT EDIT THIS LINE
 
 
@@ -231,7 +231,6 @@ COMMAND_INFO_MEMBER_RECRUIT: "§7§oRecluta {{name}}"
 COMMAND_INFO_DATE: "§eCreado en {{date}}"
 
 COMMAND_SCOREBOARD_SUCCESS: " §a>> §2La tabla de clasificación sera actualizada cuando se reinicie el servidor!"
-COMMAND_SCOREBOARD_SUCCESS_COMPLEMENT: "§2Para mantener tus cambios permanentes, por favor actualiza la línea §6'faction-scoreboard-position'§2 en tu config.yml para §6'{{data}}'§2 y configura la tabla de clasifiación como habilitada si aún no lo has hecho!"
 
 REWARD_POWER_NAME: "Poder de facción"
 REWARD_MEMBER_LIMIT_NAME: "Límite de miembros"

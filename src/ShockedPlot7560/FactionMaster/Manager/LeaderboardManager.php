@@ -36,7 +36,6 @@ use pocketmine\level\Level;
 use pocketmine\level\Position;
 use ShockedPlot7560\FactionMaster\Entity\ScoreboardEntity;
 use ShockedPlot7560\FactionMaster\Main;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class LeaderboardManager {
 
@@ -49,9 +48,9 @@ class LeaderboardManager {
         self::$main = $main;
     }
 
-    public static function placeScoreboard(): void {
+    public static function placeScoreboard(?string $coordinates = null): void {
         Entity::registerEntity(ScoreboardEntity::class, true);
-        $coordinates = Utils::getConfig("faction-scoreboard-position");
+        if ($coordinates === null) $coordinates = ConfigManager::getLeaderboardConfig()->get("position");
         if ($coordinates !== false && $coordinates !== "") {
             $coordinates = explode("|", $coordinates);
             if (count($coordinates) == 4) {
@@ -64,7 +63,7 @@ class LeaderboardManager {
                     $scoreboard->spawnToAll();
                     self::$scoreboardEntity = [$scoreboard->getId(), $level->getName()];
                 } else {
-                    self::$main->getLogger()->notice("An unknow world was set on config.yml, can't load faction scoreboard");
+                    self::$main->getLogger()->notice("An unknow world was set in leaderboard.yml, can't load faction leaderboard");
                 }            
             }
         }
@@ -84,7 +83,7 @@ class LeaderboardManager {
     }
 
     public static function checkLeaderBoard(): void {
-        $coordinates = explode("|", Utils::getConfig("faction-scoreboard-position"));
+        $coordinates = explode("|", ConfigManager::getLeaderboardConfig()->get("position"));
         if (count($coordinates) == 4) {
             foreach (self::$main->getServer()->getLevels() as $level) {
                 $entities = $level->getEntities();
