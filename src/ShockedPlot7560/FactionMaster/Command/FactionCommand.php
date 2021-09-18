@@ -35,6 +35,7 @@ namespace ShockedPlot7560\FactionMaster\Command;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
+use ShockedPlot7560\FactionMaster\Command\Subcommand\AddFlagCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\ClaimCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\ClaimInfoCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\DelhomeCommand;
@@ -48,6 +49,7 @@ use ShockedPlot7560\FactionMaster\Command\Subcommand\HomeTpCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\InfoCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\MapCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\PlaceScoreboard;
+use ShockedPlot7560\FactionMaster\Command\Subcommand\RemoveFlagCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\SethomeCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\UnclaimCommand;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
@@ -72,6 +74,8 @@ class FactionCommand extends BaseCommand {
         $this->registerSubCommand(new ClaimInfoCommand("claiminfo", Utils::getText("", "COMMAND_CLAIM_INFO_DESCRIPTION")));
         $this->registerSubCommand(new ExtensionCommand("extension", Utils::getText("", "COMMAND_EXTENSION_DESCRIPTION")));
         $this->registerSubCommand(new PlaceScoreboard("scoreboard", "Place scoreboard"));
+        $this->registerSubCommand(new AddFlagCommand("addflag", Utils::getText("", "COMMAND_ADD_FLAG")));
+        $this->registerSubCommand(new RemoveFlagCommand("removeflag", Utils::getText("", "COMMAND_REMOVE_FLAG")));
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {

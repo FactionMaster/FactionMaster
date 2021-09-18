@@ -51,26 +51,26 @@ class UnclaimCommand extends BaseSubCommand {
             return;
         }
 
-        $Player = $sender->getPlayer();
-        $Chunk = $Player->getLevel()->getChunkAtPosition($Player);
-        $X = $Chunk->getX();
-        $Z = $Chunk->getZ();
-        $World = $Player->getLevel()->getName();
-        $factionClaim = MainAPI::getFactionClaim($World, $X, $Z);
-        $UserEntity = MainAPI::getUser($sender->getName());
+        $player = $sender->getPlayer();
+        $chunk = $player->getLevel()->getChunkAtPosition($player);
+        $x = $chunk->getX();
+        $z = $chunk->getZ();
+        $world = $player->getLevel()->getName();
+        $factionClaim = MainAPI::getFactionClaim($world, $x, $z);
+        $userEntity = MainAPI::getUser($sender->getName());
         if ($factionClaim === null) {
             $sender->sendMessage(Utils::getText($sender->getName(), "NOT_CLAIMED"));
             return;
-        } elseif ($factionClaim->faction === $UserEntity->faction) {
+        } elseif ($factionClaim->getFactionName() === $userEntity->getFactionName()) {
             $permissions = MainAPI::getMemberPermission($sender->getName());
-            if (Utils::haveAccess($permissions, $UserEntity, PermissionIds::PERMISSION_REMOVE_CLAIM)) {
-                MainAPI::removeClaim($sender->getPlayer(), $UserEntity->faction);
+            if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_REMOVE_CLAIM)) {
+                MainAPI::removeClaim($sender->getPlayer(), $userEntity->getFactionName());
                 Utils::newMenuSendTask(new MenuSendTask(
-                    function () use ($World, $X, $Z) {
-                        return !MainAPI::getFactionClaim($World, $X, $Z) instanceof ClaimEntity;
+                    function () use ($world, $x, $z) {
+                        return !MainAPI::getFactionClaim($world, $x, $z) instanceof ClaimEntity;
                     },
-                    function () use ($Player, $factionClaim, $Chunk, $sender) {
-                        (new FactionUnclaimEvent($Player, $factionClaim->faction, $Chunk))->call();
+                    function () use ($player, $factionClaim, $chunk, $sender) {
+                        (new FactionUnclaimEvent($player, $factionClaim->getFactionName(), $chunk))->call();
                         $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_UNCLAIM"));
                     },
                     function () use ($sender) {

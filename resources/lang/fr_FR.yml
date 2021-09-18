@@ -1,5 +1,5 @@
 # DO NOT EDIT THIS LINE
-file-version: 1
+file-version: 2
 # DO NOT EDIT THIS LINE
 
 
@@ -240,3 +240,6 @@ REWARD_CLAIM_LIMIT_NAME: "Limite de claim"
 REWARD_ALLY_LIMIT_NAME: "Limite d'alliance"
 
 NO_FACTION_TAG: "Aucune faction"
+
+WARZONE_INFO: " §c>> This area was claim for §4Warzone §cyou can claim in this area!"
+SPAWN_INFO: " §c>> This area was claim for §4Spawn §cyou can claim in this area!"

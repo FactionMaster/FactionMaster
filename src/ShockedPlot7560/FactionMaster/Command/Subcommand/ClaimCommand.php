@@ -38,9 +38,11 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Event\FactionClaimEvent;
 use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
+use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ClaimCommand extends BaseSubCommand {
@@ -53,47 +55,47 @@ class ClaimCommand extends BaseSubCommand {
         }
 
         $permissions = MainAPI::getMemberPermission($sender->getName());
-        $UserEntity = MainAPI::getUser($sender->getName());
+        $userEntity = MainAPI::getUser($sender->getName());
         if ($permissions === null) {
             $sender->sendMessage(Utils::getText($sender->getName(), "NEED_FACTION"));
             return;
         }
-        if (Utils::haveAccess($permissions, $UserEntity, PermissionIds::PERMISSION_ADD_CLAIM)) {
-            $Player = $sender->getPlayer();
-            $Chunk = $Player->getLevel()->getChunkAtPosition($Player);
-            $X = $Chunk->getX();
-            $Z = $Chunk->getZ();
-            $World = $Player->getLevel()->getName();
+        if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_ADD_CLAIM)) {
+            $player = $sender->getPlayer();
+            $chunk = $player->getLevel()->getChunkAtPosition($player);
+            $x = $chunk->getX();
+            $z = $chunk->getZ();
+            $world = $player->getLevel()->getName();
 
-            $FactionClaim = MainAPI::getFactionClaim($World, $X, $Z);
-            if ($FactionClaim === null) {
-                $FactionPlayer = MainAPI::getFactionOfPlayer($sender->getName());
-                $Claims = MainAPI::getClaimsFaction($UserEntity->faction);
-                if (count($Claims) < $FactionPlayer->max_claim) {
-                    $claimCost = Main::getInstance()->config->get("claim-cost");
-                    $ItemCost = RewardFactory::get($claimCost['type']);
-                    switch (Main::getInstance()->config->get("claim-provider")) {
+            $factionClaim = MainAPI::getFactionClaim($world, $x, $z);
+            if ($factionClaim === null) {
+                $factionPlayer = MainAPI::getFactionOfPlayer($sender->getName());
+                $claims = MainAPI::getClaimsFaction($userEntity->getFactionName());
+                if (count($claims) < $factionPlayer->getMaxClaim()) {
+                    $claimCost = ConfigManager::getConfig()->get("claim-cost");
+                    $itemCost = RewardFactory::get($claimCost['type']);
+                    switch (ConfigManager::getConfig()->get("claim-provider")) {
                         case 'flat':
-                            $ItemCost->setValue($claimCost["value"]);
+                            $itemCost->setValue($claimCost["value"]);
                             break;
                         case 'addition':
-                            $ItemCost->setValue($claimCost["value"] * (\count($Claims) + 1));
+                            $itemCost->setValue($claimCost["value"] * (\count($claims) + 1));
                             break;
                         case 'multiplicative':
-                            $ItemCost->setValue($claimCost["value"] * (Main::getInstance()->config->get('multiplication-factor') ** count($Claims)));
+                            $itemCost->setValue($claimCost["value"] * (ConfigManager::getConfig()->get('multiplication-factor') ** count($claims)));
                             break;
                         case 'decrease':
-                            $ItemCost->setValue($claimCost["value"] - (Main::getInstance()->config->get('decrease-factor') * count($Claims)));
+                            $itemCost->setValue($claimCost["value"] - (ConfigManager::getConfig()->get('decrease-factor') * count($claims)));
                             break;
                     }
-                    if (($result = $ItemCost->executeCost($FactionPlayer->name)) === true) {
-                        MainAPI::addClaim($sender->getPlayer(), $UserEntity->faction);
+                    if (($result = $itemCost->executeCost($factionPlayer->getName())) === true) {
+                        MainAPI::addClaim($sender->getPlayer(), $userEntity->getFactionName());
                         Utils::newMenuSendTask(new MenuSendTask(
-                            function () use ($World, $X, $Z) {
-                                return MainAPI::isClaim($World, $X, $Z);
+                            function () use ($world, $x, $z) {
+                                return MainAPI::isClaim($world, $x, $z);
                             },
-                            function () use ($sender, $FactionPlayer, $Chunk, $ItemCost) {
-                                (new FactionClaimEvent($sender, $FactionPlayer, $Chunk, $ItemCost->getType(), $ItemCost->getValue()))->call();
+                            function () use ($sender, $factionPlayer, $chunk, $itemCost) {
+                                (new FactionClaimEvent($sender, $factionPlayer, $chunk, $itemCost->getType(), $itemCost->getValue()))->call();
                                 $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_CLAIM"));
                             },
                             function () use ($sender) {
@@ -110,7 +112,19 @@ class ClaimCommand extends BaseSubCommand {
                     return;
                 }
             } else {
-                $sender->sendMessage(Utils::getText($sender->getName(), "ALREADY_CLAIM"));
+                if ($factionClaim->getFlag() !== null) {
+                    switch ($factionClaim->getFlag()) {
+                        case Ids::FLAG_SPAWN:
+                            $sender->sendMessage(Utils::getText($sender->getName(), "SPAWN_INFO"));
+                            break;
+                        
+                        case Ids::FLAG_WARZONE:
+                            $sender->sendMessage(Utils::getText($sender->getName(), "WARZONE_INFO"));
+                            break;
+                    }
+                }else {
+                    $sender->sendMessage(Utils::getText($sender->getName(), "ALREADY_CLAIM"));
+                }
                 return;
             }
         } else {

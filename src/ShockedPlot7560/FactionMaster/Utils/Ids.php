@@ -52,4 +52,7 @@ interface Ids {
     const HUD_FACTIONMASTER_FACTION_VISIBILITY = "factionmaster.faction.visibility";
     const HUD_FACTIONMASTER_PLAYER_RANK = "factionmaster.player.rank";
 
+    const FLAG_WARZONE = 0;
+    const FLAG_SPAWN = 1;
+
 }

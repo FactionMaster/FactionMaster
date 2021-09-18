@@ -787,20 +787,21 @@ class MainAPI {
         return self::$claim;
     }
 
-    public static function addClaim(Player $player, string $factionName): void {
+    public static function addClaim(Player $player, string $factionName, ?int $flag = null): void {
         $chunk = $player->getLevel()->getChunkAtPosition($player);
         $x = $chunk->getX();
         $z = $chunk->getZ();
         $world = $player->getLevel()->getName();
         self::submitDatabaseTask(
             new DatabaseTask(
-                "INSERT INTO " . ClaimTable::TABLE_NAME . " (x, z, world, faction, server) VALUES (:x, :z, :world, :faction, :server)",
+                "INSERT INTO " . ClaimTable::TABLE_NAME . " (x, z, world, faction, server, flags) VALUES (:x, :z, :world, :faction, :server, :flag)",
                 [
                     "x" => $x,
                     "z" => $z,
                     "world" => $world,
                     "faction" => $factionName,
-                    "server" => self::$main->getServer()->getIp()
+                    "server" => self::$main->getServer()->getIp(),
+                    "flag" => $flag
                 ],
                 function () use ($factionName, $world, $x, $z) {
                     self::submitDatabaseTask(

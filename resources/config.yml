@@ -93,6 +93,32 @@ broadcast-faction-delete-message: "{playerName} has deleted the faction {faction
 broadcast-faction-transferProperty: false
 broadcast-faction-transferProperty-message: "{playerName} transferred the property to {targetName} of the faction {factionName}"
 
+# --------------------- F MAP CONFIGURATION -------------------------
+
+available-symbol: ["/", "\\", "#", "$", "?", "%", "=", "&", "^", "$"]
+
+player-symbol: "+"
+player-color: "§b"
+
+wilderness-symbol: "-"
+wilderness-color: "§7" 
+spawn-symbol: "-"
+spawn-color: "§8" 
+warzone-symbol: "-"
+warzone-color: "§7" 
+
+claim-color: "§f"
+claim-ally-color: "§e"
+claim-ennemie-color: "§4"
+claim-own-color: "§b"
+
+compass-color: "§c"
+compass-color-actual: "§e"
+
+map-width: 48
+map-height: 10
+map-header-color: "§6"
+map-middle-header: ".[ §2({{x}},{{z}}) {{factionLabel}} {{headerColor}}]."
 
 # --------------------- CLAIM CONFIGURATION --------------------------
 

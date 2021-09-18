@@ -66,6 +66,7 @@ use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
+use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class EventListener implements Listener {
@@ -82,10 +83,26 @@ class EventListener implements Listener {
         $level = $block->getLevel();
         $chunk = $level->getChunkAtPosition(new Vector3($block->getX(), $block->getY(), $block->getZ()));
 
-        if (($faction = MainAPI::getFactionClaim($level->getName(), $chunk->getX(), $chunk->getZ())) !== null) {
+        if (($factionClaim = MainAPI::getFactionClaim($level->getName(), $chunk->getX(), $chunk->getZ())) !== null) {
             $factionPlayer = MainAPI::getFactionOfPlayer($event->getPlayer()->getName());
-            if (!$factionPlayer instanceof FactionEntity 
-                    || ($factionPlayer instanceof FactionEntity && $faction->getFactionName() !== $factionPlayer->getName())) {
+            if (!$factionPlayer instanceof FactionEntity) {
+                $event->setCancelled(true);
+                $event->getPlayer()->sendMessage(Utils::getText($event->getPlayer()->getName(), "CANT_BREAK_CLAIM"));
+                return;
+            }
+            if ($factionClaim->getFlag() !== null) {
+                $event->setCancelled(true);
+                switch ($factionClaim->getFlag()) {
+                    case Ids::FLAG_WARZONE:
+                        $event->getPlayer()->sendMessage(Utils::getText($event->getPlayer()->getName(), "CANT_BREAK_WARZONE"));
+                        break;
+                    case Ids::FLAG_SPAWN:
+                        $event->getPlayer()->sendMessage(Utils::getText($event->getPlayer()->getName(), "CANT_BREAK_SPAWN"));
+                        break;
+                }
+                return;
+            }
+            if ($factionPlayer instanceof FactionEntity && $factionClaim->getFactionName() !== $factionPlayer->getName()) {
                 $event->setCancelled(true);
                 $event->getPlayer()->sendMessage(Utils::getText($event->getPlayer()->getName(), "CANT_BREAK_CLAIM"));
                 return;
@@ -98,10 +115,26 @@ class EventListener implements Listener {
         $level = $block->getLevel();
         $chunk = $level->getChunkAtPosition(new Vector3($block->getX(), $block->getY(), $block->getZ()));
 
-        if (($faction = MainAPI::getFactionClaim($level->getName(), $chunk->getX(), $chunk->getZ())) !== null) {
+        if (($factionClaim = MainAPI::getFactionClaim($level->getName(), $chunk->getX(), $chunk->getZ())) !== null) {
             $factionPlayer = MainAPI::getFactionOfPlayer($event->getPlayer()->getName());
-            if (!$factionPlayer instanceof FactionEntity 
-                    || ($factionPlayer instanceof FactionEntity && $faction->getFactionName() !== $factionPlayer->getName())) {
+            if (!$factionPlayer instanceof FactionEntity) {
+                $event->setCancelled(true);
+                $event->getPlayer()->sendMessage(Utils::getText($event->getPlayer()->getName(), "CANT_PLACE_CLAIM"));
+                return;
+            }
+            if ($factionClaim->getFlag() !== null) {
+                $event->setCancelled(true);
+                switch ($factionClaim->getFlag()) {
+                    case Ids::FLAG_WARZONE:
+                        $event->getPlayer()->sendMessage(Utils::getText($event->getPlayer()->getName(), "CANT_PLACE_WARZONE"));
+                        break;
+                    case Ids::FLAG_SPAWN:
+                        $event->getPlayer()->sendMessage(Utils::getText($event->getPlayer()->getName(), "CANT_PLACE_SPAWN"));
+                        break;
+                }
+                return;
+            }
+            if ($factionPlayer instanceof FactionEntity && $factionClaim->getFactionName() !== $factionPlayer->getName()) {
                 $event->setCancelled(true);
                 $event->getPlayer()->sendMessage(Utils::getText($event->getPlayer()->getName(), "CANT_PLACE_CLAIM"));
                 return;
@@ -196,13 +229,28 @@ class EventListener implements Listener {
                 || $block instanceof Chest || $block instanceof Door 
                 || $block instanceof Trapdoor || $block instanceof FenceGate 
                 || $block instanceof Furnace || $block instanceof ItemFrame) {
-            if (($faction = MainAPI::getFactionClaim($level->getName(), $chunk->getX(), $chunk->getZ())) !== null) {
+            if (($factionClaim = MainAPI::getFactionClaim($level->getName(), $chunk->getX(), $chunk->getZ())) !== null) {
                 $factionPlayer = MainAPI::getFactionOfPlayer($event->getPlayer()->getName());
-                if (!$factionPlayer instanceof FactionEntity 
-                        || ($factionPlayer instanceof FactionEntity 
-                        && $faction->getFactionName() !== $factionPlayer->getName())) {
+                if (!$factionPlayer instanceof FactionEntity) {
                     $event->setCancelled(true);
-                    $event->getPlayer()->sendMessage(Utils::getText($player->getName(), "CANT_INTERACT_CLAIM"));
+                    $event->getPlayer()->sendMessage(Utils::getText($event->getPlayer()->getName(), "CANT_INTERACT_CLAIM"));
+                    return;
+                }
+                if ($factionClaim->getFlag() !== null) {
+                    $event->setCancelled(true);
+                    switch ($factionClaim->getFlag()) {
+                        case Ids::FLAG_WARZONE:
+                            $event->getPlayer()->sendMessage(Utils::getText($event->getPlayer()->getName(), "CANT_INTERACT_WARZONE"));
+                            break;
+                        case Ids::FLAG_SPAWN:
+                            $event->getPlayer()->sendMessage(Utils::getText($event->getPlayer()->getName(), "CANT_INTERACT_SPAWN"));
+                            break;
+                    }
+                    return;
+                }
+                if ($factionPlayer instanceof FactionEntity && $factionClaim->getFactionName() !== $factionPlayer->getName()) {
+                    $event->setCancelled(true);
+                    $event->getPlayer()->sendMessage(Utils::getText($event->getPlayer()->getName(), "CANT_INTERACT_CLAIM"));
                     return;
                 }
             }
