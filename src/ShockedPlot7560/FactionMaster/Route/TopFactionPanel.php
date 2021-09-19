@@ -76,7 +76,7 @@ class TopFactionPanel extends RouteBase implements Route {
             $content .= Utils::getText($this->getUserEntity()->getName(), "TOP_FACTION_LINE", [
                 'rank' => ($key + 1),
                 'factionName' => $faction->getName(),
-                'level' => $faction->getName(),
+                'level' => $faction->getLevel(),
             ]);
         }
         $menu->addButton(Utils::getText($this->getUserEntity()->getName(), "BUTTON_BACK"));
