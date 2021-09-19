@@ -54,6 +54,7 @@ use pocketmine\item\Shovel;
 use pocketmine\level\format\Chunk;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
+use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
@@ -322,6 +323,7 @@ class EventListener implements Listener {
     }
 
     public function onMove(PlayerMoveEvent $event): void {
+        $config = ConfigManager::getConfig();
         if (Utils::getConfig("message-alert") === true) {
             if (!isset(Main::$activeTitle[$event->getPlayer()->getName()]) 
                     || (time() - Main::$activeTitle[$event->getPlayer()->getName()]) > (int)Utils::getConfig("message-alert-cooldown")) {
@@ -329,13 +331,54 @@ class EventListener implements Listener {
                 $claim = $to->getLevel()->getChunkAtPosition(new Vector3($to->getX(), $to->getY(), $to->getZ()));
                 $claim = MainAPI::getFactionClaim($to->getLevel()->getName(), $claim->getX(), $claim->getZ());
                 if ($claim instanceof ClaimEntity) {
-                    $title = str_replace("{factionName}", $claim->getFactionName(), Utils::getConfig("message-alert-title"));
-                    $subtitle = str_replace("{factionName}", $claim->getFactionName(), Utils::getConfig("message-alert-subtitle"));
-                    $event->getPlayer()->sendTitle(
-                        $title,
-                        $subtitle
-                    );
-                    Main::$activeTitle[$event->getPlayer()->getName()] = time();
+                    $faction = MainAPI::getFactionClaim($claim->getLevelName(), $claim->getX(), $claim->getZ());
+                    if ($faction->getFlag() === null) {
+                        $userEntity = MainAPI::getUser($event->getPlayer()->getName());
+                        if ($userEntity->getFactionName() !== null) {
+                            if (MainAPI::isAlly($userEntity->getFactionName(), $faction->getFactionName())) {
+                                $color = $config->get("claim-ally-color");
+                            } elseif ($faction->getFactionName() === $userEntity->getFactionName()) {
+                                $color = $config->get("claim-own-color");
+                            } else {
+                                $color = $config->get("claim-color");
+                            }
+                        } else {
+                            $color = $config->get("claim-color");
+                        }
+                        $needles = ["{factionName}", "{colorStatus}", "{x}", "{z}", "{world}"];
+                        $replace = [$claim->getFactionName(), $color, $claim->getX(), $claim->getZ(), $claim->getLevelName()];
+                        $title = str_replace($needles, $replace, Utils::getConfig("message-alert-title"));
+                        $subtitle = str_replace($needles, $replace, Utils::getConfig("message-alert-subtitle"));
+                        $event->getPlayer()->sendTitle(
+                            $title,
+                            $subtitle
+                        );
+                        Main::$activeTitle[$event->getPlayer()->getName()] = time();
+                        $print = true;
+                    } elseif ($config->get("message-alert-flag-enabled") === true) {
+                        switch ($faction->getFlag()) {
+                            case Ids::FLAG_SPAWN:
+                                $color = $config->get("spawn-color");
+                                break;
+                            case Ids::FLAG_WARZONE:
+                                $color = $config->get("warzone-color");
+                                break;
+                        }
+                        $print = true;
+                    }elseif ($config->get("message-alert-flag-enabled") === false) {
+                        $print = false;
+                    }
+                    if ($print == true) {
+                        $needles = ["{factionName}", "{colorStatus}", "{x}", "{z}", "{world}"];
+                        $replace = [$claim->getFactionName(), $color, $claim->getX(), $claim->getZ(), $claim->getLevelName()];
+                        $title = str_replace($needles, $replace, Utils::getConfig("message-alert-title"));
+                        $subtitle = str_replace($needles, $replace, Utils::getConfig("message-alert-subtitle"));
+                        $event->getPlayer()->sendTitle(
+                            $title,
+                            $subtitle
+                        );
+                        Main::$activeTitle[$event->getPlayer()->getName()] = time();
+                    }
                 }                
             }
         }

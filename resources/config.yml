@@ -153,13 +153,15 @@ allow-home-ennemy-claim: true
 message-alert: true
 # The following line define which message will be print
 # on the screen of players when entering a claim chunk
-# active parameter which can set : {factionName}
+# active parameter which can set : {factionName} / {colorStatus} / {x} / {z} / {world}
+# - colorStatus : color set in the f map configuration
 # to purpose a suggestion, open an issue on our github
-message-alert-title: "{factionName}"
-message-alert-subtitle: ""
+message-alert-title: "{colorStatus}{factionName}"
+message-alert-subtitle: "{x} - {z} - {world}"
 # Defines the time that will be applied before the message is displayed again
 message-alert-cooldown: 10
 
+message-alert-flag-enabled: false
 # -------------- TOP FACTION'S SCOREBOARD CONFIGURATION -----------------
 
 # SEE leaderboard.yml to enabled and updated position of the leaderboard !
