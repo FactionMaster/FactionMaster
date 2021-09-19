@@ -90,25 +90,25 @@ class FactionEntity extends EntityDatabase {
      * @see getMaxPlayer()
      * @var int
     */
-    public $max_player;
+    public $maxPlayer;
     /** 
      * DO NOT USE THIS CONSTANT
      * @see getMaxAlly()
      * @var int
     */
-    public $max_ally;
+    public $maxAlly;
     /** 
      * DO NOT USE THIS CONSTANT
      * @see getMaxClaim()
      * @var int
     */
-    public $max_claim;
+    public $maxClaim;
     /** 
      * DO NOT USE THIS CONSTANT
      * @see getMaxHome()
      * @var int
     */
-    public $max_home;
+    public $maxHome;
     /** 
      * DO NOT USE THIS CONSTANT
      * @see getPower()
@@ -189,19 +189,19 @@ class FactionEntity extends EntityDatabase {
     }
 
     public function setMaxPlayer(int $max): void {
-        $this->max_player = $max;
+        $this->maxPlayer = $max;
     }
 
     public function setMaxAlly(int $max): void {
-        $this->max_ally = $max;
+        $this->maxAlly = $max;
     }
 
     public function setMaxClaim(int $max): void {
-        $this->max_claim = $max;
+        $this->maxClaim = $max;
     }
 
     public function setMaxHome(int $max): void {
-        $this->max_home = $max;
+        $this->maxHome = $max;
     }
 
     public function setPower(int $power): void {
@@ -280,11 +280,11 @@ class FactionEntity extends EntityDatabase {
     }
 
     public function getMaxPlayer(): int {
-        return $this->max_player;
+        return $this->maxPlayer;
     }
 
     public function getMaxAlly(): int {
-        return $this->max_ally;
+        return $this->maxAlly;
     }
 
     public function haveMaxAlly(): bool {
@@ -292,11 +292,11 @@ class FactionEntity extends EntityDatabase {
     }
 
     public function getMaxClaim(): int {
-        return $this->max_claim;
+        return $this->maxClaim;
     }
 
     public function getMaxHome(): int {
-        return $this->max_home;
+        return $this->maxHome;
     }
 
     public function getPower(): int {

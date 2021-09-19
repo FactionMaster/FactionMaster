@@ -37,10 +37,12 @@ use Ifera\ScoreHud\scoreboard\ScoreTag;
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\HomeEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Database\Table\ClaimTable;
 use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
 use ShockedPlot7560\FactionMaster\Database\Table\HomeTable;
 use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
@@ -212,6 +214,25 @@ class SyncServerManager {
             HomeEntity::class
         );
 
+        self::addItem(
+            "SELECT * FROM " . ClaimTable::TABLE_NAME,
+            [],
+            function (array $result) {
+                if (count($result) > 0) {
+                    MainAPI::$claim = [];
+                }
+
+                foreach ($result as $claim) {
+                    if (!$claim->isActive()) continue;
+                    if (!isset(MainAPI::$claim[$claim->getFactionName()])) {
+                        MainAPI::$claim[$claim->getFactionName()] = [$claim];
+                    } else {
+                        MainAPI::$claim[$claim->getFactionName()][] = $claim;
+                    }
+                }
+            },
+            ClaimEntity::class
+        );
     }
 
     public static function addItem(string $query, array $args, callable $success, string $entity): void {

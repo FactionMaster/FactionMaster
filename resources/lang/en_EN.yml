@@ -190,6 +190,7 @@ COMMAND_EXTENSION_DESCRIPTION: "Display extensions enabled"
 COMMAND_SCOREBOARD_DESCRIPTION: "Move/enabled your leaderboard and gives the data to be entered to save it"
 COMMAND_ADD_FLAG: "Add a claim considered like an area"
 COMMAND_REMOVE_FLAG: "Remove a claim considered like an area"
+COMMAND_SYNCHRO: "Submit task to make synchronisation manually of the database"
 
 NEED_FACTION: " §c>> §4You need a faction to use this"
 SUCCESS_CLAIM: " §a>> §2Chunk claim successfully"
@@ -253,3 +254,5 @@ SPAWN_INFO: " §c>> §4This area was claim for §cSpawn §4you can claim't in th
 FLAG_ADD_COMMAND: " §c>> §4Please enter a valid flag name : warzone / spawn"
 SUCCESS_REMOVE_FLAG: " §a>> §2Flag area remove successfully"
 SUCCESS_ADD_FLAG: " §a>> §2Flag area add successfully"
+
+SUCCESS_SYNCHRO: " §a>> §2Synchronisation launched!"
