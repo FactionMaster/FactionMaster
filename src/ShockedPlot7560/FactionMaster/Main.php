@@ -112,7 +112,6 @@ class Main extends PluginBase implements Listener {
 
         $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", Utils::getText("", "COMMAND_FACTION_DESCRIPTION"), ["f", "fac"]));
 
-        LeaderboardManager::checkLeaderBoard();
         if (ConfigManager::getLeaderboardConfig()->get("enabled") === true 
                 && ConfigManager::getLeaderboardConfig()->get("position") !== false 
                 && ConfigManager::getLeaderboardConfig()->get("position") !== "") {
@@ -126,10 +125,6 @@ class Main extends PluginBase implements Listener {
             $langConfigExtension[$extension->getExtensionName()] = $extension->getLangConfig();
         }
         $this->getScheduler()->scheduleRepeatingTask(new SyncServerTask($this), (int) Utils::getConfig("sync-time"));
-    }
-
-    public function onDisable() {
-        LeaderboardManager::despawnLeaderboard();
     }
 
     public static function getTableInitQuery(string $class): ?string {

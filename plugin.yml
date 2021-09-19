@@ -11,3 +11,15 @@ permissions:
   factionmaster.scoreboard.place:
     description: "Allow the player to place scoreboard"
     default: "op"
+  factionmaster.synchro.launch:
+    description: "Allow the player to launch database synchronisation"
+    default: "op"
+  factionmaster.flag.add:
+    description: "Allow the player to add area to flag"
+    default: "op"
+  factionmaster.flag.remove:
+    description: "Allow the player to remove flag of area"
+    default: "op"
+  factionmaster.extension.list:
+    description: "Allow the player to remove flag of area"
+    default: "op"

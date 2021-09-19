@@ -42,13 +42,13 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 class PlaceScoreboard extends BaseSubCommand {
 
     protected function prepare(): void {
+        $this->setPermission("factionmaster.scoreboard.place");
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
         if ($sender instanceof Player) {
             if ($sender->hasPermission("factionmaster.scoreboard.place")) {
                 $position = $sender->getPosition();
-                LeaderboardManager::checkLeaderBoard();
                 $coord = join("|", [
                     $position->getX(),
                     $position->getY(),
@@ -57,8 +57,8 @@ class PlaceScoreboard extends BaseSubCommand {
                 ]);
                 $config = ConfigManager::getLeaderboardConfig();
                 $config->set("position", $coord);
+                $config->set("enabled", true);
                 $config->save();
-                LeaderboardManager::placeScoreboard($coord);
                 $sender->sendMessage(Utils::getText("", "COMMAND_SCOREBOARD_SUCCESS"));
             }else{
                 $sender->sendMessage(Utils::getText("", "DONT_PERMISSION"));

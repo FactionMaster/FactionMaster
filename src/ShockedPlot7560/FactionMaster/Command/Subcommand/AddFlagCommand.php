@@ -47,6 +47,7 @@ class AddFlagCommand extends BaseSubCommand {
     protected function prepare(): void {
         $this->registerArgument(0, new RawStringArgument("areaName"));
         $this->registerArgument(1, new RawStringArgument("type"));
+        $this->setPermission("factionmaster.flag.add");
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {

@@ -69,29 +69,11 @@ class LeaderboardManager {
         }
     }
 
-    public static function despawnLeaderboard(): void {
-        if (isset(self::$scoreboardEntity[1])) {
-            $level = self::$main->getServer()->getLevelByName(self::$scoreboardEntity[1]);
-            if ($level instanceof Level) {
-                $entity = $level->getEntity(self::$scoreboardEntity[0]);
+    public static function closeLeaderboard(): void {
+        foreach (Main::getInstance()->getServer()->getLevels() as $level) {
+            foreach ($level->getEntities() as $entity) {
                 if ($entity instanceof ScoreboardEntity) {
-                    $entity->flagForDespawn();
-                    $entity->despawnFromAll();
-                }
-            }
-        }
-    }
-
-    public static function checkLeaderBoard(): void {
-        $coordinates = explode("|", ConfigManager::getLeaderboardConfig()->get("position"));
-        if (count($coordinates) == 4) {
-            foreach (self::$main->getServer()->getLevels() as $level) {
-                $entities = $level->getEntities();
-                foreach ($entities as $entity) {
-                    if ($entity instanceof ScoreboardEntity) {
-                        $entity->flagForDespawn();
-                        $entity->despawnFromAll();
-                    }
+                    $entity->close();
                 }
             }
         }

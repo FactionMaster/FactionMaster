@@ -41,6 +41,7 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 class SynchroCommand extends BaseSubCommand {
 
     protected function prepare(): void {
+        $this->setPermission("factionmaster.synchro.launch");
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {

@@ -226,6 +226,9 @@ PERMISSION_ADD_FACTION_HOME: "Add a faction home"
 PERMISSION_DELETE_FACTION_HOME: "Delete a faction home"
 PERMISSION_LEVEL_UP: "Level up the faction if available"
 
+COMMAND_EXTENSION_BASE: "FactionMaster is enabled with this extension: {{extensionList}}"
+COMMAND_EXTENSION_NO: "No extension is enabled for FactionMaster"
+
 COMMAND_INFO_DESCRIPTION: " §8> §eDescription: §7{{description}}"
 COMMAND_INFO_VISIBILITY: " §8> §eVisibility: §7{{visibility}}"
 COMMAND_INFO_LEVEL: " §8> §eLevel: §7{{level}}§e | §ePower: §7{{power}}"
