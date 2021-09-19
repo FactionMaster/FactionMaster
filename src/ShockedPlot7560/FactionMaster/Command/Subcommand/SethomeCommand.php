@@ -40,6 +40,7 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\HomeEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionHomeCreateEvent;
 use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -60,22 +61,22 @@ class SethomeCommand extends BaseSubCommand {
             return;
         }
         $permissions = MainAPI::getMemberPermission($sender->getName());
-        $UserEntity = MainAPI::getUser($sender->getName());
+        $userEntity = MainAPI::getUser($sender->getName());
         if ($permissions === null) {
             $sender->sendMessage(Utils::getText($sender->getName(), "NEED_FACTION"));
             return;
         }
-        if (Utils::haveAccess($permissions, $UserEntity, PermissionIds::PERMISSION_ADD_FACTION_HOME)) {
+        if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_ADD_FACTION_HOME)) {
             $Player = $sender->getPlayer();
-            if (!MainAPI::getFactionHome($UserEntity->faction, $args["name"]) instanceof HomeEntity) {
-                $Faction = MainAPI::getFaction($UserEntity->faction);
-                if (count(MainAPI::getFactionHomes($UserEntity->faction)) < $Faction->max_home) {
+            if (!MainAPI::getFactionHome($userEntity->getFactionName(), $args["name"]) instanceof HomeEntity) {
+                $Faction = MainAPI::getFaction($userEntity->getFactionName());
+                if (count(MainAPI::getFactionHomes($userEntity->getFactionName())) < $Faction->getMaxHome()) {
                     $Chunk = $Player->getLevel()->getChunkAtPosition($Player);
-                    if (Main::getInstance()->config->get("allow-home-ennemy-claim") && MainAPI::getFactionClaim($Player->getLevel()->getName(), $Chunk->getX(), $Chunk->getZ()) === null) {
-                        MainAPI::addHome($Player, $UserEntity->faction, $args['name']);
+                    if (ConfigManager::getConfig()->get("allow-home-ennemy-claim") && MainAPI::getFactionClaim($Player->getLevel()->getName(), $Chunk->getX(), $Chunk->getZ()) === null) {
+                        MainAPI::addHome($Player, $userEntity->getFactionName(), $args['name']);
                         Utils::newMenuSendTask(new MenuSendTask(
-                            function () use ($UserEntity, $args) {
-                                return MainAPI::getFactionHome($UserEntity->faction, $args['name']) instanceof HomeEntity;
+                            function () use ($userEntity, $args) {
+                                return MainAPI::getFactionHome($userEntity->getFactionName(), $args['name']) instanceof HomeEntity;
                             },
                             function () use ($sender, $Faction, $args) {
                                 (new FactionHomeCreateEvent($sender, $Faction, $args['name']))->call();

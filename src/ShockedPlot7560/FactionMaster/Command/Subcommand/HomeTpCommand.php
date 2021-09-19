@@ -58,12 +58,12 @@ class HomeTpCommand extends BaseSubCommand {
             return;
         }
         $permissions = MainAPI::getMemberPermission($sender->getName());
-        $UserEntity = MainAPI::getUser($sender->getName());
-        if (Utils::haveAccess($permissions, $UserEntity, PermissionIds::PERMISSION_TP_FACTION_HOME)) {
-            $Home = MainAPI::getFactionHome($UserEntity->faction, $args["name"]);
-            if ($Home !== null) {
-                $sender->teleport(new Vector3($Home->x, $Home->y, $Home->z));
-                (new FactionHomeTpEvent($sender, $UserEntity->faction, $args['name'], $Home))->call();
+        $userEntity = MainAPI::getUser($sender->getName());
+        if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_TP_FACTION_HOME)) {
+            $home = MainAPI::getFactionHome($userEntity->getFactionName(), $args["name"]);
+            if ($home !== null) {
+                $sender->teleport(new Vector3($home->getX(), $home->getY(), $home->getZ()));
+                (new FactionHomeTpEvent($sender, $userEntity->getFactionName(), $args['name'], $home))->call();
                 $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_TELEPORT"));
             } else {
                 $sender->sendMessage(Utils::getText($sender->getName(), "HOME_DONT_EXIST"));
