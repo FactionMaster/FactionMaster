@@ -38,16 +38,16 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class CreateFaction extends Button {
 
+    const SLUG = "createFaction";
+
     public function __construct() {
-        parent::__construct(
-            "createFaction",
-            function ($Player) {
-                return Utils::getText($Player, "BUTTON_CREATE_FACTION");
-            },
-            function ($Player) {
-                Utils::processMenu(RouterFactory::get(CreateFactionPanel::SLUG), $Player);
-            }
-        );
+        $this->setSlug(self::SLUG)
+            ->setContent(function ($player) {
+                return Utils::getText($player, "BUTTON_CREATE_FACTION");
+            })
+            ->setCallable(function ($player) {
+                Utils::processMenu(RouterFactory::get(CreateFactionPanel::SLUG), $player);
+            });
     }
 
 }

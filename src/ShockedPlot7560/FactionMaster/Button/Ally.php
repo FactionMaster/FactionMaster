@@ -34,22 +34,25 @@ namespace ShockedPlot7560\FactionMaster\Button;
 
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\ManageAlliance;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Ally extends Button {
 
-    public function __construct(FactionEntity $Ally) {
-        parent::__construct(
-            "ally",
-            function (string $Player) use ($Ally) {
-                return $Ally->name;
-            },
-            function (Player $Player) use ($Ally) {
-                Utils::processMenu(RouterFactory::get(ManageAlliance::SLUG), $Player, [$Ally]);
-            }
-        );
-    }
+    const SLUG = "ally";
 
+    public function __construct(FactionEntity $ally) {
+        $this->setSlug(self::SLUG)
+            ->setContent(function (string $player) use ($ally) {
+                return $ally->getName();
+            })
+            ->setCallable(function (Player $player) use ($ally) {
+                Utils::processMenu(RouterFactory::get(ManageAlliance::SLUG), $player, [$ally]);
+            })
+            ->setPermissions([
+                PermissionIds::PERMISSION_BREAK_ALLIANCE
+            ]);
+    }
 }

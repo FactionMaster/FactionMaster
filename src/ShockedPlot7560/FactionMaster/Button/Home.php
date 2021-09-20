@@ -35,29 +35,35 @@ namespace ShockedPlot7560\FactionMaster\Button;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\HomeEntity;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Home extends Button {
 
-    public function __construct(string $Name, HomeEntity $Home) {
-        parent::__construct(
-            "home",
-            function (string $Player) use ($Name, $Home) {
-                return Utils::getText($Player, "BUTTON_LISTING_HOME", [
-                    'name' => $Name,
-                    'x' => $Home->x,
-                    'y' => $Home->y,
-                    'z' => $Home->z,
+    const SLUG = "home";
+
+    public function __construct(string $name, HomeEntity $home) {
+        $this->setSlug(self::SLUG)
+            ->setContent(function (string $player) use ($name, $home) {
+                return Utils::getText($player, "BUTTON_LISTING_HOME", [
+                    'name' => $name,
+                    'x' => $home->getX(),
+                    'y' => $home->getY(),
+                    'z' => $home->getZ(),
                 ]);
-            },
-            function (Player $Player) use ($Home) {
-                $Player->teleport(new Vector3($Home->x, $Home->y, $Home->z));
-                $Player->sendMessage(Utils::getText($Player->getName(), "SUCCESS_TELEPORT_HOME"));
-                Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player);
-            }
-        );
+            })
+            ->setCallable(function (Player $player) use ($home) {
+                $player->teleport(new Vector3($home->getX(), $home->getY(), $home->getZ()));
+                $player->sendMessage(Utils::getText($player->getName(), "SUCCESS_TELEPORT_HOME"));
+                Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $player);
+            })
+            ->setPermissions([
+                PermissionIds::PERMISSION_TP_FACTION_HOME,
+                PermissionIds::PERMISSION_ADD_FACTION_HOME,
+                PermissionIds::PERMISSION_DELETE_FACTION_HOME
+            ]);
     }
 
 }

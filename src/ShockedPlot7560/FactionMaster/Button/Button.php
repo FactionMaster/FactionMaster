@@ -39,28 +39,53 @@ use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-/**
- * @param string $slug
- * @param callable $content The function use to get the content, get in parameter the name of player
- * @param callable $callable The function call when the button are click, get in parameter the player instance
- * @param (int|array)[] $permissions The array of the button permissions, only one of it are necessary to show the button
- */
-class Button {
+abstract class Button {
 
+    /** @var string */
     private $slug;
+    /** @var callable */
     private $content;
-    private $permissions;
+    /** @var int[] */
+    private $permissions = [];
+    /** @var callable */
     private $callable;
-    private $imgPath;
-    private $imgType;
+    /** @var string */
+    private $imgPath = "";
+    /** @var int */
+    private $imgType = SimpleForm::IMAGE_TYPE_URL;
 
-    public function __construct(string $slug, callable $content, callable $callable, array $permissions = [], string $imgPath = "", int $imgType = SimpleForm::IMAGE_TYPE_URL) {
+    public function setSlug(string $slug): self {
         $this->slug = $slug;
+        return $this;
+    }
+
+    public function setContent(callable $content): self {
         $this->content = $content;
-        $this->permissions = $permissions;
+        return $this;
+    }
+
+    public function setCallable(callable $callable): self {
         $this->callable = $callable;
-        $this->imgPath = $imgPath;
+        return $this;
+    }
+
+    public function setPermissions(array $permissions): self {
+        $this->permissions = $permissions;
+        return $this;
+    }
+
+    public function setImgPath(string $path): self {
+        $this->imgPath = $path;
+        return $this;
+    }
+
+    public function setImgPack(string $path): self {
+        return $this->setImgPath($path)->setImgType(SimpleForm::IMAGE_TYPE_PATH);
+    }
+
+    public function setImgType(int $imgType): self {
         $this->imgType = $imgType;
+        return $this;
     }
 
     public function getSlug(): string {
@@ -76,24 +101,24 @@ class Button {
     }
 
     public function hasAccess(string $playerName): bool {
-        if (count($this->permissions) == 0) {
+        if (count($this->getPermissions()) == 0) {
             return true;
         }
 
-        $User = MainAPI::getUser($playerName);
-        if ($User->rank == Ids::OWNER_ID) {
+        $user = MainAPI::getUser($playerName);
+        if ($user->getRank() == Ids::OWNER_ID) {
             return true;
         }
 
-        $PermissionsPlayer = MainAPI::getMemberPermission($playerName);
-        foreach ($this->getPermissions() as $Permission) {
-            if (!is_array($Permission) && $PermissionsPlayer !== null) {
-                if (isset($PermissionsPlayer[$Permission]) && $PermissionsPlayer[$Permission]) {
+        $permissionsPlayer = MainAPI::getMemberPermission($playerName);
+        foreach ($this->getPermissions() as $permission) {
+            if (!is_array($permission) && $permissionsPlayer !== null) {
+                if (isset($permissionsPlayer[$permission]) && $permissionsPlayer[$permission]) {
                     return true;
                 }
 
-            } elseif (is_array($Permission) && $Permission[0] === Utils::POCKETMINE_PERMISSIONS_CONSTANT) {
-                return Main::getInstance()->getServer()->getPlayerExact($playerName)->hasPermission($Permission[1]);
+            } elseif (is_array($permission) && $permission[0] === Utils::POCKETMINE_PERMISSIONS_CONSTANT) {
+                return Main::getInstance()->getServer()->getPlayerExact($playerName)->hasPermission($permission[1]);
             }
         }
         return false;
@@ -103,8 +128,8 @@ class Button {
         return $this->callable;
     }
 
-    public function call(Player $Player) {
-        return call_user_func($this->getCallable(), $Player);
+    public function call(Player $player) {
+        return call_user_func($this->getCallable(), $player);
     }
 
     public function getImgPath(): string {

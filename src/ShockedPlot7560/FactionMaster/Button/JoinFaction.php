@@ -38,16 +38,16 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class JoinFaction extends Button {
 
+    const SLUG = "joinFaction";
+
     public function __construct() {
-        parent::__construct(
-            "joinFaction",
-            function ($Player) {
-                return Utils::getText($Player, "BUTTON_JOIN_FACTION");
-            },
-            function ($Player) {
-                Utils::processMenu(RouterFactory::get(ManageInvitationMain::SLUG), $Player);
-            }
-        );
+        $this->setSlug(self::SLUG)
+            ->setContent(function ($player) {
+                return Utils::getText($player, "BUTTON_JOIN_FACTION");
+            })
+            ->setCallable(function ($player) {
+                Utils::processMenu(RouterFactory::get(ManageInvitationMain::SLUG), $player);
+            });
     }
 
 }

@@ -39,17 +39,17 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class InvitationListItem extends Button {
 
-    public function __construct(InvitationEntity $Invitation, string $PanelSlug, array $permissions = []) {
-        parent::__construct(
-            "invitationItem",
-            function (string $Player) use ($Invitation) {
-                return $Invitation->receiver;
-            },
-            function (Player $Player) use ($Invitation, $PanelSlug) {
-                Utils::processMenu(RouterFactory::get($PanelSlug), $Player, [$Invitation]);
-            },
-            $permissions
-        );
+    const SLUG = "invitationItem";
+
+    public function __construct(InvitationEntity $invitation, string $panelSlug, array $permissions = []) {
+        $this->setSlug(self::SLUG)
+            ->setContent(function (string $player) use ($invitation) {
+                return $invitation->getReceiverString();
+            })
+            ->setCallable(function (Player $player) use ($invitation, $panelSlug) {
+                Utils::processMenu(RouterFactory::get($panelSlug), $player, [$invitation]);
+            })
+            ->setPermissions($permissions);
     }
 
 }

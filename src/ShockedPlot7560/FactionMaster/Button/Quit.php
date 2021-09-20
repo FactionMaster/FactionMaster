@@ -32,24 +32,21 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Quit extends Button {
 
+    const SLUG = "quit";
+
     public function __construct() {
-        parent::__construct(
-            "quit",
-            function ($Player) {
-                return Utils::getText($Player, "BUTTON_QUIT");
-            },
-            function ($Player) {
+        $this->setSlug(self::SLUG)
+            ->setContent(function ($player) {
+                return Utils::getText($player, "BUTTON_QUIT");
+            })
+            ->setCallable(function ($player) {
                 return;
-            }, 
-            [],
-            "textures/img/back",
-            SimpleForm::IMAGE_TYPE_PATH
-        );
+            })
+            ->setImgPack("textures/img/back");
     }
 
 }

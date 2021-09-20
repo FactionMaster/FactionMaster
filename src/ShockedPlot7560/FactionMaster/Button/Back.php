@@ -32,26 +32,23 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Back extends Button {
 
-    public function __construct(string $BackPanelString) {
-        parent::__construct(
-            "back",
-            function (string $Player) {
-                return Utils::getText($Player, "BUTTON_BACK");
-            },
-            function (Player $Player) use ($BackPanelString) {
-                Utils::processMenu(RouterFactory::get($BackPanelString), $Player);
-            }, 
-            [],
-            "textures/img/back",
-            SimpleForm::IMAGE_TYPE_PATH
-        );
+    const SLUG = "back";
+
+    public function __construct(Route $backPanel) {
+        $this->setSlug(self::SLUG)
+            ->setContent(function (string $player) {
+                return Utils::getText($player, "BUTTON_BACK");
+            })
+            ->setCallable(function (Player $player) use ($backPanel) {
+                Utils::processMenu($backPanel, $player);
+            })
+            ->setImgPack("textures/img/back");
     }
 
 }

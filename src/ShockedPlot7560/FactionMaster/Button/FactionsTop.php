@@ -32,7 +32,6 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
@@ -42,26 +41,24 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class FactionsTop extends Button {
 
+    const SLUG = "factionsTop";
+
     public function __construct() {
-        parent::__construct(
-            "factionsTop",
-            function ($Player) {
-                return Utils::getText($Player, "BUTTON_TOP_FACTION");
-            },
-            function ($Player) {
+        $this->setSlug(self::SLUG)
+            ->setContent(function ($player) {
+                return Utils::getText($player, "BUTTON_TOP_FACTION");
+            })
+            ->setCallable(function ($player) {
                 Main::getInstance()->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
                     Main::getTopQuery(),
                     [],
-                    function (array $result) use ($Player) {
-                        Utils::processMenu(RouterFactory::get(TopFactionPanel::SLUG), $Player, [$result]);
+                    function (array $result) use ($player) {
+                        Utils::processMenu(RouterFactory::get(TopFactionPanel::SLUG), $player, [$result]);
                     },
                     FactionEntity::class
                 ));
-            }, 
-            [],
-            "textures/img/top",
-            SimpleForm::IMAGE_TYPE_PATH
-        );
+            })
+            ->setImgPack("textures/img/top");
     }
 
 }

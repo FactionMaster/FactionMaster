@@ -32,7 +32,6 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
@@ -50,64 +49,65 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class AcceptMemberToFac extends Button {
 
-    public function __construct(InvitationEntity $Request) {
-        parent::__construct(
-            "acceptMemberRequest",
-            function (string $Player) {
-                return Utils::getText($Player, "BUTTON_ACCEPT_REQUEST");
-            },
-            function (Player $Player) use ($Request) {
-                Utils::processMenu(RouterFactory::get(ConfirmationMenu::SLUG), $Player, [
-                    function (Player $Player, $data) use ($Request) {
+    const SLUG = "acceptMemberRequest";
+
+    public function __construct(InvitationEntity $request) {
+        $this->setSlug(self::SLUG)
+            ->setContent(function (string $player) {
+                return Utils::getText($player, "BUTTON_ACCEPT_REQUEST");
+            })
+            ->setCallable(function (Player $player) use ($request) {
+                Utils::processMenu(RouterFactory::get(ConfirmationMenu::SLUG), $player, [
+                    function (Player $player, $data) use ($request) {
                         if ($data === null) {
                             return;
                         }
 
                         if ($data) {
-                            $Faction = MainAPI::getFaction($Request->receiver);
-                            if (count($Faction->members) < $Faction->max_player) {
-                                $message = Utils::getText($Player->getName(), "SUCCESS_ACCEPT_REQUEST", ['name' => $Request->sender]);
-                                MainAPI::addMember($Request->receiver, $Request->sender);
+                            $faction = MainAPI::getFaction($request->getReceiverString());
+                            if (count($faction->getMembers()) < $faction->getMaxPlayer()) {
+                                $message = Utils::getText($player->getName(), "SUCCESS_ACCEPT_REQUEST", ['name' => $request->getSenderString()]);
+                                MainAPI::addMember($request->getReceiverString(), $request->getSenderString());
                                 Utils::newMenuSendTask(new MenuSendTask(
-                                    function () use ($Request) {
-                                        $user = MainAPI::getUser($Request->sender);
-                                        return $user instanceof UserEntity && $user->faction === $Request->receiver;
+                                    function () use ($request) {
+                                        $user = MainAPI::getUser($request->getSenderString());
+                                        return $user instanceof UserEntity && $user->getFactionName() === $request->getReceiverString();
                                     },
-                                    function () use ($Request, $Player, $Faction, $message) {
-                                        (new FactionJoinEvent($Player, $Faction))->call();
-                                        MainAPI::removeInvitation($Request->sender, $Request->receiver, $Request->type);
+                                    function () use ($request, $player, $faction, $message) {
+                                        (new FactionJoinEvent($player, $faction))->call();
+                                        MainAPI::removeInvitation($request->getSenderString(), $request->getReceiverString(), $request->getType());
                                         Utils::newMenuSendTask(new MenuSendTask(
-                                            function () use ($Request) {
-                                                return !MainAPI::areInInvitation($Request->sender, $Request->receiver, $Request->type);
+                                            function () use ($request) {
+                                                return !MainAPI::areInInvitation($request->getSenderString(), $request->getReceiverString(), $request->getType());
                                             },
-                                            function () use ($Request, $Player, $message) {
-                                                (new InvitationAcceptEvent($Player, $Request))->call();
-                                                Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [$message]);
+                                            function () use ($request, $player, $message) {
+                                                (new InvitationAcceptEvent($player, $request))->call();
+                                                Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $player, [$message]);
                                             },
-                                            function () use ($Player) {
-                                                Utils::processMenu(RouterFactory::get(DemandList::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                            function () use ($player) {
+                                                Utils::processMenu(RouterFactory::get(DemandList::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
                                             }
                                         ));
                                     },
-                                    function () use ($Player) {
-                                        Utils::processMenu(RouterFactory::get(DemandList::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                    function () use ($player) {
+                                        Utils::processMenu(RouterFactory::get(DemandList::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
                                     }
                                 ));
                             } else {
-                                $message = Utils::getText($Player->getName(), "MAX_PLAYER_REACH");
-                                Utils::processMenu(RouterFactory::get(DemandList::SLUG), $Player, [$message]);
+                                $message = Utils::getText($player->getName(), "MAX_PLAYER_REACH");
+                                Utils::processMenu(RouterFactory::get(DemandList::SLUG), $player, [$message]);
                             }
                         } else {
-                            Utils::processMenu(RouterFactory::get(ManageDemand::SLUG), $Player, [$Request]);
+                            Utils::processMenu(RouterFactory::get(ManageDemand::SLUG), $player, [$request]);
                         }
                     },
-                    Utils::getText($Player->getName(), "CONFIRMATION_TITLE_ACCEPT_REQUEST"),
-                    Utils::getText($Player->getName(), "CONFIRMATION_CONTENT_ACCEPT_REQUEST"),
+                    Utils::getText($player->getName(), "CONFIRMATION_TITLE_ACCEPT_REQUEST"),
+                    Utils::getText($player->getName(), "CONFIRMATION_CONTENT_ACCEPT_REQUEST"),
                 ]);
-            },
-            [PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND],
-            "textures/img/true",
-            SimpleForm::IMAGE_TYPE_PATH
-        );
+            })
+            ->setPermissions([
+                PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND
+            ])
+            ->setImgPack("textures/img/true");
     }
 }
