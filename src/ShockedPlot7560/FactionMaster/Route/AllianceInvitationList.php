@@ -78,7 +78,7 @@ class AllianceInvitationList extends RouteBase implements Route {
         if (isset($params[0])) {
             $message = $params[0];
         }
-        if (count($this->Invitations) == 0) {
+        if (count($this->invitations) == 0) {
             $message .= Utils::getText($this->getUserEntity()->getName(), "NO_PENDING_INVITATION");
         }
 

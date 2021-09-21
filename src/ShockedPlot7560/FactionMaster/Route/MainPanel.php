@@ -86,11 +86,11 @@ class MainPanel extends RouteBase implements Route {
     }
 
     public function call(): callable {
-        return function (Player $Player, $data) {
+        return function (Player $player, $data) {
             if ($data === null) {
                 return;
             }
-            $this->getCollection()->process($data, $Player);
+            $this->getCollection()->process($data, $player);
             return;
         };
     }

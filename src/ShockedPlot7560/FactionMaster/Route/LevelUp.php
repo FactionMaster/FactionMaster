@@ -35,7 +35,6 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionLevelUpEvent;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
@@ -147,10 +146,10 @@ class LevelUp extends RouteBase implements Route {
 
     public function call(): callable
     {
-        $backMenu = $this->backMenu;
-        $levelReady = $this->levelUpReady;
-        $Data = $this->RewardData;
-        $faction = $this->Faction;
+        $backMenu = $this->getBackRoute();
+        $levelReady = $this->isLevelUpReady();
+        $Data = $this->getRewardData();
+        $faction = $this->getFaction();
         return function (Player $player, $data) use ($backMenu, $Data, $levelReady, $faction) {
             if ($data === null) {
                 return;

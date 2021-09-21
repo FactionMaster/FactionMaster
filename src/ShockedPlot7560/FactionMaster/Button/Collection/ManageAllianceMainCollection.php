@@ -74,7 +74,7 @@ class ManageAllianceMainCollection extends Collection {
                     PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
                 ]
             ));
-            $this->register(new Back(RouterFactory::get(AllianceMainMenu::SLUG)));
+            $this->register(new Back(RouterFactory::get(AllianceMainMenu::SLUG)->getBackRoute()));
         });
     }
 }
