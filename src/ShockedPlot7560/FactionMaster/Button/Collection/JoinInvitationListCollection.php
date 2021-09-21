@@ -36,8 +36,9 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\InvitationListItem;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Route\InvitationList;
 use ShockedPlot7560\FactionMaster\Route\ManageInvitation;
-use ShockedPlot7560\FactionMaster\Route\ManageInvitationMain;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class JoinInvitationListCollection extends Collection {
 
@@ -45,11 +46,11 @@ class JoinInvitationListCollection extends Collection {
 
     public function __construct() {
         parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, array $Invitations) {
-            foreach ($Invitations as $Invitation) {
-                $this->register(new InvitationListItem($Invitation, ManageInvitation::SLUG));
+        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, array $invitations) {
+            foreach ($invitations as $invitation) {
+                $this->register(new InvitationListItem($invitation, ManageInvitation::SLUG));
             }
-            $this->register(new Back(ManageInvitationMain::SLUG));
+            $this->register(new Back(RouterFactory::get(InvitationList::SLUG)->getBackRoute()));
         });
     }
 }

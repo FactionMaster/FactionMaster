@@ -37,7 +37,8 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\Home;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
+use ShockedPlot7560\FactionMaster\Route\HomeListPanel;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class ViewHomesCollection extends Collection {
 
@@ -46,11 +47,11 @@ class ViewHomesCollection extends Collection {
     public function __construct() {
         parent::__construct(self::SLUG);
         $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
-            $Homes = MainAPI::getFactionHomes($user->faction);
-            foreach ($Homes as $Name => $Home) {
-                $this->register(new Home($Name, $Home));
+            $homes = MainAPI::getFactionHomes($user->getFactionName());
+            foreach ($homes as $name => $home) {
+                $this->register(new Home($name, $home));
             }
-            $this->register(new Back(MainPanel::SLUG));
+            $this->register(new Back(RouterFactory::get(HomeListPanel::SLUG)->getBackRoute()));
         });
     }
 }

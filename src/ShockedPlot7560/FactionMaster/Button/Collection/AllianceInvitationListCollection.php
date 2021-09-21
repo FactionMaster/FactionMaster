@@ -38,8 +38,9 @@ use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\InvitationListItem;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\AllianceMainMenu;
+use ShockedPlot7560\FactionMaster\Route\AllianceInvitationList;
 use ShockedPlot7560\FactionMaster\Route\ManageAllianceInvitation;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class AllianceInvitationListCollection extends Collection {
 
@@ -47,15 +48,15 @@ class AllianceInvitationListCollection extends Collection {
 
     public function __construct() {
         parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, array $Invitations) {
-            foreach ($Invitations as $Invitation) {
+        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, array $invitations) {
+            foreach ($invitations as $invitation) {
                 $this->register(new InvitationListItem(
-                    $Invitation,
+                    $invitation,
                     ManageAllianceInvitation::SLUG,
                     [PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION]
                 ));
             }
-            $this->register(new Back(AllianceMainMenu::SLUG));
+            $this->register(new Back(RouterFactory::get(AllianceInvitationList::SLUG)->getBackRoute()));
         });
     }
 }

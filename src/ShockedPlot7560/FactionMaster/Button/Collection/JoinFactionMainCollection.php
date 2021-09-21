@@ -40,8 +40,9 @@ use ShockedPlot7560\FactionMaster\Button\SendInvitation;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Route\DemandList;
 use ShockedPlot7560\FactionMaster\Route\InvitationList;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
+use ShockedPlot7560\FactionMaster\Route\ManageInvitationMain;
 use ShockedPlot7560\FactionMaster\Route\NewInvitation;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class JoinFactionMainCollection extends Collection {
 
@@ -53,7 +54,7 @@ class JoinFactionMainCollection extends Collection {
             $this->register(new SendInvitation(NewInvitation::SLUG, []));
             $this->register(new InvitationPending(InvitationList::SLUG, []));
             $this->register(new RequestPending(DemandList::SLUG, []));
-            $this->register(new Back(MainPanel::SLUG));
+            $this->register(new Back(RouterFactory::get(ManageInvitationMain::SLUG)->getBackRoute()));
         });
     }
 }

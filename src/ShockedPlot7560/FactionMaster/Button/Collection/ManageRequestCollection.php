@@ -41,6 +41,7 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\ManageMemberDemand;
 use ShockedPlot7560\FactionMaster\Route\MemberDemandList;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class ManageRequestCollection extends Collection {
 
@@ -48,15 +49,15 @@ class ManageRequestCollection extends Collection {
 
     public function __construct() {
         parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, InvitationEntity $Request) {
-            $this->register(new AcceptMemberToFac($Request));
+        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, InvitationEntity $request) {
+            $this->register(new AcceptMemberToFac($request));
             $this->register(new DeleteRequest(
-                $Request, 
+                $request, 
                 MemberDemandList::SLUG, 
                 ManageMemberDemand::SLUG, 
                 [PermissionIds::PERMISSION_REFUSE_MEMBER_DEMAND]
             ));
-            $this->register(new Back(MemberDemandList::SLUG));
+            $this->register(new Back(RouterFactory::get(ManageMemberDemand::SLUG)->getBackRoute()));
         });
     }
 }

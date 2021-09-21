@@ -67,13 +67,13 @@ class CollectionFactory {
 
     }
 
-    public static function register(Collection $Collection, bool $override = false): void {
-        $slug = $Collection->getSlug();
+    public static function register(Collection $collection, bool $override = false): void {
+        $slug = $collection->getSlug();
         if (self::isRegistered($slug) && $override === false) {
             return;
         }
 
-        self::$list[$slug] = $Collection;
+        self::$list[$slug] = $collection;
     }
 
     public static function get(string $slug): ?Collection {

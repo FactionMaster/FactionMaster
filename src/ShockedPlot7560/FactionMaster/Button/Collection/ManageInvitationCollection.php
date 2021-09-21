@@ -37,7 +37,9 @@ use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\DeleteInvitation;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Route\ManageInvitation;
 use ShockedPlot7560\FactionMaster\Route\MemberInvitationList;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class ManageInvitationCollection extends Collection {
 
@@ -45,9 +47,9 @@ class ManageInvitationCollection extends Collection {
 
     public function __construct() {
         parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, InvitationEntity $Invitation) {
-            $this->register(new DeleteInvitation($Invitation, MemberInvitationList::SLUG));
-            $this->register(new Back(MemberInvitationList::SLUG));
+        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, InvitationEntity $invitation) {
+            $this->register(new DeleteInvitation($invitation, MemberInvitationList::SLUG));
+            $this->register(new Back(RouterFactory::get(ManageInvitation::SLUG)->getBackRoute()));
         });
     }
 }

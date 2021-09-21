@@ -36,7 +36,8 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\ChangePermission;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\ManageFactionMain;
+use ShockedPlot7560\FactionMaster\Route\ChangePermissionMain;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 
 class PermissionMainCollection extends Collection {
@@ -45,20 +46,20 @@ class PermissionMainCollection extends Collection {
 
     public function __construct() {
         parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $User) {
-            if ($User->rank > Ids::RECRUIT_ID) {
+        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
+            if ($user->getRank() > Ids::RECRUIT_ID) {
                 $this->register(new ChangePermission("RECRUIT_RANK_NAME", Ids::RECRUIT_ID));
             }
 
-            if ($User->rank > Ids::MEMBER_ID) {
+            if ($user->getRank() > Ids::MEMBER_ID) {
                 $this->register(new ChangePermission("MEMBER_RANK_NAME", Ids::MEMBER_ID));
             }
 
-            if ($User->rank > Ids::COOWNER_ID) {
+            if ($user->getRank() > Ids::COOWNER_ID) {
                 $this->register(new ChangePermission("COOWNER_RANK_NAME", Ids::COOWNER_ID));
             }
 
-            $this->register(new Back(ManageFactionMain::SLUG));
+            $this->register(new Back(RouterFactory::get(ChangePermissionMain::SLUG)->getBackRoute()));
         });
     }
 }

@@ -36,12 +36,11 @@ use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\Button;
 use ShockedPlot7560\FactionMaster\Main;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Collection {
 
     /** @var Button[] */
-    protected $ButtonsList;
+    protected $buttonsList;
     /** @var string */
     protected $slug;
     /** @var callable[] */
@@ -55,43 +54,43 @@ class Collection {
         $this->processFunction[$slug] = $callable;
     }
 
-    public function register(Button $Button, ?int $index = null, bool $override = false): void {
+    public function register(Button $button, ?int $index = null, bool $override = false): void {
         if ($index === null) {
-            $this->ButtonsList[] = $Button;
+            $this->buttonsList[] = $button;
         } else {
             if ($override) {
-                $this->ButtonsList[$index] = $Button;
+                $this->buttonsList[$index] = $button;
             } else {
-                $newElement = $Button;
-                for ($i = $index; $i < count($this->ButtonsList); $i++) {
-                    $oldElement = $this->ButtonsList[$i];
-                    $this->ButtonsList[$i] = $newElement;
+                $newElement = $button;
+                for ($i = $index; $i < count($this->buttonsList); $i++) {
+                    $oldElement = $this->buttonsList[$i];
+                    $this->buttonsList[$i] = $newElement;
                     $newElement = $oldElement;
                 }
-                $this->ButtonsList[$i + 1] = $newElement;
-                $this->ButtonsList = \array_values($this->ButtonsList);
+                $this->buttonsList[$i + 1] = $newElement;
+                $this->buttonsList = array_values($this->buttonsList);
             }
         }
     }
 
-    public function generateButtons(SimpleForm $Form, string $playerName): SimpleForm {
-        foreach ($this->ButtonsList as $key => $Button) {
-            if ($Button->hasAccess($playerName)) {
-                if (Main::$activeImage === true && $Button->getImgPath() !== "") {
-                    $Form->addButton($Button->getContent($playerName), $Button->getImgType(), $Button->getImgPath());
+    public function generateButtons(SimpleForm $form, string $playerName): SimpleForm {
+        foreach ($this->buttonsList as $key => $button) {
+            if ($button->hasAccess($playerName)) {
+                if (Main::$activeImage === true && $button->getImgPath() !== "") {
+                    $form->addButton($button->getContent($playerName), $button->getImgType(), $button->getImgPath());
                 } else {
-                    $Form->addButton($Button->getContent($playerName));
+                    $form->addButton($button->getContent($playerName));
                 }
             } else {
-                unset($this->ButtonsList[$key]);
+                unset($this->buttonsList[$key]);
             }
         }
-        $this->ButtonsList = \array_values($this->ButtonsList);
-        return $Form;
+        $this->buttonsList = array_values($this->buttonsList);
+        return $form;
     }
 
-    public function process(int $keyButtonPress, Player $Player): void {
-        $this->ButtonsList[$keyButtonPress]->call($Player);
+    public function process(int $keyButtonPress, Player $player): void {
+        $this->buttonsList[$keyButtonPress]->call($player);
     }
 
     public function getSlug(): string {
@@ -99,7 +98,7 @@ class Collection {
     }
 
     public function init(...$parameter): self {
-        $this->ButtonsList = [];
+        $this->buttonsList = [];
         foreach ($this->processFunction as $callable) {
             call_user_func_array($callable, $parameter);
         }

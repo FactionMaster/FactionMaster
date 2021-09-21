@@ -36,8 +36,9 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\RequestListItem;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Route\DemandList;
 use ShockedPlot7560\FactionMaster\Route\ManageDemand;
-use ShockedPlot7560\FactionMaster\Route\ManageInvitationMain;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class JoinRequestListCollection extends Collection {
 
@@ -45,11 +46,11 @@ class JoinRequestListCollection extends Collection {
 
     public function __construct() {
         parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, array $Requests) {
-            foreach ($Requests as $Request) {
-                $this->register(new RequestListItem($Request, ManageDemand::SLUG));
+        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, array $requests) {
+            foreach ($requests as $request) {
+                $this->register(new RequestListItem($request, ManageDemand::SLUG));
             }
-            $this->register(new Back(ManageInvitationMain::SLUG));
+            $this->register(new Back(RouterFactory::get(DemandList::SLUG)->getBackRoute()));
         });
     }
 }

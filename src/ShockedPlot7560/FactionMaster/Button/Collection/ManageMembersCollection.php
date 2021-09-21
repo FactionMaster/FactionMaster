@@ -39,6 +39,8 @@ use ShockedPlot7560\FactionMaster\Button\ManageMember;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Route\ManageMainMembers;
+use ShockedPlot7560\FactionMaster\Route\ManageMembersList;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class ManageMembersCollection extends Collection {
 
@@ -46,17 +48,17 @@ class ManageMembersCollection extends Collection {
 
     public function __construct() {
         parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $User, FactionEntity $Faction) {
-            foreach ($Faction->members as $Name => $Rank) {
-                if ($Name === $User->name) {
+        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, FactionEntity $faction) {
+            foreach ($faction->getMembers() as $name => $rank) {
+                if ($name === $user->getName()) {
                     continue;
                 }
 
-                if ($Rank < $User->rank) {
-                    $this->register(new ManageMember(MainAPI::getUser($Name)));
+                if ($rank < $user->getRank()) {
+                    $this->register(new ManageMember(MainAPI::getUser($name)));
                 }
             }
-            $this->register(new Back(ManageMainMembers::SLUG));
+            $this->register(new Back(RouterFactory::get(ManageMembersList::SLUG)->getBackRoute()));
         });
     }
 }

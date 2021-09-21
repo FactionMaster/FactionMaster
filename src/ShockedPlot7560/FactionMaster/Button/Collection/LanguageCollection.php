@@ -36,7 +36,8 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\Langue;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
+use ShockedPlot7560\FactionMaster\Route\LanguagePanel;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class LanguageCollection extends Collection {
@@ -46,10 +47,10 @@ class LanguageCollection extends Collection {
     public function __construct() {
         parent::__construct(self::SLUG);
         $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
-            foreach (Utils::getConfigLang("languages-name") as $Langue) {
-                $this->register(new Langue($Langue));
+            foreach (Utils::getConfigLang("languages-name") as $langue) {
+                $this->register(new Langue($langue));
             }
-            $this->register(new Back(MainPanel::SLUG));
+            $this->register(new Back(RouterFactory::get(LanguagePanel::SLUG)->getBackRoute()));
         });
     }
 }

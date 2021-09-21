@@ -42,6 +42,7 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\AllianceDemandList;
 use ShockedPlot7560\FactionMaster\Route\ManageAllianceDemand;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class AllianceRequestCollection extends Collection {
 
@@ -49,15 +50,15 @@ class AllianceRequestCollection extends Collection {
 
     public function __construct() {
         parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, InvitationEntity $Request) {
-            $this->register(new AcceptAlly($Request));
+        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, InvitationEntity $request) {
+            $this->register(new AcceptAlly($request));
             $this->register(new DeleteRequest(
-                $Request, 
+                $request, 
                 AllianceDemandList::SLUG, 
                 ManageAllianceDemand::SLUG, 
                 [PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND]
             ));
-            $this->register(new Back(AllianceDemandList::SLUG));
+            $this->register(new Back(RouterFactory::get(ManageAllianceDemand::SLUG)->getBackRoute()));
         });
     }
 }

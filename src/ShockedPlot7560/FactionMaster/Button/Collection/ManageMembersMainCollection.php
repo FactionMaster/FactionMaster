@@ -41,9 +41,11 @@ use ShockedPlot7560\FactionMaster\Button\SendInvitation;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\MainPanel;
+use ShockedPlot7560\FactionMaster\Route\ManageMainMembers;
 use ShockedPlot7560\FactionMaster\Route\MemberDemandList;
 use ShockedPlot7560\FactionMaster\Route\MemberInvitationList;
 use ShockedPlot7560\FactionMaster\Route\NewMemberInvitation;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class ManageMembersMainCollection extends Collection {
 
@@ -68,7 +70,7 @@ class ManageMembersMainCollection extends Collection {
                 ]
             ));
             $this->register(new ManageMembersMain());
-            $this->register(new Back(MainPanel::SLUG));
+            $this->register(new Back(RouterFactory::get(ManageMainMembers::SLUG)->getBackRoute()));
         });
     }
 }

@@ -32,22 +32,18 @@
 
 namespace ShockedPlot7560\FactionMaster\Button\Collection;
 
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\Back;
-use ShockedPlot7560\FactionMaster\Button\Button;
+use ShockedPlot7560\FactionMaster\Button\ChangeDescription;
+use ShockedPlot7560\FactionMaster\Button\ChangeMessage;
+use ShockedPlot7560\FactionMaster\Button\ChangePermissionMain;
+use ShockedPlot7560\FactionMaster\Button\ChangeVisibility;
 use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
+use ShockedPlot7560\FactionMaster\Button\LevelUp;
+use ShockedPlot7560\FactionMaster\Button\ManageAlliance;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\AllianceMainMenu;
-use ShockedPlot7560\FactionMaster\Route\ChangeDescription;
-use ShockedPlot7560\FactionMaster\Route\ChangeMessage;
-use ShockedPlot7560\FactionMaster\Route\ChangePermissionMain;
-use ShockedPlot7560\FactionMaster\Route\ChangeVisibility;
-use ShockedPlot7560\FactionMaster\Route\LevelUp;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
+use ShockedPlot7560\FactionMaster\Route\ManageFactionMain;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageFactionMainCollection extends Collection {
 
@@ -56,84 +52,13 @@ class ManageFactionMainCollection extends Collection {
     public function __construct() {
         parent::__construct(self::SLUG);
         $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
-            $this->register(new Button(
-                "changeDescription",
-                function ($Player) {
-                    return Utils::getText($Player, "BUTTON_CHANGE_DESCRIPTION");
-                },
-                function (Player $Player) {
-                    Utils::processMenu(RouterFactory::get(ChangeDescription::SLUG), $Player);
-                },
-                [PermissionIds::PERMISSION_CHANGE_FACTION_DESCRIPTION],
-                "textures/img/description",
-                SimpleForm::IMAGE_TYPE_PATH
-            ));
-            $this->register(new Button(
-                "changeMessage",
-                function ($Player) {
-                    return Utils::getText($Player, "BUTTON_CHANGE_MESSAGE");
-                },
-                function (Player $Player) {
-                    Utils::processMenu(RouterFactory::get(ChangeMessage::SLUG), $Player);
-                },
-                [PermissionIds::PERMISSION_CHANGE_FACTION_MESSAGE],
-                "textures/img/message",
-                SimpleForm::IMAGE_TYPE_PATH
-            ));
-            $this->register(new Button(
-                "changeVisibility",
-                function ($Player) {
-                    return Utils::getText($Player, "BUTTON_CHANGE_VISIBILITY");
-                },
-                function (Player $Player) {
-                    Utils::processMenu(RouterFactory::get(ChangeVisibility::SLUG), $Player);
-                },
-                [PermissionIds::PERMISSION_CHANGE_FACTION_VISIBILITY],
-                "textures/img/visibility",
-                SimpleForm::IMAGE_TYPE_PATH
-            ));
-            $this->register(new Button(
-                "levelUp",
-                function ($Player) {
-                    return Utils::getText($Player, "BUTTON_LEVEL_UP");
-                },
-                function (Player $Player) {
-                    Utils::processMenu(RouterFactory::get(LevelUp::SLUG), $Player);
-                },
-                [PermissionIds::PERMISSION_LEVEL_UP],
-                "textures/img/level_up",
-                SimpleForm::IMAGE_TYPE_PATH
-            ));
-            $this->register(new Button(
-                "changePermission",
-                function ($Player) {
-                    return Utils::getText($Player, "BUTTON_CHANGE_PERMISSION");
-                },
-                function (Player $Player) {
-                    Utils::processMenu(RouterFactory::get(ChangePermissionMain::SLUG), $Player);
-                },
-                [PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS],
-                "textures/img/permission",
-                SimpleForm::IMAGE_TYPE_PATH
-            ));
-            $this->register(new Button(
-                "manageAlliance",
-                function ($Player) {
-                    return Utils::getText($Player, "BUTTON_MANAGE_ALLIANCE");
-                },
-                function (Player $Player) {
-                    Utils::processMenu(RouterFactory::get(AllianceMainMenu::SLUG), $Player);
-                },
-                [
-                    PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION,
-                    PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION,
-                    PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
-                    PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
-                ],
-                "textures/img/option_alliance",
-                SimpleForm::IMAGE_TYPE_PATH
-            ));
-            $this->register(new Back(MainPanel::SLUG));
+            $this->register(new ChangeDescription());
+            $this->register(new ChangeMessage());
+            $this->register(New ChangeVisibility());
+            $this->register(new LevelUp());
+            $this->register(new ChangePermissionMain());
+            $this->register(new ManageAlliance());
+            $this->register(new Back(RouterFactory::get(ManageFactionMain::SLUG)->getBackRoute()));
         });
     }
 }

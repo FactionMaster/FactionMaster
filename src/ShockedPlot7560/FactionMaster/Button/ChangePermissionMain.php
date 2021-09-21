@@ -30,28 +30,30 @@
  *
  */
 
-namespace ShockedPlot7560\FactionMaster\Button\Collection;
+namespace ShockedPlot7560\FactionMaster\Button;
 
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Button\AcceptMemberRequest;
-use ShockedPlot7560\FactionMaster\Button\Back;
-use ShockedPlot7560\FactionMaster\Button\DeleteRequest;
-use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
-use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\DemandList;
-use ShockedPlot7560\FactionMaster\Route\ManageDemand;
+use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
+use ShockedPlot7560\FactionMaster\Route\ChangePermissionMain as RouteChangePermissionMain;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class JoinRequestCollection extends Collection {
+class ChangePermissionMain extends Button {
 
-    const SLUG = "joinRequest";
+    const SLUG = "changePermissionMain";
 
     public function __construct() {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, InvitationEntity $invitation) {
-            $this->register(new AcceptMemberRequest($invitation));
-            $this->register(new DeleteRequest($invitation, DemandList::SLUG, ManageDemand::SLUG));
-            $this->register(new Back(RouterFactory::get(ManageDemand::SLUG)->getBackRoute()));
-        });
+        $this->setSlug(self::SLUG)
+            ->setContent(function ($player) {
+                return Utils::getText($player, "BUTTON_CHANGE_PERMISSION");
+            })
+            ->setCallable(function (Player $player) {
+                Utils::processMenu(RouterFactory::get(RouteChangePermissionMain::SLUG), $player);
+            })
+            ->setPermissions([
+                PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS
+            ])
+            ->setImgPack("textures/img/permission");
     }
+
 }

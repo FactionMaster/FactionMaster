@@ -45,8 +45,9 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\AllianceDemandList;
 use ShockedPlot7560\FactionMaster\Route\AllianceInvitationList;
-use ShockedPlot7560\FactionMaster\Route\ManageFactionMain;
+use ShockedPlot7560\FactionMaster\Route\AllianceMainMenu;
 use ShockedPlot7560\FactionMaster\Route\NewAllianceInvitation;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class ManageAllianceMainCollection extends Collection {
 
@@ -54,9 +55,9 @@ class ManageAllianceMainCollection extends Collection {
 
     public function __construct() {
         parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, FactionEntity $Faction) {
-            foreach ($Faction->ally as $Name) {
-                $this->register(new Ally(MainAPI::getFaction($Name)));
+        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, FactionEntity $faction) {
+            foreach ($faction->getAlly() as $name) {
+                $this->register(new Ally(MainAPI::getFaction($name)));
             }
             $this->register(new SendInvitation(
                 NewAllianceInvitation::SLUG,
@@ -73,7 +74,7 @@ class ManageAllianceMainCollection extends Collection {
                     PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
                 ]
             ));
-            $this->register(new Back(ManageFactionMain::SLUG));
+            $this->register(new Back(RouterFactory::get(AllianceMainMenu::SLUG)));
         });
     }
 }

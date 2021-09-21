@@ -38,7 +38,8 @@ use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\Member;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\ViewFactionMembers;
 
 class ViewMembersCollection extends Collection {
 
@@ -47,10 +48,10 @@ class ViewMembersCollection extends Collection {
     public function __construct() {
         parent::__construct(self::SLUG);
         $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, FactionEntity $faction) {
-            foreach ($faction->members as $Name => $Rank) {
-                $this->register(new Member($Name, $Rank));
+            foreach ($faction->members as $name => $rank) {
+                $this->register(new Member($name, $rank));
             }
-            $this->register(new Back(MainPanel::SLUG));
+            $this->register(new Back(RouterFactory::get(ViewFactionMembers::SLUG)->getBackRoute()));
         });
     }
 }
