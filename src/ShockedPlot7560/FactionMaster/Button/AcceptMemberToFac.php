@@ -39,10 +39,10 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionJoinEvent;
 use ShockedPlot7560\FactionMaster\Event\InvitationAcceptEvent;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
-use ShockedPlot7560\FactionMaster\Route\DemandList;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
-use ShockedPlot7560\FactionMaster\Route\ManageDemand;
+use ShockedPlot7560\FactionMaster\Route\ConfirmationRoute;
+use ShockedPlot7560\FactionMaster\Route\JoinRequestReceiveRoute;
+use ShockedPlot7560\FactionMaster\Route\MainRoute;
+use ShockedPlot7560\FactionMaster\Route\ManageJoinRequestRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -57,7 +57,7 @@ class AcceptMemberToFac extends Button {
                 return Utils::getText($player, "BUTTON_ACCEPT_REQUEST");
             })
             ->setCallable(function (Player $player) use ($request) {
-                Utils::processMenu(RouterFactory::get(ConfirmationMenu::SLUG), $player, [
+                Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
                     function (Player $player, $data) use ($request) {
                         if ($data === null) {
                             return;
@@ -82,23 +82,23 @@ class AcceptMemberToFac extends Button {
                                             },
                                             function () use ($request, $player, $message) {
                                                 (new InvitationAcceptEvent($player, $request))->call();
-                                                Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $player, [$message]);
+                                                Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player, [$message]);
                                             },
                                             function () use ($player) {
-                                                Utils::processMenu(RouterFactory::get(DemandList::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+                                                Utils::processMenu(RouterFactory::get(JoinRequestReceiveRoute::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
                                             }
                                         ));
                                     },
                                     function () use ($player) {
-                                        Utils::processMenu(RouterFactory::get(DemandList::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+                                        Utils::processMenu(RouterFactory::get(JoinRequestReceiveRoute::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
                                     }
                                 ));
                             } else {
                                 $message = Utils::getText($player->getName(), "MAX_PLAYER_REACH");
-                                Utils::processMenu(RouterFactory::get(DemandList::SLUG), $player, [$message]);
+                                Utils::processMenu(RouterFactory::get(JoinRequestReceiveRoute::SLUG), $player, [$message]);
                             }
                         } else {
-                            Utils::processMenu(RouterFactory::get(ManageDemand::SLUG), $player, [$request]);
+                            Utils::processMenu(RouterFactory::get(ManageJoinRequestRoute::SLUG), $player, [$request]);
                         }
                     },
                     Utils::getText($player->getName(), "CONFIRMATION_TITLE_ACCEPT_REQUEST"),

@@ -33,7 +33,7 @@
 namespace ShockedPlot7560\FactionMaster\Button;
 
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\ManageFactionMain;
+use ShockedPlot7560\FactionMaster\Route\FactionOptionRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -47,7 +47,7 @@ class ManageFaction extends Button {
                 return Utils::getText($player, "BUTTON_MANAGE_FACTION");
             })
             ->setCallable(function ($player) {
-                Utils::processMenu(RouterFactory::get(ManageFactionMain::SLUG), $player);
+                Utils::processMenu(RouterFactory::get(FactionOptionRoute::SLUG), $player);
             })
             ->setPermissions([
                 PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION,

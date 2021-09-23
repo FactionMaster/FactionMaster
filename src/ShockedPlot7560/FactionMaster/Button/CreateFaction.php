@@ -32,7 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
-use ShockedPlot7560\FactionMaster\Route\CreateFactionPanel;
+use ShockedPlot7560\FactionMaster\Route\CreateFactionRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -46,7 +46,7 @@ class CreateFaction extends Button {
                 return Utils::getText($player, "BUTTON_CREATE_FACTION");
             })
             ->setCallable(function ($player) {
-                Utils::processMenu(RouterFactory::get(CreateFactionPanel::SLUG), $player);
+                Utils::processMenu(RouterFactory::get(CreateFactionRoute::SLUG), $player);
             });
     }
 

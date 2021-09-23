@@ -35,7 +35,7 @@ namespace ShockedPlot7560\FactionMaster\Button;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\ManageMember as MembersManageMember;
+use ShockedPlot7560\FactionMaster\Route\ManageMemberRoute as MembersManageMember;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 

@@ -34,7 +34,7 @@ namespace ShockedPlot7560\FactionMaster\Button;
 
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\ChangePermissionMain as RouteChangePermissionMain;
+use ShockedPlot7560\FactionMaster\Route\ManagePermissionRoute as RouteChangePermissionMain;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 

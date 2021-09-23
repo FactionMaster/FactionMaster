@@ -39,31 +39,31 @@ class CollectionFactory {
 
     public static function init(): void {
 
-        self::register(new AllianceInvitationCollection());
-        self::register(new AllianceInvitationListCollection());
-        self::register(new AllianceRequestCollection());
-        self::register(new AllianceRequestListCollection());
-        self::register(new JoinFactionMainCollection());
-        self::register(new JoinInvitationCollection());
-        self::register(new JoinInvitationListCollection());
-        self::register(new JoinRequestCollection());
-        self::register(new JoinRequestListCollection());
-        self::register(new LanguageCollection());
-        self::register(new MainCollectionFac());
-        self::register(new MainCollectionNoFac());
+        self::register(new ManageAllianceInvitationCollection());
+        self::register(new AllianceInvitationSendCollection());
+        self::register(new ManageAllianceRequestCollection());
+        self::register(new AllianceRequestReceiveCollection());
+        self::register(new JoinFactionCollection());
+        self::register(new ManageJoinInvitationCollection());
+        self::register(new JoinInvitationSendCollection());
+        self::register(new ManageJoinRequestCollection());
+        self::register(new JoinRequestReceiveCollection());
+        self::register(new ChangeLangueCollection());
+        self::register(new MainFacCollection());
+        self::register(new MainNoFacCollection());
         self::register(new ManageAllianceCollection());
-        self::register(new ManageAllianceMainCollection());
-        self::register(new ManageFactionMainCollection());
-        self::register(new ManageInvitationCollection());
-        self::register(new MemberInvitationListCollection());
+        self::register(new AllianceOptionCollection());
+        self::register(new FactionOptionCollection());
+        self::register(new ManageMemberInvitationCollection());
+        self::register(new MembersInvitationSendCollection());
         self::register(new ManageMemberCollection());
-        self::register(new ManageMembersCollection());
-        self::register(new ManageMembersMainCollection());
-        self::register(new ManageRequestCollection());
-        self::register(new ManageRequestListCollection());
-        self::register(new PermissionMainCollection());
-        self::register(new ViewHomesCollection());
-        self::register(new ViewMembersCollection());
+        self::register(new MembersManageCollection());
+        self::register(new MembersOptionCollection());
+        self::register(new ManageMemberRequestCollection());
+        self::register(new MembersRequestReceiveCollection());
+        self::register(new ManagePermissionCollection());
+        self::register(new HomesViewCollection());
+        self::register(new MembersViewCollection());
 
     }
 

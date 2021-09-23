@@ -34,7 +34,7 @@ namespace ShockedPlot7560\FactionMaster\Button;
 
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\RankPermissionManage;
+use ShockedPlot7560\FactionMaster\Route\PermissionChangeRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -48,7 +48,7 @@ class ChangePermission extends Button {
                 return Utils::getText($player, $nameSlug);
             })
             ->setCallable(function (Player $player) use ($rankId) {
-                Utils::processMenu(RouterFactory::get(RankPermissionManage::SLUG), $player, [$rankId]);
+                Utils::processMenu(RouterFactory::get(PermissionChangeRoute::SLUG), $player, [$rankId]);
             })
             ->setPermissions([
                 PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS

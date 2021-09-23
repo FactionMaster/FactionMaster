@@ -40,9 +40,9 @@ use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\Event\FactionPropertyTransferEvent;
 use ShockedPlot7560\FactionMaster\Event\MemberChangeRankEvent;
 use ShockedPlot7560\FactionMaster\Main;
-use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
-use ShockedPlot7560\FactionMaster\Route\ManageMember as MembersManageMember;
+use ShockedPlot7560\FactionMaster\Route\ConfirmationRoute;
+use ShockedPlot7560\FactionMaster\Route\MainRoute;
+use ShockedPlot7560\FactionMaster\Route\ManageMemberRoute as MembersManageMember;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
@@ -58,7 +58,7 @@ class TransferProperty extends Button {
                 return Utils::getText($player, "BUTTON_TRANSFER_PROPERTY");
             })
             ->setCallable(function (Player $player) use ($member) {
-                Utils::processMenu(RouterFactory::get(ConfirmationMenu::SLUG), $player, [
+                Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
                     function (Player $player, $data) use ($member) {
                         if ($data === null) {
                             return;
@@ -110,7 +110,7 @@ class TransferProperty extends Button {
                                         MainAPI::$users[$user->getName()] = $user;
                                         (new MemberChangeRankEvent($userj))->call();
                                         (new FactionPropertyTransferEvent($player, $member, $player->getName()))->call();
-                                        Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $player, [$message]);
+                                        Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player, [$message]);
                                     }
                                 )
                             );

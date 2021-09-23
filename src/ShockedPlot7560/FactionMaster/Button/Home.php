@@ -36,7 +36,7 @@ use pocketmine\math\Vector3;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\HomeEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
+use ShockedPlot7560\FactionMaster\Route\MainRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -57,7 +57,7 @@ class Home extends Button {
             ->setCallable(function (Player $player) use ($home) {
                 $player->teleport(new Vector3($home->getX(), $home->getY(), $home->getZ()));
                 $player->sendMessage(Utils::getText($player->getName(), "SUCCESS_TELEPORT_HOME"));
-                Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $player);
+                Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player);
             })
             ->setPermissions([
                 PermissionIds::PERMISSION_TP_FACTION_HOME,

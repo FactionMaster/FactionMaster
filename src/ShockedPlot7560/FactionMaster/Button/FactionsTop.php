@@ -35,7 +35,7 @@ namespace ShockedPlot7560\FactionMaster\Button;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
-use ShockedPlot7560\FactionMaster\Route\TopFactionPanel;
+use ShockedPlot7560\FactionMaster\Route\TopFactionRoute;
 use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -53,7 +53,7 @@ class FactionsTop extends Button {
                     Main::getTopQuery(),
                     [],
                     function (array $result) use ($player) {
-                        Utils::processMenu(RouterFactory::get(TopFactionPanel::SLUG), $player, [$result]);
+                        Utils::processMenu(RouterFactory::get(TopFactionRoute::SLUG), $player, [$result]);
                     },
                     FactionEntity::class
                 ));

@@ -32,7 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
-use ShockedPlot7560\FactionMaster\Route\ManageInvitationMain;
+use ShockedPlot7560\FactionMaster\Route\JoinFactionRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -46,7 +46,7 @@ class JoinFaction extends Button {
                 return Utils::getText($player, "BUTTON_JOIN_FACTION");
             })
             ->setCallable(function ($player) {
-                Utils::processMenu(RouterFactory::get(ManageInvitationMain::SLUG), $player);
+                Utils::processMenu(RouterFactory::get(JoinFactionRoute::SLUG), $player);
             });
     }
 

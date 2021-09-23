@@ -36,7 +36,7 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Button;
 use ShockedPlot7560\FactionMaster\Event\PlayerChangeLanguageEvent;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
+use ShockedPlot7560\FactionMaster\Route\MainRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -67,10 +67,10 @@ class Langue extends Button {
                     },
                     function () use ($player, $lang) {
                         (new PlayerChangeLanguageEvent($player, $lang))->call();
-                        Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $player);
+                        Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player);
                     },
                     function () use ($player) {
-                        Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+                        Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
                     }
                 ));
             })

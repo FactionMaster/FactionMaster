@@ -33,7 +33,7 @@
 namespace ShockedPlot7560\FactionMaster\Button;
 
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\HomeListPanel;
+use ShockedPlot7560\FactionMaster\Route\HomesViewRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -47,7 +47,7 @@ class ViewHomes extends Button {
                 return Utils::getText($player, "BUTTON_VIEW_FACTION_HOME");
             })
             ->setCallable(function ($player) {
-                Utils::processMenu(RouterFactory::get(HomeListPanel::SLUG), $player);
+                Utils::processMenu(RouterFactory::get(HomesViewRoute::SLUG), $player);
             })
             ->setPermissions([
                 PermissionIds::PERMISSION_TP_FACTION_HOME,

@@ -33,7 +33,7 @@
 namespace ShockedPlot7560\FactionMaster\Button;
 
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
-use ShockedPlot7560\FactionMaster\Route\ViewFactionMembers;
+use ShockedPlot7560\FactionMaster\Route\MembersViewRoute;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ViewMembers extends Button {
@@ -46,7 +46,7 @@ class ViewMembers extends Button {
                 return Utils::getText($player, "BUTTON_VIEW_FACTION_MEMBERS");
             })
             ->setCallable(function ($player) {
-                Utils::processMenu(RouterFactory::get(ViewFactionMembers::SLUG), $player);
+                Utils::processMenu(RouterFactory::get(MembersViewRoute::SLUG), $player);
             })
             ->setImgPack("textures/img/member");
     }
