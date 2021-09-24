@@ -90,8 +90,9 @@ class ManageMemberRankRoute extends VictimBase implements Route {
             }
 
             MainAPI::changeRank($this->getVictim()->getName(), $data[0]);
+            $oldRank = $this->getVictim()->getRank();
             $this->getVictim()->setRank($data[0]);
-            (new MemberChangeRankEvent($this->getVictim()))->call();
+            (new MemberChangeRankEvent($this->getFaction(), $this->getVictim(), $oldRank))->call();
             Utils::processMenu($this->getBackRoute(), $player, [$this->getVictim()]);
         };
     }

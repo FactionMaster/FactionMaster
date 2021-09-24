@@ -53,7 +53,7 @@ use ShockedPlot7560\FactionMaster\Command\Subcommand\RemoveFlagCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\SethomeCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\SynchroCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\UnclaimCommand;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
+use ShockedPlot7560\FactionMaster\Route\MainRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -85,7 +85,7 @@ class FactionCommand extends BaseCommand {
             return;
         }
         if (count($args) == 0) {
-            Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $sender->getPlayer());
+            Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $sender->getPlayer());
             return;
         }
     }

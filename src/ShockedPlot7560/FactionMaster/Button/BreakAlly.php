@@ -68,7 +68,8 @@ class BreakAlly extends Button {
                                     return MainAPI::isAlly($faction->getName(), $ally->getName());
                                 },
                                 function () use ($player, $faction, $ally) {
-                                    (new AllianceBreakEvent($player, $faction->getName(), $ally->getName()))->call();
+                                    $event = new AllianceBreakEvent($player, $faction, $ally);
+                                    $event->call();
                                     Utils::processMenu(RouterFactory::get(AllianceOptionRoute::SLUG), $player, [Utils::getText($player->getName(), "SUCCESS_BREAK_ALLIANCE", ['name' => $ally->name])]);
                                 },
                                 function () use ($player) {

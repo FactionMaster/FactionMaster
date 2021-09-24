@@ -52,7 +52,7 @@ class BroadcastMessageListener implements Listener {
             $message = Utils::getConfig("broadcast-faction-create-message");
             $message = str_replace(["{playerName}", "{factionName}"], [
                 $event->getPlayer()->getName(),
-                $event->getFaction()
+                $event->getFaction()->getName()
             ], $message);
             $this->main->getServer()->broadcastMessage($message);
         }
@@ -75,7 +75,7 @@ class BroadcastMessageListener implements Listener {
             $message = str_replace(["{playerName}", "{targetName}", "{factionName}"], [
                 $event->getPlayer()->getName(),
                 $event->getTarget()->getName(),
-                $event->getTarget()->getFactionName()
+                $event->getFaction()->getName()
             ], $message);
             $this->main->getServer()->broadcastMessage($message);
         }

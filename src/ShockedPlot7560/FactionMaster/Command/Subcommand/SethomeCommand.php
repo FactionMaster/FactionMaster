@@ -67,19 +67,19 @@ class SethomeCommand extends BaseSubCommand {
             return;
         }
         if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_ADD_FACTION_HOME)) {
-            $Player = $sender->getPlayer();
+            $player = $sender->getPlayer();
             if (!MainAPI::getFactionHome($userEntity->getFactionName(), $args["name"]) instanceof HomeEntity) {
-                $Faction = MainAPI::getFaction($userEntity->getFactionName());
-                if (count(MainAPI::getFactionHomes($userEntity->getFactionName())) < $Faction->getMaxHome()) {
-                    $Chunk = $Player->getLevel()->getChunkAtPosition($Player);
-                    if (ConfigManager::getConfig()->get("allow-home-ennemy-claim") && MainAPI::getFactionClaim($Player->getLevel()->getName(), $Chunk->getX(), $Chunk->getZ()) === null) {
-                        MainAPI::addHome($Player, $userEntity->getFactionName(), $args['name']);
+                $faction = MainAPI::getFaction($userEntity->getFactionName());
+                if (count(MainAPI::getFactionHomes($userEntity->getFactionName())) < $faction->getMaxHome()) {
+                    $Chunk = $player->getLevel()->getChunkAtPosition($player);
+                    if (ConfigManager::getConfig()->get("allow-home-ennemy-claim") && MainAPI::getFactionClaim($player->getLevel()->getName(), $Chunk->getX(), $Chunk->getZ()) === null) {
+                        MainAPI::addHome($player, $userEntity->getFactionName(), $args['name']);
                         Utils::newMenuSendTask(new MenuSendTask(
                             function () use ($userEntity, $args) {
                                 return MainAPI::getFactionHome($userEntity->getFactionName(), $args['name']) instanceof HomeEntity;
                             },
-                            function () use ($sender, $Faction, $args) {
-                                (new FactionHomeCreateEvent($sender, $Faction, $args['name']))->call();
+                            function () use ($sender, $faction, $args) {
+                                (new FactionHomeCreateEvent($sender, $faction, $args['name']))->call();
                                 $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_CREATE"));
                             },
                             function () use ($sender) {

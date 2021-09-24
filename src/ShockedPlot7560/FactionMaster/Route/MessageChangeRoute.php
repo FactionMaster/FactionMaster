@@ -90,8 +90,9 @@ class MessageChangeRoute extends RouteBase implements Route {
                         return MainAPI::getFaction($faction->getName())->getMessage() === $message;
                     },
                     function () use ($player, $faction, $message) {
+                        $oldMessage = $faction->getMessage();
                         $faction->setMessage($message);
-                        (new MessageChangeEvent($player, $faction, $message))->call();
+                        (new MessageChangeEvent($player, $faction, $oldMessage))->call();
                         Utils::processMenu($this->getBackRoute(), $player, [Utils::getText($player->getName(), "SUCCESS_MESSAGE_UPDATE")]);
                     },
                     function () use ($player) {

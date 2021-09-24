@@ -48,11 +48,11 @@ class Utils {
 
     const POCKETMINE_PERMISSIONS_CONSTANT = "Pocketmine";
 
-    public static function generateButton(SimpleForm $Form, array $buttons): SimpleForm {
+    public static function generateButton(SimpleForm $form, array $buttons): SimpleForm {
         foreach ($buttons as $button) {
-            $Form->addButton($button);
+            $form->addButton($button);
         }
-        return $Form;
+        return $form;
     }
 
     public static function processMenu(Route $route, Player $player, ?array $params = null): void {

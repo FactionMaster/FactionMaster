@@ -36,6 +36,7 @@ use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\CustomForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
+use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\AllianceCreateEvent;
 use ShockedPlot7560\FactionMaster\Event\InvitationAcceptEvent;
@@ -86,14 +87,17 @@ class AllianceSendInvitationRoute extends RouteBase implements Route {
                     if (count($this->getFaction()->getAlly()) < $this->getFaction()->getMaxAlly()) {
                         if (count($factionRequested->getAlly()) < $factionRequested->getMaxAlly()) {
                             $faction = $this->getFaction();
-                            if (MainAPI::areInInvitation($targetName, $faction->getName(), InvitationSendEvent::ALLIANCE_TYPE)) {
+                            if (!$faction instanceof FactionEntity) return;
+                            if (MainAPI::areInInvitation($targetName, $faction->getName(), InvitationEntity::ALLIANCE_INVITATION)) {
+                                
                                 MainAPI::setAlly($targetName, $faction->getName());
                                 Utils::newMenuSendTask(new MenuSendTask(
                                     function () use ($targetName, $faction) {
                                         return MainAPI::isAlly($targetName, $faction->getName());
                                     },
-                                    function () use ($faction, $targetName, $player) {
-                                        (new AllianceCreateEvent($player, $faction->getName(), $targetName))->call();
+                                    function () use ($faction, $targetName, $player, $factionRequested) {
+                                        $event = new AllianceCreateEvent($player, $faction, $factionRequested);
+                                        $event->call();
                                         $invit = MainAPI::getInvitationsBySender($targetName, "alliance")[0];
                                         MainAPI::removeInvitation($targetName, $faction->getName(), "alliance");
                                         Utils::newMenuSendTask(new MenuSendTask(
@@ -113,14 +117,20 @@ class AllianceSendInvitationRoute extends RouteBase implements Route {
                                         Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
                                     }
                                 ));
-                            } elseif (!MainAPI::areInInvitation($faction->getName(), $targetName, InvitationSendEvent::ALLIANCE_TYPE)) {
-                                MainAPI::makeInvitation($faction->getName(), $targetName, InvitationSendEvent::ALLIANCE_TYPE);
+                            } elseif (!MainAPI::areInInvitation($faction->getName(), $targetName, InvitationEntity::ALLIANCE_INVITATION)) {
+                                MainAPI::makeInvitation($faction->getName(), $targetName, InvitationEntity::ALLIANCE_INVITATION);
                                 Utils::newMenuSendTask(new MenuSendTask(
                                     function () use ($faction, $targetName) {
-                                        return MainAPI::areInInvitation($faction->getName(), $targetName, InvitationSendEvent::ALLIANCE_TYPE);
+                                        return MainAPI::areInInvitation($faction->getName(), $targetName, InvitationEntity::ALLIANCE_INVITATION);
                                     },
                                     function () use ($faction, $player, $targetName, $data) {
-                                        (new InvitationSendEvent($player, $faction->getName(), $targetName, InvitationSendEvent::ALLIANCE_TYPE))->call();
+                                        $invitation = null;
+                                        foreach (MainAPI::getInvitationsBySender($faction->getName(), InvitationEntity::ALLIANCE_INVITATION) as $invitations) {
+                                            if ($invitations->getReceiverString() === $targetName) {
+                                                $invitation = $invitations;
+                                            }
+                                        }
+                                        (new InvitationSendEvent($player, $invitation))->call();
                                         Utils::processMenu($this->getBackRoute(), $player, [Utils::getText($player->getName(), "SUCCESS_SEND_INVITATION", ['name' => $data[1]])]);
                                     },
                                     function () use ($player) {

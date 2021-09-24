@@ -86,13 +86,14 @@ class CreateFactionRoute extends RouteBase implements Route {
                     if (\strlen($factionName) >= ConfigManager::getConfig()->get("min-faction-name-length")
                             && \strlen($factionName) <= ConfigManager::getConfig()->get("max-faction-name-length")) {
                         if (!in_array($factionName, (array) Utils::getConfig("banned-faction-name"))) {
+                            $event = new FactionCreateEvent($player, $factionName);
                             MainAPI::addFaction($factionName, $player->getName());
                             Utils::newMenuSendTask(new MenuSendTask(
                                 function () use ($factionName) {
                                     return MainAPI::getFaction($factionName) instanceof FactionEntity;
                                 },
-                                function () use ($factionName, $player) {
-                                    (new FactionCreateEvent($player, $factionName))->call();
+                                function () use ($player, $event) {
+                                    $event->call();
                                     Utils::processMenu($this->getBackRoute(), $player, [Utils::getText($player->getName(), "SUCCESS_CREATE_FACTION")]);
                                 },
                                 function () use ($player) {

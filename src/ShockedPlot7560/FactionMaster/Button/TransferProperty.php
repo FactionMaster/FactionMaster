@@ -90,13 +90,14 @@ class TransferProperty extends Button {
                                         'rank' => Ids::COOWNER_ID,
                                         'name' => $user->getName(),
                                     ],
-                                    function () use ($user) {
+                                    function () use ($user, $faction) {
                                         MainAPI::$users[$user->getName()] = $user;
-                                        (new MemberChangeRankEvent($user))->call();
+                                        (new MemberChangeRankEvent($faction, $user, Ids::OWNER_ID))->call();
                                     }
                                 )
                             );
                             $userj = MainAPI::getUser($member->getName());
+                            $oldRank = $userj->getRank();
                             $userj->setRank(Ids::OWNER_ID);
                             Main::getInstance()->getServer()->getAsyncPool()->submitTask(
                                 new DatabaseTask(
@@ -105,11 +106,11 @@ class TransferProperty extends Button {
                                         'rank' => Ids::OWNER_ID,
                                         'name' => $userj->getName(),
                                     ],
-                                    function () use ($userj, $user, $player, $member, $message) {
+                                    function () use ($userj, $user, $player, $member, $message, $faction, $oldRank) {
                                         MainAPI::$users[$userj->getName()] = $userj;
                                         MainAPI::$users[$user->getName()] = $user;
-                                        (new MemberChangeRankEvent($userj))->call();
-                                        (new FactionPropertyTransferEvent($player, $member, $player->getName()))->call();
+                                        (new MemberChangeRankEvent($faction, $userj, $oldRank))->call();
+                                        (new FactionPropertyTransferEvent($player, $faction, $member))->call();
                                         Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player, [$message]);
                                     }
                                 )

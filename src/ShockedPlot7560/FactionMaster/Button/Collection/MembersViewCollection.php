@@ -48,7 +48,7 @@ class MembersViewCollection extends Collection {
     public function __construct() {
         parent::__construct(self::SLUG);
         $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, FactionEntity $faction) {
-            foreach ($faction->members as $name => $rank) {
+            foreach ($faction->getMembers() as $name => $rank) {
                 $this->register(new Member($name, $rank));
             }
             $this->register(new Back(RouterFactory::get(MembersViewRoute::SLUG)->getBackRoute()));

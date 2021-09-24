@@ -38,7 +38,7 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
-use ShockedPlot7560\FactionMaster\Route\TopFactionPanel;
+use ShockedPlot7560\FactionMaster\Route\TopFactionRoute;
 use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -55,7 +55,7 @@ class FactionTopCommand extends BaseSubCommand {
             Main::getTopQuery(),
             [],
             function (array $result) use ($sender) {
-                Utils::processMenu(RouterFactory::get(TopFactionPanel::SLUG), $sender->getPlayer(), [$result]);
+                Utils::processMenu(RouterFactory::get(TopFactionRoute::SLUG), $sender->getPlayer(), [$result]);
             },
             FactionEntity::class
         ));

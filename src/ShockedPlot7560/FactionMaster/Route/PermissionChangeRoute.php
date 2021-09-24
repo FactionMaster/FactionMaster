@@ -118,8 +118,8 @@ class PermissionChangeRoute extends RouteBase implements Route {
                 function () use ($faction, $oldPermission) {
                     return MainAPI::getFaction($faction->getName())->getPermissions() !== $oldPermission;
                 },
-                function () use ($player, $faction) {
-                    (new PermissionChangeEvent($player, $faction, $faction->getPermissions()))->call();
+                function () use ($player, $faction, $oldPermission) {
+                    (new PermissionChangeEvent($player, $faction, $oldPermission))->call();
                     Utils::processMenu($this->getBackRoute(), $player, [Utils::getText($player->getName(), "SUCCESS_PERMISSION_UPDATE")]);
                 },
                 function () use ($player) {

@@ -74,7 +74,7 @@ class SyncServerManager {
                         MainAPI::$factions[$faction->name] = $faction;
                         if (self::$main->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
                             $server = self::$main->getServer();
-                            foreach ($faction->members as $name => $rank) {
+                            foreach ($faction->getMembers() as $name => $rank) {
                                 $player = $server->getPlayer($name);
                                 if ($player instanceof Player) {
                                     $ev = new PlayerTagUpdateEvent($player, new ScoreTag(

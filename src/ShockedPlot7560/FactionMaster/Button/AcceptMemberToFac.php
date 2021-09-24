@@ -74,7 +74,7 @@ class AcceptMemberToFac extends Button {
                                         return $user instanceof UserEntity && $user->getFactionName() === $request->getReceiverString();
                                     },
                                     function () use ($request, $player, $faction, $message) {
-                                        (new FactionJoinEvent($player, $faction))->call();
+                                        (new FactionJoinEvent($request->getSenderString(), $faction))->call();
                                         MainAPI::removeInvitation($request->getSenderString(), $request->getReceiverString(), $request->getType());
                                         Utils::newMenuSendTask(new MenuSendTask(
                                             function () use ($request) {

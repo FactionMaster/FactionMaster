@@ -36,7 +36,7 @@ use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\Route\CreateFactionPanel;
+use ShockedPlot7560\FactionMaster\Route\CreateFactionRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -49,9 +49,9 @@ class FactionCreateCommand extends BaseSubCommand {
             return;
         }
 
-        $UserEntity = MainAPI::getUser($sender->getName());
-        if ($UserEntity->getFactionName() === null) {
-            Utils::processMenu(RouterFactory::get(CreateFactionPanel::SLUG), $sender->getPlayer());
+        $userEntity = MainAPI::getUser($sender->getName());
+        if ($userEntity->getFactionName() === null) {
+            Utils::processMenu(RouterFactory::get(CreateFactionRoute::SLUG), $sender->getPlayer());
         } else {
             $sender->sendMessage(Utils::getText($sender->getName(), "ALREADY_IN_FACTION"));
         }

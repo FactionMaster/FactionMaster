@@ -320,8 +320,8 @@ class FactionEntity extends EntityDatabase {
      */
     public function getAllyInstance(): array {
         $array = [];
-        foreach ($this->ally as $key => $Ally) {
-            $array[] = MainAPI::getFaction($Ally);
+        foreach ($this->getAlly() as $key => $ally) {
+            $array[] = MainAPI::getFaction($ally);
         }
         return $array;
     }

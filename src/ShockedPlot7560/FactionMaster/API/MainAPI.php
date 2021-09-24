@@ -201,12 +201,13 @@ class MainAPI {
                 "UPDATE " . UserTable::TABLE_NAME . " SET faction = NULL, rank = NULL WHERE faction = :faction",
                 ['faction' => $factionName],
                 function () use ($faction) {
-                    foreach ($faction->members as $name => $rank) {
+                    foreach ($faction->getMembers() as $name => $rank) {
                         $user = MainAPI::getUser($name);
+                        $oldRank = $user->getRank();
                         $user->setFactionName(null);
                         $user->setRank(null);
                         MainAPI::$users[$name] = $user;
-                        (new MemberChangeRankEvent($user))->call();
+                        (new MemberChangeRankEvent($faction, $user, $oldRank))->call();
                     }
                 }
             )
@@ -286,9 +287,9 @@ class MainAPI {
                     'rank' => $rankId,
                     'name' => $playerName,
                 ],
-                function () use ($playerName, $user) {
+                function () use ($playerName, $user, $faction) {
                     MainAPI::$users[$playerName] = $user;
-                    (new MemberChangeRankEvent($user))->call();
+                    (new MemberChangeRankEvent($faction, $user, null))->call();
                 }
             )
         );
@@ -302,6 +303,7 @@ class MainAPI {
 
         $faction->removeMember($playerName);
         $user = self::getUser($playerName);
+        $oldRank = $user->getRank();
         $user->setFactionName(null);
         $user->setRank(null);
         self::submitDatabaseTask(
@@ -322,9 +324,9 @@ class MainAPI {
                 [
                     'name' => $playerName,
                 ],
-                function () use ($playerName, $user) {
+                function () use ($playerName, $user, $faction, $oldRank) {
                     MainAPI::$users[$playerName] = $user;
-                    (new MemberChangeRankEvent($user))->call();
+                    (new MemberChangeRankEvent($faction, $user, $oldRank))->call();
                 }
             )
         );
@@ -334,6 +336,7 @@ class MainAPI {
      * Add a quantity of XP to the faction, *If the total xp of the level are exceeded, it will be set to this limit*
      */
     public static function addXP(string $factionName, int $xp): void {
+        $setXP = $xp;
         $faction = self::getFaction($factionName);
         if (!$faction instanceof FactionEntity) {
             return;
@@ -359,9 +362,9 @@ class MainAPI {
                     'level' => $level,
                     'name' => $factionName,
                 ],
-                function () use ($factionName, $faction) {
+                function () use ($factionName, $faction, $setXP) {
                     MainAPI::$factions[$factionName] = $faction;
-                    (new FactionXPChangeEvent($faction))->call();
+                    (new FactionXPChangeEvent($faction, $setXP))->call();
                 }
             )
         );
@@ -554,6 +557,7 @@ class MainAPI {
             )
         );
         $user = self::getUser($playerName);
+        $oldRank = $user->getRank();
         $user->setFactionName(null);
         $user->setRank(null);
         self::submitDatabaseTask(
@@ -563,9 +567,9 @@ class MainAPI {
                     'rank' => $rank,
                     'name' => $playerName,
                 ],
-                function () use ($user) {
+                function () use ($user, $faction, $oldRank) {
                     MainAPI::$users[$user->getName()] = $user;
-                    (new MemberChangeRankEvent($user))->call();
+                    (new MemberChangeRankEvent($faction, $user, $oldRank))->call();
                 }
             )
         );

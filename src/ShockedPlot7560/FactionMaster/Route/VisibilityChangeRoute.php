@@ -90,7 +90,9 @@ class VisibilityChangeRoute extends RouteBase implements Route {
                     return MainAPI::getFaction($faction->getName())->getVisibilityId() == $visibility;
                 },
                 function () use ($player, $faction, $visibility) {
-                    (new VisibilityChangeEvent($player, $faction, $visibility))->call();
+                    $oldVisibility = $faction->getVisibilityId();
+                    $faction->setVisibility($visibility);
+                    (new VisibilityChangeEvent($player, $faction, $oldVisibility))->call();
                     Utils::processMenu($this->getBackRoute(), $player, [Utils::getText($player->getName(), "SUCCESS_VISIBILITY_UPDATE")]);
                 },
                 function () use ($player) {

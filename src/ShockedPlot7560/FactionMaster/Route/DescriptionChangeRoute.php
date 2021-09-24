@@ -90,8 +90,10 @@ class DescriptionChangeRoute extends RouteBase implements Route {
                         return MainAPI::getFaction($faction->getName())->getDescription() === $description;
                     },
                     function () use ($player, $faction, $description) {
+                        $oldDescription = $faction->getDescription();
                         $faction->setDescription($description);
-                        (new DescriptionChangeEvent($player, $faction, $description))->call();
+                        $event = new DescriptionChangeEvent($player, $faction, $oldDescription);
+                        $event->call();
                         Utils::processMenu($this->getBackRoute(), $player, [Utils::getText($player->getName(), "SUCCESS_DESCRIPTION_UPDATE")]);
                     },
                     function () use ($player) {

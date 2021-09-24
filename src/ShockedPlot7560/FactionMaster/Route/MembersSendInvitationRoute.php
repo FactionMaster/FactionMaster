@@ -37,6 +37,7 @@ use pocketmine\Player;
 use pocketmine\Server;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
+use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionJoinEvent;
 use ShockedPlot7560\FactionMaster\Event\InvitationAcceptEvent;
@@ -93,8 +94,8 @@ class MembersSendInvitationRoute extends RouteBase implements Route {
                 if ($userRequested instanceof UserEntity) {
                     $factionName = $faction->getName();
                     if (!MainAPI::getFactionOfPlayer($targetName) instanceof FactionEntity) {
-                        if (!MainAPI::areInInvitation($factionName, $targetName, InvitationSendEvent::MEMBER_TYPE)) {
-                            if (MainAPI::areInInvitation($targetName, $factionName, InvitationSendEvent::MEMBER_TYPE)) {
+                        if (!MainAPI::areInInvitation($factionName, $targetName, InvitationEntity::MEMBER_INVITATION)) {
+                            if (MainAPI::areInInvitation($targetName, $factionName, InvitationEntity::MEMBER_INVITATION)) {
                                 MainAPI::addMember($factionName, $userRequested->getName());
                                 Utils::newMenuSendTask(new MenuSendTask(
                                     function () use ($userRequested) {
@@ -122,13 +123,19 @@ class MembersSendInvitationRoute extends RouteBase implements Route {
                                     }
                                 ));
                             } else {
-                                MainAPI::makeInvitation($factionName, $targetName, InvitationSendEvent::MEMBER_TYPE);
+                                MainAPI::makeInvitation($factionName, $targetName, InvitationEntity::MEMBER_INVITATION);
                                 Utils::newMenuSendTask(new MenuSendTask(
                                     function () use ($faction, $targetName) {
-                                        return MainAPI::areInInvitation($faction->getName(), $targetName, InvitationSendEvent::MEMBER_TYPE);
+                                        return MainAPI::areInInvitation($faction->getName(), $targetName, InvitationEntity::MEMBER_INVITATION);
                                     },
                                     function () use ($player, $targetName, $faction) {
-                                        (new InvitationSendEvent($player, $faction->getName(), $targetName, InvitationSendEvent::MEMBER_TYPE))->call();
+                                        $invitation = null;
+                                        foreach (MainAPI::getInvitationsBySender($faction->getName(), InvitationEntity::MEMBER_INVITATION) as $invitations) {
+                                            if ($invitations->getReceiverString() === $targetName) {
+                                                $invitation = $invitations;
+                                            }
+                                        }
+                                        (new InvitationSendEvent($player, $invitation))->call();
                                         Utils::processMenu($this->getBackRoute(), $player, [Utils::getText($player->getName(), "SUCCESS_SEND_INVITATION", ['name' => $targetName])]);
                                     },
                                     function () use ($player) {

@@ -227,10 +227,10 @@ class ManageLevelRoute extends RouteBase implements Route {
                         function () use ($faction) {
                             return MainAPI::getFaction($faction->getName())->getLevel() == $faction->getLevel() + 1;
                         },
-                        function () use ($player, $reward, $faction, $rewardData, $factionName) {
+                        function () use ($player, $reward, $faction, $rewardData, $costItem) {
                             $result = $reward->executeGet($faction->getName(), $rewardData['value']);
                             if ($result === true) {
-                                (new FactionLevelUpEvent($player, $factionName, $faction->getLevel(), $reward, $rewardData['value']))->call();
+                                (new FactionLevelUpEvent($player, $faction, $costItem, $reward))->call();
                                 Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "SUCCESS_LEVEL_UP")]);
                             } else {
                                 Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);

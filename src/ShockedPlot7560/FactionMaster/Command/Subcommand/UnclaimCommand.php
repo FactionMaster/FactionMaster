@@ -70,7 +70,7 @@ class UnclaimCommand extends BaseSubCommand {
                         return !MainAPI::getFactionClaim($world, $x, $z) instanceof ClaimEntity;
                     },
                     function () use ($player, $factionClaim, $chunk, $sender) {
-                        (new FactionUnclaimEvent($player, $factionClaim->getFactionName(), $chunk))->call();
+                        (new FactionUnclaimEvent($player, $factionClaim, $chunk))->call();
                         $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_UNCLAIM"));
                     },
                     function () use ($sender) {

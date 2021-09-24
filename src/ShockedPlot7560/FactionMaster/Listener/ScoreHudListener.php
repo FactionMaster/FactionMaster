@@ -173,7 +173,7 @@ class ScoreHudListener implements Listener {
 
     public function onFactionCreate(FactionCreateEvent $event): void {
         $player = $event->getPlayer();
-        $faction = MainAPI::getFaction($event->getFaction());
+        $faction = $event->getFaction();
         if ($faction instanceof FactionEntity) {
             $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                 Ids::HUD_FACTIONMASTER_FACTION_NAME,
@@ -313,7 +313,7 @@ class ScoreHudListener implements Listener {
     }
 
     public function onFactionJoin(FactionJoinEvent $event): void {
-        $player = $event->getPlayer();
+        $player = $event->getTarget();
         if (!$player instanceof Player) {
             $player =  Main::getInstance()->getServer()->getPlayer($player);
         }
@@ -471,7 +471,7 @@ class ScoreHudListener implements Listener {
             if ($player instanceof Player) {
                 $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                     Ids::HUD_FACTIONMASTER_FACTION_DESCRIPTION,
-                    $faction->getDescription()
+                    $event->getFaction()->getDescription()
                 ));
                 $ev->call();            
             }
@@ -508,9 +508,9 @@ class ScoreHudListener implements Listener {
     }
 
     public function onRankChange(MemberChangeRankEvent $event): void {
-        $user = $event->getPlayer();
+        $user = $event->getTarget();
         $server = Main::getInstance()->getServer();
-        $player = $server->getPlayer($user->name);
+        $player = $server->getPlayer($user->getName());
         if ($player instanceof Player) {
             if ($user->getRank() !== null && $user->getFactionName() !== null) {
                 switch ($user->getRank()) {
@@ -547,7 +547,7 @@ class ScoreHudListener implements Listener {
     }
 
     public function onFactionLeave(FactionLeaveEvent $event): void {
-        $player = $event->getPlayer();
+        $player = $event->getTarget();
         $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
             Ids::HUD_FACTIONMASTER_FACTION_NAME,
             Utils::getText($player->getName(), "NO_FACTION_TAG")

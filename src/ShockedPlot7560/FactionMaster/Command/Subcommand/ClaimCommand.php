@@ -37,7 +37,6 @@ use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Event\FactionClaimEvent;
-use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
@@ -95,7 +94,8 @@ class ClaimCommand extends BaseSubCommand {
                                 return MainAPI::isClaim($world, $x, $z);
                             },
                             function () use ($sender, $factionPlayer, $chunk, $itemCost) {
-                                (new FactionClaimEvent($sender, $factionPlayer, $chunk, $itemCost->getType(), $itemCost->getValue()))->call();
+                                $event = new FactionClaimEvent($sender, $factionPlayer, $chunk, $itemCost);
+                                $event->call();
                                 $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_CLAIM"));
                             },
                             function () use ($sender) {
