@@ -32,21 +32,50 @@
 
 namespace ShockedPlot7560\FactionMaster\Event;
 
-use pocketmine\Player;
+use pocketmine\event\Event;
+use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
-class AllianceCreateEvent extends AllianceEvent implements Forcable {
+abstract class FactionEvent extends Event {
 
-    use PlayerEvent;
-
-    protected $player;
+    protected $faction;
+	/** @var bool */
+	private $isForcable = false;
 
     /**
      * @param string|FactionEntity $faction
-     * @param string|FactionEntity $alliance
      */
-    public function __construct(Player $player, $faction, $alliance, bool $isForce = false) {
-        parent::__construct($faction, $alliance, $isForce);
-        $this->player = $player;
+    public function __construct($faction, ?bool $isForce = null) {
+		if ($isForce !== null && $this instanceof Forcable) {
+			$this->setForcable($isForce);
+		}
+        $this->faction = $faction;
     }
+
+    public function getFaction(): ?FactionEntity {
+        if ($this->faction instanceof FactionEntity) return $this->faction;
+        return MainAPI::getFaction($this->faction);
+    }
+
+    /**
+	 * @throws \BadMethodCallException
+	 */
+	public function isForcable() : bool{
+		if(!($this instanceof Forcable)){
+			throw new \BadMethodCallException(get_class($this) . " is not Forcable");
+		}
+
+		return $this->isForcable;
+	}
+
+    /**
+	 * @throws \BadMethodCallException
+	 */
+	public function setForcable(bool $value = true) : void{
+		if(!($this instanceof Forcable)){
+			throw new \BadMethodCallException(get_class($this) . " is not Forcable");
+		}
+
+		$this->isForcable = $value;
+	}
 }

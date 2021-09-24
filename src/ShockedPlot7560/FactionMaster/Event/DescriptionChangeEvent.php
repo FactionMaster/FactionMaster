@@ -32,31 +32,26 @@
 
 namespace ShockedPlot7560\FactionMaster\Event;
 
-use pocketmine\event\Event;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
-class DescriptionChangeEvent extends Event {
+class DescriptionChangeEvent extends FactionEvent implements Forcable {
 
-    private $Player;
-    private $Faction;
-    private $content;
+    use PlayerEvent;
 
-    public function __construct(Player $Player, FactionEntity $Faction, string $content) {
-        $this->Player = $Player;
-        $this->Faction = $Faction;
-        $this->content = $content;
+    protected $player;
+    private $oldDescription;
+
+    /**
+     * @param string|FactionEntity $faction
+     */
+    public function __construct(Player $player, $faction, string $oldDescription, $isForce = false) {
+        parent::__construct($faction, $isForce);
+        $this->player = $player;
+        $this->oldDescription = $oldDescription;
     }
 
-    public function getPlayer(): Player {
-        return $this->Player;
-    }
-
-    public function getFaction(): FactionEntity {
-        return $this->Faction;
-    }
-
-    public function getContent(): string {
-        return $this->content;
+    public function getOldDescription(): string {
+        return $this->oldDescription;
     }
 }

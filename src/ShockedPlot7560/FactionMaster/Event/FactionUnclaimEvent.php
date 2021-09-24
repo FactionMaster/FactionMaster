@@ -32,32 +32,28 @@
 
 namespace ShockedPlot7560\FactionMaster\Event;
 
-use pocketmine\event\Event;
 use pocketmine\level\format\Chunk;
 use pocketmine\Player;
+use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
-class FactionUnclaimEvent extends Event {
+class FactionUnclaimEvent extends FactionEvent implements Forcable {
 
-    private $Player;
-    private $Faction;
-    private $Chunk;
+    use PlayerEvent;
 
-    public function __construct(Player $Player, string $Faction, Chunk $Chunk) {
-        $this->Player = $Player;
-        $this->Faction = $Faction;
-        $this->Chunk = $Chunk;
-    }
+    protected $player;
+    private $chunk;
 
-    public function getPlayer(): Player {
-        return $this->Player;
-    }
-
-    public function getFaction(): string {
-        return $this->Faction;
+    /**
+     * @param string|FactionEntity $faction
+     */
+    public function __construct(Player $player, $faction, Chunk $chunk, bool $isForce = false) {
+        parent::__construct($faction, $isForce);
+        $this->player = $player;
+        $this->chunk = $chunk;
     }
 
     public function getChunk(): Chunk {
-        return $this->Chunk;
+        return $this->chunk;
     }
 
 }

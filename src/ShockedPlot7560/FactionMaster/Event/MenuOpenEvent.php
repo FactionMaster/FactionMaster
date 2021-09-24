@@ -39,19 +39,17 @@ use ShockedPlot7560\FactionMaster\Route\Route;
 
 class MenuOpenEvent extends Event implements Cancellable {
 
-    private $Player;
-    private $Route;
+    use PlayerEvent;
 
-    public function __construct(Player $Player, Route $Route) {
-        $this->Player = $Player;
-        $this->Route = $Route;
-    }
+    protected  $player;
+    private $route;
 
-    public function getPlayer(): Player {
-        return $this->Player;
+    public function __construct(Player $player, Route $route) {
+        $this->player = $player;
+        $this->route = $route;
     }
 
     public function getRoute(): Route {
-        return $this->Route;
+        return $this->route;
     }
 }
