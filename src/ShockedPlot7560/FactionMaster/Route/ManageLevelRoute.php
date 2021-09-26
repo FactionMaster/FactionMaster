@@ -167,7 +167,7 @@ class ManageLevelRoute extends RouteBase implements Route {
                 }
                 if ($levelReady === true) {
                     Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
-                        $this->callLevelUp($faction->name),
+                        $this->callLevelUp($faction->getName()),
                         Utils::getText($player->getName(), "CONFIRMATION_TITLE_LEVEL_UP"),
                         Utils::getText($player->getName(), "CONFIRMATION_CONTENT_LEVEL_UP", ['cost' => $content]),
                     ]);

@@ -96,8 +96,8 @@ class MainAPI {
             foreach ($result as $invitation) {
                 self::$invitation[$invitation->getSenderString() . "|" . $invitation->getReceiverString()] = $invitation;
             }
-        } catch (\PDOException $Exception) {
-            self::$main->getLogger()->alert("An occured in the server synchronisation, please open an issue on GitHub with this error : " . $Exception->getMessage());
+        } catch (\PDOException $exception) {
+            self::$main->getLogger()->alert("An occured in the server synchronisation, please open an issue on GitHub with this error : " . $exception->getMessage());
         }
     }
 
@@ -115,8 +115,8 @@ class MainAPI {
                     self::$home[$home->getFactionName()][] = $home;
                 }
             }
-        } catch (\PDOException $Exception) {
-            self::$main->getLogger()->alert("An occured in the server synchronisation, please open an issue on GitHub with this error : " . $Exception->getMessage());
+        } catch (\PDOException $exception) {
+            self::$main->getLogger()->alert("An occured in the server synchronisation, please open an issue on GitHub with this error : " . $exception->getMessage());
         }
     }
 
@@ -135,8 +135,8 @@ class MainAPI {
                     self::$claim[$claim->getFactionName()][] = $claim;
                 }
             }
-        } catch (\PDOException $Exception) {
-            self::$main->getLogger()->alert("An occured in the server synchronisation, please open an issue on GitHub with this error : " . $Exception->getMessage());
+        } catch (\PDOException $exception) {
+            self::$main->getLogger()->alert("An occured in the server synchronisation, please open an issue on GitHub with this error : " . $exception->getMessage());
         }
     }
 
@@ -150,8 +150,8 @@ class MainAPI {
             foreach ($result as $faction) {
                 self::$factions[$faction->getName()] = $faction;
             }
-        } catch (\PDOException $Exception) {
-            self::$main->getLogger()->alert("An occured in the server synchronisation, please open an issue on GitHub with this error : " . $Exception->getMessage());
+        } catch (\PDOException $exception) {
+            self::$main->getLogger()->alert("An occured in the server synchronisation, please open an issue on GitHub with this error : " . $exception->getMessage());
         }
     }
 
@@ -165,8 +165,8 @@ class MainAPI {
             foreach ($result as $user) {
                 self::$users[$user->getName()] = $user;
             }
-        } catch (\PDOException $Exception) {
-            self::$main->getLogger()->alert("An occured in the server synchronisation, please open an issue on GitHub with this error : " . $Exception->getMessage());
+        } catch (\PDOException $exception) {
+            self::$main->getLogger()->alert("An occured in the server synchronisation, please open an issue on GitHub with this error : " . $exception->getMessage());
         }
     }
 

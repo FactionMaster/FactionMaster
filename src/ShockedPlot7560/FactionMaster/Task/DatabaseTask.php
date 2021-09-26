@@ -94,7 +94,6 @@ class DatabaseTask extends AsyncTask {
             }
             $this->setResult($results);        
         } catch (\Throwable $th) {
-            var_dump($th->getMessage());
             throw new Exception($th->getMessage(), 1);
         }
         

@@ -71,7 +71,7 @@ class SyncServerManager {
 
                 foreach ($result as $faction) {
                     if ($faction instanceof FactionEntity) {
-                        MainAPI::$factions[$faction->name] = $faction;
+                        MainAPI::$factions[$faction->getName()] = $faction;
                         if (self::$main->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
                             $server = self::$main->getServer();
                             foreach ($faction->getMembers() as $name => $rank) {
@@ -79,34 +79,34 @@ class SyncServerManager {
                                 if ($player instanceof Player) {
                                     $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                                         Ids::HUD_FACTIONMASTER_FACTION_NAME,
-                                        $faction->name
+                                        $faction->getName()
                                     ));
                                     $ev->call();
                                     $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                                         Ids::HUD_FACTIONMASTER_FACTION_POWER,
-                                        $faction->power
+                                        $faction->getPower()
                                     ));
                                     $ev->call();
                                     $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                                         Ids::HUD_FACTIONMASTER_FACTION_LEVEL,
-                                        $faction->level
+                                        $faction->getLevel()
                                     ));
                                     $ev->call();
                                     $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                                         Ids::HUD_FACTIONMASTER_FACTION_XP,
-                                        $faction->xp
+                                        $faction->getXP()
                                     ));
                                     $ev->call();
                                     $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                                         Ids::HUD_FACTIONMASTER_FACTION_MESSAGE,
-                                        $faction->messageFaction ?? ""
+                                        $faction->getMessage()
                                     ));
                                     $ev->call();
                                     $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                                         Ids::HUD_FACTIONMASTER_FACTION_DESCRIPTION,
-                                        $faction->description ?? ""
+                                        $faction->getDescription()
                                     ));
-                                    switch ($faction->visibility) {
+                                    switch ($faction->getVisibilityId()) {
                                         case Ids::PUBLIC_VISIBILITY:
                                             $visibility = "§a" . Utils::getText($player->getName(), "PUBLIC_VISIBILITY_NAME");
                                             break;
@@ -144,7 +144,7 @@ class SyncServerManager {
 
                 foreach ($result as $invitation) {
                     if ($invitation instanceof InvitationEntity) {
-                        MainAPI::$invitation[$invitation->sender . "|" . $invitation->receiver] = $invitation;
+                        MainAPI::$invitation[$invitation->getSenderString() . "|" . $invitation->getReceiverString()] = $invitation;
                     }
 
                 }
@@ -161,23 +161,23 @@ class SyncServerManager {
 
                 foreach ($result as $user) {
                     if ($user instanceof UserEntity) {
-                        MainAPI::$users[$user->name] = $user;
+                        MainAPI::$users[$user->getName()] = $user;
                         if (self::$main->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
-                            $player = self::$main->getServer()->getPlayer($user->name);
+                            $player = self::$main->getServer()->getPlayer($user->getName());
                             if ($player instanceof Player) {
-                                if ($user->rank !== null && $user->faction !== null) {
+                                if ($user->getRank() !== null && $user->getFactionName() !== null) {
                                     switch ($user->rank) {
                                         case Ids::RECRUIT_ID:
-                                            $rank = Utils::getText($user->name, "RECRUIT_RANK_NAME");
+                                            $rank = Utils::getText($user->getName(), "RECRUIT_RANK_NAME");
                                             break;
                                         case Ids::MEMBER_ID:
-                                            $rank = Utils::getText($user->name, "MEMBER_RANK_NAME");
+                                            $rank = Utils::getText($user->getName(), "MEMBER_RANK_NAME");
                                             break;
                                         case Ids::COOWNER_ID:
-                                            $rank = Utils::getText($user->name, "COOWNER_RANK_NAME");
+                                            $rank = Utils::getText($user->getName(), "COOWNER_RANK_NAME");
                                             break;
                                         case Ids::OWNER_ID:
-                                            $rank = Utils::getText($user->name, "OWNER_RANK_NAME");
+                                            $rank = Utils::getText($user->getName(), "OWNER_RANK_NAME");
                                             break;
                                         default: 
                                             $rank = "Unknow";
@@ -206,7 +206,7 @@ class SyncServerManager {
 
                 foreach ($result as $home) {
                     if ($home instanceof HomeEntity) {
-                        MainAPI::$home[$home->faction][$home->name] = $home;
+                        MainAPI::$home[$home->getFactionName()][$home->getName()] = $home;
                     }
 
                 }

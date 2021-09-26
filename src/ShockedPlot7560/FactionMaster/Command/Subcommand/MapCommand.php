@@ -219,7 +219,6 @@ class MapCommand extends BaseSubCommand {
             }
             $text = "";
             foreach ($claimData as $key => $Claim) {
-                var_dump($Claim);
                 $newString = " §r" . $Claim['COLOR'] . $Claim['SYMBOL'] . ": " . $Claim['FACTION'];
                 if (\strlen($text . $newString) > $config->get("map-width")) {
                     $player->sendMessage($text . $newString);

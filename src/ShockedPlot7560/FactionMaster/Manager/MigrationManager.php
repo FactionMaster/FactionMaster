@@ -57,9 +57,7 @@ class MigrationManager {
             "2.1.4-alpha" => function () {},
             "2.2.0" => function () {},
             "2.3.0" => function () {},
-            "2.3.1" => function () {
-                self::$main->getLogger()->notice("Some translation slug have change due to version change, please delete Translation folder in your plugin_data folder and reload the server to apply the change");
-            }
+            "2.3.1" => function () {}
         ];
         self::$configDbToCheck = [
             [

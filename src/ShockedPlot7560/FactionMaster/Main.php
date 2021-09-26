@@ -132,6 +132,10 @@ class Main extends PluginBase implements Listener {
                 $this->getScheduler()->scheduleRepeatingTask(new MapTask(), $time);
             }
         }
+        if (Utils::getConfig("message-alert") === true) {
+            $this->getLogger()->warning("Claim alert are enabled, with a lot of player this can probably a source of lag.");
+            $this->getLogger()->warning("So, if you have a lot of player, please disable this feature.");
+        }
     }
 
     public static function getTableInitQuery(string $class): ?string {
