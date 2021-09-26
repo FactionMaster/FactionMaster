@@ -46,7 +46,7 @@ abstract class RouteBase implements Route {
     protected $userPermissions;
     /** @var Player */
     protected $player;
-    /** @var nnull|array */
+    /** @var null|array */
     protected $params;
 
     public function getCollection(): ?Collection {

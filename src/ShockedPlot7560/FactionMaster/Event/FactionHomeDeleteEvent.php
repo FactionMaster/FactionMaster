@@ -33,6 +33,7 @@
 namespace ShockedPlot7560\FactionMaster\Event;
 
 use pocketmine\Player;
+use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
 class FactionHomeDeleteEvent extends FactionEvent implements Forcable {
 

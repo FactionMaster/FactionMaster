@@ -156,7 +156,7 @@ class FactionEntity extends EntityDatabase {
         $this->visibility = $visibility;
     }
 
-    public function setXp(float $xp): void {
+    public function setXp(int $xp): void {
         $this->xp = $xp;
     }
 

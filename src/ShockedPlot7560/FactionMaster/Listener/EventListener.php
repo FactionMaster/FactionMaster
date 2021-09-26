@@ -332,6 +332,8 @@ class EventListener implements Listener {
                 $claim = MainAPI::getFactionClaim($to->getLevel()->getName(), $claim->getX(), $claim->getZ());
                 if ($claim instanceof ClaimEntity) {
                     $faction = MainAPI::getFactionClaim($claim->getLevelName(), $claim->getX(), $claim->getZ());
+                    $color = "§f";
+                    $print = false;
                     if ($faction->getFlag() === null) {
                         $userEntity = MainAPI::getUser($event->getPlayer()->getName());
                         if ($userEntity->getFactionName() !== null) {
@@ -367,7 +369,7 @@ class EventListener implements Listener {
                         $print = true;
                     }elseif ($config->get("message-alert-flag-enabled") === false) {
                         $print = false;
-                    }
+                    } 
                     if ($print == true) {
                         $needles = ["{factionName}", "{colorStatus}", "{x}", "{z}", "{world}"];
                         $replace = [$claim->getFactionName(), $color, $claim->getX(), $claim->getZ(), $claim->getLevelName()];

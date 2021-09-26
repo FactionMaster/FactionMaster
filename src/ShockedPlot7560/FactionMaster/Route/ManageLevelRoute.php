@@ -72,7 +72,7 @@ class ManageLevelRoute extends RouteBase implements Route {
         return RouterFactory::get(FactionOptionRoute::SLUG);
     }
 
-    protected function getReward(): RewardInterface {
+    protected function getReward(): ?RewardInterface {
         return $this->reward;
     }
 
@@ -216,6 +216,7 @@ class ManageLevelRoute extends RouteBase implements Route {
                         $finish = true;
                     }
                 }
+                if ($costItem === null) return;
                 if ($continue !== true) {
                     Utils::processMenu(RouterFactory::get(self::SLUG), $player, [$continue]);
                 } else {

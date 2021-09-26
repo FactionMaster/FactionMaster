@@ -90,11 +90,11 @@ class ClaimEntity extends EntityDatabase {
     }
 
     public function setLevelName(string $levelName): void {
-        $this->world = $levelName;
+        $this->level = $levelName;
     }
 
     public function setFlag(?int $flag): void {
-        $this->flags = $flag;
+        $this->flag = $flag;
     }
 
     /**
@@ -132,7 +132,7 @@ class ClaimEntity extends EntityDatabase {
     }
 
     public function getLevelName(): string {
-        return $this->world;
+        return $this->level;
     }
 
     public function getLevel(): ?Level {
@@ -141,7 +141,7 @@ class ClaimEntity extends EntityDatabase {
     }
 
     public function getFlag(): ?int {
-        return $this->flags;
+        return $this->flag;
     }
 
     public function toString(): string {

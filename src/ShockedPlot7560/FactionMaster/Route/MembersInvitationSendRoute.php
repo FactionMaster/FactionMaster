@@ -63,7 +63,7 @@ class MembersInvitationSendRoute extends RouteBase implements Route {
         return RouterFactory::get(MembersOptionRoute::SLUG);
     }
 
-    /** @var InvitationEntity[] */
+    /** @return InvitationEntity[] */
     protected function getInvitations(): array {
         return $this->invitations;
     }
