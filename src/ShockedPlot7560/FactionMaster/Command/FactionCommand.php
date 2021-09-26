@@ -51,6 +51,7 @@ use ShockedPlot7560\FactionMaster\Command\Subcommand\MapCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\PlaceScoreboard;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\RemoveFlagCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\SethomeCommand;
+use ShockedPlot7560\FactionMaster\Command\Subcommand\SettingsCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\SynchroCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\UnclaimCommand;
 use ShockedPlot7560\FactionMaster\Route\MainRoute;
@@ -78,6 +79,7 @@ class FactionCommand extends BaseCommand {
         $this->registerSubCommand(new AddFlagCommand("addflag", Utils::getText("", "COMMAND_ADD_FLAG")));
         $this->registerSubCommand(new RemoveFlagCommand("removeflag", Utils::getText("", "COMMAND_REMOVE_FLAG")));
         $this->registerSubCommand(new SynchroCommand("synchro", Utils::getText("", "COMMAND_SYNCHRO")));
+        $this->registerSubCommand(new SettingsCommand("settings", "Give all the FactionMaster settings"));
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
