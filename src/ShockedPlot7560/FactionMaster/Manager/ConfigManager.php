@@ -68,6 +68,7 @@ class ConfigManager {
         $main->saveDefaultConfig();
         $main->saveResource('translation.yml');
         $main->saveResource('level.yml');
+        $main->saveResource('version.yml');
         $main->saveResource('leaderboard.yml');
 
         self::$config = Utils::getConfigFile("config");

@@ -47,7 +47,7 @@ class SynchroCommand extends BaseSubCommand {
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
         if ($sender->hasPermission("factionmaster.synchro.launch")) {
             $this->getPlugin()->getScheduler()->scheduleTask(new SyncServerTask($this->getPlugin()));
-            $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_SYNCHRO"));
+            $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_SYNCHRO") . ", launch!");
         }
     }
 

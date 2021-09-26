@@ -57,7 +57,13 @@ class MigrationManager {
             "2.1.4-alpha" => function () {},
             "2.2.0" => function () {},
             "2.3.0" => function () {},
-            "2.3.1" => function () {}
+            "2.3.1" => function () {},
+            "3.0.0" => function () {
+                self::$main->getLogger()->critical("FactionMaster 3.0.0 was not compatible with the anterior version, please remake all the installation before launch the server");
+                self::$main->getLogger()->critical("For precaution, factionMaster will bbe disabled now");
+                self::$main->getServer()->getPluginManager()->disablePlugin(self::$main);
+                return false;
+            }
         ];
         self::$configDbToCheck = [
             [
@@ -106,7 +112,7 @@ class MigrationManager {
             if (version_compare($version, $versionName, "<")) {
                 $actualVersion = $versionName;
                 self::$main->getLogger()->debug("Starting migration from $versionName");
-                call_user_func($callable);
+                if (call_user_func($callable) === false) return;
                 self::$main->getLogger()->debug("Migration from $versionName finish");
             }
         }

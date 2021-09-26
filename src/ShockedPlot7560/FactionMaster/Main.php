@@ -87,11 +87,6 @@ class Main extends PluginBase implements Listener {
         PermissionManager::init();
         ImageManager::init($this);
         LeaderboardManager::init($this);
-        
-        MigrationManager::init($this);
-        if (version_compare($this->getDescription()->getVersion(), Utils::getConfigFile("version")->get("migrate-version")) == 1) {
-            MigrationManager::migrate(Utils::getConfigFile("version")->get("migrate-version"));
-        }
 
         RouterFactory::init();
         RewardFactory::init();
@@ -99,42 +94,48 @@ class Main extends PluginBase implements Listener {
     }
 
     public function onEnable(): void {
-        UpdateNotifier::checkUpdate($this->getDescription()->getName(), $this->getDescription()->getVersion());
-        
-        $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
-        $this->getServer()->getPluginManager()->registerEvents(new BroadcastMessageListener($this), $this);
-        if ($this->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
-            $this->getServer()->getPluginManager()->registerEvents(new ScoreHudListener($this), $this);
-        }
-
-        if (!PacketHooker::isRegistered()) {
-            PacketHooker::register($this);
-        }
-
-        $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", Utils::getText("", "COMMAND_FACTION_DESCRIPTION"), ["f", "fac"]));
-
-        if (ConfigManager::getLeaderboardConfig()->get("enabled") === true 
-                && ConfigManager::getLeaderboardConfig()->get("position") !== false 
-                && ConfigManager::getLeaderboardConfig()->get("position") !== "") {
-            LeaderboardManager::placeScoreboard();
+        MigrationManager::init($this);
+        if (version_compare($this->getDescription()->getVersion(), Utils::getConfigFile("version")->get("migrate-version")) == 1) {
+            MigrationManager::migrate(Utils::getConfigFile("version")->get("migrate-version"));
         }
         
-        ExtensionManager::load();
-
-        $langConfigExtension = [];
-        foreach (ExtensionManager::getExtensions() as $extension) {
-            $langConfigExtension[$extension->getExtensionName()] = $extension->getLangConfig();
-        }
-        $this->getScheduler()->scheduleRepeatingTask(new SyncServerTask($this), (int) Utils::getConfig("sync-time"));
-        if (Utils::getConfig("f-map-task") !== false) {
-            $time = (int) Utils::getConfig("f-map-task");
-            if ($time > 0) {
-                $this->getScheduler()->scheduleRepeatingTask(new MapTask(), $time);
+        if ($this->isEnabled()) {
+            UpdateNotifier::checkUpdate($this->getDescription()->getName(), $this->getDescription()->getVersion());
+            $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
+            $this->getServer()->getPluginManager()->registerEvents(new BroadcastMessageListener($this), $this);
+            if ($this->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
+                $this->getServer()->getPluginManager()->registerEvents(new ScoreHudListener($this), $this);
             }
-        }
-        if (Utils::getConfig("message-alert") === true) {
-            $this->getLogger()->warning("Claim alert are enabled, with a lot of player this can probably a source of lag.");
-            $this->getLogger()->warning("So, if you have a lot of player, please disable this feature.");
+
+            if (!PacketHooker::isRegistered()) {
+                PacketHooker::register($this);
+            }
+
+            $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", Utils::getText("", "COMMAND_FACTION_DESCRIPTION"), ["f", "fac"]));
+
+            if (ConfigManager::getLeaderboardConfig()->get("enabled") === true 
+                    && ConfigManager::getLeaderboardConfig()->get("position") !== false 
+                    && ConfigManager::getLeaderboardConfig()->get("position") !== "") {
+                LeaderboardManager::placeScoreboard();
+            }
+            
+            ExtensionManager::load();
+
+            $langConfigExtension = [];
+            foreach (ExtensionManager::getExtensions() as $extension) {
+                $langConfigExtension[$extension->getExtensionName()] = $extension->getLangConfig();
+            }
+            $this->getScheduler()->scheduleRepeatingTask(new SyncServerTask($this), (int) Utils::getConfig("sync-time"));
+            if (Utils::getConfig("f-map-task") !== false) {
+                $time = (int) Utils::getConfig("f-map-task");
+                if ($time > 0) {
+                    $this->getScheduler()->scheduleRepeatingTask(new MapTask(), $time);
+                }
+            }
+            if (Utils::getConfig("message-alert") === true) {
+                $this->getLogger()->warning("Claim alert are enabled, with a lot of player this can probably a source of lag.");
+                $this->getLogger()->warning("So, if you have a lot of player, please disable this feature.");
+            }
         }
     }
 
