@@ -95,7 +95,7 @@ class MainRoute extends RouteBase implements Route {
         };
     }
 
-    protected function getForm(string $message = ""): SimpleForm {
+    protected function getForm(string $message = ""): ?SimpleForm {
         switch ($this->getMenuType()) {
             case self::FACTION_TYPE:
                 $menu = new SimpleForm($this->call());
@@ -115,5 +115,6 @@ class MainRoute extends RouteBase implements Route {
                 }
                 return $menu;
         }
+        return null;
     }
 }

@@ -216,7 +216,7 @@ class ManageLevelRoute extends RouteBase implements Route {
                         $finish = true;
                     }
                 }
-                if ($costItem === null) return;
+                if ($costItem === null || !isset($costItem)) return;
                 if ($continue !== true) {
                     Utils::processMenu(RouterFactory::get(self::SLUG), $player, [$continue]);
                 } else {

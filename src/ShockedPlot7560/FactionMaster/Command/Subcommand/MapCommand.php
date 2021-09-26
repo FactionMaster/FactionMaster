@@ -93,6 +93,7 @@ class MapCommand extends BaseSubCommand {
             $x = round($player->getX());
             $z = round($player->getZ());
             $chunkFaction = MainAPI::getFactionClaim($player->getLevel()->getName(), $centralChunk->getX(), $centralChunk->getZ());
+            $factionLabelColor = '§f';
             if ($chunkFaction instanceof ClaimEntity && $chunkFaction->getFlag() === null) {
                 if ($chunkFaction instanceof ClaimEntity && $chunkFaction->getFactionName() === $userEntity->getFactionName()) {
                     $factionLabelColor = $config->get("claim-own-color");
@@ -133,6 +134,11 @@ class MapCommand extends BaseSubCommand {
                     } else {
                         $faction = MainAPI::getFactionClaim($player->getLevel()->getName(), $x, $z);
                         if ($faction instanceof ClaimEntity) {
+                            $data = [
+                                "COLOR" => "§f",
+                                "SYMBOL" => "-",
+                                "FACTION" => "Unknow"
+                            ];
                             if ($faction->getFlag() === null) {
                                 if (!isset($claimData[$faction->getFactionName()])) {
                                     if (!isset($symbolData[$symbolCursor])) {
