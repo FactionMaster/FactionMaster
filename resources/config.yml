@@ -27,7 +27,7 @@
  #
 
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
-file-version: 6
+file-version: 7
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
 
 # --------------------- DATABASE --------------------------
@@ -83,6 +83,8 @@ faction-chat-message: "[{factionName}] {playerName}: {message}"
 ally-chat-active: false
 ally-chat-symbol: "%"
 ally-chat-message: "[{factionName}] {playerName}: {message}"
+
+help-command-color: "§b"
 
 # ------------------ BROADCAST MESSAGE CONFIGURATION ---------------------
 
