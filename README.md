@@ -127,7 +127,7 @@ All approved extensions will have a line in the README and and listed in the ``E
  #
 
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
-file-version: 8
+file-version: 9
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
 
 # --------------------- DATABASE --------------------------
