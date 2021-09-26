@@ -27,7 +27,7 @@
  #
 
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
-file-version: 7
+file-version: 8
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
 
 # --------------------- DATABASE --------------------------
@@ -84,7 +84,8 @@ ally-chat-active: false
 ally-chat-symbol: "%"
 ally-chat-message: "[{factionName}] {playerName}: {message}"
 
-help-command-color: "§b"
+help-command-header: "§8=§7=§8=§7=§8=§7=§8=§7=§8=§7= §bFactionMaster command §8=§7=§8=§7=§8=§7=§8=§7=§8=§7="
+help-command-lign: " §8>> §r§b{command}: §7{description}"
 
 # ------------------ BROADCAST MESSAGE CONFIGURATION ---------------------
 

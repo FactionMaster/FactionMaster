@@ -38,41 +38,52 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class HelpCommand extends BaseSubCommand {
 
+    private $player;
+
     protected function prepare(): void {
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-        $color = Utils::getConfig("help-command-color");
-        $sender->sendMessage("§8=§7=§8=§7=§8=§7=§8=§7=§8=§7= $color"."FactionMaster command §8=§7=§8=§7=§8=§7=§8=§7=§8=§7=");
-        $sender->sendMessage(" §8>> §r$color/f: §7" . Utils::getText($sender->getName(), "COMMAND_FACTION_DESCRIPTION"));
-        $sender->sendMessage(" §8>> §r$color/f top: §7" . Utils::getText($sender->getName(), "COMMAND_TOP_DESCRIPTION"));
-        $sender->sendMessage(" §8>> §r$color/f manage: §7" . Utils::getText($sender->getName(), "COMMAND_MANAGE_DESCRIPTION"));
-        $sender->sendMessage(" §8>> §r$color/f claim: §7" . Utils::getText($sender->getName(), "COMMAND_CLAIM_DESCRIPTION"));
-        $sender->sendMessage(" §8>> §r$color/f unclaim: §7" . Utils::getText($sender->getName(), "COMMAND_UNCLAIM_DESCRIPTION"));
-        $sender->sendMessage(" §8>> §r$color/f sethome <:name>: §7" . Utils::getText($sender->getName(), "COMMAND_SETHOME_DESCRIPTION"));
-        $sender->sendMessage(" §8>> §r$color/f delhome <:name>: §7" . Utils::getText($sender->getName(), "COMMAND_DELHOME_DESCRIPTION"));
-        $sender->sendMessage(" §8>> §r$color/f tp <:name>: §7" . Utils::getText($sender->getName(), "COMMAND_TP_DESCRIPTION"));
-        $sender->sendMessage(" §8>> §r$color/f home: §7" . Utils::getText($sender->getName(), "COMMAND_HOME_DESCRIPTION"));
-        $sender->sendMessage(" §8>> §r$color/f create: §7" . Utils::getText($sender->getName(), "COMMAND_CREATE_DESCRIPTION"));
-        $sender->sendMessage(" §8>> §r$color/f map [on|off]: §7" . Utils::getText($sender->getName(), "COMMAND_MAP_DESCRIPTION"));
-        $sender->sendMessage(" §8>> §r$color/f help: §7" . Utils::getText($sender->getName(), "COMMAND_HELP_DESCRIPTION"));
-        $sender->sendMessage(" §8>> §r$color/f info <:name>: §7" . Utils::getText($sender->getName(), "COMMAND_INFO_DESCRIPTION_GLOBAL"));
-        $sender->sendMessage(" §8>> §r$color/f claiminfo: §7" . Utils::getText($sender->getName(), "COMMAND_CLAIM_INFO_DESCRIPTION"));
+        $this->player = $sender;
+        $sender->sendMessage(Utils::getConfig("help-command-header"));
+        $sender->sendMessage($this->getString("/f", "COMMAND_FACTION_DESCRIPTION"));
+        $sender->sendMessage($this->getString("/f top", "COMMAND_TOP_DESCRIPTION"));
+        $sender->sendMessage($this->getString("/f manage", "COMMAND_MANAGE_DESCRIPTION"));
+        $sender->sendMessage($this->getString("/f claim", "COMMAND_CLAIM_DESCRIPTION"));
+        $sender->sendMessage($this->getString("/f unclaim", "COMMAND_UNCLAIM_DESCRIPTION"));
+        $sender->sendMessage($this->getString("/f sethome <:name>", "COMMAND_SETHOME_DESCRIPTION"));
+        $sender->sendMessage($this->getString("/f delhome <:name>", "COMMAND_DELHOME_DESCRIPTION"));
+        $sender->sendMessage($this->getString("/f tp <:name>", "COMMAND_TP_DESCRIPTION"));
+        $sender->sendMessage($this->getString("/f home", "COMMAND_HOME_DESCRIPTION"));
+        $sender->sendMessage($this->getString("/f create", "COMMAND_CREATE_DESCRIPTION"));
+        $sender->sendMessage($this->getString("/f map [on|off]", "COMMAND_MAP_DESCRIPTION"));
+        $sender->sendMessage($this->getString("/f help", "COMMAND_HELP_DESCRIPTION"));
+        $sender->sendMessage($this->getString("/f info <:name>", "COMMAND_INFO_DESCRIPTION_GLOBAL"));
+        $sender->sendMessage($this->getString("/f claiminfo", "COMMAND_CLAIM_INFO_DESCRIPTION"));
         if ($sender->hasPermission("factionmaster.flag.add")) {
-            $sender->sendMessage(" §8>> §r$color/f addflag <areaName> <type>: §7" . Utils::getText($sender->getName(), "COMMAND_ADD_FLAG"));
+            $sender->sendMessage($this->getString("/f addflag <areaName> <type>", "COMMAND_ADD_FLAG"));
         }
         if ($sender->hasPermission("factionmaster.flag.remove")) {
-            $sender->sendMessage(" §8>> §r$color/f removeflag: §7" . Utils::getText($sender->getName(), "COMMAND_REMOVE_FLAG"));
+            $sender->sendMessage($this->getString("/f removeflag", "COMMAND_REMOVE_FLAG"));
         }
         if ($sender->hasPermission("factionmaster.extension.list")) {
-            $sender->sendMessage(" §8>> §r$color/f extension: §7" . Utils::getText($sender->getName(), "COMMAND_EXTENSION_DESCRIPTION"));
+            $sender->sendMessage($this->getString("/f extension", "COMMAND_EXTENSION_DESCRIPTION"));
         }
         if ($sender->hasPermission("factionmaster.scoreboard.place")) {
-            $sender->sendMessage(" §8>> §r$color/f scoreboard: §7" . Utils::getText($sender->getName(), "COMMAND_SCOREBOARD_DESCRIPTION"));
+            $sender->sendMessage($this->getString("/f scoreboard", "COMMAND_SCOREBOARD_DESCRIPTION"));
         }
         if ($sender->hasPermission("factionmaster.synchro.launch")) {
-            $sender->sendMessage(" §8>> §r$color/f synchro: §7" . Utils::getText($sender->getName(), "COMMAND_SYNCHRO"));
+            $sender->sendMessage($this->getString("/f synchro", "COMMAND_SYNCHRO"));
         }
+    }
+
+    protected function getString(string $usage, string $translationSlug): string {
+        $patern = Utils::getConfig("help-command-lign");
+        return str_replace(
+            ["{command}", "{description}"],
+            [$usage, Utils::getText($this->player->getName(), $translationSlug)],
+            $patern
+        );
     }
 
 }
