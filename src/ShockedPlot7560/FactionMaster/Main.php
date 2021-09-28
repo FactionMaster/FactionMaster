@@ -91,13 +91,13 @@ class Main extends PluginBase implements Listener {
         RouterFactory::init();
         RewardFactory::init();
         CollectionFactory::init();
-    }
-
-    public function onEnable(): void {
         MigrationManager::init($this);
         if (version_compare($this->getDescription()->getVersion(), Utils::getConfigFile("version")->get("migrate-version")) == 1) {
             MigrationManager::migrate(Utils::getConfigFile("version")->get("migrate-version"));
         }
+    }
+
+    public function onEnable(): void {
         
         if ($this->isEnabled()) {
             UpdateNotifier::checkUpdate($this->getDescription()->getName(), $this->getDescription()->getVersion());
@@ -136,6 +136,7 @@ class Main extends PluginBase implements Listener {
                 $this->getLogger()->warning("Claim alert are enabled, with a lot of player this can probably a source of lag.");
                 $this->getLogger()->warning("So, if you have a lot of player, please disable this feature.");
             }
+            MigrationManager::updateConfigDb();
         }
     }
 

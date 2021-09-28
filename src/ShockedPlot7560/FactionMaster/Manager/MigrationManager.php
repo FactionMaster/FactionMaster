@@ -33,8 +33,6 @@
 namespace ShockedPlot7560\FactionMaster\Manager;
 
 use pocketmine\utils\Config;
-use ShockedPlot7560\FactionMaster\Database\Database;
-use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\QueryBuildeur;
@@ -67,36 +65,6 @@ class MigrationManager {
         ];
         self::$configDbToCheck = [
             [
-                "CONFIG_INST" => $config,
-                "CONFIG_NAME" => "default-home-limit",
-                "TABLE_NAME" => FactionTable::TABLE_NAME,
-                "COLUMN_NAME" => "max_home",
-                "TABLE_CLASS" => FactionTable::class
-            ], [
-                "CONFIG_INST" => $config,
-                "CONFIG_NAME" => "default-claim-limit",
-                "TABLE_NAME" => FactionTable::TABLE_NAME,
-                "COLUMN_NAME" => "max_claim",
-                "TABLE_CLASS" => FactionTable::class
-            ], [
-                "CONFIG_INST" => $config,
-                "CONFIG_NAME" => "default-member-limit",
-                "TABLE_NAME" => FactionTable::TABLE_NAME,
-                "COLUMN_NAME" => "max_player",
-                "TABLE_CLASS" => FactionTable::class
-            ], [
-                "CONFIG_INST" => $config,
-                "CONFIG_NAME" => "default-ally-limit",
-                "TABLE_NAME" => FactionTable::TABLE_NAME,
-                "COLUMN_NAME" => "max_ally",
-                "TABLE_CLASS" => FactionTable::class
-            ], [
-                "CONFIG_INST" => $config,
-                "CONFIG_NAME" => "default-power",
-                "TABLE_NAME" => FactionTable::TABLE_NAME,
-                "COLUMN_NAME" => "power",
-                "TABLE_CLASS" => FactionTable::class
-            ], [
                 "CONFIG_INST" => new Config(Utils::getDataFolder() . "translation.yml", Config::YAML),
                 "CONFIG_NAME" => "default-language",
                 "TABLE_NAME" => UserTable::TABLE_NAME,
@@ -104,6 +72,10 @@ class MigrationManager {
                 "TABLE_CLASS" => UserTable::class
             ]
         ];
+    }
+
+    public static function addConfigDbToCheck(array $check): void {
+        self::$configDbToCheck[] = $check;
     }
 
     public static function migrate(string $version) {
