@@ -32,25 +32,32 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use CortexPE\Commando\BaseSubCommand;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Manager\ExtensionManager;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ExtensionCommand extends BaseSubCommand {
 
-    protected function prepare(): void {}
+    protected function prepare(): void {
+        $this->setPermission("factionmaster.extension.list");
+    }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
         if (!$sender->isOp()) {
-            $sender->sendMessage("§4You haven't permission");
+            $sender->sendMessage(Utils::getText($sender->getName(), "NO_PERMISSION"));
             return;
         }
-        $extensions = Main::getInstance()->getExtensionManager()->getExtensions();
+        $extensions = ExtensionManager::getExtensions();
         $string = "";
         foreach ($extensions as $extension) {
             $string .= "§a" . $extension->getExtensionName() . "§f, ";
         }
-        $sender->sendMessage("FactionMaster is enabled with this extension: " . $string);
+        if ($string !== "") {
+            $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_EXTENSION_BASE", ["extensionList" => $string]));
+        }else{
+            $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_EXTENSION_NO"));
+        }
     }
 
 }

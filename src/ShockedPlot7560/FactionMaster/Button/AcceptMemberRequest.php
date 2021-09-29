@@ -32,81 +32,78 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
-use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionJoinEvent;
 use ShockedPlot7560\FactionMaster\Event\InvitationAcceptEvent;
-use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
-use ShockedPlot7560\FactionMaster\Route\DemandList;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
-use ShockedPlot7560\FactionMaster\Route\ManageDemand;
+use ShockedPlot7560\FactionMaster\Route\ConfirmationRoute;
+use ShockedPlot7560\FactionMaster\Route\JoinRequestReceiveRoute;
+use ShockedPlot7560\FactionMaster\Route\MainRoute;
+use ShockedPlot7560\FactionMaster\Route\ManageJoinRequestRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class AcceptMemberRequest extends Button {
 
-    public function __construct(InvitationEntity $Request) {
-        parent::__construct(
-            "acceptRequest",
-            function (string $Player) {
-                return Utils::getText($Player, "BUTTON_ACCEPT_REQUEST");
-            },
-            function (Player $Player) use ($Request) {
-                Utils::processMenu(RouterFactory::get(ConfirmationMenu::SLUG), $Player, [
-                    function (Player $Player, $data) use ($Request) {
+    const SLUG = "acceptRequest";
+
+    public function __construct(InvitationEntity $request) {
+        $this->setSlug(self::SLUG)
+            ->setContent(function (string $player) {
+                return Utils::getText($player, "BUTTON_ACCEPT_REQUEST");
+            })
+            ->setCallable(function (Player $player) use ($request) {
+                Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
+                    function (Player $player, $data) use ($request) {
                         if ($data === null) {
                             return;
                         }
 
                         if ($data) {
-                            $Faction = MainAPI::getFaction($Request->sender);
-                            if (count($Faction->members) < $Faction->max_player) {
-                                $message = Utils::getText($Player->getName(), "SUCCESS_ACCEPT_REQUEST", ['name' => $Request->sender]);
-                                MainAPI::addMember($Request->sender, $Request->receiver);
+                            $faction = MainAPI::getFaction($request->getSenderString());
+                            if (count($faction->getMembers()) < $faction->getMaxPlayer()) {
+                                $message = Utils::getText($player->getName(), "SUCCESS_ACCEPT_REQUEST", ['name' => $request->getSenderString()]);
+                                MainAPI::addMember($request->getSenderString(), $request->getReceiverString());
                                 Utils::newMenuSendTask(new MenuSendTask(
-                                    function () use ($Request) {
-                                        $user = MainAPI::getUser($Request->receiver);
-                                        return $user instanceof UserEntity && $user->faction === $Request->sender;
+                                    function () use ($request) {
+                                        $user = MainAPI::getUser($request->getReceiverString());
+                                        return $user instanceof UserEntity && $user->getFactionName() === $request->getSenderString();
                                     },
-                                    function () use ($Request, $Player, $Faction, $message) {
-                                        (new FactionJoinEvent($Player, $Faction))->call();
-                                        MainAPI::removeInvitation($Request->sender, $Request->receiver, $Request->type);
+                                    function () use ($request, $player, $faction, $message) {
+                                        (new FactionJoinEvent($request->getReceiverString(), $faction))->call();
+                                        MainAPI::removeInvitation($request->getSenderString(), $request->getReceiverString(), $request->getType());
                                         Utils::newMenuSendTask(new MenuSendTask(
-                                            function () use ($Request) {
-                                                return !MainAPI::areInInvitation($Request->sender, $Request->receiver, $Request->type);
+                                            function () use ($request) {
+                                                return !MainAPI::areInInvitation($request->sender, $request->getReceiverString(), $request->getType());
                                             },
-                                            function () use ($Request, $Player, $message) {
-                                                (new InvitationAcceptEvent($Player, $Request))->call();
-                                                Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [$message]);
+                                            function () use ($request, $player, $message) {
+                                                (new InvitationAcceptEvent($player, $request))->call();
+                                                Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player, [$message]);
                                             },
-                                            function () use ($Player) {
-                                                Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                            function () use ($player) {
+                                                Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
                                             }
                                         ));
                                     },
-                                    function () use ($Player) {
-                                        Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                    function () use ($player) {
+                                        Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
                                     }
                                 ));
                             } else {
-                                $message = Utils::getText($Player->getName(), "MAX_PLAYER_REACH");
-                                Utils::processMenu(RouterFactory::get(DemandList::SLUG), $Player, [$message]);
+                                $message = Utils::getText($player->getName(), "MAX_PLAYER_REACH");
+                                Utils::processMenu(RouterFactory::get(JoinRequestReceiveRoute::SLUG), $player, [$message]);
                             }
                         } else {
-                            Utils::processMenu(RouterFactory::get(ManageDemand::SLUG), $Player, [$Request]);
+                            Utils::processMenu(RouterFactory::get(ManageJoinRequestRoute::SLUG), $player, [$request]);
                         }
                     },
-                    Utils::getText($Player->getName(), "CONFIRMATION_TITLE_ACCEPT_REQUEST"),
-                    Utils::getText($Player->getName(), "CONFIRMATION_CONTENT_ACCEPT_REQUEST"),
+                    Utils::getText($player->getName(), "CONFIRMATION_TITLE_ACCEPT_REQUEST"),
+                    Utils::getText($player->getName(), "CONFIRMATION_CONTENT_ACCEPT_REQUEST"),
                 ]);
-            },
-            [],
-            "textures/img/true",
-            SimpleForm::IMAGE_TYPE_PATH
-        );
+            })
+            ->setImgPack("textures/img/true");
     }
 }

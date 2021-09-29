@@ -36,24 +36,20 @@ use pocketmine\event\Event;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
-class PermissionChangeEvent extends Event {
+class PermissionChangeEvent extends FactionEvent implements Forcable {
 
-    private $Player;
-    private $Faction;
+    use PlayerEvent;
+
+    protected $player;
     private $oldPermission;
 
-    public function __construct(Player $Player, FactionEntity $Faction, array $oldPermission) {
-        $this->Player = $Player;
-        $this->Faction = $Faction;
+    /**
+     * @param string|FactionEntity $faction
+     */
+    public function __construct(Player $player, $faction, array $oldPermission, bool $isForce = false) {
+        parent::__construct($faction, $isForce);
+        $this->player = $player;
         $this->oldPermission = $oldPermission;
-    }
-
-    public function getPlayer(): Player {
-        return $this->Player;
-    }
-
-    public function getFaction(): FactionEntity {
-        return $this->Faction;
     }
 
     public function getOldPermission(): array{

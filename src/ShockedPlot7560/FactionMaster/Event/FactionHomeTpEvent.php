@@ -32,31 +32,31 @@
 
 namespace ShockedPlot7560\FactionMaster\Event;
 
-use pocketmine\event\Event;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
+use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\HomeEntity;
 
-class FactionHomeTpEvent extends Event {
+class FactionHomeTpEvent extends FactionEvent implements Forcable {
 
-    private $Player;
-    private $Faction;
+    use PlayerEvent;
+
+    protected $player;
     private $home;
     private $name;
 
-    public function __construct(Player $Player, string $Faction, string $name, HomeEntity $home) {
-        $this->Player = $Player;
-        $this->Faction = $Faction;
+    /**
+     * @param string|FactionEntity $faction
+     */
+    public function __construct(Player $player, $faction, string $name, HomeEntity $home, bool $isForce = false) {
+        parent::__construct($faction, $isForce);
+        $this->player = $player;
         $this->home = $home;
         $this->name = $name;
     }
 
     public function getPlayer(): Player {
-        return $this->Player;
-    }
-
-    public function getFaction(): string {
-        return $this->Faction;
+        return $this->player;
     }
 
     public function getName(): string {
@@ -64,11 +64,15 @@ class FactionHomeTpEvent extends Event {
     }
 
     public function getVector(): Vector3 {
-        return new Vector3($this->home->x, $this->home->y, $this->home->z);
+        return new Vector3($this->getHome()->getX(), $this->getHome()->getY(), $this->getHome()->getZ());
+    }
+
+    public function getHome(): HomeEntity {
+        return $this->home;
     }
 
     public function getWorldName(): string {
-        return $this->home->world;
+        return $this->getHome()->getLevelName();
     }
 
 }

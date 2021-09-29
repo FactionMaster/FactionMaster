@@ -32,12 +32,12 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use CortexPE\Commando\BaseSubCommand;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\HomeListPanel;
+use ShockedPlot7560\FactionMaster\Route\HomesViewRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -51,9 +51,9 @@ class HomeCommand extends BaseSubCommand {
         }
 
         $permissions = MainAPI::getMemberPermission($sender->getName());
-        $UserEntity = MainAPI::getUser($sender->getName());
-        if (Utils::haveAccess($permissions, $UserEntity, PermissionIds::PERMISSION_TP_FACTION_HOME)) {
-            Utils::processMenu(RouterFactory::get(HomeListPanel::SLUG), $sender->getPlayer());
+        $userEntity = MainAPI::getUser($sender->getName());
+        if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_TP_FACTION_HOME)) {
+            Utils::processMenu(RouterFactory::get(HomesViewRoute::SLUG), $sender->getPlayer());
         } else {
             $sender->sendMessage(Utils::getText($sender->getName(), "DONT_PERMISSION"));
         }

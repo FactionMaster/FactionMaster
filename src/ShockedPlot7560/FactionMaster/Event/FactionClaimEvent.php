@@ -32,45 +32,34 @@
 
 namespace ShockedPlot7560\FactionMaster\Event;
 
-use pocketmine\event\Event;
 use pocketmine\level\format\Chunk;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
+use ShockedPlot7560\FactionMaster\Reward\RewardInterface;
 
-class FactionClaimEvent extends Event {
+class FactionClaimEvent extends FactionEvent implements Forcable {
 
-    private $Player;
-    private $Faction;
-    private $Chunk;
-    private $CostType;
-    private $CostValue;
+    use PlayerEvent;
 
-    public function __construct(Player $Player, FactionEntity $Faction, Chunk $Chunk, string $CostType, int $CostValue) {
-        $this->Player = $Player;
-        $this->Faction = $Faction;
-        $this->Chunk = $Chunk;
-        $this->CostType = $CostType;
-        $this->CostValue = $CostValue;
-    }
+    protected $player;
+    private $chunk;
+    private $costReward;
 
-    public function getPlayer(): Player {
-        return $this->Player;
-    }
-
-    public function getFaction(): FactionEntity {
-        return $this->Faction;
+    /**
+     * @param string|FactionEntity $faction
+     */
+    public function __construct(Player $player, $faction, Chunk $chunk, RewardInterface $costReward, bool $isForce = false) {
+        parent::__construct($faction, $isForce);
+        $this->player = $player;
+        $this->chunk = $chunk;
+        $this->costReward = $costReward;
     }
 
     public function getChunk(): Chunk {
-        return $this->Chunk;
+        return $this->chunk;
     }
 
-    public function getCostValue(): int {
-        return $this->CostValue;
+    public function getCostReward(): RewardInterface {
+        return $this->costReward;
     }
-
-    public function getCostType(): string {
-        return $this->CostType;
-    }
-
 }

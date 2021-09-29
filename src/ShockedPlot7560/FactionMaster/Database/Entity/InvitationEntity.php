@@ -32,15 +32,76 @@
 
 namespace ShockedPlot7560\FactionMaster\Database\Entity;
 
-class InvitationEntity {
+use DateTime;
 
-    /** @var string */
+class InvitationEntity extends EntityDatabase {
+
+    public const MEMBER_INVITATION = "member";
+    public const ALLIANCE_INVITATION = "alliance";
+
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getSenderString()
+     * @var string
+    */
     public $sender;
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getReceiverString()
+     * @var string
+    */
     public $receiver;
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getType()
+     * @var string
+    */
     public $type;
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getDate(), getDateString()
+     * @var string
+    */
     public $date;
+
+    public function setSenderString(string $sender): void {
+        $this->sender = $sender;
+    }
+
+    public function setReceiverString(string $receiver): void {
+        $this->receiver = $receiver;
+    }
+
+    public function setType(string $type): void {
+        $this->type = $type;
+    }
+
+    public function setDateString(string $date): void {
+        $this->date = $date;
+    }
+
+    public function setDatetime(DateTime $date): void {
+        $this->setDateString($date->format("Y-m-d H:i:s"));
+    }
+
+    public function getSenderString(): string {
+        return $this->sender;
+    }
+
+    public function getReceiverString(): string {
+        return $this->receiver;
+    }
+
+    public function getType(): string {
+        return $this->type;
+    }
+
+    public function getDateString(): string {
+        return $this->date;
+    }
+
+    public function getDate(): DateTime {
+        return new DateTime($this->date);
+    }
 
 }

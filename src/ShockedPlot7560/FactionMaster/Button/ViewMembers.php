@@ -32,26 +32,23 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
-use jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
-use ShockedPlot7560\FactionMaster\Route\ViewFactionMembers;
+use ShockedPlot7560\FactionMaster\Route\MembersViewRoute;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ViewMembers extends Button {
 
+    const SLUG = "factionMembers";
+
     public function __construct() {
-        parent::__construct(
-            "factionMembers",
-            function ($Player) {
-                return Utils::getText($Player, "BUTTON_VIEW_FACTION_MEMBERS");
-            },
-            function ($Player) {
-                Utils::processMenu(RouterFactory::get(ViewFactionMembers::SLUG), $Player);
-            },
-            [],
-            "textures/img/member",
-            SimpleForm::IMAGE_TYPE_PATH
-        );
+        $this->setSlug(self::SLUG)
+            ->setContent(function ($player) {
+                return Utils::getText($player, "BUTTON_VIEW_FACTION_MEMBERS");
+            })
+            ->setCallable(function ($player) {
+                Utils::processMenu(RouterFactory::get(MembersViewRoute::SLUG), $player);
+            })
+            ->setImgPack("textures/img/member");
     }
 
 }

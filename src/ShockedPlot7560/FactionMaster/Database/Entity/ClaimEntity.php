@@ -32,23 +32,127 @@
 
 namespace ShockedPlot7560\FactionMaster\Database\Entity;
 
+use pocketmine\level\Level;
+use pocketmine\math\Vector2;
+use pocketmine\math\Vector3;
+use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class ClaimEntity {
+class ClaimEntity extends EntityDatabase {
 
-    /** @var int */
-    public $id;
-    /** @var string */
+    use FactionUtils;
+    use ServerIp;
+
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getFactionName(), getFactionEntity()
+     * @var string
+    */
     public $faction;
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getX()
+     * @var int
+    */
     public $x;
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getZ()
+     * @var int
+    */
     public $z;
-    /** @var string */
-    public $world;
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getLevel(), getLevelName()
+     * @var string
+    */
+    public $level;
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getServerIp()
+     * @var string
+    */
+    public $server;
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getFlag()
+     * @var int|null
+    */
+    public $flag;
 
-    public function getToString(): string {
-        return Utils::claimToString($this->x, $this->z, $this->world);
+    public function setX(int $x): void {
+        $this->x = $x;
     }
 
+    public function setZ(int $z): void {
+        $this->z = $z;
+    }
+
+    public function setLevelName(string $levelName): void {
+        $this->level = $levelName;
+    }
+
+    public function setFlag(?int $flag): void {
+        $this->flag = $flag;
+    }
+
+    /**
+     * @param Vector2|Vector3 $vector
+     */
+    public function setVector($vector): void {
+        if ($vector instanceof Vector2) {
+            $this->setX($vector->getX());
+            $this->setZ($vector->getY());
+        } elseif ($vector instanceof Vector3) {
+            $this->setX($vector->getX());
+            $this->setZ($vector->getZ());
+        }
+    }
+
+    public function getFactionName(): string {
+        return $this->faction;
+    }
+
+    public function getFactionEntity(): ?FactionEntity {
+        if ($this->getFlag() === null) {
+            if ($this->getFactionName() === "") return null;
+            return MainAPI::getFaction($this->getFactionName());
+        } else {
+            return null;
+        }
+    }
+
+    public function getX(): int {
+        return $this->x;
+    }
+
+    public function getZ(): int {
+        return $this->z;
+    }
+
+    public function getLevelName(): string {
+        return $this->level;
+    }
+
+    public function getLevel(): ?Level {
+        if (!$this->isActive()) return null;
+        return Main::getInstance()->getServer()->getLevelByName($this->getLevelName());
+    }
+
+    public function getFlag(): ?int {
+        return $this->flag;
+    }
+
+    public function toString(): string {
+        return Utils::claimToString($this->getX(), $this->getZ(), $this->getLevelName());
+    }
+
+    public function __toString() {
+        return $this->toString();
+    }
+
+    public function getVector(): Vector2 {
+        return new Vector2($this->getX(), $this->getZ());
+    }
 }

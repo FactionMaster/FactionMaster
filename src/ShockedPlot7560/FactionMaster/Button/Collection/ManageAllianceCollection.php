@@ -33,66 +33,23 @@
 namespace ShockedPlot7560\FactionMaster\Button\Collection;
 
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Back;
-use ShockedPlot7560\FactionMaster\Button\Button;
+use ShockedPlot7560\FactionMaster\Button\BreakAlly;
 use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Event\AllianceBreakEvent;
-use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\AllianceMainMenu;
-use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
-use ShockedPlot7560\FactionMaster\Route\ManageAlliance;
+use ShockedPlot7560\FactionMaster\Route\ManageAllianceRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
-use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageAllianceCollection extends Collection {
 
-    const SLUG = "manageAlliance";
+    const SLUG = "manageAllianceCollection";
 
     public function __construct() {
         parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $User, FactionEntity $Ally) {
-            $this->register(new Button(
-                "breakAlly",
-                function (string $Player) {
-                    return Utils::getText($Player, "BUTTON_BREAK_ALLIANCE");
-                },
-                function (Player $Player) use ($Ally) {
-                    Utils::processMenu(RouterFactory::get(ConfirmationMenu::SLUG), $Player, [
-                        function (Player $Player, $data) use ($Ally) {
-                            $Faction = MainAPI::getFactionOfPlayer($Player->getName());
-                            if ($data === null) {
-                                return;
-                            }
-
-                            if ($data === true) {
-                                MainAPI::removeAlly($Faction->name, $Ally->name);
-                                Utils::newMenuSendTask(new MenuSendTask(
-                                    function () use ($Faction, $Ally) {
-                                        return MainAPI::isAlly($Faction->name, $Ally->name);
-                                    },
-                                    function () use ($Player, $Faction, $Ally) {
-                                        (new AllianceBreakEvent($Player, $Faction->name, $Ally->name))->call();
-                                        Utils::processMenu(RouterFactory::get(AllianceMainMenu::SLUG), $Player, [Utils::getText($Player->getName(), "SUCCESS_BREAK_ALLIANCE", ['name' => $Ally->name])]);
-                                    },
-                                    function () use ($Player) {
-                                        Utils::processMenu(RouterFactory::get(AllianceMainMenu::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
-                                    }
-                                ));
-                            } else {
-                                Utils::processMenu(RouterFactory::get(ManageAlliance::SLUG), $Player, [$Ally]);
-                            }
-                        },
-                        Utils::getText($Player->getName(), "CONFIRMATION_TITLE_BREAK_ALLIANCE"),
-                        Utils::getText($Player->getName(), "CONFIRMATION_CONTENT_BREAK_ALLIANCE"),
-                    ]);
-                },
-                [PermissionIds::PERMISSION_BREAK_ALLIANCE]
-            ));
-            $this->register(new Back(AllianceMainMenu::SLUG));
+        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, FactionEntity $ally) {
+            $this->register(new BreakAlly($ally));
+            $this->register(new Back(RouterFactory::get(ManageAllianceRoute::SLUG)->getBackRoute()));
         });
     }
 }

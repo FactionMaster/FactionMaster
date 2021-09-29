@@ -32,32 +32,20 @@
 
 namespace ShockedPlot7560\FactionMaster\Event;
 
-use pocketmine\event\Event;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
-class FactionDeleteEvent extends Event {
+class FactionDeleteEvent extends FactionEvent implements Forcable {
 
-    private $Player;
-    private $Faction;
-    private $force;
+    use PlayerEvent;
 
-    public function __construct(Player $Player, FactionEntity $Faction, bool $force = false) {
-        $this->Player = $Player;
-        $this->Faction = $Faction;
-        $this->force = $force;
+    protected $player;
+
+    /**
+     * @param string|FactionEntity $faction
+     */
+    public function __construct(Player $player, $faction, bool $force = false) {
+        parent::__construct($faction, $force);
+        $this->player = $player;
     }
-
-    public function getPlayer(): Player {
-        return $this->Player;
-    }
-
-    public function getFaction(): FactionEntity {
-        return $this->Faction;
-    }
-
-    public function isForceDelete(): bool {
-        return $this->force;
-    }
-
 }

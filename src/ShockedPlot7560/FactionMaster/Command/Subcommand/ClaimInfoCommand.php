@@ -32,11 +32,12 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use CortexPE\Commando\BaseSubCommand;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ClaimInfoCommand extends BaseSubCommand {
@@ -48,15 +49,27 @@ class ClaimInfoCommand extends BaseSubCommand {
             return;
         }
 
-        $Player = $sender->getPlayer();
-        $Chunk = $Player->getLevel()->getChunkAtPosition($Player);
-        $X = $Chunk->getX();
-        $Z = $Chunk->getZ();
-        $World = $Player->getLevel()->getName();
+        $player = $sender->getPlayer();
+        $chunk = $player->getLevel()->getChunkAtPosition($player);
+        $x = $chunk->getX();
+        $z = $chunk->getZ();
+        $world = $player->getLevel()->getName();
 
-        $FactionClaim = MainAPI::getFactionClaim($World, $X, $Z);
-        if ($FactionClaim !== null) {
-            Main::getInstance()->getServer()->dispatchCommand($Player, "f info " . $FactionClaim->faction);
+        $factionClaim = MainAPI::getFactionClaim($world, $x, $z);
+        if ($factionClaim !== null) {
+            if ($factionClaim->getFlag() === null) {
+                Main::getInstance()->getServer()->dispatchCommand($player, "f info " . $factionClaim->getFactionName());
+            } else {
+                switch ($factionClaim->getFlag()) {
+                    case Ids::FLAG_SPAWN:
+                        $sender->sendMessage(Utils::getText($sender->getName(), "SPAWN_INFO"));
+                        break;
+                    
+                    case Ids::FLAG_WARZONE:
+                        $sender->sendMessage(Utils::getText($sender->getName(), "WARZONE_INFO"));
+                        break;
+                }
+            }
             return;
         } else {
             $sender->sendMessage(Utils::getText($sender->getName(), "NOT_CLAIMED"));

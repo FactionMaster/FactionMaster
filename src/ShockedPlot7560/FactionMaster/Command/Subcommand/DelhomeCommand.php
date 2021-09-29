@@ -32,8 +32,8 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use CortexPE\Commando\args\RawStringArgument;
-use CortexPE\Commando\BaseSubCommand;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
@@ -59,20 +59,20 @@ class DelhomeCommand extends BaseSubCommand {
             return;
         }
         $permissions = MainAPI::getMemberPermission($sender->getName());
-        $UserEntity = MainAPI::getUser($sender->getName());
+        $userEntity = MainAPI::getUser($sender->getName());
         if ($permissions === null) {
             $sender->sendMessage(Utils::getText($sender->getName(), "NEED_FACTION"));
             return;
         }
-        if (Utils::haveAccess($permissions, $UserEntity, PermissionIds::PERMISSION_DELETE_FACTION_HOME)) {
-            if (MainAPI::getFactionHome($UserEntity->faction, $args["name"]) instanceof HomeEntity) {
-                MainAPI::removeHome($UserEntity->faction, $args['name']);
+        if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_DELETE_FACTION_HOME)) {
+            if (MainAPI::getFactionHome($userEntity->getFactionName(), $args["name"]) instanceof HomeEntity) {
+                MainAPI::removeHome($userEntity->getFactionName(), $args['name']);
                 Utils::newMenuSendTask(new MenuSendTask(
-                    function () use ($UserEntity, $args) {
-                        return !MainAPI::getFactionHome($UserEntity->faction, $args['name']) instanceof HomeEntity;
+                    function () use ($userEntity, $args) {
+                        return !MainAPI::getFactionHome($userEntity->getFactionName(), $args['name']) instanceof HomeEntity;
                     },
-                    function () use ($sender, $UserEntity, $args) {
-                        (new FactionHomeDeleteEvent($sender, $UserEntity->faction, $args['name']))->call();
+                    function () use ($sender, $userEntity, $args) {
+                        (new FactionHomeDeleteEvent($sender, $userEntity->getFactionName(), $args['name']))->call();
                         $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_DELETE"));
                     },
                     function () use ($sender) {

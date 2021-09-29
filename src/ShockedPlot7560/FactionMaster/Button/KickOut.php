@@ -37,56 +37,58 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\MemberKickOutEvent;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
-use ShockedPlot7560\FactionMaster\Route\ManageMember as MembersManageMember;
-use ShockedPlot7560\FactionMaster\Route\ManageMembersList;
+use ShockedPlot7560\FactionMaster\Route\ConfirmationRoute;
+use ShockedPlot7560\FactionMaster\Route\ManageMemberRoute as MembersManageMember;
+use ShockedPlot7560\FactionMaster\Route\MembersManageRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class KickOut extends Button {
 
-    public function __construct(UserEntity $Member) {
-        parent::__construct(
-            "kickOut",
-            function (string $Player) {
-                return Utils::getText($Player, "BUTTON_KICK_OUT");
-            },
-            function (Player $Player) use ($Member) {
-                Utils::processMenu(RouterFactory::get(ConfirmationMenu::SLUG), $Player, [
-                    function (Player $Player, $data) use ($Member) {
-                        $Faction = MainAPI::getFactionOfPlayer($Player->getName());
+    const SLUG = "kickOut";
+
+    public function __construct(UserEntity $member) {
+        $this->setSlug(self::SLUG)
+            ->setContent(function (string $player) {
+                return Utils::getText($player, "BUTTON_KICK_OUT");
+            })
+            ->setCallable(function (Player $player) use ($member) {
+                Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
+                    function (Player $player, $data) use ($member) {
+                        $faction = MainAPI::getFactionOfPlayer($player->getName());
                         if ($data === null) {
                             return;
                         }
 
                         if ($data) {
-                            $message = Utils::getText($Player->getName(), "SUCCESS_KICK_OUT", ['playerName' => $Member->name]);
-                            MainAPI::removeMember($Faction->name, $Member->name);
+                            $message = Utils::getText($player->getName(), "SUCCESS_KICK_OUT", ['playerName' => $member->getName()]);
+                            MainAPI::removeMember($faction->getName(), $member->getName());
                             Utils::newMenuSendTask(new MenuSendTask(
-                                function () use ($Player, $Faction) {
-                                    $user = MainAPI::getUser($Player->getName());
-                                    return $user instanceof UserEntity && $user->faction !== $Faction->name;
+                                function () use ($player, $faction) {
+                                    $user = MainAPI::getUser($player->getName());
+                                    return $user instanceof UserEntity && $user->getFactionName() !== $faction->getName();
                                 },
-                                function () use ($Player, $Faction, $message) {
-                                    $Member = MainAPI::getUser($Player->getName());
-                                    (new MemberKickOutEvent($Player, $Faction, $Member))->call();
-                                    Utils::processMenu(RouterFactory::get(ManageMembersList::SLUG), $Player, [$message]);
+                                function () use ($player, $faction, $message) {
+                                    $member = MainAPI::getUser($player->getName());
+                                    (new MemberKickOutEvent($player, $faction, $member))->call();
+                                    Utils::processMenu(RouterFactory::get(MembersManageRoute::SLUG), $player, [$message]);
                                 },
-                                function () use ($Player) {
-                                    Utils::processMenu(RouterFactory::get(ManageMembersList::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                function () use ($player) {
+                                    Utils::processMenu(RouterFactory::get(MembersManageRoute::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
                                 }
                             ));
                         } else {
-                            Utils::processMenu(RouterFactory::get(MembersManageMember::SLUG), $Player, [$Member]);
+                            Utils::processMenu(RouterFactory::get(MembersManageMember::SLUG), $player, [$member]);
                         }
                     },
-                    Utils::getText($Player->getName(), "CONFIRMATION_TITLE_KICK_OUT"),
-                    Utils::getText($Player->getName(), "CONFIRMATION_CONTENT_KICK_OUT"),
+                    Utils::getText($player->getName(), "CONFIRMATION_TITLE_KICK_OUT"),
+                    Utils::getText($player->getName(), "CONFIRMATION_CONTENT_KICK_OUT"),
                 ]);
-            },
-            [PermissionIds::PERMISSION_KICK_MEMBER]
-        );
+            })
+            ->setPermissions([
+                PermissionIds::PERMISSION_KICK_MEMBER
+            ]);
     }
 
 }

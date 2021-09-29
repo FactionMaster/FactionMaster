@@ -32,10 +32,11 @@
 
 namespace ShockedPlot7560\FactionMaster\Task;
 
+use Exception;
 use PDO;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
-use ShockedPlot7560\FactionMaster\Database\Database;
+use ShockedPlot7560\FactionMaster\Manager\DatabaseManager;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class DatabaseTask extends AsyncTask {
@@ -54,12 +55,12 @@ class DatabaseTask extends AsyncTask {
         $this->callable = $callable;
         $this->provider = Utils::getConfig("PROVIDER");
         switch ($this->provider) {
-            case Database::MYSQL_PROVIDER:
+            case DatabaseManager::MYSQL_PROVIDER:
                 $databaseConfig = Utils::getConfig("MYSQL_database");
                 $this->db = array($databaseConfig['host'], $databaseConfig['user'], $databaseConfig['pass'], $databaseConfig['name']);
                 break;
 
-            case Database::SQLITE_PROVIDER:
+            case DatabaseManager::SQLITE_PROVIDER:
                 $this->db = Utils::getConfig("SQLITE_database")["name"];
                 break;
         }
@@ -69,28 +70,33 @@ class DatabaseTask extends AsyncTask {
         $provider = $this->provider;
         $db = (array) $this->db;
         switch ($provider) {
-            case Database::MYSQL_PROVIDER:
+            case DatabaseManager::MYSQL_PROVIDER:
                 $db = new PDO(
                     "mysql:host=" . $db[0] . ";dbname=" . $db[3],
                     $db[1],
                     $db[2]
                 );
                 break;
-            case Database::SQLITE_PROVIDER:
+            case DatabaseManager::SQLITE_PROVIDER:
                 $db = new PDO("sqlite:" . $db[0] . ".sqlite");
                 break;
             default:
                 $db = new PDO("sqlite:" . $db[0] . ".sqlite");
                 break;
         }
-        $query = $db->prepare($this->query);
-        $query->execute((array) $this->args);
-        $results = "";
-        if ($this->class !== null) {
-            $query->setFetchMode(PDO::FETCH_CLASS, $this->class);
-            $results = $query->fetchAll();
+        try {
+            $query = $db->prepare($this->query);
+            $query->execute((array) $this->args);
+            $results = "";
+            if ($this->class !== null) {
+                $query->setFetchMode(PDO::FETCH_CLASS, $this->class);
+                $results = $query->fetchAll();
+            }
+            $this->setResult($results);        
+        } catch (\Throwable $th) {
+            throw new Exception($th->getMessage(), 1);
         }
-        $this->setResult($results);
+        
     }
 
     public function onCompletion(Server $server): void {

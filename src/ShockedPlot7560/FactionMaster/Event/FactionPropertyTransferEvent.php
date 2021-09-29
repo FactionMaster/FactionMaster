@@ -32,31 +32,27 @@
 
 namespace ShockedPlot7560\FactionMaster\Event;
 
-use pocketmine\event\Event;
 use pocketmine\Player;
+use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 
-class FactionPropertyTransferEvent extends Event {
+class FactionPropertyTransferEvent extends FactionEvent implements Forcable {
 
-    private $Player;
-    private $Target;
-    private $oldOwner;
+    use PlayerEvent;
 
-    public function __construct(Player $Player, UserEntity $Target, string $oldOwner) {
-        $this->Player = $Player;
-        $this->Target = $Target;
-        $this->oldOwner = $oldOwner;
-    }
+    protected $player;
+    private $target;
 
-    public function getPlayer(): Player {
-        return $this->Player;
+    /**
+     * @param string|FactionEntity $faction
+     */
+    public function __construct(Player $player, $faction, UserEntity $target, bool $isForce = false) {
+        parent::__construct($faction, $isForce);
+        $this->player = $player;
+        $this->target = $target;
     }
 
     public function getTarget(): UserEntity {
-        return $this->Target;
-    }
-
-    public function getOldOwner(): string {
-        return $this->oldOwner;
+        return $this->target;
     }
 }

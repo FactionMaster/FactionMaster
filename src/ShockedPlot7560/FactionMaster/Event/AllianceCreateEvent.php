@@ -32,30 +32,21 @@
 
 namespace ShockedPlot7560\FactionMaster\Event;
 
-use pocketmine\event\Event;
 use pocketmine\Player;
+use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
-class AllianceCreateEvent extends Event {
+class AllianceCreateEvent extends AllianceEvent implements Forcable {
 
-    private $Player;
-    private $Alliance;
-    private $Faction;
+    use PlayerEvent;
 
-    public function __construct(Player $Player, string $Faction, string $Alliance) {
-        $this->Player = $Player;
-        $this->Alliance = $Alliance;
-        $this->Faction = $Faction;
-    }
+    protected $player;
 
-    public function getPlayer(): Player {
-        return $this->Player;
-    }
-
-    public function getFaction(): string {
-        return $this->Faction;
-    }
-
-    public function getAlliance(): string {
-        return $this->Alliance;
+    /**
+     * @param string|FactionEntity $faction
+     * @param string|FactionEntity $alliance
+     */
+    public function __construct(Player $player, $faction, $alliance, bool $isForce = false) {
+        parent::__construct($faction, $alliance, $isForce);
+        $this->player = $player;
     }
 }

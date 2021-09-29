@@ -33,17 +33,44 @@
 namespace ShockedPlot7560\FactionMaster\Database\Table;
 
 use PDO;
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Manager\DatabaseManager;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class FactionTable implements TableInterface {
 
+    /** @var PDO */
     private $PDO;
 
-    const TABLE_NAME = "faction";
-    const SLUG = "faction";
+    const TABLE_NAME = "factionmaster_faction";
+    const SLUG = "factionmaster_faction";
 
     public function init(): self {
-        $this->PDO->query(Main::getTableInitQuery(__CLASS__));
+        $tableName = self::TABLE_NAME;
+        $auto_increment = Utils::getConfig("PROVIDER") === DatabaseManager::MYSQL_PROVIDER ? "AUTO_INCREMENT" : "AUTOINCREMENT";
+        $visibility = Utils::getConfig("default-faction-visibility");
+        $xp = Utils::getConfig("default-faction-xp");
+        $maxPlayer = Utils::getConfig("default-player-limit");
+        $maxAlly = Utils::getConfig("default-ally-limit");
+        $maxClaim = Utils::getConfig("default-claim-limit");
+        $maxHome = Utils::getConfig("default-home-limit");
+        $power = Utils::getConfig("default-power");
+        $this->PDO->query("CREATE TABLE IF NOT EXISTS `$tableName` ( 
+            `id` INTEGER PRIMARY KEY $auto_increment, 
+            `name` TEXT NOT NULL, 
+            `members` TEXT NOT NULL, 
+            `visibility` TINYINT UNSIGNED NOT NULL DEFAULT '$visibility', 
+            `xp` SMALLINT UNSIGNED NOT NULL DEFAULT '$xp', 
+            `level` TINYINT UNSIGNED NOT NULL, 
+            `description` TEXT NOT NULL, 
+            `message` TEXT NOT NULL, 
+            `ally` TEXT NOT NULL, 
+            `maxPlayer` TINYINT UNSIGNED NOT NULL DEFAULT '$maxPlayer',
+            `maxAlly` TINYINT UNSIGNED NOT NULL DEFAULT '$maxAlly', 
+            `maxClaim` TINYINT UNSIGNED NOT NULL DEFAULT '$maxClaim', 
+            `maxHome` TINYINT UNSIGNED NOT NULL DEFAULT '$maxHome', 
+            `power` SMALLINT UNSIGNED NOT NULL DEFAULT '$power', 
+            `permissions` TEXT NOT NULL, 
+            `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)");
         return $this;
     }
 

@@ -1,6 +1,6 @@
 ---
-# NOT TO BE DELETED, 
+# NOT TO BE DELETED,
 # 
 # OTHERWISE THE PLUGIN WILL NOT WORK ANYMORE AND YOU WILL HAVE TO REINSTALL IT
-migrate-version: 2.3.1
+migrate-version: 3.0.0
 ...

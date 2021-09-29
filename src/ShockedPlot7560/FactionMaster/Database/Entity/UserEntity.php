@@ -32,15 +32,56 @@
 
 namespace ShockedPlot7560\FactionMaster\Database\Entity;
 
-class UserEntity {
+class UserEntity extends EntityDatabase {
 
-    /** @var string */
+    use FactionUtils;
+
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getName()
+     * @var string
+    */
     public $name;
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getFactionName(), getFactionEntity()
+     * @var string|null
+    */
     public $faction;
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getRank()
+     * @var int|null
+    */
     public $rank;
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getLanguage()
+     * @var string
+    */
     public $language;
 
+    public function setName(string $name): void {
+        $this->name = $name;
+    }
+
+    public function setRank(?int $rank): void {
+        $this->rank = $rank;
+    }
+
+    public function setLanguage(string $slug): void {
+        $this->language = $slug;
+    }
+
+    public function getName(): string {
+        return $this->name;
+    }
+
+    public function getRank(): ?int {
+        return $this->rank;
+    }
+
+    public function getLanguage(): string {
+        return $this->language;
+    }
 }

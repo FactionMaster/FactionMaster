@@ -34,37 +34,16 @@ namespace ShockedPlot7560\FactionMaster\Event;
 
 use pocketmine\event\Event;
 use pocketmine\Player;
+use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 
-class InvitationSendEvent extends Event {
+class InvitationSendEvent extends InvitationEvent implements Forcable {
 
-    private $Player;
-    private $sender;
-    private $receiver;
-    private $type;
+    use PlayerEvent;
 
-    const ALLIANCE_TYPE = "alliance";
-    const MEMBER_TYPE = "member";
+    protected $player;
 
-    public function __construct(Player $Player, $sender, $receiver, string $type) {
-        $this->Player = $Player;
-        $this->sender = $sender;
-        $this->receiver = $receiver;
-        $this->type = $type;
-    }
-
-    public function getPlayer(): Player {
-        return $this->Player;
-    }
-
-    public function getSender() {
-        return $this->sender;
-    }
-
-    public function getReceiver() {
-        return $this->receiver;
-    }
-
-    public function getType(): string {
-        return $this->type;
+    public function __construct(Player $player, InvitationEntity $invitation, bool $isForce = false) {
+        parent::__construct($invitation, $isForce);
+        $this->player = $player;
     }
 }

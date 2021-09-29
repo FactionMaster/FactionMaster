@@ -59,10 +59,10 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 class ScoreHudListener implements Listener {
 
     /** @var Main */
-    private $Main;
+    private $main;
 
     public function __construct(Main $Main) {
-        $this->Main = $Main;
+        $this->main = $Main;
     }
 
     public function onTagResolve(TagsResolveEvent $event): void {
@@ -72,7 +72,7 @@ class ScoreHudListener implements Listener {
             case Ids::HUD_FACTIONMASTER_FACTION_DESCRIPTION:
                 $faction = MainAPI::getFactionOfPlayer($player->getName());
                 if ($faction instanceof FactionEntity) {
-                    $tag->setValue($faction->description ?? "");
+                    $tag->setValue($faction->getDescription());
                 }else{
                     $tag->setValue("");
                 }
@@ -80,7 +80,7 @@ class ScoreHudListener implements Listener {
             case Ids::HUD_FACTIONMASTER_FACTION_LEVEL:
                 $faction = MainAPI::getFactionOfPlayer($player->getName());
                 if ($faction instanceof FactionEntity) {
-                    $tag->setValue($faction->level);
+                    $tag->setValue($faction->getLevel());
                 }else{
                     $tag->setValue(0);
                 }
@@ -88,7 +88,7 @@ class ScoreHudListener implements Listener {
             case Ids::HUD_FACTIONMASTER_FACTION_MESSAGE:
                 $faction = MainAPI::getFactionOfPlayer($player->getName());
                 if ($faction instanceof FactionEntity) {
-                    $tag->setValue($faction->messageFaction ?? "");
+                    $tag->setValue($faction->getMessage());
                 }else{
                     $tag->setValue("");
                 }
@@ -96,7 +96,7 @@ class ScoreHudListener implements Listener {
             case Ids::HUD_FACTIONMASTER_FACTION_NAME:
                 $faction = MainAPI::getFactionOfPlayer($player->getName());
                 if ($faction instanceof FactionEntity) {
-                    $tag->setValue($faction->name);
+                    $tag->setValue($faction->getName());
                 }else{
                     $tag->setValue(Utils::getText($player->getName(), "NO_FACTION_TAG"));
                 }
@@ -104,7 +104,7 @@ class ScoreHudListener implements Listener {
             case Ids::HUD_FACTIONMASTER_FACTION_POWER:
                 $faction = MainAPI::getFactionOfPlayer($player->getName());
                 if ($faction instanceof FactionEntity) {
-                    $tag->setValue($faction->power);
+                    $tag->setValue($faction->getPower());
                 }else{
                     $tag->setValue(0);
                 }
@@ -112,7 +112,7 @@ class ScoreHudListener implements Listener {
             case Ids::HUD_FACTIONMASTER_FACTION_VISIBILITY:
                 $faction = MainAPI::getFactionOfPlayer($player->getName());
                 if ($faction instanceof FactionEntity) {
-                    switch ($faction->visibility) {
+                    switch ($faction->getVisibilityId()) {
                         case Ids::PUBLIC_VISIBILITY:
                             $visibility = "§a" . Utils::getText($player->getName(), "PUBLIC_VISIBILITY_NAME");
                             break;
@@ -134,16 +134,16 @@ class ScoreHudListener implements Listener {
             case Ids::HUD_FACTIONMASTER_FACTION_XP:
                 $faction = MainAPI::getFactionOfPlayer($player->getName());
                 if ($faction instanceof FactionEntity) {
-                    $tag->setValue($faction->xp);
+                    $tag->setValue($faction->getXP());
                 }else{
                     $tag->setValue(0);
                 }
                 break;
             case Ids::HUD_FACTIONMASTER_PLAYER_RANK:
-                $User = MainAPI::getUser($player->getName());
-                if ($User instanceof UserEntity) {
-                    if ($User->rank !== null && $User->faction !== null) {
-                        switch ($User->rank) {
+                $user = MainAPI::getUser($player->getName());
+                if ($user instanceof UserEntity) {
+                    if ($user->getRank() !== null && $user->getFactionName() !== null) {
+                        switch ($user->getRank()) {
                             case Ids::RECRUIT_ID:
                                 $rank = Utils::getText($player->getName(), "RECRUIT_RANK_NAME");
                                 break;
@@ -173,38 +173,38 @@ class ScoreHudListener implements Listener {
 
     public function onFactionCreate(FactionCreateEvent $event): void {
         $player = $event->getPlayer();
-        $Faction = MainAPI::getFaction($event->getFaction());
-        if ($Faction instanceof FactionEntity) {
+        $faction = $event->getFaction();
+        if ($faction instanceof FactionEntity) {
             $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                 Ids::HUD_FACTIONMASTER_FACTION_NAME,
-                $Faction->name
+                $faction->getName()
             ));
             $ev->call();
             $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                 Ids::HUD_FACTIONMASTER_FACTION_POWER,
-                $Faction->power
+                $faction->getPower()
             ));
             $ev->call();
             $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                 Ids::HUD_FACTIONMASTER_FACTION_LEVEL,
-                $Faction->level
+                $faction->getLevel()
             ));
             $ev->call();
             $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                 Ids::HUD_FACTIONMASTER_FACTION_XP,
-                $Faction->xp
+                $faction->getXP()
             ));
             $ev->call();
             $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                 Ids::HUD_FACTIONMASTER_FACTION_MESSAGE,
-                $Faction->messageFaction ?? ""
+                $faction->getMessage()
             ));
             $ev->call();
             $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                 Ids::HUD_FACTIONMASTER_FACTION_DESCRIPTION,
-                $Faction->description ?? ""
+                $faction->getDescription()
             ));
-            switch ($Faction->visibility) {
+            switch ($faction->getVisibilityId()) {
                 case Ids::PUBLIC_VISIBILITY:
                     $visibility = "§a" . Utils::getText($player->getName(), "PUBLIC_VISIBILITY_NAME");
                     break;
@@ -225,9 +225,9 @@ class ScoreHudListener implements Listener {
             ));        
             $ev->call();
         }
-        $User = MainAPI::getUser($player->getName());
-        if ($User instanceof UserEntity && $User->faction !== null && $User->rank !== null) {
-            switch ($User->rank) {
+        $user = MainAPI::getUser($player->getName());
+        if ($user instanceof UserEntity && $user->getFactionName() !== null && $user->getRank() !== null) {
+            switch ($user->getRank()) {
                 case Ids::RECRUIT_ID:
                     $rank = Utils::getText($player->getName(), "RECRUIT_RANK_NAME");
                     break;
@@ -260,8 +260,8 @@ class ScoreHudListener implements Listener {
 
     public function onPropertyTransfer(FactionPropertyTransferEvent $event): void {
         $originUser = MainAPI::getUser($event->getPlayer()->getName());
-        if ($originUser->rank !== null) {
-            switch ($originUser->rank) {
+        if ($originUser->getRank() !== null) {
+            switch ($originUser->getRank()) {
                 case Ids::RECRUIT_ID:
                     $rank = Utils::getText($event->getPlayer()->getName(), "RECRUIT_RANK_NAME");
                     break;
@@ -286,8 +286,8 @@ class ScoreHudListener implements Listener {
         }
         $targetPlayer = Main::getInstance()->getServer()->getPlayer($event->getTarget()->name);
         if (!$targetPlayer instanceof Player) return;
-        if ($event->getTarget()->rank !== null) {
-            switch ($event->getTarget()->rank) {
+        if ($event->getTarget()->getRank() !== null) {
+            switch ($event->getTarget()->getRank()) {
                 case Ids::RECRUIT_ID:
                     $rank = Utils::getText($targetPlayer->getName(), "RECRUIT_RANK_NAME");
                     break;
@@ -313,43 +313,43 @@ class ScoreHudListener implements Listener {
     }
 
     public function onFactionJoin(FactionJoinEvent $event): void {
-        $player = $event->getPlayer();
+        $player = $event->getTarget();
         if (!$player instanceof Player) {
             $player =  Main::getInstance()->getServer()->getPlayer($player);
         }
         if (!$player instanceof Player) return;
-        $Faction = $event->getFaction();
-        if ($Faction instanceof FactionEntity) {
+        $faction = $event->getFaction();
+        if ($faction instanceof FactionEntity) {
             $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                 Ids::HUD_FACTIONMASTER_FACTION_NAME,
-                $Faction->name
+                $faction->getName()
             ));
             $ev->call();
             $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                 Ids::HUD_FACTIONMASTER_FACTION_POWER,
-                $Faction->power
+                $faction->getPower()
             ));
             $ev->call();
             $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                 Ids::HUD_FACTIONMASTER_FACTION_LEVEL,
-                $Faction->level
+                $faction->getLevel()
             ));
             $ev->call();
             $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                 Ids::HUD_FACTIONMASTER_FACTION_XP,
-                $Faction->xp
+                $faction->getXP()
             ));
             $ev->call();
             $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                 Ids::HUD_FACTIONMASTER_FACTION_MESSAGE,
-                $Faction->messageFaction ?? ""
+                $faction->getMessage()
             ));
             $ev->call();
             $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                 Ids::HUD_FACTIONMASTER_FACTION_DESCRIPTION,
-                $Faction->description ?? ""
+                $faction->getDescription()
             ));
-            switch ($Faction->visibility) {
+            switch ($faction->getVisibilityId()) {
                 case Ids::PUBLIC_VISIBILITY:
                     $visibility = "§a" . Utils::getText($player->getName(), "PUBLIC_VISIBILITY_NAME");
                     break;
@@ -370,9 +370,9 @@ class ScoreHudListener implements Listener {
             ));        
             $ev->call();
         }
-        $User = MainAPI::getUser($player->getName());
-        if ($User instanceof UserEntity && $User->faction !== null && $User->rank !== null) {
-            switch ($User->rank) {
+        $user = MainAPI::getUser($player->getName());
+        if ($user instanceof UserEntity && $user->getFactionName() !== null && $user->getRank() !== null) {
+            switch ($user->getRank()) {
                 case Ids::RECRUIT_ID:
                     $rank = Utils::getText($player->getName(), "RECRUIT_RANK_NAME");
                     break;
@@ -406,12 +406,12 @@ class ScoreHudListener implements Listener {
     public function onPower(FactionPowerEvent $event): void {
         $faction = $event->getFaction();
         $server = Main::getInstance()->getServer();
-        foreach ($faction->members as $name => $rank) {
+        foreach ($faction->getMembers() as $name => $rank) {
             $player = $server->getPlayer($name);
             if ($player instanceof Player) {
                 $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                     Ids::HUD_FACTIONMASTER_FACTION_POWER,
-                    $faction->power
+                    $faction->getPower()
                 ));
                 $ev->call();            
             }
@@ -421,12 +421,12 @@ class ScoreHudListener implements Listener {
     public function onLevelChange(FactionLevelChangeEvent $event): void {
         $faction = $event->getFaction();
         $server = Main::getInstance()->getServer();
-        foreach ($faction->members as $name => $rank) {
+        foreach ($faction->getMembers() as $name => $rank) {
             $player = $server->getPlayer($name);
             if ($player instanceof Player) {
                 $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                     Ids::HUD_FACTIONMASTER_FACTION_LEVEL,
-                    $faction->level
+                    $faction->getLevel()
                 ));
                 $ev->call();            
             }
@@ -436,12 +436,12 @@ class ScoreHudListener implements Listener {
     public function onXPChange(FactionXPChangeEvent $event): void {
         $faction = $event->getFaction();
         $server = Main::getInstance()->getServer();
-        foreach ($faction->members as $name => $rank) {
+        foreach ($faction->getMembers() as $name => $rank) {
             $player = $server->getPlayer($name);
             if ($player instanceof Player) {
                 $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                     Ids::HUD_FACTIONMASTER_FACTION_XP,
-                    $faction->xp
+                    $faction->getXP()
                 ));
                 $ev->call();            
             }
@@ -451,12 +451,12 @@ class ScoreHudListener implements Listener {
     public function onMessageChange(MessageChangeEvent $event): void {
         $faction = $event->getFaction();
         $server = Main::getInstance()->getServer();
-        foreach ($faction->members as $name => $rank) {
+        foreach ($faction->getMembers() as $name => $rank) {
             $player = $server->getPlayer($name);
             if ($player instanceof Player) {
                 $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                     Ids::HUD_FACTIONMASTER_FACTION_MESSAGE,
-                    $faction->messageFaction
+                    $faction->getMessage()
                 ));
                 $ev->call();            
             }
@@ -466,12 +466,12 @@ class ScoreHudListener implements Listener {
     public function onDescriptionChange(DescriptionChangeEvent $event): void {
         $faction = $event->getFaction();
         $server = Main::getInstance()->getServer();
-        foreach ($faction->members as $name => $rank) {
+        foreach ($faction->getMembers() as $name => $rank) {
             $player = $server->getPlayer($name);
             if ($player instanceof Player) {
                 $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                     Ids::HUD_FACTIONMASTER_FACTION_DESCRIPTION,
-                    $faction->description
+                    $event->getFaction()->getDescription()
                 ));
                 $ev->call();            
             }
@@ -481,10 +481,10 @@ class ScoreHudListener implements Listener {
     public function onVisibilityChange(VisibilityChangeEvent $event): void {
         $faction = $event->getFaction();
         $server = Main::getInstance()->getServer();
-        foreach ($faction->members as $name => $rank) {
+        foreach ($faction->getMembers() as $name => $rank) {
             $player = $server->getPlayer($name);
             if ($player instanceof Player) {
-                switch ($faction->visibility) {
+                switch ($faction->getVisibilityId()) {
                     case Ids::PUBLIC_VISIBILITY:
                         $visibility = "§a" . Utils::getText($player->getName(), "PUBLIC_VISIBILITY_NAME");
                         break;
@@ -508,12 +508,12 @@ class ScoreHudListener implements Listener {
     }
 
     public function onRankChange(MemberChangeRankEvent $event): void {
-        $user = $event->getPlayer();
+        $user = $event->getTarget();
         $server = Main::getInstance()->getServer();
-        $player = $server->getPlayer($user->name);
+        $player = $server->getPlayer($user->getName());
         if ($player instanceof Player) {
-            if ($user->rank !== null && $user->faction !== null) {
-                switch ($user->rank) {
+            if ($user->getRank() !== null && $user->getFactionName() !== null) {
+                switch ($user->getRank()) {
                     case Ids::RECRUIT_ID:
                         $rank = Utils::getText($player->getName(), "RECRUIT_RANK_NAME");
                         break;
@@ -547,7 +547,7 @@ class ScoreHudListener implements Listener {
     }
 
     public function onFactionLeave(FactionLeaveEvent $event): void {
-        $player = $event->getPlayer();
+        $player = $event->getTarget();
         $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
             Ids::HUD_FACTIONMASTER_FACTION_NAME,
             Utils::getText($player->getName(), "NO_FACTION_TAG")
@@ -592,7 +592,7 @@ class ScoreHudListener implements Listener {
 
     public function onFactionDelete(FactionDeleteEvent $event): void {
         $server = Main::getInstance()->getServer();
-        foreach ($event->getFaction()->members as $name => $rank) {
+        foreach ($event->getFaction()->getMembers() as $name => $rank) {
             $player = $server->getPlayer($name);
             if ($player instanceof Player) {
                 $ev = new PlayerTagUpdateEvent($player, new ScoreTag(

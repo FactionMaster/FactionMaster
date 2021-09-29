@@ -32,31 +32,29 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
-use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\ManageMembersList;
+use ShockedPlot7560\FactionMaster\Route\MembersManageRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageMembersMain extends Button {
 
+    const SLUG = "manageMembersMain";
+
     public function __construct() {
-        parent::__construct(
-            "manageMembersMain",
-            function (string $Player) {
-                return Utils::getText($Player, "BUTTON_MANAGE_MEMBERS");
-            },
-            function (Player $Player) {
-                Utils::processMenu(RouterFactory::get(ManageMembersList::SLUG), $Player);
-            },
-            [
+        $this->setSlug(self::SLUG)
+            ->setContent(function (string $player) {
+                return Utils::getText($player, "BUTTON_MANAGE_MEMBERS");
+            })
+            ->setCallable(function (Player $player) {
+                Utils::processMenu(RouterFactory::get(MembersManageRoute::SLUG), $player);
+            })
+            ->setPermissions([
                 PermissionIds::PERMISSION_CHANGE_MEMBER_RANK,
                 PermissionIds::PERMISSION_KICK_MEMBER
-            ],
-            "textures/img/option_member",
-            SimpleForm::IMAGE_TYPE_PATH
-        );
+            ])
+            ->setImgPack("textures/img/option_member");
     }
 
 }

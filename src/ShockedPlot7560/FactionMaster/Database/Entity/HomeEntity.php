@@ -32,31 +32,122 @@
 
 namespace ShockedPlot7560\FactionMaster\Database\Entity;
 
+use pocketmine\level\Level;
+use pocketmine\level\Position;
+use pocketmine\math\Vector3;
+use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class HomeEntity {
+class HomeEntity extends EntityDatabase {
 
-    /** @var int */
-    public $id;
-    /** @var string */
+    use FactionUtils;
+    use ServerIp;
+
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getFactionName(), getfactionEntity
+     * @var string
+    */
     public $faction;
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getName()
+     * @var string
+    */
     public $name;
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getX()
+     * @var int
+    */
     public $x;
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getY()
+     * @var int
+    */
     public $y;
-    /** @var int */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getZ()
+     * @var int
+    */
     public $z;
-    /** @var string */
+    /** 
+     * DO NOT USE THIS CONSTANT
+     * @see getLevelName(), getLevel()
+     * @var string
+    */
     public $world;
 
-    public function getToString(): string {
+    public function setName(string $name): void {
+        $this->name = $name;
+    }
+
+    public function setX(int $x): void {
+        $this->x = $x;
+    }
+
+    public function setY(int $y): void {
+        $this->y = $y;
+    }
+
+    public function setZ(int $z): void {
+        $this->z = $z;
+    }
+
+    public function setWorldName(string $worldName): void {
+        $this->world = $worldName;
+    }
+
+    public function setVector(Vector3 $vector): void {
+        $this->setX($vector->getX());
+        $this->setY($vector->getY());
+        $this->setX($vector->getX());
+    }
+
+    public function getName(): string {
+        return $this->name;
+    }
+
+    public function getLevelName(): string {
+        return $this->world;
+    }
+
+    public function getLevel(): ?Level {
+        if (!$this->isActive()) return null;
+        return Main::getInstance()->getServer()->getLevelByName($this->getLevelName());
+    }
+
+    public function toString(): string {
         return Utils::homeToString($this->x, $this->y, $this->z, $this->world);
     }
 
-    public function getToArray(): array{
+    public function __toString(): string{
+        return $this->toString();
+    }
+
+    public function toArray(): array {
         return Utils::homeToArray($this->x, $this->y, $this->z, $this->world);
     }
 
+    public function getX(): int {
+        return $this->x;
+    }
+
+    public function getY(): int {
+        return $this->y;
+    }
+
+    public function getZ(): int {
+        return $this->z;
+    }
+
+    public function getVector(): Vector3 {
+        return new Vector3($this->getX(), $this->getY(), $this->getZ());
+    }
+
+    public function getPosition(): Position {
+        return new Position($this->getX(), $this->getY(), $this->getZ(), $this->getLevel());
+    }
 }

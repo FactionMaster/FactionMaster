@@ -32,23 +32,25 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use CortexPE\Commando\BaseSubCommand;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\level\Level;
 use pocketmine\Player;
-use ShockedPlot7560\FactionMaster\Entity\ScoreboardEntity;
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
+use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class PlaceScoreboard extends BaseSubCommand {
 
     protected function prepare(): void {
+        $this->setPermission("factionmaster.scoreboard.place");
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
         if ($sender instanceof Player) {
             if ($sender->hasPermission("factionmaster.scoreboard.place")) {
                 $position = $sender->getPosition();
+<<<<<<< HEAD
                 $coordinates = explode("|", Utils::getConfig("faction-scoreboard-position"));
                 if (count($coordinates) == 4) {
                     $level = Main::getInstance()->getServer()->getLevelByName($coordinates[3]);
@@ -68,14 +70,19 @@ class PlaceScoreboard extends BaseSubCommand {
                     }
                 }
                 Main::placeScoreboard();
+=======
+>>>>>>> dev
                 $coord = join("|", [
                     $position->getX(),
                     $position->getY(),
                     $position->getZ(),
                     $position->getLevel()->getName()
                 ]);
+                $config = ConfigManager::getLeaderboardConfig();
+                $config->set("position", $coord);
+                $config->set("enabled", true);
+                $config->save();
                 $sender->sendMessage(Utils::getText("", "COMMAND_SCOREBOARD_SUCCESS"));
-                $sender->sendMessage(Utils::getText("", "COMMAND_SCOREBOARD_SUCCESS_COMPLEMENT", ["data" => $coord]));
             }else{
                 $sender->sendMessage(Utils::getText("", "DONT_PERMISSION"));
             }

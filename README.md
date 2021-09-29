@@ -75,6 +75,10 @@ FactionMaster have multiple server support, see the Installation section for mor
 * ``/f claiminfo``: Displays information about a chunk
 * ``/f extension``: Display extensions enabled *For op only*
 * ``/f scoreboard``: Set the location to spawn top faction scoreboard
+* ``/f addflag``: Add a claim considered like an area
+* ``/f removeflag``: Remove a claim considered like an area
+* ``/f settings``: Give all the FactionMaster settings
+* ``/f synchro``: Submit task to make synchronisation manually of the database
 
 ## Extensions
 Extensions, a new way to customize your plugin to your liking. You just have to download the plugin corresponding to the desired extension and place it in the corresponding folder on your server. If you have an urge to stop using the functionality, delete the plugin from your server and the changes will be gone! You can use those approved by the FactionMaster team or do it yourself (*refer to the GitHub*) and submit it to us if you feel like it.
@@ -123,6 +127,10 @@ All approved extensions will have a line in the README and and listed in the ``E
  # @link https://github.com/ShockedPlot7560
  #
 
+# DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
+file-version: 9
+# DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
+
 # --------------------- DATABASE --------------------------
 
 # Use only SQLITE or MYSQL
@@ -153,8 +161,14 @@ allow-no-stuff: false
 
 default-home-limit: 2
 default-claim-limit: 2
-default-member-limit: 2
+default-player-limit: 2
 default-ally-limit: 2
+# PUBLIC: 0  /  PRIVATE: 1  /  INVITATION: 2
+default-faction-visibility: 0
+default-faction-xp: 0
+default-faction-level: 1
+default-faction-description: ""
+default-faction-message: ""
 default-power: 0
 
 min-faction-name-length: 3
@@ -171,6 +185,9 @@ ally-chat-active: false
 ally-chat-symbol: "%"
 ally-chat-message: "[{factionName}] {playerName}: {message}"
 
+help-command-header: "§8=§7=§8=§7=§8=§7=§8=§7=§8=§7= §bFactionMaster command §8=§7=§8=§7=§8=§7=§8=§7=§8=§7="
+help-command-lign: " §8>> §r§b{command}: §7{description}"
+
 # ------------------ BROADCAST MESSAGE CONFIGURATION ---------------------
 
 broadcast-faction-create: false
@@ -180,6 +197,37 @@ broadcast-faction-delete-message: "{playerName} has deleted the faction {faction
 broadcast-faction-transferProperty: false
 broadcast-faction-transferProperty-message: "{playerName} transferred the property to {targetName} of the faction {factionName}"
 
+# --------------------- F MAP CONFIGURATION -------------------------
+
+# Set thiis value to false if you want to disable /f map on | /f map off
+# Otherwise set this value to the number of ticks between each display 
+f-map-task: false
+#f-map-task: 40
+
+available-symbol: ["/", "\\", "#", "$", "?", "%", "=", "&", "^", "$"]
+
+player-symbol: "+"
+player-color: "§b"
+
+wilderness-symbol: "-"
+wilderness-color: "§7" 
+spawn-symbol: "-"
+spawn-color: "§8" 
+warzone-symbol: "-"
+warzone-color: "§7" 
+
+claim-color: "§f"
+claim-ally-color: "§e"
+claim-ennemie-color: "§4"
+claim-own-color: "§b"
+
+compass-color: "§c"
+compass-color-actual: "§e"
+
+map-width: 48
+map-height: 10
+map-header-color: "§6"
+map-middle-header: ".[ §2({{x}},{{z}}) {{factionLabel}} {{headerColor}}]."
 
 # --------------------- CLAIM CONFIGURATION --------------------------
 
@@ -214,30 +262,29 @@ allow-home-ennemy-claim: true
 message-alert: true
 # The following line define which message will be print
 # on the screen of players when entering a claim chunk
-# active parameter which can set : {factionName}
+# active parameter which can set : {factionName} / {colorStatus} / {x} / {z} / {world}
+# - colorStatus : color set in the f map configuration
 # to purpose a suggestion, open an issue on our github
-message-alert-title: "{factionName}"
-message-alert-subtitle: ""
+message-alert-title: "{colorStatus}{factionName}"
+message-alert-subtitle: "{x} - {z} - {world}"
 # Defines the time that will be applied before the message is displayed again
 message-alert-cooldown: 10
 
-# ------------ TOP FACTION'S LEADERBOARD CONFIGURATION ---------------
+message-alert-flag-enabled: false
+# -------------- TOP FACTION'S SCOREBOARD CONFIGURATION -----------------
 
-# set this to true if you want to enable this leaderboard
-faction-scoreboard: false
-# This is the leaderboard header, display on the top
+# SEE leaderboard.yml to enabled and updated position of the leaderboard !
+
+# This is the scoreboard header, display on the top
 faction-scoreboard-header: "- Top 10 faction -"
 # Lign patern for each faction
 # you can use this parameter : 
 # {factionName} / {level} / {power}
 # to purpose a parameter suggestion, please open an issue on github
 faction-scoreboard-lign: "{factionName}: Level {level}"
-# This is the coordonnate to display the leaderboard
-# for a better handling, use the /f leaderboard command in game
-faction-scoreboard-position: "0|100|0|world"
 
 # --------------------- PLUGIN CONFIGURATION --------------------------
-#       DONT CHANGE THIS IF YOU DONT KNOW WHAT YOU ARE DOING
+#       DONT CHANGE IF YOU DONT KNOW WHAT YOU ARE DOING
 
 # Change this value only if you are sure of what you are doing, 
 # reducing it may break some functionality of the plugin, 

@@ -32,18 +32,19 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use CortexPE\Commando\BaseSubCommand;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
+use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
+use ShockedPlot7560\FactionMaster\Manager\MapManager;
+use ShockedPlot7560\FactionMaster\Utils\Ids;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class MapCommand extends BaseSubCommand {
-
-    const SYMBOL = [
-        "/", "\\", "#", "$", "?", "%", "=", "&", "^", "$",
-    ];
 
     const DIRECTION = [
         "N" => 'N',
@@ -57,135 +58,183 @@ class MapCommand extends BaseSubCommand {
         "NONE" => '+',
     ];
 
-    const PLAYER_SYMBOL = "+";
-    const PLAYER_COLOR = "§b";
-
-    const WILDERNESS_SYMBOL = "-";
-    const WILDERNESS_COLOR = "§7";
-
     const NO_SYMBOL = "0";
-    const CLAIM_COLOR = "§f";
-    const CLAIM_ALLIES_COLOR = "§e";
-    const CLAIM_ENNEMIE_COLOR = "§4";
-    const CLAIM_OWN_COLOR = "§b";
 
-    const HEIGHT = 10;
-    const WIDTH = 48;
-
-    protected function prepare(): void {}
+    protected function prepare(): void {
+        if (Utils::getConfig("f-map-task") !== false) {
+            $this->registerArgument(0, new RawStringArgument("statement", true));
+        }
+    }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
         if (!$sender instanceof Player) {
             return;
         }
 
-        $Player = $sender->getPlayer();
-        $UserEntity = MainAPI::getUser($Player->getName());
-        if (!$UserEntity instanceof UserEntity) {
-            return;
-        }
-
-        $CentralChunk = $Player->getLevel()->getChunkAtPosition($Player);
-        $SymbolData = self::SYMBOL;
-        $SymbolCursor = 0;
-        $ClaimData = [];
-
-        $X = round($Player->getX());
-        $Z = round($Player->getZ());
-        $ChunkFaction = MainAPI::getFactionClaim($Player->getLevel()->getName(), $CentralChunk->getX(), $CentralChunk->getZ());
-        if ($ChunkFaction instanceof ClaimEntity && $ChunkFaction->faction === $UserEntity->faction) {
-            $FactionLabelColor = self::CLAIM_OWN_COLOR;
-        } elseif ($ChunkFaction instanceof ClaimEntity && MainAPI::isAlly($UserEntity->faction, $ChunkFaction->faction)) {
-            $FactionLabelColor = self::CLAIM_ALLIES_COLOR;
+        if (isset($args["statement"]) && $args["statement"] === "off") {
+            MapManager::remove($sender->getPlayer());
         } else {
-            $FactionLabelColor = self::CLAIM_ENNEMIE_COLOR;
-        }
-        $FactionLabel = $ChunkFaction instanceof ClaimEntity ? $FactionLabelColor . $ChunkFaction->faction : "§5" . "Wilderness";
-        $middleString = ".[ §2($X,$Z) " . $FactionLabel . " §6].";
-        $lenMiddle = \strlen($middleString) - 3;
-        $bottom = "";
-        for ($i = 0; $i < \floor((48 - $lenMiddle) / 2); $i++) {
-            $bottom .= "_";
-        }
-        $Player->sendMessage("§6$bottom" . "$middleString" . "$bottom");
-        for ($mZ = 0; $mZ < self::HEIGHT; $mZ++) {
-            $lign = "";
-            for ($mX = 0; $mX < self::WIDTH; $mX++) {
-                $X = $CentralChunk->getX() + $mX - (self::WIDTH / 2);
-                $Z = $CentralChunk->getZ() + $mZ - (self::HEIGHT / 2);
+            if (isset($args["statement"]) && $args["statement"] === "on" && !MapManager::isRegister($sender->getPlayer())) {
+                MapManager::add($sender->getPlayer());
+            }
+            $config = ConfigManager::getConfig();
 
-                if ($CentralChunk->getX() == $X && $CentralChunk->getZ() == $Z) {
-                    $lign .= self::PLAYER_COLOR . self::PLAYER_SYMBOL;
-                    continue;
+            $player = $sender->getPlayer();
+            $userEntity = MainAPI::getUser($player->getName());
+            if (!$userEntity instanceof UserEntity) {
+                return;
+            }
+
+            $centralChunk = $player->getLevel()->getChunkAtPosition($player);
+            $symbolData = $config->get("available-symbol");
+            $symbolCursor = 0;
+            $claimData = [];
+
+            $x = round($player->getX());
+            $z = round($player->getZ());
+            $chunkFaction = MainAPI::getFactionClaim($player->getLevel()->getName(), $centralChunk->getX(), $centralChunk->getZ());
+            $factionLabelColor = '§f';
+            if ($chunkFaction instanceof ClaimEntity && $chunkFaction->getFlag() === null) {
+                if ($chunkFaction instanceof ClaimEntity && $chunkFaction->getFactionName() === $userEntity->getFactionName()) {
+                    $factionLabelColor = $config->get("claim-own-color");
+                } elseif ($chunkFaction instanceof ClaimEntity && MainAPI::isAlly($userEntity->getFactionName(), $chunkFaction->getFactionName())) {
+                    $factionLabelColor = $config->get("claim-ally-color");
                 } else {
-                    $Faction = MainAPI::getFactionClaim($Player->getLevel()->getName(), $X, $Z);
-                    if ($Faction instanceof ClaimEntity) {
-                        if (!isset($ClaimData[$Faction->faction])) {
-                            if (!isset($SymbolData[$SymbolCursor])) {
-                                $lign .= self::CLAIM_COLOR . self::NO_SYMBOL;
-                                continue;
-                            } else {
-                                if ($UserEntity->faction !== null) {
-                                    if (MainAPI::isAlly($UserEntity->faction, $Faction->faction)) {
-                                        $color = self::CLAIM_ALLIES_COLOR;
-                                    } elseif ($Faction->faction === $UserEntity->faction) {
-                                        $color = self::CLAIM_OWN_COLOR;
-                                    } else {
-                                        $color = self::CLAIM_COLOR;
-                                    }
-                                } else {
-                                    $color = self::CLAIM_COLOR;
-                                }
-                                $ClaimData[$Faction->faction] = [
-                                    "SYMBOL" => $SymbolData[$SymbolCursor],
-                                    "COLOR" => $color,
-                                    "FACTION" => $Faction,
-                                ];
-                                $SymbolCursor++;
-                            }
-                        }
-                        $Data = $ClaimData[$Faction->faction];
-                        $lign .= $Data['COLOR'] . $Data['SYMBOL'];
-                    } else {
-                        $lign .= self::WILDERNESS_COLOR . self::WILDERNESS_SYMBOL;
-                    }
+                    $factionLabelColor = $config->get("claim-ennemie-color");
+                }
+            } elseif ($chunkFaction instanceof ClaimEntity) {
+                switch ($chunkFaction->getFlag()) {
+                    case Ids::FLAG_SPAWN:
+                        $factionLabelColor = $config->get("spawn-color");
+                        break;
+                    case Ids::FLAG_WARZONE:
+                        $factionLabelColor = $config->get("warzone-color");
+                        break;
                 }
             }
-            if ($mZ <= 2) {
-                $degrees = ($Player->getYaw() - 157) % 360;
-                if ($degrees < 0) {
-                    $degrees += 360;
-                }
+            $factionLabel = $chunkFaction instanceof ClaimEntity ? $factionLabelColor . $chunkFaction->getFactionName() : $config->get("wilderness-color") . "Wilderness";
+            $headerColor = $config->get("map-header-color");
+            $middleString = $config->get("map-middle-header");
+            $middleString = str_replace(["{{x}}", "{{z}}", "{{factionLabel}}", "{{headerColor}}"], [$x, $z, $factionLabel, $headerColor], $middleString);
+            $lenMiddle = \strlen($middleString) - 3;
+            $bottom = "";
+            for ($i = 0; $i < \floor((48 - $lenMiddle) / 2); $i++) {
+                $bottom .= "_";
+            }
+            $player->sendMessage($headerColor . $bottom . $middleString . $bottom);
+            for ($mZ = 0; $mZ < $config->get("map-height"); $mZ++) {
+                $lign = "";
+                for ($mX = 0; $mX < $config->get("map-width"); $mX++) {
+                    $x = $centralChunk->getX() + $mX - ($config->get("map-width") / 2);
+                    $z = $centralChunk->getZ() + $mZ - ($config->get("map-height") / 2);
 
-                $Direction = array_keys(self::DIRECTION)[intval(floor($degrees / 45))];
-                $Compass = [["NW", "N", "NE"], ["W", "NONE", "E"], ["SW", "S", "SE"]];
-                $Compass = \array_map(function (array $DirectionsData) use ($Direction) {
-                    $text = "";
-                    foreach ($DirectionsData as $DirectionData) {
-                        if ($Direction === $DirectionData) {
-                            $text .= "§c";
+                    if ($centralChunk->getX() == $x && $centralChunk->getZ() == $z) {
+                        $lign .= $config->get("player-color") . $config->get("player-symbol");
+                        continue;
+                    } else {
+                        $faction = MainAPI::getFactionClaim($player->getLevel()->getName(), $x, $z);
+                        if ($faction instanceof ClaimEntity) {
+                            $data = [
+                                "COLOR" => "§f",
+                                "SYMBOL" => "-",
+                                "FACTION" => "Unknow"
+                            ];
+                            if ($faction->getFlag() === null) {
+                                if (!isset($claimData[$faction->getFactionName()])) {
+                                    if (!isset($symbolData[$symbolCursor])) {
+                                        $lign .= $config->get("claim-color") . self::NO_SYMBOL;
+                                        continue;
+                                    } else {
+                                        if ($userEntity->getFactionName() !== null) {
+                                            if (MainAPI::isAlly($userEntity->getFactionName(), $faction->getFactionName())) {
+                                                $color = $config->get("claim-ally-color");
+                                            } elseif ($faction->getFactionName() === $userEntity->getFactionName()) {
+                                                $color = $config->get("claim-own-color");
+                                            } else {
+                                                $color = $config->get("claim-color");
+                                            }
+                                        } else {
+                                            $color = $config->get("claim-color");
+                                        }
+                                        $claimData[$faction->getFactionName()] = [
+                                            "SYMBOL" => $symbolData[$symbolCursor],
+                                            "COLOR" => $color,
+                                            "FACTION" => $faction->getFactionName(),
+                                        ];
+                                        $symbolCursor++;
+                                    }
+                                }                        
+                                $data = $claimData[$faction->getFactionName()];
+                            } else {
+                                switch ($faction->getFlag()) {
+                                    case Ids::FLAG_SPAWN:
+                                        $data = [
+                                            "COLOR" => $config->get("spawn-color"),
+                                            "SYMBOL" => $config->get("spawn-symbol"),
+                                            "FACTION" => $faction->getFactionName()
+                                        ];
+                                        $claimData[$faction->getFactionName()] = [
+                                            "SYMBOL" => $config->get("spawn-symbol"),
+                                            "COLOR" => $config->get("spawn-color"),
+                                            "FACTION" => $faction->getFactionName(),
+                                        ];
+                                        break;
+                                    case Ids::FLAG_WARZONE:
+                                        $data = [
+                                            "COLOR" => $config->get("warzone-color"),
+                                            "SYMBOL" => $config->get("warzone-symbol"),
+                                            "FACTION" => $faction->getFactionName()
+                                        ];
+                                        $claimData[$faction->getFactionName()] = [
+                                            "SYMBOL" => $config->get("warzone-symbol"),
+                                            "COLOR" => $config->get("warzone-color"),
+                                            "FACTION" => $faction->getFactionName(),
+                                        ];
+                                        break;
+                                }
+                            }
+                            $lign .= $data['COLOR'] . $data['SYMBOL'];
                         } else {
-                            $text .= "§e";
+                            $lign .= $config->get("wilderness-color") . $config->get("wilderness-symbol");
                         }
-                        $text .= self::DIRECTION[$DirectionData];
                     }
-                    return $text;
-                }, $Compass);
-                $lign = $Compass[$mZ] . \substr($lign, 12, \strlen($lign));
+                }
+                if ($mZ <= 2) {
+                    $degrees = ($player->getYaw() - 157) % 360;
+                    if ($degrees < 0) {
+                        $degrees += 360;
+                    }
+
+                    $Direction = array_keys(self::DIRECTION)[intval(floor($degrees / 45))];
+                    $Compass = [["NW", "N", "NE"], ["W", "NONE", "E"], ["SW", "S", "SE"]];
+                    $Compass = \array_map(function (array $DirectionsData) use ($Direction) {
+                        $text = "";
+                        foreach ($DirectionsData as $DirectionData) {
+                            if ($Direction === $DirectionData) {
+                                $text .= ConfigManager::getConfig()->get("compass-color");
+                            } else {
+                                $text .= ConfigManager::getConfig()->get("compass-color-actual");
+                            }
+                            $text .= self::DIRECTION[$DirectionData];
+                        }
+                        return $text;
+                    }, $Compass);
+                    $lign = $Compass[$mZ] . \substr($lign, 12, \strlen($lign));
+                }
+                $player->sendMessage($lign);
             }
-            $Player->sendMessage($lign);
-        }
-        $text = "";
-        foreach ($ClaimData as $key => $Claim) {
-            $newString = " " . $Claim['COLOR'] . $Claim['SYMBOL'] . ": " . $Claim['FACTION']->faction;
-            if (\strlen($text . $newString) > 48) {
-                $Player->sendMessage($text . $newString);
-                $text = "";
-            } else {
-                $text .= $newString;
+            $text = "";
+            foreach ($claimData as $key => $Claim) {
+                $newString = " §r" . $Claim['COLOR'] . $Claim['SYMBOL'] . ": " . $Claim['FACTION'];
+                if (\strlen($text . $newString) > $config->get("map-width")) {
+                    $player->sendMessage($text . $newString);
+                    $text = "";
+                } else {
+                    $text .= $newString;
+                }
             }
+            $player->sendMessage($text);
         }
-        $Player->sendMessage($text);
     }
 
 }

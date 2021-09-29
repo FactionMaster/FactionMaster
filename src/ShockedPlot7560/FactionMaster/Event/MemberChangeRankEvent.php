@@ -32,18 +32,29 @@
 
 namespace ShockedPlot7560\FactionMaster\Event;
 
-use pocketmine\event\Event;
+use pocketmine\Player;
+use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 
-class MemberChangeRankEvent extends Event {
+class MemberChangeRankEvent extends FactionEvent implements Forcable {
 
-    private $Target;
+    private $target;
+    private $oldRank;
 
-    public function __construct(UserEntity $Target) {
-        $this->Target = $Target;
+    /**
+     * @param string|FactionEntity $faction
+     */
+    public function __construct($faction, UserEntity $target, ?int $oldRank, bool $isForce = false) {
+        parent::__construct($faction, $isForce);
+        $this->target = $target;
+        $this->oldRank = $oldRank;
     }
 
-    public function getPlayer(): UserEntity {
-        return $this->Target;
+    public function getTarget(): UserEntity {
+        return $this->target;
+    }
+
+    public function getOldRank(): ?int {
+        return $this->oldRank;
     }
 }

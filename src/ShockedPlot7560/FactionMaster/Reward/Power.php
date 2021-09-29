@@ -47,7 +47,7 @@ class Power extends Reward implements RewardInterface {
             $this->setValue($value);
         }
 
-        MainAPI::changePower($factionName, $this->value);
+        MainAPI::changePower($factionName, $this->getValue());
         return true;
     }
 
@@ -56,11 +56,11 @@ class Power extends Reward implements RewardInterface {
             $this->setValue($value);
         }
 
-        $Faction = MainAPI::getFaction($factionName);
-        if (($Faction->power - $this->getValue()) < 0) {
+        $faction = MainAPI::getFaction($factionName);
+        if (($faction->getPower() - $this->getValue()) < 0) {
             return "NO_ENOUGH_POWER";
         }
-        MainAPI::changePower($Faction->name, $this->value * -1);
+        MainAPI::changePower($faction->getName(), $this->getValue() * -1);
         return true;
     }
 

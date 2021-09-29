@@ -37,19 +37,19 @@ use pocketmine\Player;
 
 class PlayerChangeLanguageEvent extends Event {
 
-    private $Player;
-    private $LanguageSlug;
+    private $player;
+    private $languageSlug;
 
-    public function __construct(Player $Player, string $LanguageSlug) {
-        $this->Player = $Player;
-        $this->LanguageSlug = $LanguageSlug;
+    public function __construct(Player $player, string $languageSlug) {
+        $this->player = $player;
+        $this->languageSlug = $languageSlug;
     }
 
     public function getPlayer(): Player {
-        return $this->Player;
+        return $this->player;
     }
 
     public function getLanguageSlug(): string {
-        return $this->LanguageSlug;
+        return $this->languageSlug;
     }
 }

@@ -32,8 +32,8 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use CortexPE\Commando\args\RawStringArgument;
-use CortexPE\Commando\BaseSubCommand;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use DateTime;
 use pocketmine\command\CommandSender;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
@@ -48,27 +48,27 @@ class InfoCommand extends BaseSubCommand {
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-        $Faction = MainAPI::getFactionOfPlayer($sender->getName());
-        if (!isset($args['name']) && !$Faction instanceof FactionEntity) {
+        $faction = MainAPI::getFactionOfPlayer($sender->getName());
+        if (!isset($args['name']) && !$faction instanceof FactionEntity) {
             $this->sendUsage();
             return;
         }elseif (isset($args['name'])){
-            $Faction = MainAPI::getFaction($args['name']);
+            $faction = MainAPI::getFaction($args['name']);
         }
-        if ($Faction === null) {
+        if ($faction === null) {
             $sender->sendMessage(Utils::getText($sender->getName(), "FACTION_DONT_EXIST"));
             return;
         }
-        $middleString = ".[ §a" . $Faction->name . " §6].";
+        $middleString = ".[ §a" . $faction->getName() . " §6].";
         $lenMiddle = \strlen($middleString) - 4;
         $bottom = "";
         for ($i = 0; $i < \floor((48 - $lenMiddle) / 2); $i++) {
             $bottom .= "_";
         }
         $sender->sendMessage("§6" . $bottom . $middleString . $bottom);
-        $description = ($Faction->description === "" ? Utils::getText($sender->getName(), "COMMAND_NO_DESCRIPTION") : $Faction->description);
+        $description = ($faction->getDescription() === "" ? Utils::getText($sender->getName(), "COMMAND_NO_DESCRIPTION") : $faction->getDescription());
         $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_INFO_DESCRIPTION", ['description' => $description]));
-        switch ($Faction->visibility) {
+        switch ($faction->getVisibilityId()) {
             case Ids::PUBLIC_VISIBILITY:
                 $visibility = "§a" . Utils::getText($sender->getName(), "PUBLIC_VISIBILITY_NAME");
                 break;
@@ -83,43 +83,43 @@ class InfoCommand extends BaseSubCommand {
                 break;
         }
         $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_INFO_VISIBILITY", ['visibility' => $visibility]));
-        $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_INFO_LEVEL", ['level' => $Faction->level, 'power' => $Faction->power]));
-        $Ally = "";
-        foreach ($Faction->ally as $key => $ally) {
-            if ($key == \count($Faction->ally) - 1) {
-                $Ally .= $ally;
+        $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_INFO_LEVEL", ['level' => $faction->getLevel(), 'power' => $faction->getPower()]));
+        $ally = "";
+        foreach ($faction->getAlly() as $key => $ally) {
+            if ($key == \count($faction->getAlly()) - 1) {
+                $ally .= $ally;
             } else {
-                $Ally .= $ally . ", ";
+                $ally .= $ally . ", ";
             }
         }
-        if (\count($Faction->ally) == 0) {
-            $Ally = Utils::getText($sender->getName(), "COMMAND_NO_ALLY");
+        if (\count($faction->getAlly()) == 0) {
+            $ally = Utils::getText($sender->getName(), "COMMAND_NO_ALLY");
         }
-        $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_INFO_ALLY", ['ally' => $Ally]));
-        $Members = "";
+        $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_INFO_ALLY", ['ally' => $ally]));
+        $members = "";
         $i = 0;
-        foreach ($Faction->members as $member => $rank) {
+        foreach ($faction->getMembers() as $member => $rank) {
             switch ($rank) {
                 case Ids::OWNER_ID:
-                    $Members .= Utils::getText($sender->getName(), "COMMAND_INFO_MEMBER_OWNER", ['name' => $member]);
+                    $members .= Utils::getText($sender->getName(), "COMMAND_INFO_MEMBER_OWNER", ['name' => $member]);
                     break;
                 case Ids::COOWNER_ID:
-                    $Members .= Utils::getText($sender->getName(), "COMMAND_INFO_MEMBER_COOWNER", ['name' => $member]);
+                    $members .= Utils::getText($sender->getName(), "COMMAND_INFO_MEMBER_COOWNER", ['name' => $member]);
                     break;
                 case Ids::MEMBER_ID:
-                    $Members .= Utils::getText($sender->getName(), "COMMAND_INFO_MEMBER_MEMBER", ['name' => $member]);
+                    $members .= Utils::getText($sender->getName(), "COMMAND_INFO_MEMBER_MEMBER", ['name' => $member]);
                     break;
                 case Ids::RECRUIT_ID:
-                    $Members .= Utils::getText($sender->getName(), "COMMAND_INFO_MEMBER_RECRUIT", ['name' => $member]);
+                    $members .= Utils::getText($sender->getName(), "COMMAND_INFO_MEMBER_RECRUIT", ['name' => $member]);
                     break;
             }
-            if ($i != \count($Faction->members) - 1) {
-                $Members .= " / ";
+            if ($i != \count($faction->getMembers()) - 1) {
+                $members .= " / ";
             }
             $i++;
         }
-        $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_INFO_MEMBER", ['members' => $Members]));
-        $Date = new DateTime($Faction->date);
+        $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_INFO_MEMBER", ['members' => $members]));
+        $Date = $faction->getDate();
         $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_INFO_DATE", ['date' => $Date->format("d M")]));
     }
 

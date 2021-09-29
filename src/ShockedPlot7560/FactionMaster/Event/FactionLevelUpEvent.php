@@ -32,44 +32,34 @@
 
 namespace ShockedPlot7560\FactionMaster\Event;
 
-use pocketmine\event\Event;
 use pocketmine\Player;
+use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Reward\RewardInterface;
 
-class FactionLevelUpEvent extends Event {
+class FactionLevelUpEvent extends FactionEvent implements Forcable {
 
-    private $Player;
-    private $Faction;
+    use PlayerEvent;
+
+    protected $player;
     private $oldLevel;
     private $reward;
-    private $Count;
+    private $cost;
 
-    public function __construct(Player $Player, string $Faction, int $oldLevel, RewardInterface $reward, int $Count) {
-        $this->Player = $Player;
-        $this->Faction = $Faction;
-        $this->oldLevel = $oldLevel;
+    /**
+     * @param FactionEntity|string $faction
+     */
+    public function __construct(Player $player, $faction, RewardInterface $cost, RewardInterface $reward, bool $isForce = false) {
+        parent::__construct($faction, $isForce);
+        $this->player = $player;
         $this->reward = $reward;
-        $this->Count = $Count;
-    }
-
-    public function getPlayer(): Player {
-        return $this->Player;
-    }
-
-    public function getFaction(): string {
-        return $this->Faction;
-    }
-
-    public function getOldLevel(): int {
-        return $this->oldLevel;
+        $this->cost = $cost;
     }
 
     public function getReward(): RewardInterface {
         return $this->reward;
     }
 
-    public function getCount(): string {
-        return $this->Count;
+    public function getCost(): RewardInterface {
+        return $this->cost;
     }
-
 }

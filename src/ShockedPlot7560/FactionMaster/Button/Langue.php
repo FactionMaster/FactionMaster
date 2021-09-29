@@ -32,54 +32,49 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
-use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Button;
 use ShockedPlot7560\FactionMaster\Event\PlayerChangeLanguageEvent;
-use ShockedPlot7560\FactionMaster\Route\MainPanel;
+use ShockedPlot7560\FactionMaster\Route\MainRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Langue extends Button {
 
-    public function __construct(string $Lang) {
+    public function __construct(string $lang) {
         foreach (Utils::getConfigLang("languages-name") as $slug => $langN) {
-            if ($langN === $Lang) {
+            if ($langN === $lang) {
                 $slugG = $slug;
             }
         }
-        parent::__construct(
-            $Lang,
-            function (string $Player) use ($Lang) {
-                $UserLang = MainAPI::getPlayerLang($Player);
-                return $Lang . (Utils::getConfigLang("languages-name")[$UserLang] === $Lang ? ("\n" . Utils::getText($Player, "CURRENT_LANG")) : "");
-            },
-            function (Player $Player) use ($Lang) {
+        $this->setSlug($lang)
+            ->setContent(function (string $player) use ($lang) {
+                $userLang = MainAPI::getPlayerLang($player);
+                return $lang . (Utils::getConfigLang("languages-name")[$userLang] === $lang ? ("\n" . Utils::getText($player, "CURRENT_LANG")) : "");
+            })
+            ->setCallable(function (Player $player) use ($lang) {
                 foreach (Utils::getConfigLang("languages-name") as $key => $value) {
-                    if ($value === $Lang) {
-                        $Lang = $key;
+                    if ($value === $lang) {
+                        $lang = $key;
                     }
                 }
-                MainAPI::changeLanguage($Player->getName(), $Lang);
+                MainAPI::changeLanguage($player->getName(), $lang);
                 Utils::newMenuSendTask(new MenuSendTask(
-                    function () use ($Lang, $Player) {
-                        return MainAPI::getPlayerLang($Player->getName()) === $Lang;
+                    function () use ($lang, $player) {
+                        return MainAPI::getPlayerLang($player->getName()) === $lang;
                     },
-                    function () use ($Player, $Lang) {
-                        (new PlayerChangeLanguageEvent($Player, $Lang))->call();
-                        Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player);
+                    function () use ($player, $lang) {
+                        (new PlayerChangeLanguageEvent($player, $lang))->call();
+                        Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player);
                     },
-                    function () use ($Player) {
-                        Utils::processMenu(RouterFactory::get(MainPanel::SLUG), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                    function () use ($player) {
+                        Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
                     }
                 ));
-            },
-            [],
-            (isset($slugG) ? "textures/img/lang/" . $slugG : ""),
-            SimpleForm::IMAGE_TYPE_PATH
-        );
+            })
+            ->setImgPack((isset($slugG) ? "textures/img/lang/" . $slugG : ""));
     }
 
 }

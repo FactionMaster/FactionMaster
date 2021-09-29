@@ -36,27 +36,23 @@ use pocketmine\event\Event;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
-class VisibilityChangeEvent extends Event {
+class VisibilityChangeEvent extends FactionEvent implements Forcable {
 
-    private $Player;
-    private $Faction;
-    private $visibility;
+    use PlayerEvent;
 
-    public function __construct(Player $Player, FactionEntity $Faction, int $visibility) {
-        $this->Player = $Player;
-        $this->Faction = $Faction;
-        $this->visibility = $visibility;
+    protected $player;
+    private $oldVisibility;
+
+    /**
+     * @param string|FactionEntity $faction
+     */
+    public function __construct(Player $player, $faction, int $oldVisibility, bool $isForce = false) {
+        parent::__construct($faction, $isForce);
+        $this->player = $player;
+        $this->oldVisibility = $oldVisibility;
     }
 
-    public function getPlayer(): Player {
-        return $this->Player;
-    }
-
-    public function getFaction(): FactionEntity {
-        return $this->Faction;
-    }
-
-    public function getVisibility(): int {
-        return $this->visibility;
+    public function getOldVisibility(): int {
+        return $this->oldVisibility;
     }
 }

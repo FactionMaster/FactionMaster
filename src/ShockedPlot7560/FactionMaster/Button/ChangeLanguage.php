@@ -32,26 +32,23 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
-use jojoe77777\FormAPI\SimpleForm;
-use ShockedPlot7560\FactionMaster\Route\LanguagePanel;
+use ShockedPlot7560\FactionMaster\Route\ChangeLangueRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeLanguage extends Button {
 
+    const SLUG = "cchangeLanguage";
+
     public function __construct() {
-        parent::__construct(
-            "changeLanguage",
-            function ($Player) {
-                return Utils::getText($Player, "BUTTON_CHANGE_LANGUAGE");
-            },
-            function ($Player) {
-                Utils::processMenu(RouterFactory::get(LanguagePanel::SLUG), $Player);
-            },
-            [],
-            "textures/img/translate",
-            SimpleForm::IMAGE_TYPE_PATH
-        );
+        $this->setSlug(self::SLUG)
+            ->setContent(function ($player) {
+                return Utils::getText($player, "BUTTON_CHANGE_LANGUAGE");
+            })
+            ->setCallable(function ($player) {
+                Utils::processMenu(RouterFactory::get(ChangeLangueRoute::SLUG), $player);
+            })
+            ->setImgPack("textures/img/translate");
     }
 
 }

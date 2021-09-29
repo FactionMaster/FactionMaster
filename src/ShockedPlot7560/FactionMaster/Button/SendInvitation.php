@@ -32,26 +32,24 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
-use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class SendInvitation extends Button {
 
-    public function __construct(string $PanelSlug, array $permissions) {
-        parent::__construct(
-            "sendInvitation",
-            function (string $Player) {
-                return Utils::getText($Player, "BUTTON_SEND_INVITATION");
-            },
-            function (Player $Player) use ($PanelSlug) {
-                Utils::processMenu(RouterFactory::get($PanelSlug), $Player);
-            },
-            $permissions,
-            "textures/img/invit_write",
-            SimpleForm::IMAGE_TYPE_PATH
-        );
+    const SLUG = "sendInvitation";
+
+    public function __construct(string $panelSlug, array $permissions) {
+        $this->setSlug(self::SLUG)
+            ->setContent(function (string $player) {
+                return Utils::getText($player, "BUTTON_SEND_INVITATION");
+            })
+            ->setCallable(function (Player $player) use ($panelSlug) {
+                Utils::processMenu(RouterFactory::get($panelSlug), $player);
+            })
+            ->setPermissions($permissions)
+            ->setImgPack("textures/img/invit_write");
     }
 
 }

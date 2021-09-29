@@ -32,29 +32,24 @@
 
 namespace ShockedPlot7560\FactionMaster\Event;
 
-use pocketmine\event\Event;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
-class FactionHomeCreateEvent extends Event {
+class FactionHomeCreateEvent extends FactionEvent implements Forcable {
 
-    private $Player;
-    private $Faction;
+    use PlayerEvent;
+
+    protected $player;
     private $name;
 
-    public function __construct(Player $Player, FactionEntity $Faction, string $name) {
-        $this->Player = $Player;
-        $this->Faction = $Faction;
+    /**
+     * @param string|FactionEntity $faction
+     */
+    public function __construct(Player $player, $faction, string $name, bool $isForce = false) {
+        parent::__construct($faction, $isForce);
+        $this->player = $player;
         $this->name = $name;
-    }
-
-    public function getPlayer(): Player {
-        return $this->Player;
-    }
-
-    public function getFaction(): FactionEntity {
-        return $this->Faction;
     }
 
     public function getName(): string {
@@ -62,11 +57,11 @@ class FactionHomeCreateEvent extends Event {
     }
 
     public function getVector(): Vector3 {
-        return new Vector3($this->Player->getX(), $this->Player->getY(), $this->Player->getZ());
+        return new Vector3($this->getPlayer()->getX(), $this->getPlayer()->getY(), $this->getPlayer()->getZ());
     }
 
     public function getWorldName(): string {
-        return $this->Player->getLevel()->getName();
+        return $this->getPlayer()->getLevel()->getName();
     }
 
 }

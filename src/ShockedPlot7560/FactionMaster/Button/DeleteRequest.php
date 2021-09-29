@@ -32,57 +32,55 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
-use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Event\InvitationRefuseEvent;
-use ShockedPlot7560\FactionMaster\Route\ConfirmationMenu;
+use ShockedPlot7560\FactionMaster\Route\ConfirmationRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class DeleteRequest extends Button {
 
-    public function __construct(InvitationEntity $Request, string $PanelSlug, string $backPanelSlug, array $permissions = []) {
-        parent::__construct(
-            "deleteRequest",
-            function (string $Player) {
-                return Utils::getText($Player, "BUTTON_REFUSE_REQUEST");
-            },
-            function (Player $Player) use ($Request, $PanelSlug, $backPanelSlug) {
-                Utils::processMenu(RouterFactory::get(ConfirmationMenu::SLUG), $Player, [
-                    function (Player $Player, $data) use ($Request, $PanelSlug, $backPanelSlug) {
+    const SLUG = "deleteRequest";
+
+    public function __construct(InvitationEntity $request, string $panelSlug, string $backPanelSlug, array $permissions = []) {
+        $this->setSlug(self::SLUG)
+            ->setContent(function (string $player) {
+                return Utils::getText($player, "BUTTON_REFUSE_REQUEST");
+            })
+            ->setCallable(function (Player $player) use ($request, $panelSlug, $backPanelSlug) {
+                Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
+                    function (Player $player, $data) use ($request, $panelSlug, $backPanelSlug) {
                         if ($data === null) {
                             return;
                         }
 
                         if ($data) {
-                            $message = Utils::getText($Player->getName(), "SUCCESS_DELETE_REQUEST", ['name' => $Request->sender]);
-                            MainAPI::removeInvitation($Request->sender, $Request->receiver, $Request->type);
+                            $message = Utils::getText($player->getName(), "SUCCESS_DELETE_REQUEST", ['name' => $request->getSenderString()]);
+                            MainAPI::removeInvitation($request->getSenderString(), $request->getReceiverString(), $request->getType());
                             Utils::newMenuSendTask(new MenuSendTask(
-                                function () use ($Request) {
-                                    return !MainAPI::areInInvitation($Request->sender, $Request->receiver, $Request->type);
+                                function () use ($request) {
+                                    return !MainAPI::areInInvitation($request->getSenderString(), $request->getReceiverString(), $request->getType());
                                 },
-                                function () use ($Request, $Player, $PanelSlug, $message) {
-                                    (new InvitationRefuseEvent($Player, $Request))->call();
-                                    Utils::processMenu(RouterFactory::get($PanelSlug), $Player, [$message]);
+                                function () use ($request, $player, $panelSlug, $message) {
+                                    (new InvitationRefuseEvent($player, $request))->call();
+                                    Utils::processMenu(RouterFactory::get($panelSlug), $player, [$message]);
                                 },
-                                function () use ($Player, $PanelSlug) {
-                                    Utils::processMenu(RouterFactory::get($PanelSlug), $Player, [Utils::getText($Player->getName(), "ERROR")]);
+                                function () use ($player, $panelSlug) {
+                                    Utils::processMenu(RouterFactory::get($panelSlug), $player, [Utils::getText($player->getName(), "ERROR")]);
                                 }
                             ));
                         } else {
-                            Utils::processMenu(RouterFactory::get($backPanelSlug), $Player, [$Request]);
+                            Utils::processMenu(RouterFactory::get($backPanelSlug), $player, [$request]);
                         }
                     },
-                    Utils::getText($Player->getName(), "CONFIRMATION_TITLE_DELETE_REQUEST"),
-                    Utils::getText($Player->getName(), "CONFIRMATION_CONTENT_DELETE_REQUEST"),
+                    Utils::getText($player->getName(), "CONFIRMATION_TITLE_DELETE_REQUEST"),
+                    Utils::getText($player->getName(), "CONFIRMATION_CONTENT_DELETE_REQUEST"),
                 ]);
-            },
-            $permissions,
-            "textures/img/false",
-            SimpleForm::IMAGE_TYPE_PATH
-        );
+            })
+            ->setPermissions($permissions)
+            ->setImgPack("textures/img/false");
     }
 }

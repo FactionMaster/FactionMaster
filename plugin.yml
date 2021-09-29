@@ -1,7 +1,7 @@
 name: FactionMaster
 author: ShockedPlot7560
-version: 2.4.0
-api: 3.17.7
+version: 3.0.0-alpha1
+api: 3.0.0
 main: ShockedPlot7560\FactionMaster\Main
 description: "Full configurable and modulable faction plugin"
 softdepend: ["ScoreHud"]
@@ -10,4 +10,16 @@ virions: ["Commando", "libFormAPI"]
 permissions:
   factionmaster.scoreboard.place:
     description: "Allow the player to place scoreboard"
+    default: "op"
+  factionmaster.synchro.launch:
+    description: "Allow the player to launch database synchronisation"
+    default: "op"
+  factionmaster.flag.add:
+    description: "Allow the player to add area to flag"
+    default: "op"
+  factionmaster.flag.remove:
+    description: "Allow the player to remove flag of area"
+    default: "op"
+  factionmaster.extension.list:
+    description: "Allow the player to remove flag of area"
     default: "op"

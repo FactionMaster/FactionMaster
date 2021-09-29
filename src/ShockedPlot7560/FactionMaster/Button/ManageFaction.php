@@ -32,37 +32,35 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
-use jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\ManageFactionMain;
+use ShockedPlot7560\FactionMaster\Route\FactionOptionRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageFaction extends Button {
 
+    const SLUG = "manageFaction";
+
     public function __construct() {
-        parent::__construct(
-            "manageFaction",
-            function ($Player) {
-                return Utils::getText($Player, "BUTTON_MANAGE_FACTION");
-            },
-            function ($Player) {
-                Utils::processMenu(RouterFactory::get(ManageFactionMain::SLUG), $Player);
-            },
-            [
-                PermissionIds::PERMISSION_BREAK_ALLIANCE,
+        $this->setSlug(self::SLUG)
+            ->setContent(function ($player) {
+                return Utils::getText($player, "BUTTON_MANAGE_FACTION");
+            })
+            ->setCallable(function ($player) {
+                Utils::processMenu(RouterFactory::get(FactionOptionRoute::SLUG), $player);
+            })
+            ->setPermissions([
                 PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION,
+                PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION,
                 PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
                 PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
-                PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION,
-                PermissionIds::PERMISSION_CHANGE_FACTION_DESCRIPTION,
-                PermissionIds::PERMISSION_CHANGE_FACTION_MESSAGE,
+                PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS,
+                PermissionIds::PERMISSION_LEVEL_UP,
                 PermissionIds::PERMISSION_CHANGE_FACTION_VISIBILITY,
-                PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS
-            ],
-            "textures/img/option_faction",
-            SimpleForm::IMAGE_TYPE_PATH
-        );
+                PermissionIds::PERMISSION_CHANGE_FACTION_MESSAGE,
+                PermissionIds::PERMISSION_CHANGE_FACTION_DESCRIPTION
+            ])
+            ->setImgPack("textures/img/option_faction");
     }
 
 }

@@ -36,9 +36,11 @@ use pocketmine\entity\Entity;
 use pocketmine\entity\EntityIds;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\level\Level;
+use pocketmine\level\Position;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -80,7 +82,7 @@ class ScoreboardEntity extends Entity {
                         $nametag = Utils::getConfig("faction-scoreboard-header") . "\n";
                         foreach ($result as $faction) {
                             $newLine = Utils::getConfig("faction-scoreboard-lign");
-                            $newLine = str_replace(["{factionName}", "{level}", "{power}"], [$faction->name, $faction->level, $faction->power], $newLine);
+                            $newLine = str_replace(["{factionName}", "{level}", "{power}"], [$faction->getName(), $faction->getLevel(), $faction->getPower()], $newLine);
                             $nametag .= $newLine . "\n";
                         }
                         $entity = Main::getInstance()->getServer()->getLevelByName($levelName)->getEntity($id);
@@ -90,6 +92,23 @@ class ScoreboardEntity extends Entity {
                     },
                     FactionEntity::class
                 ));        
+            }
+            $coordinates = ConfigManager::getLeaderboardConfig()->get("position");
+            if ($coordinates !== false && $coordinates !== "") {
+                $coordinates = explode("|", $coordinates);
+                if (count($coordinates) == 4) {
+                    $levelName = $coordinates[3];
+                    $level = Main::getInstance()->getServer()->getLevelByName($levelName);
+                    if ($level instanceof Level) {
+                        $position = new Position((float)$coordinates[0], (float)$coordinates[1], (float)$coordinates[2], $level);
+                        if ($this->getPosition() !== $position) {
+                            $level->loadChunk((float)$coordinates[0] >> 4, (float)$coordinates[2] >> 4);
+                            $this->teleport($position);
+                        }
+                    } else {
+                        Main::getInstance()->getLogger()->notice("An unknow world was set in leaderboard.yml, can't load faction leaderboard");
+                    }            
+                }
             }
             $this->tick--;
         }elseif ($this->tick == 0) {
