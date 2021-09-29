@@ -34,10 +34,8 @@ namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
-use pocketmine\level\Level;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
-use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class PlaceScoreboard extends BaseSubCommand {
@@ -50,28 +48,6 @@ class PlaceScoreboard extends BaseSubCommand {
         if ($sender instanceof Player) {
             if ($sender->hasPermission("factionmaster.scoreboard.place")) {
                 $position = $sender->getPosition();
-<<<<<<< HEAD
-                $coordinates = explode("|", Utils::getConfig("faction-scoreboard-position"));
-                if (count($coordinates) == 4) {
-                    $level = Main::getInstance()->getServer()->getLevelByName($coordinates[3]);
-                    if (!$level instanceof Level) {
-                        $sender->sendMessage(" §c§l>> The world name given in the config.yml seems to be incorrect, world unknown or not found. Please update it correctly.");
-                        $sender->sendMessage(" §c>> §4Actual coordonate : §c{x:" . $sender->getX() . ", y: " . $sender->getY() . ", z: " . $sender->getZ() . "}");
-                        $sender->sendMessage(" §c>> §4Actual worldName : §c" . $sender->getLevel()->getName());
-                        $sender->sendMessage(" §c>> §cData to add in config.yml : §c§l" . join("|", [$sender->getX(), $sender->getY(), $sender->getZ(), $sender->getLevel()->getName()]));
-                        return;
-                    }
-                    $entities = Main::getInstance()->getServer()->getLevelByName($coordinates[3])->getEntities();
-                    foreach ($entities as $entity) {
-                        if ($entity instanceof ScoreboardEntity) {
-                            $entity->flagForDespawn();
-                            $entity->despawnFromAll();
-                        }
-                    }
-                }
-                Main::placeScoreboard();
-=======
->>>>>>> dev
                 $coord = join("|", [
                     $position->getX(),
                     $position->getY(),
