@@ -36,6 +36,7 @@ use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\Button;
 use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Manager\ImageManager;
 
 class Collection {
 
@@ -76,7 +77,7 @@ class Collection {
     public function generateButtons(SimpleForm $form, string $playerName): SimpleForm {
         foreach ($this->buttonsList as $key => $button) {
             if ($button->hasAccess($playerName)) {
-                if (Main::$activeImage === true && $button->getImgPath() !== "") {
+                if (ImageManager::isImageEnable() === true && $button->getImgPath() !== "") {
                     $form->addButton($button->getContent($playerName), $button->getImgType(), $button->getImgPath());
                 } else {
                     $form->addButton($button->getContent($playerName));
