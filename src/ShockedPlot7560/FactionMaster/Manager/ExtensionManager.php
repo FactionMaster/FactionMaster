@@ -76,6 +76,7 @@ class ExtensionManager {
                 } else {
                     $langMain = new Config(Utils::getDataFolder() . "lang/$langSlug.yml", Config::YAML);
                     foreach ($langConfigFile->getAll() as $key => $value) {
+                        if ($key === "file-version") continue;
                         $langMain->__set($key, $value);
                     }
                     $langMain->save();

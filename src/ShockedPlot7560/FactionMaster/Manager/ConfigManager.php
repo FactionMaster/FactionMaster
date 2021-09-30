@@ -43,9 +43,9 @@ class ConfigManager {
     const LEVEL_VERSION = 0;
     const TRANSLATION_VERSION = 0;
     const LANG_FILE_VERSION = [
-        "en_EN" => 3,
-        "fr_FR" => 2,
-        "es_SPA" => 1
+        "en_EN" => 4,
+        "fr_FR" => 3,
+        "es_SPA" => 2
     ];
 
     /** @var Config */
@@ -82,8 +82,8 @@ class ConfigManager {
         ConfigUpdater::checkUpdate($main, self::getTranslationConfig(), "file-version", self::TRANSLATION_VERSION);
 
         foreach (self::getTranslationConfig()->get("languages") as $language) {
-            ConfigUpdater::checkUpdate($main, Utils::getConfigLangFile($language), "file-version", self::LANG_FILE_VERSION[$language]);
             $main->saveResource("lang/$language.yml");
+            ConfigUpdater::checkUpdate($main, Utils::getConfigLangFile($language), "file-version", self::LANG_FILE_VERSION[$language]);
             self::$lang[$language] = Utils::getConfigLangFile($language);
         }
     }

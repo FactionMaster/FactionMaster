@@ -1,5 +1,6 @@
+---
 # DO NOT EDIT THIS LINE
-file-version: 2
+file-version: 3
 # DO NOT EDIT THIS LINE
 
 
@@ -258,3 +259,4 @@ FLAG_ADD_COMMAND: " §c>> §4Veuiller entrer un nom de zone valide : warzone / s
 SUCCESS_REMOVE_FLAG: " §a>> §2Zone retiré avec succès"
 SUCCESS_ADD_FLAG: " §a>> §2Zone ajouté avec succès"
 SUCCESS_SYNCHRO: " §a>> §2Synchronisation lancé!"
+...
