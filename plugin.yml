@@ -1,6 +1,6 @@
 name: FactionMaster
 author: ShockedPlot7560
-version: 3.0.0-alpha1
+version: 3.0.0
 api: 3.0.0
 main: ShockedPlot7560\FactionMaster\Main
 description: "Full configurable and modulable faction plugin"
