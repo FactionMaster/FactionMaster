@@ -90,7 +90,7 @@ class ClaimEntity extends EntityDatabase {
     }
 
     public function setLevelName(string $levelName): void {
-        $this->level = $levelName;
+        $this->world = $levelName;
     }
 
     public function setFlag(?int $flag): void {
