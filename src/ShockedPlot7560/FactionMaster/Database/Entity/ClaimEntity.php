@@ -132,7 +132,7 @@ class ClaimEntity extends EntityDatabase {
     }
 
     public function getLevelName(): string {
-        return $this->level;
+        return $this->world;
     }
 
     public function getLevel(): ?Level {

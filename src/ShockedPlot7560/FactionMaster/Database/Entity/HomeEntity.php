@@ -120,7 +120,7 @@ class HomeEntity extends EntityDatabase {
     }
 
     public function toString(): string {
-        return Utils::homeToString($this->x, $this->y, $this->z, $this->world);
+        return Utils::homeToString($this->getX(), $this->getY(), $this->getZ(), $this->getLevelName());
     }
 
     public function __toString(): string{
@@ -128,7 +128,7 @@ class HomeEntity extends EntityDatabase {
     }
 
     public function toArray(): array {
-        return Utils::homeToArray($this->x, $this->y, $this->z, $this->world);
+        return Utils::homeToArray($this->getX(), $this->getY(), $this->getZ(), $this->getLevelName());
     }
 
     public function getX(): int {
