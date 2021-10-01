@@ -64,7 +64,6 @@ class RouterFactory {
         self::registerRoute(new ManageLevelRoute());
         self::registerRoute(new AllianceOptionRoute());
         self::registerRoute(new AllianceRequestReceiveRoute());
-        self::registerRoute(new AllianceRequestReceiveRoute());
         self::registerRoute(new ManageAllianceRequestRoute());
         self::registerRoute(new ManageAllianceInvitationRoute());
         self::registerRoute(new AllianceSendInvitationRoute());
@@ -76,6 +75,7 @@ class RouterFactory {
         self::registerRoute(new JoinInvitationSendRoute());
         self::registerRoute(new JoinRequestReceiveRoute());
         self::registerRoute(new ManageMemberRequestRoute());
+        self::registerRoute(new AllianceInvitationSendRoute());
     }
 
     /**
