@@ -62,7 +62,8 @@ class MigrationManager {
                 self::$main->getServer()->getPluginManager()->disablePlugin(self::$main);
                 return false;
             },
-            "3.0.1" => function () {}
+            "3.0.1" => function () {},
+            "3.0.2" => function () {}
         ];
         self::$configDbToCheck = [
             [
