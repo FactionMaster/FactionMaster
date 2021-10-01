@@ -61,7 +61,8 @@ class MigrationManager {
                 self::$main->getLogger()->critical("For precaution, factionMaster will bbe disabled now");
                 self::$main->getServer()->getPluginManager()->disablePlugin(self::$main);
                 return false;
-            }
+            },
+            "3.0.1" => function () {}
         ];
         self::$configDbToCheck = [
             [

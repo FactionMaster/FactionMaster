@@ -56,7 +56,7 @@ class MembersRequestReceiveRoute extends RouteBase implements Route {
     public function getPermissions(): array {
         return [
             PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND, 
-            PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND
+            PermissionIds::PERMISSION_REFUSE_MEMBER_DEMAND
         ];
     }
 

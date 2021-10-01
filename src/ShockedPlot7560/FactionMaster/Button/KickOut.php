@@ -64,13 +64,13 @@ class KickOut extends Button {
                         if ($data) {
                             $message = Utils::getText($player->getName(), "SUCCESS_KICK_OUT", ['playerName' => $member->getName()]);
                             MainAPI::removeMember($faction->getName(), $member->getName());
+                            $factionActual = $faction;
                             Utils::newMenuSendTask(new MenuSendTask(
-                                function () use ($player, $faction) {
-                                    $user = MainAPI::getUser($player->getName());
-                                    return $user instanceof UserEntity && $user->getFactionName() !== $faction->getName();
+                                function () use ($member, $factionActual) {
+                                    $faction = MainAPI::getFaction($factionActual->getName());
+                                    return !isset($faction->getMembers()[$member->getName()]);
                                 },
-                                function () use ($player, $faction, $message) {
-                                    $member = MainAPI::getUser($player->getName());
+                                function () use ($player, $faction, $message, $member) {
                                     (new MemberKickOutEvent($player, $faction, $member))->call();
                                     Utils::processMenu(RouterFactory::get(MembersManageRoute::SLUG), $player, [$message]);
                                 },

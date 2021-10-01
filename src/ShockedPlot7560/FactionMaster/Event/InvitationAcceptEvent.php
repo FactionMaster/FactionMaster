@@ -40,7 +40,6 @@ class InvitationAcceptEvent extends InvitationEvent implements Forcable {
     use PlayerEvent;
 
     protected $player;
-    private $invitation;
 
     public function __construct(Player $player, InvitationEntity $invitation, bool $isForce = false) {
         parent::__construct($invitation, $isForce);

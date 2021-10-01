@@ -38,6 +38,7 @@ use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\RequestListItem;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
+use ShockedPlot7560\FactionMaster\Route\ManageMemberRequestRoute;
 use ShockedPlot7560\FactionMaster\Route\MembersRequestReceiveRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
@@ -51,10 +52,10 @@ class MembersRequestReceiveCollection extends Collection {
             foreach ($requests as $request) {
                 $this->register(new RequestListItem(
                     $request, 
-                    MembersRequestReceiveRoute::SLUG, 
+                    ManageMemberRequestRoute::SLUG, 
                     [
                         PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND, 
-                        PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND
+                        PermissionIds::PERMISSION_REFUSE_MEMBER_DEMAND
                     ]
                 ));
             }
