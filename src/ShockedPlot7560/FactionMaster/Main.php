@@ -54,6 +54,7 @@ use ShockedPlot7560\FactionMaster\Manager\PermissionManager;
 use ShockedPlot7560\FactionMaster\Manager\SyncServerManager;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Task\LeaderboardTask;
 use ShockedPlot7560\FactionMaster\Task\MapTask;
 use ShockedPlot7560\FactionMaster\Task\SyncServerTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -126,6 +127,7 @@ class Main extends PluginBase implements Listener {
                 $langConfigExtension[$extension->getExtensionName()] = $extension->getLangConfig();
             }
             $this->getScheduler()->scheduleRepeatingTask(new SyncServerTask($this), (int) Utils::getConfig("sync-time"));
+            $this->getScheduler()->scheduleRepeatingTask(new LeaderboardTask($this), 80);
             if (Utils::getConfig("f-map-task") !== false) {
                 $time = (int) Utils::getConfig("f-map-task");
                 if ($time > 0) {

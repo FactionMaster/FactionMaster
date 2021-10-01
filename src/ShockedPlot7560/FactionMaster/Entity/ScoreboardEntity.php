@@ -62,6 +62,7 @@ class ScoreboardEntity extends Entity {
         parent::initEntity();
         $this->setImmobile(true);
         $this->setScale(0.0000001);
+        $this->setHealth(1000);
         $this->setNameTagAlwaysVisible(true);
     }
 
@@ -120,7 +121,11 @@ class ScoreboardEntity extends Entity {
     }
 
     public function attack(EntityDamageEvent $source): void {
+        $source->setBaseDamage(0);
         $source->setCancelled(true);
+        var_dump($source->getFinalDamage());
+        var_dump($source->getEntity()->getNameTag());
+        return;
     }
 
 }

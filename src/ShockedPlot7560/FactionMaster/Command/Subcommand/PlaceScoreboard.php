@@ -36,6 +36,7 @@ use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
+use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class PlaceScoreboard extends BaseSubCommand {
@@ -54,6 +55,8 @@ class PlaceScoreboard extends BaseSubCommand {
                     $position->getZ(),
                     $position->getLevel()->getName()
                 ]);
+                LeaderboardManager::closeLeaderboard();
+                LeaderboardManager::placeScoreboard($coord);
                 $config = ConfigManager::getLeaderboardConfig();
                 $config->set("position", $coord);
                 $config->set("enabled", true);
