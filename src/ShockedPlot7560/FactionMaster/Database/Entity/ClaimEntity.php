@@ -67,7 +67,7 @@ class ClaimEntity extends EntityDatabase {
      * @see getLevel(), getLevelName()
      * @var string
     */
-    public $level;
+    public $world;
     /** 
      * DO NOT USE THIS CONSTANT
      * @see getServerIp()
