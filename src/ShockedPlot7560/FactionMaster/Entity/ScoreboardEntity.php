@@ -123,8 +123,6 @@ class ScoreboardEntity extends Entity {
     public function attack(EntityDamageEvent $source): void {
         $source->setBaseDamage(0);
         $source->setCancelled(true);
-        var_dump($source->getFinalDamage());
-        var_dump($source->getEntity()->getNameTag());
         return;
     }
 
