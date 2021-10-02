@@ -63,7 +63,11 @@ class MigrationManager {
                 return false;
             },
             "3.0.1" => function () {},
-            "3.0.2" => function () {}
+            "3.0.2" => function () {},
+            "3.0.3" => function () {
+                self::$main->getLogger()->notice("This version includes a new translation: turkish, if you use the images with the buttons, please update the texture pack, available here : ");
+                self::$main->getLogger()->notice("https://github.com/FactionMaster/FactionMaster/blob/stable/FactionMaster.zip");
+            }
         ];
         self::$configDbToCheck = [
             [

@@ -45,7 +45,7 @@ class ImageManager {
     public static function init(Main $main) {
         self::$main = $main;
         if (Utils::getConfig("active-image") == true) {
-            $pack = $main->getServer()->getResourcePackManager()->getPackById("6682bde3-ece8-4f22-8d6b-d521efc9325d");
+            $pack = $main->getServer()->getResourcePackManager()->getPackById("dbcac694-6cc7-4c68-8798-bd114218ba16");
             if (!$pack instanceof ResourcePack) {
                 $main->getLogger()->warning("To enable FactionMaster images and a better player experience, please download the dedicated FactionMaster pack. Then reactivate the images once this is done.");
                 self::setImageEnable(false);
