@@ -312,7 +312,9 @@ class EventListener implements Listener {
                             "name" => $playerName,
                         ],
                         function ($result) use ($playerName) {
-                            MainAPI::$users[$playerName] = $result[0];
+                            if (count($result) > 0) {
+                                MainAPI::$users[$playerName] = $result[0];
+                            }
                         },
                         UserEntity::class
                     ));
