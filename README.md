@@ -92,6 +92,7 @@ To participate in the translation of FactionMaster and probably see yourself her
 * **French** (fr_Fr): @ShockedPlot7560
 * **English** (en_EN): @ShockedPlot7560
 * **Spanish** (es_SPA): @MrBlasyMSK
+* **Turkish** (tr_TR): @xAliTura01
 
 ## Developers
 Adding and modifying extensions is rather simple and explained on the README.md of the [GitHub](https://github.com/ShockedPlot7560/FactionMaster/) repository with a documentation for the handling of the API.
