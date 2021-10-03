@@ -281,8 +281,10 @@ class EventListener implements Listener {
                                 "name" => $user->getFactionName(),
                             ],
                             function ($result) use ($user) {
-                                $faction = $result[0];
-                                MainAPI::$factions[$user->getFactionName()] = $faction;
+                                if (count($result) > 0) {
+                                    $faction = $result[0];
+                                    MainAPI::$factions[$user->getFactionName()] = $faction;
+                                } 
                             },
                             FactionEntity::class
                         ));
