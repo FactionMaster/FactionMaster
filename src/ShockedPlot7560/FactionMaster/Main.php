@@ -44,6 +44,7 @@ use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
 use ShockedPlot7560\FactionMaster\Listener\BroadcastMessageListener;
 use ShockedPlot7560\FactionMaster\Listener\EventListener;
 use ShockedPlot7560\FactionMaster\Listener\ScoreHudListener;
+use ShockedPlot7560\FactionMaster\Manager\CommandManager;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Manager\DatabaseManager;
 use ShockedPlot7560\FactionMaster\Manager\ExtensionManager;
@@ -81,6 +82,7 @@ class Main extends PluginBase implements Listener {
         self::$topFactionQuery = "SELECT * FROM $factionTable ORDER BY level DESC, xp DESC, power DESC LIMIT 10";
         self::$instance = $this;
 
+        CommandManager::init();
         ConfigManager::init($this);
         SyncServerManager::init($this);
         DatabaseManager::init($this);
@@ -122,10 +124,6 @@ class Main extends PluginBase implements Listener {
             
             ExtensionManager::load();
 
-            $langConfigExtension = [];
-            foreach (ExtensionManager::getExtensions() as $extension) {
-                $langConfigExtension[$extension->getExtensionName()] = $extension->getLangConfig();
-            }
             $this->getScheduler()->scheduleRepeatingTask(new SyncServerTask($this), (int) Utils::getConfig("sync-time"));
             $this->getScheduler()->scheduleRepeatingTask(new LeaderboardTask(), 80);
             if (Utils::getConfig("f-map-task") !== false) {

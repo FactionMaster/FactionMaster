@@ -67,12 +67,16 @@ class ExtensionManager {
     public static function loadLangFile(): void {
         $langConfigExtension = [];
         foreach (self::getExtensions() as $extension) {
-            $langConfigExtension[$extension->getExtensionName()] = $extension->getLangConfig();
+            try {
+                $langConfigExtension[$extension->getExtensionName()] = $extension->getLangConfig();
+            } catch (\Throwable $th) {
+                Main::getInstance()->getLogger()->error("Can not load the translate files of : " . $extension->getExtensionName() . ", check the return value of the function getLangConfig() and verify its key and value. If you are not the author of this extension, please inform him");
+            }
         }
         foreach ($langConfigExtension as $extensionName => $langConfig) {
             foreach ($langConfig as $langSlug => $langConfigFile) {
                 if (!$langConfigFile instanceof Config) {
-                    Main::getInstance()->getLogger()->warning("Loading the translate files of : $extensionName, check the return value of the function getLangConfig() and verify its key and value. If you are not the author of this extension, please inform him");
+                    Main::getInstance()->getLogger()->error("Can not load the translate files of : $extensionName, check the return value of the function getLangConfig() and verify its key and value. If you are not the author of this extension, please inform him");
                 } else {
                     $langMain = new Config(Utils::getDataFolder() . "lang/$langSlug.yml", Config::YAML);
                     foreach ($langConfigFile->getAll() as $key => $value) {
