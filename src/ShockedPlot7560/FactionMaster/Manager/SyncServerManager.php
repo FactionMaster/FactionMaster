@@ -72,8 +72,8 @@ class SyncServerManager {
                 foreach ($result as $faction) {
                     if ($faction instanceof FactionEntity) {
                         MainAPI::$factions[$faction->getName()] = $faction;
-                        if (self::$main->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
-                            $server = self::$main->getServer();
+                        if (Main::getInstance()->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
+                            $server = Main::getInstance()->getServer();
                             foreach ($faction->getMembers() as $name => $rank) {
                                 $player = $server->getPlayer($name);
                                 if ($player instanceof Player) {
@@ -162,8 +162,8 @@ class SyncServerManager {
                 foreach ($result as $user) {
                     if ($user instanceof UserEntity) {
                         MainAPI::$users[$user->getName()] = $user;
-                        if (self::$main->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
-                            $player = self::$main->getServer()->getPlayer($user->getName());
+                        if (Main::getInstance()->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
+                            $player = Main::getInstance()->getServer()->getPlayer($user->getName());
                             if ($player instanceof Player) {
                                 if ($user->getRank() !== null && $user->getFactionName() !== null) {
                                     switch ($user->rank) {
