@@ -82,8 +82,8 @@ class Main extends PluginBase implements Listener {
         self::$topFactionQuery = "SELECT * FROM $factionTable ORDER BY level DESC, xp DESC, power DESC LIMIT 10";
         self::$instance = $this;
 
-        CommandManager::init();
         ConfigManager::init($this);
+        CommandManager::init();
         SyncServerManager::init($this);
         DatabaseManager::init($this);
         MainAPI::init(DatabaseManager::getPDO(), $this);
