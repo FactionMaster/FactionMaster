@@ -40,17 +40,24 @@ class ImageManager {
     /** @var Main */
     private static $main;
     /** @var boolean */
-    private static $activeImage;
+    private static $activeImage = false;
 
     public static function init(Main $main) {
         self::$main = $main;
         if (Utils::getConfig("active-image") == true) {
-            $pack = $main->getServer()->getResourcePackManager()->getPackById("dbcac694-6cc7-4c68-8798-bd114218ba16");
-            if (!$pack instanceof ResourcePack) {
+            $uuid = [
+                "dbcac694-6cc7-4c68-8798-bd114218ba16", //official
+                "dc84ba0e-f0f1-4beb-a0da-be2b1115c613" //another
+            ];
+            foreach ($uuid as $id) {
+                if (self::isImageEnable()) continue;
+                $pack = $main->getServer()->getResourcePackManager()->getPackById($id);
+                if ($pack instanceof ResourcePack) {
+                    self::setImageEnable(true);
+                }
+            }
+            if (!self::isImageEnable()) {
                 $main->getLogger()->warning("To enable FactionMaster images and a better player experience, please download the dedicated FactionMaster pack. Then reactivate the images once this is done.");
-                self::setImageEnable(false);
-            }else{
-                self::setImageEnable(true);
             }
         }else{
             self::setImageEnable(false);
