@@ -66,7 +66,21 @@ class MigrationManager {
             "3.0.2" => function () {},
             "3.0.3" => function () {
                 self::$main->getLogger()->notice("This version includes a new translation: turkish, if you use the images with the buttons, please update the texture pack, available here : ");
-                self::$main->getLogger()->notice("https://github.com/FactionMaster/FactionMaster/resource_pack");
+                self::$main->getLogger()->notice("https://github.com/FactionMaster/FactionMaster/blob/stable/FactionMaster.zip");
+            },
+            "3.1.2" => function () {
+                $leaderborardConfig = ConfigManager::getLeaderboardConfig();
+                $leaderborardConfig->set("leaderboards", [
+                    [
+                        "slug" => "faction",
+                        "position" => $leaderborardConfig->get("position"),
+                        "active" => $leaderborardConfig->get("enabled")
+                    ]
+                ]);
+                $leaderborardConfig->__unset("position");
+                $leaderborardConfig->__unset("enabled");
+                $leaderborardConfig->save();
+                self::$main->getLogger()->notice("Update your old leaderboard.yml format");
             }
         ];
         self::$configDbToCheck = [

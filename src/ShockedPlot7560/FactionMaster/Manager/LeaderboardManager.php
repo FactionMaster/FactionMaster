@@ -34,6 +34,8 @@ namespace ShockedPlot7560\FactionMaster\Manager;
 use pocketmine\entity\Entity;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
+use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
+use ShockedPlot7560\FactionMaster\Entity\FactionMasterEntity;
 use ShockedPlot7560\FactionMaster\Entity\ScoreboardEntity;
 use ShockedPlot7560\FactionMaster\Main;
 
@@ -44,36 +46,54 @@ class LeaderboardManager {
     /** @var array */
     public static $scoreboardEntity;
 
+    public static $queryList = [];
+    public static $entityClass = [];
+
     public static function init(Main $main) {
         self::$main = $main;
+        $factionTable = FactionTable::TABLE_NAME;
+        self::$queryList["faction"] = "SELECT * FROM $factionTable ORDER BY level DESC, xp DESC, power DESC LIMIT 10";
+        self::$entityClass["faction"] = ScoreboardEntity::class;
     }
 
-    public static function placeScoreboard(?string $coordinates = null): void {
-        Entity::registerEntity(ScoreboardEntity::class, true);
-        if ($coordinates === null) $coordinates = ConfigManager::getLeaderboardConfig()->get("position");
-        if ($coordinates !== false && $coordinates !== "") {
-            $coordinates = explode("|", $coordinates);
-            if (count($coordinates) == 4) {
-                $levelName = $coordinates[3];
-                $level = self::$main->getServer()->getLevelByName($levelName);
-                if ($level instanceof Level) {
-                    $level->loadChunk((float)$coordinates[0] >> 4, (float)$coordinates[2] >> 4);
-                    $nbt = Entity::createBaseNBT(new Position((float)$coordinates[0], (float)$coordinates[1], (float)$coordinates[2], $level));
-                    $scoreboard = Entity::createEntity("ScoreboardEntity", $level, $nbt);
-                    $scoreboard->spawnToAll();
-                    self::$scoreboardEntity = [$scoreboard->getId(), $level->getName()];
-                } else {
-                    self::$main->getLogger()->notice("An unknow world was set in leaderboard.yml, can't load faction leaderboard");
-                }            
-            }
+    public static function placeScoreboard(string $slug, string $coordinates): void {
+        if (isset(self::$queryList[$slug])) {
+            Entity::registerEntity(self::$entityClass[$slug], true);
+            if ($coordinates !== false && $coordinates !== "") {
+                $coordinates = explode("|", $coordinates);
+                if (count($coordinates) == 4) {
+                    $levelName = $coordinates[3];
+                    $level = self::$main->getServer()->getLevelByName($levelName);
+                    if ($level instanceof Level) {
+                        $level->loadChunk((float)$coordinates[0] >> 4, (float)$coordinates[2] >> 4);
+                        $nbt = Entity::createBaseNBT(new Position((float)$coordinates[0], (float)$coordinates[1], (float)$coordinates[2], $level));
+                        var_dump(self::$entityClass[$slug]::getEntityName());
+                        $scoreboard = Entity::createEntity(self::$entityClass[$slug]::getEntityName(), $level, $nbt);
+                        $scoreboard->spawnToAll();
+                        self::$scoreboardEntity = [$scoreboard->getId(), $level->getName()];
+                    } else {
+                        self::$main->getLogger()->notice("An unknow world was set in leaderboard.yml, can't load faction leaderboard");
+                    }            
+                }
+            }        
         }
     }
 
-    public static function closeLeaderboard(): void {
-        foreach (Main::getInstance()->getServer()->getLevels() as $level) {
-            foreach ($level->getEntities() as $entity) {
-                if ($entity instanceof ScoreboardEntity) {
-                    $entity->close();
+    public static function closeLeaderboard(?string $slug = null): void {
+        if ($slug === null) {
+            foreach (Main::getInstance()->getServer()->getLevels() as $level) {
+                foreach ($level->getEntities() as $entity) {
+                    if ($entity instanceof FactionMasterEntity) {
+                        $entity->close();
+                    }
+                }
+            }
+        } else {
+            foreach (Main::getInstance()->getServer()->getLevels() as $level) {
+                foreach ($level->getEntities() as $entity) {
+                    if ($entity instanceof self::$entityClass[$slug]) {
+                        $entity->close();
+                    }
                 }
             }
         }

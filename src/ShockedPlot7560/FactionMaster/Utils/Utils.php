@@ -139,7 +139,14 @@ class Utils {
 
     public static function getText(string $playerName, string $slug, array $args = []): string {
         $playerLang = MainAPI::getPlayerLang($playerName);
-        $fileName = self::getConfigLang("languages")[$playerLang] ?? self::getConfigLang("languages")["EN"];
+        if (isset(self::getConfigLang("languages")[$playerLang])) {
+            $fileName = self::getConfigLang("languages")[$playerLang];
+        } elseif (isset(self::getConfigLang("languages")["EN"])) {
+            $fileName = self::getConfigLang("languages")["EN"];
+        } else {
+            Main::getInstance()->getLogger()->error("Error in lang loading, please remove your plugin_data");
+            Main::getInstance()->getServer()->getPluginManager()->disablePlugin(Main::getInstance());
+        }
         $config = self::getConfigLangFile($fileName);
         $textNoReplace = $config->get($slug);
         if ($textNoReplace === false) {
