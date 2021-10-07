@@ -53,7 +53,7 @@ FactionMaster have multiple server support, see the Installation section for mor
 * If you wish to use FactionMaster on more than one server at a time, please modify the ``config.yml`` after starting your server for the first time with FactionMaster on it and change the ``PROVIDER: "SQLITE"`` with MYSQL. Enter your database connection details and restart your server.
 
 ## Use resource pack
-* Download factionMaster texture pack available [here](https://github.com/ShockedPlot7560/FactionMaster/blob/v2.1.3-alpha/FactionMaster.zip)
+* Download factionMaster texture pack available [here](https://github.com/ShockedPlot7560/FactionMaster/resource_pack)
 * Install it on your server as a mandatory Texture pack
 * Put the line : active-image to true in ``config.yml`` file
 * Stop and start your server

@@ -47,7 +47,8 @@ class JoinFaction extends Button {
             })
             ->setCallable(function ($player) {
                 Utils::processMenu(RouterFactory::get(JoinFactionRoute::SLUG), $player);
-            });
+            })
+            ->setImgPack("textures/img/join_fac");
     }
 
 }
