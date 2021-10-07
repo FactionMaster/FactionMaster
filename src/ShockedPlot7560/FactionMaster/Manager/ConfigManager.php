@@ -82,10 +82,12 @@ class ConfigManager {
         ConfigUpdater::checkUpdate($main, self::getLevelConfig(), "file-version", self::LEVEL_VERSION);
         ConfigUpdater::checkUpdate($main, self::getTranslationConfig(), "file-version", self::TRANSLATION_VERSION);
 
-        foreach (self::getTranslationConfig()->get("languages") as $language) {
-            $main->saveResource("lang/$language.yml");
-            ConfigUpdater::checkUpdate($main, Utils::getConfigLangFile($language), "file-version", self::LANG_FILE_VERSION[$language]);
-            self::$lang[$language] = Utils::getConfigLangFile($language);
+        if (count(self::getTranslationConfig()->get("languages")) > 0) {
+            foreach (self::getTranslationConfig()->get("languages") as $language) {
+                $main->saveResource("lang/$language.yml");
+                ConfigUpdater::checkUpdate($main, Utils::getConfigLangFile($language), "file-version", self::LANG_FILE_VERSION[$language]);
+                self::$lang[$language] = Utils::getConfigLangFile($language);
+            }
         }
     }
 
