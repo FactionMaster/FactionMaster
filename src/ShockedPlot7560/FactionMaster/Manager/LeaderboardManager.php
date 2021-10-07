@@ -67,7 +67,6 @@ class LeaderboardManager {
                     if ($level instanceof Level) {
                         $level->loadChunk((float)$coordinates[0] >> 4, (float)$coordinates[2] >> 4);
                         $nbt = Entity::createBaseNBT(new Position((float)$coordinates[0], (float)$coordinates[1], (float)$coordinates[2], $level));
-                        var_dump(self::$entityClass[$slug]::getEntityName());
                         $scoreboard = Entity::createEntity(self::$entityClass[$slug]::getEntityName(), $level, $nbt);
                         $scoreboard->spawnToAll();
                         self::$scoreboardEntity = [$scoreboard->getId(), $level->getName()];
