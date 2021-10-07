@@ -30,25 +30,31 @@
  *
  */
 
-namespace ShockedPlot7560\FactionMaster\Task;
+namespace ShockedPlot7560\FactionMaster\Entity;
 
-use pocketmine\scheduler\Task;
-use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
-use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
+use pocketmine\entity\Entity;
+use pocketmine\entity\EntityIds;
+use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\Player;
 
-class LeaderboardTask extends Task {
+abstract class FactionMasterEntity extends Entity {
+    
+    public $gravity = 0;
+    public $height = 0.01;
+    public $width = 0.01;
 
-    public function onRun(int $currentTick): void {
-        $scanSlug = [];
-        $leaderboards = ConfigManager::getLeaderboardConfig()->get("leaderboards");
-        if ($leaderboards === false) $leaderboards = [];
-        foreach ($leaderboards as $leaderboard) {
-            if (!in_array($leaderboard["slug"], $scanSlug)) {
-                LeaderboardManager::closeLeaderboard($leaderboard["slug"]);
-                $scanSlug[] = $leaderboard["slug"];
-            }
-            if ($leaderboard["active"] == true)
-                LeaderboardManager::placeScoreboard($leaderboard["slug"], $leaderboard["position"]);
-        }
+    const NETWORK_ID = EntityIds::NPC;
+
+    public function tryChangeMovement(): void {}
+
+    public function onCollideWithPlayer(Player $player): void { }
+
+    public function attack(EntityDamageEvent $source): void {
+        $source->setBaseDamage(0);
+        $source->setCancelled(true);
+        return;
     }
+
+    abstract public static function getEntityName(): string;
+
 }

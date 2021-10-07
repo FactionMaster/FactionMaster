@@ -1,5 +1,5 @@
 # DO NOT EDIT THIS LINE
-file-version: 4
+file-version: 5
 # DO NOT EDIT THIS LINE
 
 
@@ -243,6 +243,7 @@ COMMAND_INFO_MEMBER_RECRUIT: "§7§oRecruit {{name}}"
 COMMAND_INFO_DATE: "§eCreated on {{date}}"
 
 COMMAND_SCOREBOARD_SUCCESS: " §a>> §2Position scoreboard updated!"
+COMMAND_SCOREBOARD_INVALID_SLUG: " §4>> §cInvalid slug provided, choose a slug from this list: §c{{list}}"
 
 REWARD_POWER_NAME: "Faction power"
 REWARD_MEMBER_LIMIT_NAME: "Member limit"

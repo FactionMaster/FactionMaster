@@ -43,7 +43,7 @@ class ConfigManager {
     const LEVEL_VERSION = 0;
     const TRANSLATION_VERSION = 1;
     const LANG_FILE_VERSION = [
-        "en_EN" => 4,
+        "en_EN" => 5,
         "fr_FR" => 3,
         "es_SPA" => 2,
         "tr_TR" => 1
@@ -76,16 +76,18 @@ class ConfigManager {
         self::$level = Utils::getConfigFile("level");
         self::$translation = Utils::getConfigFile("translation");
         self::$version = Utils::getConfigFile("version");
-        self::$leaderboard = Utils::getConfigFile("leaderboard");
+        self::$leaderboard = Utils::getConfigFile("leaderboard"); 
 
         ConfigUpdater::checkUpdate($main, self::getConfig(), "file-version", self::CONFIG_VERSION);
         ConfigUpdater::checkUpdate($main, self::getLevelConfig(), "file-version", self::LEVEL_VERSION);
         ConfigUpdater::checkUpdate($main, self::getTranslationConfig(), "file-version", self::TRANSLATION_VERSION);
 
-        foreach (self::getTranslationConfig()->get("languages") as $language) {
-            $main->saveResource("lang/$language.yml");
-            ConfigUpdater::checkUpdate($main, Utils::getConfigLangFile($language), "file-version", self::LANG_FILE_VERSION[$language]);
-            self::$lang[$language] = Utils::getConfigLangFile($language);
+        if (count(self::getTranslationConfig()->get("languages")) > 0) {
+            foreach (self::getTranslationConfig()->get("languages") as $language) {
+                $main->saveResource("lang/$language.yml");
+                ConfigUpdater::checkUpdate($main, Utils::getConfigLangFile($language), "file-version", self::LANG_FILE_VERSION[$language]);
+                self::$lang[$language] = Utils::getConfigLangFile($language);
+            }
         }
     }
 
