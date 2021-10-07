@@ -146,6 +146,7 @@ class Utils {
         } else {
             Main::getInstance()->getLogger()->error("Error in lang loading, please remove your plugin_data");
             Main::getInstance()->getServer()->getPluginManager()->disablePlugin(Main::getInstance());
+            return "";
         }
         $config = self::getConfigLangFile($fileName);
         $textNoReplace = $config->get($slug);

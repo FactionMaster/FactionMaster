@@ -36,6 +36,9 @@ use ShockedPlot7560\FactionMaster\Main;
 
 trait ServerIp {
 
+    /** @var string */
+    public $server;
+
     public function getServerIp(): string {
         return $this->server;
     }
