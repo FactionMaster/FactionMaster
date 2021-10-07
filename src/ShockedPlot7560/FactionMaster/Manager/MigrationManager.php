@@ -77,6 +77,8 @@ class MigrationManager {
                         "active" => $leaderborardConfig->get("enabled")
                     ]
                 ]);
+                $leaderborardConfig->__unset("position");
+                $leaderborardConfig->__unset("enabled");
                 $leaderborardConfig->save();
                 self::$main->getLogger()->notice("Update your old leaderboard.yml format");
             }

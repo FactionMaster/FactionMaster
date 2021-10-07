@@ -113,7 +113,9 @@ class Main extends PluginBase implements Listener {
 
             $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", Utils::getText("", "COMMAND_FACTION_DESCRIPTION"), ["f", "fac"]));
 
-            foreach (ConfigManager::getLeaderboardConfig()->get("leaderboards") as $leaderboard) {
+            $leaderboards = ConfigManager::getLeaderboardConfig()->get("leaderboards");
+            if ($leaderboards === false) $leaderboards = [];
+            foreach ($leaderboards as $leaderboard) {
                 if ($leaderboard["active"] == true)
                     LeaderboardManager::placeScoreboard($leaderboard["slug"], $leaderboard["position"]);
             }

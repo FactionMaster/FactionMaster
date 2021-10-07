@@ -40,7 +40,9 @@ class LeaderboardTask extends Task {
 
     public function onRun(int $currentTick): void {
         $scanSlug = [];
-        foreach (ConfigManager::getLeaderboardConfig()->get("leaderboards") as $leaderboard) {
+        $leaderboards = ConfigManager::getLeaderboardConfig()->get("leaderboards");
+        if ($leaderboards === false) $leaderboards = [];
+        foreach ($leaderboards as $leaderboard) {
             if (!in_array($leaderboard["slug"], $scanSlug)) {
                 LeaderboardManager::closeLeaderboard($leaderboard["slug"]);
                 $scanSlug[] = $leaderboard["slug"];
