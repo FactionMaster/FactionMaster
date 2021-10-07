@@ -121,9 +121,9 @@ class TransferProperty extends Button {
                     },
                     Utils::getText($player->getName(), "CONFIRMATION_TITLE_TRANSFER_PROPERTY"),
                     Utils::getText($player->getName(), "CONFIRMATION_CONTENT_TRANSFER_PROPERTY"),
-                ])
-                ->setImgPack("textures/img/transfer");
-            });
+                ]);
+            })
+            ->setImgPack("textures/img/transfer");
     }
 
 }
