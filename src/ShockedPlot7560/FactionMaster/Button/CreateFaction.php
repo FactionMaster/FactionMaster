@@ -47,7 +47,8 @@ class CreateFaction extends Button {
             })
             ->setCallable(function ($player) {
                 Utils::processMenu(RouterFactory::get(CreateFactionRoute::SLUG), $player);
-            });
+            })
+            ->setImgPack("textures/img/create_fac");
     }
 
 }
