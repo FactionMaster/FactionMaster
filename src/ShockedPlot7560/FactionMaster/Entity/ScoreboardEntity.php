@@ -32,29 +32,24 @@
 
 namespace ShockedPlot7560\FactionMaster\Entity;
 
-use pocketmine\entity\Entity;
-use pocketmine\entity\EntityIds;
-use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
-use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
+use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class ScoreboardEntity extends Entity {
+class ScoreboardEntity extends FactionMasterEntity {
     
-    public $gravity = 0;
-    public $height = 0.01;
-    public $width = 0.01;
-
     private $tick = 200;
 
-    const NETWORK_ID = EntityIds::NPC;
-
     public function getName(): string {
+        return self::getEntityName();
+    }
+
+    public static function getEntityName(): string {
         return "ScoreboardEntity";
     }
 
@@ -66,10 +61,6 @@ class ScoreboardEntity extends Entity {
         $this->setNameTagAlwaysVisible(true);
     }
 
-    public function tryChangeMovement(): void {}
-
-    public function onCollideWithPlayer(Player $player): void { }
-
     public function onUpdate(int $currentTick): bool {
         if ($this->tick == 200) {
             $id = $this->getId();
@@ -77,7 +68,7 @@ class ScoreboardEntity extends Entity {
             if ($level instanceof Level) {
                 $levelName = $level->getName();
                 Main::getInstance()->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
-                    Main::getTopQuery(),
+                    LeaderboardManager::$queryList["faction"],
                     [],
                     function (array $result) use ($levelName, $id) {
                         $nametag = Utils::getConfig("faction-scoreboard-header") . "\n";
@@ -94,7 +85,7 @@ class ScoreboardEntity extends Entity {
                     FactionEntity::class
                 ));        
             }
-            $coordinates = ConfigManager::getLeaderboardConfig()->get("position");
+            $coordinates = ConfigManager::getLeaderboardConfig()->get("faction-position");
             if ($coordinates !== false && $coordinates !== "") {
                 $coordinates = explode("|", $coordinates);
                 if (count($coordinates) == 4) {
@@ -119,11 +110,4 @@ class ScoreboardEntity extends Entity {
         }
         return parent::onUpdate($currentTick);
     }
-
-    public function attack(EntityDamageEvent $source): void {
-        $source->setBaseDamage(0);
-        $source->setCancelled(true);
-        return;
-    }
-
 }

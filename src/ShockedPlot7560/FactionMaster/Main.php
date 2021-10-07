@@ -73,13 +73,10 @@ class Main extends PluginBase implements Listener {
     private static $instance;
     /** @var array */
     private static $tableQuery;
-    /** @var string */
-    private static $topFactionQuery;
 
     public function onLoad(): void {
         $factionTable = FactionTable::TABLE_NAME;
 
-        self::$topFactionQuery = "SELECT * FROM $factionTable ORDER BY level DESC, xp DESC, power DESC LIMIT 10";
         self::$instance = $this;
 
         ConfigManager::init($this);
@@ -116,10 +113,9 @@ class Main extends PluginBase implements Listener {
 
             $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", Utils::getText("", "COMMAND_FACTION_DESCRIPTION"), ["f", "fac"]));
 
-            if (ConfigManager::getLeaderboardConfig()->get("enabled") === true 
-                    && ConfigManager::getLeaderboardConfig()->get("position") !== false 
-                    && ConfigManager::getLeaderboardConfig()->get("position") !== "") {
-                LeaderboardManager::placeScoreboard();
+            foreach (ConfigManager::getLeaderboardConfig()->get("leaderboards") as $leaderboard) {
+                if ($leaderboard["active"] == true)
+                    LeaderboardManager::placeScoreboard($leaderboard["slug"], $leaderboard["position"]);
             }
             
             ExtensionManager::load();
@@ -150,13 +146,5 @@ class Main extends PluginBase implements Listener {
 
     public static function getInstance(): self {
         return self::$instance;
-    }
-
-    public static function getTopQuery(): string {
-        return self::$topFactionQuery;
-    }
-
-    public static function setTopQuery(string $query): void {
-        self::$topFactionQuery = $query;
     }
 }
