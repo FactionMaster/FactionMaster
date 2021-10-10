@@ -38,7 +38,7 @@ use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 
 class LeaderboardTask extends Task {
 
-    public function onRun(int $currentTick): void {
+    public function onRun(): void {
         $scanSlug = [];
         $leaderboards = ConfigManager::getLeaderboardConfig()->get("leaderboards");
         if ($leaderboards === false) $leaderboards = [];

@@ -32,7 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
-use pocketmine\Player;
+use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 

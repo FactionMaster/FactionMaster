@@ -32,26 +32,26 @@
 
 namespace ShockedPlot7560\FactionMaster\Manager;
 
-use pocketmine\Player;
+use pocketmine\command\CommandSender;
 
 class MapManager {
 
     private static $players = [];
 
-    public static function add(Player $player): void {
+    public static function add(CommandSender $player): void {
         self::$players[$player->getName()] = $player;
     }
 
-    public static function remove(Player $player): void {
+    public static function remove(CommandSender $player): void {
         unset(self::$players[$player->getName()]);
     }
 
-    public static function isRegister(Player $player): bool {
+    public static function isRegister(CommandSender $player): bool {
         return isset(self::$players[$player->getName()]);
     }
 
     /**
-     * @return Player[]
+     * @return CommandSender[]
      */
     public static function getAll(): array{
         return self::$players;

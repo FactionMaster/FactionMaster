@@ -33,7 +33,7 @@
 namespace ShockedPlot7560\FactionMaster\Event;
 
 use pocketmine\level\format\Chunk;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Reward\RewardInterface;
 

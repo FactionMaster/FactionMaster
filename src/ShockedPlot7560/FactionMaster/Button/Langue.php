@@ -32,7 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
-use pocketmine\Player;
+use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Button;
 use ShockedPlot7560\FactionMaster\Event\PlayerChangeLanguageEvent;

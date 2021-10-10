@@ -32,6 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Task;
 
+use pocketmine\scheduler\CancelTaskException;
 use pocketmine\scheduler\Task;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -51,14 +52,14 @@ class MenuSendTask extends Task {
         $this->timeOut = (int) Utils::getConfig("timeout-task");
     }
 
-    public function onRun(int $currentTick): void {
+    public function onRun(): void {
         $result = call_user_func($this->condition);
         if ($result === true && $this->tick < $this->timeOut) {
             call_user_func($this->onSuccess);
-            Main::getInstance()->getScheduler()->cancelTask($this->getTaskId());
+            throw new CancelTaskException();
         } elseif ($this->tick >= $this->timeOut) {
             call_user_func($this->onTimeOut);
-            Main::getInstance()->getScheduler()->cancelTask($this->getTaskId());
+            throw new CancelTaskException();
         }
         $this->tick++;
     }

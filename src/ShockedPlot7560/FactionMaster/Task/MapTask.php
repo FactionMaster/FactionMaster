@@ -38,7 +38,7 @@ use ShockedPlot7560\FactionMaster\Manager\MapManager;
 
 class MapTask extends Task {
 
-    public function onRun(int $currentTick): void {
+    public function onRun(): void {
         foreach (MapManager::getAll() as $player) {
             Main::getInstance()->getServer()->dispatchCommand($player, "f map");
         }

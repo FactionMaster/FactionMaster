@@ -33,7 +33,7 @@
 namespace ShockedPlot7560\FactionMaster\Event;
 
 use pocketmine\math\Vector3;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
 class FactionHomeCreateEvent extends FactionEvent implements Forcable {

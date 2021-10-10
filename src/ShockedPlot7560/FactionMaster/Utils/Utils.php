@@ -33,7 +33,7 @@
 namespace ShockedPlot7560\FactionMaster\Utils;
 
 use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\scheduler\TaskHandler;
 use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\API\MainAPI;

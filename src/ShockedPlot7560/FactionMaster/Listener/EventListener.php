@@ -53,7 +53,7 @@ use pocketmine\item\ItemIds;
 use pocketmine\item\Shovel;
 use pocketmine\level\format\Chunk;
 use pocketmine\math\Vector3;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;

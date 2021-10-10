@@ -36,7 +36,7 @@ use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\math\Vector3;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Event\FactionHomeTpEvent;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;

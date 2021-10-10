@@ -32,14 +32,15 @@
 
 namespace ShockedPlot7560\FactionMaster\Entity;
 
-use pocketmine\level\Level;
-use pocketmine\level\Position;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\world\Position;
+use pocketmine\world\World;
 
 class ScoreboardEntity extends FactionMasterEntity {
     
@@ -53,8 +54,8 @@ class ScoreboardEntity extends FactionMasterEntity {
         return "ScoreboardEntity";
     }
 
-    public function initEntity(): void {
-        parent::initEntity();
+    public function initEntity(?CompoundTag $nbt = null): void {
+        parent::initEntity($nbt === null ? new CompoundTag() : $nbt);
         $this->setImmobile(true);
         $this->setScale(0.0000001);
         $this->setHealth(1000);
@@ -64,9 +65,9 @@ class ScoreboardEntity extends FactionMasterEntity {
     public function onUpdate(int $currentTick): bool {
         if ($this->tick == 200) {
             $id = $this->getId();
-            $level = $this->getLevel();
-            if ($level instanceof Level) {
-                $levelName = $level->getName();
+            $level = $this->getWorld();
+            if ($level instanceof World) {
+                $levelName = $level->getDisplayName();
                 Main::getInstance()->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
                     LeaderboardManager::$queryList["faction"],
                     [],
@@ -77,7 +78,7 @@ class ScoreboardEntity extends FactionMasterEntity {
                             $newLine = str_replace(["{factionName}", "{level}", "{power}"], [$faction->getName(), $faction->getLevel(), $faction->getPower()], $newLine);
                             $nametag .= $newLine . "\n";
                         }
-                        $entity = Main::getInstance()->getServer()->getLevelByName($levelName)->getEntity($id);
+                        $entity = Main::getInstance()->getServer()->getWorldManager()->getWorldByName($levelName)->getEntity($id);
                         if ($entity !== null) {
                             $entity->setNameTag($nametag);
                         }
@@ -90,8 +91,8 @@ class ScoreboardEntity extends FactionMasterEntity {
                 $coordinates = explode("|", $coordinates);
                 if (count($coordinates) == 4) {
                     $levelName = $coordinates[3];
-                    $level = Main::getInstance()->getServer()->getLevelByName($levelName);
-                    if ($level instanceof Level) {
+                    $level = Main::getInstance()->getServer()->getWorldManager()->getWorldByName($levelName);
+                    if ($level instanceof World) {
                         $position = new Position((float)$coordinates[0], (float)$coordinates[1], (float)$coordinates[2], $level);
                         if ($this->getPosition() !== $position) {
                             $level->loadChunk((float)$coordinates[0] >> 4, (float)$coordinates[2] >> 4);

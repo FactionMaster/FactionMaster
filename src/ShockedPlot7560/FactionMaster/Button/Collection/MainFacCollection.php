@@ -32,7 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Button\Collection;
 
-use pocketmine\Player;
+use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\ChangeLanguage;
 use ShockedPlot7560\FactionMaster\Button\FactionsTop;
 use ShockedPlot7560\FactionMaster\Button\LeaveDelete;

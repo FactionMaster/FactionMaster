@@ -99,7 +99,7 @@ class DatabaseTask extends AsyncTask {
         
     }
 
-    public function onCompletion(Server $server): void {
+    public function onCompletion(): void {
         call_user_func($this->callable, $this->getResult());
     }
 }

@@ -31,12 +31,19 @@
  */
 namespace ShockedPlot7560\FactionMaster\Manager;
 
+use Closure;
+use pocketmine\data\bedrock\EntityLegacyIds;
 use pocketmine\entity\Entity;
+use pocketmine\entity\EntityDataHelper;
+use pocketmine\entity\EntityFactory;
+use pocketmine\entity\Location;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
+use pocketmine\world\World;
 use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
 use ShockedPlot7560\FactionMaster\Entity\FactionMasterEntity;
 use ShockedPlot7560\FactionMaster\Entity\ScoreboardEntity;
+use pocketmine\nbt\tag\CompoundTag;
 use ShockedPlot7560\FactionMaster\Main;
 
 class LeaderboardManager {
@@ -58,18 +65,19 @@ class LeaderboardManager {
 
     public static function placeScoreboard(string $slug, string $coordinates): void {
         if (isset(self::$queryList[$slug])) {
-            Entity::registerEntity(self::$entityClass[$slug], true);
+            EntityFactory::getInstance()->register(self::$entityClass[$slug], function(World $world, CompoundTag $nbt) use ($slug) {
+                return new self::$entityClass[$slug](EntityDataHelper::parseLocation($nbt, $world), $nbt);
+            }, [self::$entityClass[$slug]::getEntityName()], EntityLegacyIds::NPC);
             if ($coordinates !== false && $coordinates !== "") {
                 $coordinates = explode("|", $coordinates);
                 if (count($coordinates) == 4) {
                     $levelName = $coordinates[3];
-                    $level = self::$main->getServer()->getLevelByName($levelName);
-                    if ($level instanceof Level) {
+                    $level = self::$main->getServer()->getWorldManager()->getWorldByName($levelName);
+                    if ($level instanceof World) {
                         $level->loadChunk((float)$coordinates[0] >> 4, (float)$coordinates[2] >> 4);
-                        $nbt = Entity::createBaseNBT(new Position((float)$coordinates[0], (float)$coordinates[1], (float)$coordinates[2], $level));
-                        $scoreboard = Entity::createEntity(self::$entityClass[$slug]::getEntityName(), $level, $nbt);
-                        $scoreboard->spawnToAll();
-                        self::$scoreboardEntity = [$scoreboard->getId(), $level->getName()];
+                        /** @var Entity */
+                        $entity = new self::$entityClass[$slug](new Location($coordinates[0], $coordinates[1], $coordinates[2], 0.0, 0.0, $level));
+                        $entity->spawnToAll();
                     } else {
                         self::$main->getLogger()->notice("An unknow world was set in leaderboard.yml, can't load faction leaderboard");
                     }            
@@ -80,7 +88,7 @@ class LeaderboardManager {
 
     public static function closeLeaderboard(?string $slug = null): void {
         if ($slug === null) {
-            foreach (Main::getInstance()->getServer()->getLevels() as $level) {
+            foreach (Main::getInstance()->getServer()->getWorldManager()->getWorlds() as $level) {
                 foreach ($level->getEntities() as $entity) {
                     if ($entity instanceof FactionMasterEntity) {
                         $entity->close();
@@ -88,7 +96,7 @@ class LeaderboardManager {
                 }
             }
         } else {
-            foreach (Main::getInstance()->getServer()->getLevels() as $level) {
+            foreach (Main::getInstance()->getServer()->getWorldManager()->getWorlds() as $level) {
                 foreach ($level->getEntities() as $entity) {
                     if ($entity instanceof self::$entityClass[$slug]) {
                         $entity->close();

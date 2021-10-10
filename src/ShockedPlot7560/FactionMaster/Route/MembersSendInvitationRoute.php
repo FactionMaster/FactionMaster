@@ -33,7 +33,7 @@
 namespace ShockedPlot7560\FactionMaster\Route;
 
 use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\CustomForm;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\Server;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;

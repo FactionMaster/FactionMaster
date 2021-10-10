@@ -32,7 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Button\Collection;
 
-use pocketmine\Player;
+use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\Langue;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;

@@ -32,7 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Event;
 
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 trait PlayerEvent {
 

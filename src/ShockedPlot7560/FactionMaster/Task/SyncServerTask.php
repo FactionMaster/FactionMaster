@@ -45,7 +45,7 @@ class SyncServerTask extends Task {
         $this->main = $main;
     }
 
-    public function onRun(int $currentTick): void {
+    public function onRun(): void {
         foreach (SyncServerManager::getAll() as $task) {
             $this->main->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
                 $task[0],

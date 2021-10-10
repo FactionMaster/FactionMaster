@@ -33,7 +33,7 @@
 namespace ShockedPlot7560\FactionMaster\Event;
 
 use pocketmine\event\Event;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 class PlayerChangeLanguageEvent extends Event {
 

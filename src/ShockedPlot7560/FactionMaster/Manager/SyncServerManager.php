@@ -34,7 +34,7 @@ namespace ShockedPlot7560\FactionMaster\Manager;
 
 use Ifera\ScoreHud\event\PlayerTagUpdateEvent;
 use Ifera\ScoreHud\scoreboard\ScoreTag;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
@@ -75,8 +75,8 @@ class SyncServerManager {
                         if (Main::getInstance()->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
                             $server = Main::getInstance()->getServer();
                             foreach ($faction->getMembers() as $name => $rank) {
-                                $player = $server->getPlayer($name);
-                                if ($player instanceof Player) {
+                                $player = $server->getPlayerExact($name);
+                                if ($player instanceof PlayerPlayer) {
                                     $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                                         Ids::HUD_FACTIONMASTER_FACTION_NAME,
                                         $faction->getName()
@@ -163,7 +163,7 @@ class SyncServerManager {
                     if ($user instanceof UserEntity) {
                         MainAPI::$users[$user->getName()] = $user;
                         if (Main::getInstance()->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
-                            $player = Main::getInstance()->getServer()->getPlayer($user->getName());
+                            $player = Main::getInstance()->getServer()->getPlayerExact($user->getName());
                             if ($player instanceof Player) {
                                 if ($user->getRank() !== null && $user->getFactionName() !== null) {
                                     switch ($user->rank) {
