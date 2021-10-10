@@ -60,7 +60,7 @@ class CommandManager {
     private static $commands = [];
 
     public static function init(): void {
-        self::registerCommand(new FactionCreateCommand("create", Utils::getText("", "COMMAND_CREATE_DESCRIPTION")));
+        /*self::registerCommand(new FactionCreateCommand("create", Utils::getText("", "COMMAND_CREATE_DESCRIPTION")));
         self::registerCommand(new FactionTopCommand("top", Utils::getText("", "COMMAND_TOP_DESCRIPTION")));
         self::registerCommand(new FactionManageCommand("manage", Utils::getText("", "COMMAND_MANAGE_DESCRIPTION")));
         self::registerCommand(new ClaimCommand("claim", Utils::getText("", "COMMAND_CLAIM_DESCRIPTION")));
@@ -78,7 +78,7 @@ class CommandManager {
         self::registerCommand(new AddFlagCommand("addflag", Utils::getText("", "COMMAND_ADD_FLAG")));
         self::registerCommand(new RemoveFlagCommand("removeflag", Utils::getText("", "COMMAND_REMOVE_FLAG")));
         self::registerCommand(new SynchroCommand("synchro", Utils::getText("", "COMMAND_SYNCHRO")));
-        self::registerCommand(new SettingsCommand("settings", "Give all the FactionMaster settings"));
+        self::registerCommand(new SettingsCommand("settings", "Give all the FactionMaster settings"));*/
     }
 
     public static function registerCommand(BaseSubCommand $command): void {
