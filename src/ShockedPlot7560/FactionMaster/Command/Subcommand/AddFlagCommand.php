@@ -54,12 +54,12 @@ class AddFlagCommand extends BaseSubCommand {
         if ($sender instanceof Player) {
             if (count($args) > 0) {
                 if ($sender->hasPermission("factionmaster.flag.add")) {
-                    $player = $sender->getPlayer();
-                    $chunk = $player->getLevel()->getChunkAtPosition($player);
-                    $x = $chunk->getX();
-                    $z = $chunk->getZ();
-                    $world = $player->getLevel()->getName();
-                    if (MainAPI::getFactionClaim($world, $x, $z) !== null) {
+                    $player = $sender;
+                    $chunkX = floor($player->getPosition()->getFloorX()/16);
+                    $chunkZ = floor($player->getPosition()->getFloorZ()/16);
+                    $chunk = $player->getWorld()->getChunk($chunkX, $chunkZ);
+                    $world = $player->getWorld()->getDisplayName();
+                    if (MainAPI::getFactionClaim($world, $chunkX, $chunkZ) !== null) {
                         $sender->sendMessage(Utils::getText($sender->getName(), "ALREADY_CLAIM"));
                         return;
                     }
@@ -76,10 +76,10 @@ class AddFlagCommand extends BaseSubCommand {
                             $sender->sendMessage(Utils::getText($sender->getName(), "FLAG_ADD_COMMAND"));
                             return;
                     }
-                    MainAPI::addClaim($sender->getPlayer(), $args["areaName"], $flag);
+                    MainAPI::addClaim($sender, $args["areaName"], $flag);
                     Utils::newMenuSendTask(new MenuSendTask(
-                        function () use ($world, $x, $z) {
-                            return MainAPI::getFactionClaim($world, $x, $z) instanceof ClaimEntity;
+                        function () use ($world, $chunkX, $chunkZ) {
+                            return MainAPI::getFactionClaim($world, $chunkX, $chunkZ) instanceof ClaimEntity;
                         },
                         function () use ($sender) {
                             $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_ADD_FLAG"));

@@ -32,9 +32,9 @@
 
 namespace ShockedPlot7560\FactionMaster\Database\Entity;
 
-use pocketmine\level\Level;
-use pocketmine\level\Position;
 use pocketmine\math\Vector3;
+use pocketmine\world\Position;
+use pocketmine\world\World;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -114,9 +114,9 @@ class HomeEntity extends EntityDatabase {
         return $this->world;
     }
 
-    public function getLevel(): ?Level {
+    public function getLevel(): ?World {
         if (!$this->isActive()) return null;
-        return Main::getInstance()->getServer()->getLevelByName($this->getLevelName());
+        return Main::getInstance()->getServer()->getWorldManager()->getWorldByName($this->getLevelName());
     }
 
     public function toString(): string {

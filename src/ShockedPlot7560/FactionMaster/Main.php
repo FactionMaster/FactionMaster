@@ -107,11 +107,11 @@ class Main extends PluginBase implements Listener {
                 $this->getServer()->getPluginManager()->registerEvents(new ScoreHudListener($this), $this);
             }
 
-            /*if (!PacketHooker::isRegistered()) {
+            if (!PacketHooker::isRegistered()) {
                 PacketHooker::register($this);
-            }*/
+            }
 
-            //$this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", Utils::getText("", "COMMAND_FACTION_DESCRIPTION"), ["f", "fac"]));
+            $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", Utils::getText("", "COMMAND_FACTION_DESCRIPTION"), ["f", "fac"]));
 
             $leaderboards = ConfigManager::getLeaderboardConfig()->get("leaderboards");
             if ($leaderboards === false) $leaderboards = [];

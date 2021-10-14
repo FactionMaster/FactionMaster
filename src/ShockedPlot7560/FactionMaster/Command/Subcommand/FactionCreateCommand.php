@@ -51,7 +51,7 @@ class FactionCreateCommand extends BaseSubCommand {
 
         $userEntity = MainAPI::getUser($sender->getName());
         if ($userEntity->getFactionName() === null) {
-            Utils::processMenu(RouterFactory::get(CreateFactionRoute::SLUG), $sender->getPlayer());
+            Utils::processMenu(RouterFactory::get(CreateFactionRoute::SLUG), $sender);
         } else {
             $sender->sendMessage(Utils::getText($sender->getName(), "ALREADY_IN_FACTION"));
         }

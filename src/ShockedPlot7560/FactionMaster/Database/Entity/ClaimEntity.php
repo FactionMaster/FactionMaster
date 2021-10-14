@@ -32,9 +32,9 @@
 
 namespace ShockedPlot7560\FactionMaster\Database\Entity;
 
-use pocketmine\level\Level;
 use pocketmine\math\Vector2;
 use pocketmine\math\Vector3;
+use pocketmine\world\World;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -135,9 +135,9 @@ class ClaimEntity extends EntityDatabase {
         return $this->world;
     }
 
-    public function getLevel(): ?Level {
+    public function getLevel(): ?World {
         if (!$this->isActive()) return null;
-        return Main::getInstance()->getServer()->getLevelByName($this->getLevelName());
+        return Main::getInstance()->getServer()->getWorldManager()->getWorldByName($this->getLevelName());
     }
 
     public function getFlag(): ?int {

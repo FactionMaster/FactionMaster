@@ -51,7 +51,7 @@ class FactionManageCommand extends BaseSubCommand {
 
         $userEntity = MainAPI::getUser($sender->getName());
         if ($userEntity->getFactionName() !== null) {
-            Utils::processMenu(RouterFactory::get(FactionOptionRoute::SLUG), $sender->getPlayer());
+            Utils::processMenu(RouterFactory::get(FactionOptionRoute::SLUG), $sender);
         } else {
             $sender->sendMessage(Utils::getText($sender->getName(), "NEED_FACTION"));
         }

@@ -792,10 +792,10 @@ class MainAPI {
     }
 
     public static function addClaim(Player $player, string $factionName, ?int $flag = null): void {
-        $chunk = $player->getLevel()->getChunkAtPosition($player);
-        $x = $chunk->getX();
-        $z = $chunk->getZ();
-        $world = $player->getLevel()->getName();
+        $z = floor($player->getPosition()->getFloorX()/16);
+        $x = floor($player->getPosition()->getFloorZ()/16);
+        $chunk = $player->getWorld()->getChunk($x, $z);
+        $world = $player->getWorld()->getDisplayName();
         self::submitDatabaseTask(
             new DatabaseTask(
                 "INSERT INTO " . ClaimTable::TABLE_NAME . " (x, z, world, faction, server, flags) VALUES (:x, :z, :world, :faction, :server, :flag)",
@@ -845,10 +845,10 @@ class MainAPI {
     }
 
     public static function removeClaim(Player $player, string $factionName): void {
-        $chunk = $player->getLevel()->getChunkAtPosition($player);
-        $x = $chunk->getX();
-        $z = $chunk->getZ();
-        $world = $player->getLevel()->getName();
+        $z = floor($player->getPosition()->getFloorX()/16);
+        $x = floor($player->getPosition()->getFloorZ()/16);
+        $chunk = $player->getWorld()->getChunk($x, $z);
+        $world = $player->getWorld()->getDisplayName();
         $claim = self::getFactionClaim($world, $x, $z);
         if (!$claim instanceof ClaimEntity) {
             return;
@@ -916,10 +916,10 @@ class MainAPI {
             new DatabaseTask(
                 "INSERT INTO " . HomeTable::TABLE_NAME . " (x, y, z, world, faction, name, server) VALUES (:x, :y, :z, :world, :faction, :name, :server)",
                 [
-                    "x" => floor($player->getX()),
-                    "z" => floor($player->getZ()),
-                    "y" => floor($player->getY()),
-                    "world" => $player->getLevel()->getName(),
+                    "x" => floor($player->getPosition()->getX()),
+                    "z" => floor($player->getPosition()->getZ()),
+                    "y" => floor($player->getPosition()->getY()),
+                    "world" => $player->getWorld()->getDisplayName(),
                     "faction" => $factionName,
                     "name" => $name,
                     "server" => self::$main->getServer()->getIp()
@@ -929,10 +929,10 @@ class MainAPI {
                         new DatabaseTask(
                             "SELECT * FROM " . HomeTable::TABLE_NAME . " WHERE x = :x AND z = :z AND y = :y AND world = :world AND faction = :faction AND name = :name",
                             [
-                                "x" => floor($player->getX()),
-                                "z" => floor($player->getZ()),
-                                "y" => floor($player->getY()),
-                                "world" => $player->getLevel()->getName(),
+                                "x" => floor($player->getPosition()->getX()),
+                                "z" => floor($player->getPosition()->getZ()),
+                                "y" => floor($player->getPosition()->getY()),
+                                "world" => $player->getWorld()->getDisplayName(),
                                 "faction" => $factionName,
                                 "name" => $name,
                             ],

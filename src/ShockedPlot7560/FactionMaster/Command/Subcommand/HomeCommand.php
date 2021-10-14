@@ -53,7 +53,7 @@ class HomeCommand extends BaseSubCommand {
         $permissions = MainAPI::getMemberPermission($sender->getName());
         $userEntity = MainAPI::getUser($sender->getName());
         if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_TP_FACTION_HOME)) {
-            Utils::processMenu(RouterFactory::get(HomesViewRoute::SLUG), $sender->getPlayer());
+            Utils::processMenu(RouterFactory::get(HomesViewRoute::SLUG), $sender);
         } else {
             $sender->sendMessage(Utils::getText($sender->getName(), "DONT_PERMISSION"));
         }

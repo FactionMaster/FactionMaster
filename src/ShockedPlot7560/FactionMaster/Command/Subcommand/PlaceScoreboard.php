@@ -59,7 +59,7 @@ class PlaceScoreboard extends BaseSubCommand {
                     $position->getX(),
                     $position->getY(),
                     $position->getZ(),
-                    $position->getLevel()->getName()
+                    $position->getWorld()->getDisplayName()
                 ]);
                 LeaderboardManager::closeLeaderboard($args["slug"]);
                 LeaderboardManager::placeScoreboard($args["slug"], $coord);

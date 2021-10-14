@@ -53,7 +53,7 @@ class FactionCommand extends BaseCommand {
             return;
         }
         if (count($args) == 0) {
-            Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $sender->getPlayer());
+            Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $sender);
             return;
         }
     }

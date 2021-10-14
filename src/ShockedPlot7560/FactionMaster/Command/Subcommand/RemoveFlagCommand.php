@@ -49,17 +49,17 @@ class RemoveFlagCommand extends BaseSubCommand {
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
         if ($sender instanceof Player) {
             if ($sender->hasPermission("factionmaster.flag.remove")) {
-                $player = $sender->getPlayer();
-                $chunk = $player->getLevel()->getChunkAtPosition($player);
-                $x = $chunk->getX();
-                $z = $chunk->getZ();
-                $world = $player->getLevel()->getName();
+                $player = $sender;
+                $z = floor($player->getPosition()->getFloorX()/16);
+                $x = floor($player->getPosition()->getFloorZ()/16);
+                $chunk = $player->getWorld()->getChunk($x, $z);
+                $world = $player->getWorld()->getDisplayName();
                 $factionClaim = MainAPI::getFactionClaim($world, $x, $z);
                 if ($factionClaim === null) {
                     $sender->sendMessage(Utils::getText($sender->getName(), "NOT_CLAIMED"));
                     return;
                 } elseif ($factionClaim->getFlag() !== null) {
-                    MainAPI::removeClaim($sender->getPlayer(), $factionClaim->getFactionName());
+                    MainAPI::removeClaim($sender, $factionClaim->getFactionName());
                     Utils::newMenuSendTask(new MenuSendTask(
                         function () use ($world, $x, $z) {
                             return !MainAPI::getFactionClaim($world, $x, $z) instanceof ClaimEntity;

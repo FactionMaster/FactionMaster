@@ -35,6 +35,7 @@ namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
+use pocketmine\world\format\Chunk;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Event\FactionClaimEvent;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
@@ -60,11 +61,12 @@ class ClaimCommand extends BaseSubCommand {
             return;
         }
         if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_ADD_CLAIM)) {
-            $player = $sender->getPlayer();
-            $chunk = $player->getLevel()->getChunkAtPosition($player);
-            $x = $chunk->getX();
-            $z = $chunk->getZ();
-            $world = $player->getLevel()->getName();
+            $player = $sender;
+            $x = floor($player->getPosition()->getFloorX()/16);
+            $z = floor($player->getPosition()->getFloorZ()/16);
+            $chunk = $player->getWorld()->getChunk($x, $z);
+            if (!$chunk instanceof Chunk) return;
+            $world = $player->getWorld()->getDisplayName();
 
             $factionClaim = MainAPI::getFactionClaim($world, $x, $z);
             if ($factionClaim === null) {
@@ -88,7 +90,7 @@ class ClaimCommand extends BaseSubCommand {
                             break;
                     }
                     if (($result = $itemCost->executeCost($factionPlayer->getName())) === true) {
-                        MainAPI::addClaim($sender->getPlayer(), $userEntity->getFactionName());
+                        MainAPI::addClaim($sender, $userEntity->getFactionName());
                         Utils::newMenuSendTask(new MenuSendTask(
                             function () use ($world, $x, $z) {
                                 return MainAPI::isClaim($world, $x, $z);

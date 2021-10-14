@@ -57,11 +57,11 @@ class FactionHomeCreateEvent extends FactionEvent implements Forcable {
     }
 
     public function getVector(): Vector3 {
-        return new Vector3($this->getPlayer()->getX(), $this->getPlayer()->getY(), $this->getPlayer()->getZ());
+        return new Vector3($this->getPlayer()->getPosition()->getX(), $this->getPlayer()->getPosition()->getY(), $this->getPlayer()->getPosition()->getZ());
     }
 
     public function getWorldName(): string {
-        return $this->getPlayer()->getLevel()->getName();
+        return $this->getPlayer()->getWorld()->getDisplayName();
     }
 
 }

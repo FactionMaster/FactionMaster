@@ -32,6 +32,9 @@
 
 namespace ShockedPlot7560\FactionMaster\Utils;
 
+use Exception;
+use pocketmine\command\CommandSender;
+use pocketmine\console\ConsoleCommandSender;
 use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\player\Player;
 use pocketmine\scheduler\TaskHandler;
@@ -55,7 +58,10 @@ class Utils {
         return $form;
     }
 
-    public static function processMenu(Route $route, Player $player, ?array $params = null): void {
+    public static function processMenu(Route $route, Player|CommandSender $player, ?array $params = null): void {
+        if ($player instanceof CommandSender && !$player instanceof Player) {
+            @throw new Exception("player given must be of type Player", 1);
+        }
         $userEntity = MainAPI::getUser($player->getName());
         $userPermissions = MainAPI::getMemberPermission($player->getName());
         if ($userPermissions === null) {

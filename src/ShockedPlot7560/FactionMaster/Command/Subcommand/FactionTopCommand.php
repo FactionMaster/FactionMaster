@@ -56,7 +56,7 @@ class FactionTopCommand extends BaseSubCommand {
             LeaderboardManager::$queryList["faction"],
             [],
             function (array $result) use ($sender) {
-                Utils::processMenu(RouterFactory::get(TopFactionRoute::SLUG), $sender->getPlayer(), [$result]);
+                Utils::processMenu(RouterFactory::get(TopFactionRoute::SLUG), $sender, [$result]);
             },
             FactionEntity::class
         ));

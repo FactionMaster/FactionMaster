@@ -32,8 +32,8 @@
 
 namespace ShockedPlot7560\FactionMaster\Event;
 
-use pocketmine\level\format\Chunk;
 use pocketmine\player\Player;
+use pocketmine\world\format\Chunk;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
 class FactionUnclaimEvent extends FactionEvent implements Forcable {

@@ -51,11 +51,11 @@ class UnclaimCommand extends BaseSubCommand {
             return;
         }
 
-        $player = $sender->getPlayer();
-        $chunk = $player->getLevel()->getChunkAtPosition($player);
-        $x = $chunk->getX();
-        $z = $chunk->getZ();
-        $world = $player->getLevel()->getName();
+        $player = $sender;
+        $z = floor($player->getPosition()->getFloorX()/16);
+        $x = floor($player->getPosition()->getFloorZ()/16);
+        $chunk = $player->getWorld()->getChunk($x, $z);
+        $world = $player->getWorld()->getDisplayName();
         $factionClaim = MainAPI::getFactionClaim($world, $x, $z);
         $userEntity = MainAPI::getUser($sender->getName());
         if ($factionClaim === null) {
@@ -64,7 +64,7 @@ class UnclaimCommand extends BaseSubCommand {
         } elseif ($factionClaim->getFactionName() === $userEntity->getFactionName()) {
             $permissions = MainAPI::getMemberPermission($sender->getName());
             if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_REMOVE_CLAIM)) {
-                MainAPI::removeClaim($sender->getPlayer(), $userEntity->getFactionName());
+                MainAPI::removeClaim($sender, $userEntity->getFactionName());
                 Utils::newMenuSendTask(new MenuSendTask(
                     function () use ($world, $x, $z) {
                         return !MainAPI::getFactionClaim($world, $x, $z) instanceof ClaimEntity;

@@ -72,27 +72,29 @@ class MapCommand extends BaseSubCommand {
         }
 
         if (isset($args["statement"]) && $args["statement"] === "off") {
-            MapManager::remove($sender->getPlayer());
+            MapManager::remove($sender);
         } else {
-            if (isset($args["statement"]) && $args["statement"] === "on" && !MapManager::isRegister($sender->getPlayer())) {
-                MapManager::add($sender->getPlayer());
+            if (isset($args["statement"]) && $args["statement"] === "on" && !MapManager::isRegister($sender)) {
+                MapManager::add($sender);
             }
             $config = ConfigManager::getConfig();
 
-            $player = $sender->getPlayer();
+            $player = $sender;
             $userEntity = MainAPI::getUser($player->getName());
             if (!$userEntity instanceof UserEntity) {
                 return;
             }
 
-            $centralChunk = $player->getLevel()->getChunkAtPosition($player);
+            $centralChunkX = floor($player->getPosition()->getFloorX()/16);
+            $centralChunkZ = floor($player->getPosition()->getFloorZ()/16);
+            $centralChunk = $player->getWorld()->getChunk($centralChunkX, $centralChunkZ);
             $symbolData = $config->get("available-symbol");
             $symbolCursor = 0;
             $claimData = [];
 
-            $x = round($player->getX());
-            $z = round($player->getZ());
-            $chunkFaction = MainAPI::getFactionClaim($player->getLevel()->getName(), $centralChunk->getX(), $centralChunk->getZ());
+            $x = round($player->getPosition()->getX());
+            $z = round($player->getPosition()->getZ());
+            $chunkFaction = MainAPI::getFactionClaim($player->getWorld()->getDisplayName(), $centralChunkX, $centralChunkZ);
             $factionLabelColor = '§f';
             if ($chunkFaction instanceof ClaimEntity && $chunkFaction->getFlag() === null) {
                 if ($chunkFaction instanceof ClaimEntity && $chunkFaction->getFactionName() === $userEntity->getFactionName()) {
@@ -125,14 +127,14 @@ class MapCommand extends BaseSubCommand {
             for ($mZ = 0; $mZ < $config->get("map-height"); $mZ++) {
                 $lign = "";
                 for ($mX = 0; $mX < $config->get("map-width"); $mX++) {
-                    $x = $centralChunk->getX() + $mX - ($config->get("map-width") / 2);
-                    $z = $centralChunk->getZ() + $mZ - ($config->get("map-height") / 2);
+                    $x = $centralChunkX + $mX - ($config->get("map-width") / 2);
+                    $z = $centralChunkZ + $mZ - ($config->get("map-height") / 2);
 
-                    if ($centralChunk->getX() == $x && $centralChunk->getZ() == $z) {
+                    if ($centralChunkX == $x && $centralChunkZ == $z) {
                         $lign .= $config->get("player-color") . $config->get("player-symbol");
                         continue;
                     } else {
-                        $faction = MainAPI::getFactionClaim($player->getLevel()->getName(), $x, $z);
+                        $faction = MainAPI::getFactionClaim($player->getWorld()->getDisplayName(), $x, $z);
                         if ($faction instanceof ClaimEntity) {
                             $data = [
                                 "COLOR" => "§f",
@@ -200,7 +202,7 @@ class MapCommand extends BaseSubCommand {
                     }
                 }
                 if ($mZ <= 2) {
-                    $degrees = ($player->getYaw() - 157) % 360;
+                    $degrees = ($player->getLocation()->getYaw() - 157) % 360;
                     if ($degrees < 0) {
                         $degrees += 360;
                     }

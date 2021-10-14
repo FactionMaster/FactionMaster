@@ -85,8 +85,8 @@ class EventListener implements Listener {
     public function onBreak(BlockBreakEvent $event): void {
         $block = $event->getBlock();
         $level = $block->getPosition()->getWorld();
-        $chunkX = $block->getPosition()->getFloorX()/16;
-        $chunkZ = $block->getPosition()->getFloorZ()/16;
+        $chunkX = floor($block->getPosition()->getFloorX()/16);
+        $chunkZ = floor($block->getPosition()->getFloorZ()/16);
         $chunk = $level->getChunk($chunkX, $chunkZ);
 
         if (($factionClaim = MainAPI::getFactionClaim($level->getDisplayName(), $chunkX, $chunkZ)) !== null) {
@@ -119,8 +119,8 @@ class EventListener implements Listener {
     public function onPlace(BlockPlaceEvent $event): void {
         $block = $event->getBlock();
         $level = $block->getPosition()->getWorld();
-        $chunkX = $block->getPosition()->getFloorX()/16;
-        $chunkZ = $block->getPosition()->getFloorZ()/16;
+        $chunkX = floor($block->getPosition()->getFloorX()/16);
+        $chunkZ = floor($block->getPosition()->getFloorZ()/16);
 
         if (($factionClaim = MainAPI::getFactionClaim($level->getDisplayName(), $chunkX, $chunkZ)) !== null) {
             $factionPlayer = MainAPI::getFactionOfPlayer($event->getPlayer()->getName());
@@ -225,8 +225,8 @@ class EventListener implements Listener {
         $item = $event->getItem();
         $player = $event->getPlayer();
         $level = $player->getWorld();
-        $chunkX = $block->getPosition()->getFloorX()/16;
-        $chunkZ = $block->getPosition()->getFloorZ()/16;
+        $chunkX = floor($block->getPosition()->getFloorX()/16);
+        $chunkZ = floor($block->getPosition()->getFloorZ()/16);
         $chunk = $level->getChunk($chunkX, $chunkZ);
 
         if (!$chunk instanceof Chunk) {

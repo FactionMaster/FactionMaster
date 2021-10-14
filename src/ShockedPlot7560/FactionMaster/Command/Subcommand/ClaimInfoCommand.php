@@ -49,11 +49,11 @@ class ClaimInfoCommand extends BaseSubCommand {
             return;
         }
 
-        $player = $sender->getPlayer();
-        $chunk = $player->getLevel()->getChunkAtPosition($player);
-        $x = $chunk->getX();
-        $z = $chunk->getZ();
-        $world = $player->getLevel()->getName();
+        $player = $sender;
+        $x = floor($player->getPosition()->getFloorX()/16);
+        $z = floor($player->getPosition()->getFloorZ()/16);
+        $chunk = $player->getWorld()->getChunk($x, $z);
+        $world = $player->getWorld()->getDisplayName();
 
         $factionClaim = MainAPI::getFactionClaim($world, $x, $z);
         if ($factionClaim !== null) {
