@@ -76,7 +76,7 @@ class SyncServerManager {
                             $server = Main::getInstance()->getServer();
                             foreach ($faction->getMembers() as $name => $rank) {
                                 $player = $server->getPlayerExact($name);
-                                if ($player instanceof PlayerPlayer) {
+                                if ($player instanceof Player) {
                                     $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
                                         Ids::HUD_FACTIONMASTER_FACTION_NAME,
                                         $faction->getName()

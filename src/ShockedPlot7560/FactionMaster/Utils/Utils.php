@@ -75,6 +75,7 @@ class Utils {
                     }
                 }
             }
+            var_dump($good);
             if ($good) {
                 $ev = new MenuOpenEvent($player, $route);
                 $ev->call();

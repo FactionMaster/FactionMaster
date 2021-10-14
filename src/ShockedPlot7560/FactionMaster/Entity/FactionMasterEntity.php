@@ -34,7 +34,6 @@ namespace ShockedPlot7560\FactionMaster\Entity;
 
 use pocketmine\data\bedrock\EntityLegacyIds;
 use pocketmine\entity\Entity;
-use pocketmine\entity\EntityIds;
 use pocketmine\entity\EntitySizeInfo;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\player\Player;
