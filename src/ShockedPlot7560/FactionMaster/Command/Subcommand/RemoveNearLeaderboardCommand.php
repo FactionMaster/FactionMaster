@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,70 +34,71 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\world\Position;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function array_keys;
+use function explode;
+use function floor;
+use function join;
 
 class RemoveNearLeaderboardCommand extends BaseSubCommand {
+	protected function prepare(): void {
+		$this->setPermission("factionmaster.leaderboard.place");
+	}
 
-    protected function prepare(): void {
-        $this->setPermission("factionmaster.leaderboard.place");
-    }
-
-    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-        if ($sender instanceof Player) {
-            if ($sender->hasPermission("factionmaster.leaderboard.remove")) {
-                /** @var Position|null $prec */
-                $prec = null;
-                foreach (array_keys(LeaderboardManager::getAllSession()) as $coordonate) {
-                    $coordonate = explode("|", $coordonate);
-                    if ($sender->getWorld()->getDisplayName() === $coordonate[3]) {
-                        $level = Main::getInstance()->getServer()->getWorldManager()->getWorldByName($coordonate[3]);
-                        $coordonate = new Position((int) $coordonate[0], (int) $coordonate[1], (int) $coordonate[2], $level);
-                        $playerVector = new Vector3(
-                            $sender->getPosition()->getX(),
-                            $sender->getPosition()->getY(),
-                            $sender->getPosition()->getZ()
-                        );
-                        $distance = $coordonate->distance($playerVector);
-                        if ($prec == null || $prec->distance($playerVector) > $distance) {
-                            $prec = $coordonate;
-                        }
-                    }
-                }
-                if ($prec == null) {
-                    $sender->sendMessage(Utils::getText("", "COMMAND_SCOREBOARD_NO_NEAREST"));
-                    return;
-                }
-                $coordonate = join("|", [
-                    $prec->getX(),
-                    $prec->getY(),
-                    $prec->getZ(),
-                    $prec->getWorld()->getDisplayName()
-                ]);
-                $leaderboards = ConfigManager::getLeaderboardConfig()->get("leaderboards");
-                foreach ($leaderboards as $index => $data) {
-                    $pos = explode("|", $data["position"]);
-                    if (floor((int)$pos[0]) == $prec->getFloorX() && floor((int)$pos[1]) == $prec->getFloorY() && floor((int)$pos[2]) == $prec->getFloorZ() && $pos[3] == $prec->getWorld()->getDisplayName()) {
-                        unset($leaderboards[$index]);
-                    }
-                }
-                $config = ConfigManager::getLeaderboardConfig();
-                $config->set("leaderboards", $leaderboards);
-                $config->save();
-                LeaderboardManager::dispawnLeaderboard($coordonate);
-                $sender->sendMessage(Utils::getText("", "COMMAND_SCOREBOARD_REMOVE_SUCCESS"));
-            }else{
-                $sender->sendMessage(Utils::getText("", "DONT_PERMISSION"));
-            }
-        }
-    }
-
+	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
+		if ($sender instanceof Player) {
+			if ($sender->hasPermission("factionmaster.leaderboard.remove")) {
+				/** @var Position|null $prec */
+				$prec = null;
+				foreach (array_keys(LeaderboardManager::getAllSession()) as $coordonate) {
+					$coordonate = explode("|", $coordonate);
+					if ($sender->getWorld()->getDisplayName() === $coordonate[3]) {
+						$level = Main::getInstance()->getServer()->getWorldManager()->getWorldByName($coordonate[3]);
+						$coordonate = new Position((int) $coordonate[0], (int) $coordonate[1], (int) $coordonate[2], $level);
+						$playerVector = new Vector3(
+							$sender->getPosition()->getX(),
+							$sender->getPosition()->getY(),
+							$sender->getPosition()->getZ()
+						);
+						$distance = $coordonate->distance($playerVector);
+						if ($prec == null || $prec->distance($playerVector) > $distance) {
+							$prec = $coordonate;
+						}
+					}
+				}
+				if ($prec == null) {
+					$sender->sendMessage(Utils::getText("", "COMMAND_SCOREBOARD_NO_NEAREST"));
+					return;
+				}
+				$coordonate = join("|", [
+					$prec->getX(),
+					$prec->getY(),
+					$prec->getZ(),
+					$prec->getWorld()->getDisplayName()
+				]);
+				$leaderboards = ConfigManager::getLeaderboardConfig()->get("leaderboards");
+				foreach ($leaderboards as $index => $data) {
+					$pos = explode("|", $data["position"]);
+					if (floor((int) $pos[0]) == $prec->getFloorX() && floor((int) $pos[1]) == $prec->getFloorY() && floor((int) $pos[2]) == $prec->getFloorZ() && $pos[3] == $prec->getWorld()->getDisplayName()) {
+						unset($leaderboards[$index]);
+					}
+				}
+				$config = ConfigManager::getLeaderboardConfig();
+				$config->set("leaderboards", $leaderboards);
+				$config->save();
+				LeaderboardManager::dispawnLeaderboard($coordonate);
+				$sender->sendMessage(Utils::getText("", "COMMAND_SCOREBOARD_REMOVE_SUCCESS"));
+			} else {
+				$sender->sendMessage(Utils::getText("", "DONT_PERMISSION"));
+			}
+		}
+	}
 }

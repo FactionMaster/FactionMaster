@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -35,9 +37,7 @@ namespace ShockedPlot7560\FactionMaster\Event;
 use pocketmine\player\Player;
 
 trait PlayerEvent {
-
-    public function getPlayer(): Player {
-        return $this->player;
-    }
-    
+	public function getPlayer(): Player {
+		return $this->player;
+	}
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -36,45 +38,43 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Ally;
 use ShockedPlot7560\FactionMaster\Button\Back;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\InvitationPending;
 use ShockedPlot7560\FactionMaster\Button\RequestPending;
 use ShockedPlot7560\FactionMaster\Button\SendInvitation;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\AllianceRequestReceiveRoute;
 use ShockedPlot7560\FactionMaster\Route\AllianceInvitationSendRoute;
 use ShockedPlot7560\FactionMaster\Route\AllianceOptionRoute;
+use ShockedPlot7560\FactionMaster\Route\AllianceRequestReceiveRoute;
 use ShockedPlot7560\FactionMaster\Route\AllianceSendInvitationRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class AllianceOptionCollection extends Collection {
+	const SLUG = "allianceOptionCollection";
 
-    const SLUG = "allianceOptionCollection";
-
-    public function __construct() {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, FactionEntity $faction) {
-            foreach ($faction->getAlly() as $name) {
-                $this->register(new Ally(MainAPI::getFaction($name)));
-            }
-            $this->register(new SendInvitation(
-                AllianceSendInvitationRoute::SLUG,
-                [PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION]
-            ));
-            $this->register(new InvitationPending(
-                AllianceInvitationSendRoute::SLUG,
-                [PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION]
-            ));
-            $this->register(new RequestPending(
-                AllianceRequestReceiveRoute::SLUG,
-                [
-                    PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
-                    PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
-                ]
-            ));
-            $this->register(new Back(RouterFactory::get(AllianceOptionRoute::SLUG)->getBackRoute()));
-        });
-    }
+	public function __construct() {
+		parent::__construct(self::SLUG);
+		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, FactionEntity $faction) {
+			foreach ($faction->getAlly() as $name) {
+				$this->register(new Ally(MainAPI::getFaction($name)));
+			}
+			$this->register(new SendInvitation(
+				AllianceSendInvitationRoute::SLUG,
+				[PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION]
+			));
+			$this->register(new InvitationPending(
+				AllianceInvitationSendRoute::SLUG,
+				[PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION]
+			));
+			$this->register(new RequestPending(
+				AllianceRequestReceiveRoute::SLUG,
+				[
+					PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
+					PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
+				]
+			));
+			$this->register(new Back(RouterFactory::get(AllianceOptionRoute::SLUG)->getBackRoute()));
+		});
+	}
 }

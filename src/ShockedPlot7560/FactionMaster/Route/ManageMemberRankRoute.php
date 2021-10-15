@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -33,74 +35,72 @@
 namespace ShockedPlot7560\FactionMaster\Route;
 
 use InvalidArgumentException;
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\CustomForm;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\MemberChangeRankEvent;
+use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\CustomForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageMemberRankRoute extends VictimBase implements Route {
+	const SLUG = "manageMemberRankRoute";
 
-    const SLUG = "manageMemberRankRoute";
+	/** @var array */
+	private $sliderData;
 
-    /** @var array */
-    private $sliderData;
+	public function getSlug(): string {
+		return self::SLUG;
+	}
 
-    public function getSlug(): string {
-        return self::SLUG;
-    }
+	public function getPermissions(): array {
+		return [
+			PermissionIds::PERMISSION_CHANGE_MEMBER_RANK
+		];
+	}
 
-    public function getPermissions(): array {
-        return [
-            PermissionIds::PERMISSION_CHANGE_MEMBER_RANK
-        ];
-    }
+	public function getBackRoute(): ?Route {
+		return RouterFactory::get(ManageMemberRoute::SLUG);
+	}
 
-    public function getBackRoute(): ?Route {
-        return RouterFactory::get(ManageMemberRoute::SLUG);
-    }
+	private function getSliderData(): array {
+		return $this->sliderData;
+	}
 
-    private function getSliderData(): array {
-        return $this->sliderData;
-    }
+	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+		$this->init($player, $userEntity, $userPermissions, $params);
+		if (!isset($params[0])) {
+			throw new InvalidArgumentException("Need the target player instance");
+		}
 
-    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
-        $this->init($player, $userEntity, $userPermissions, $params);
-        if (!isset($params[0])) {
-            throw new InvalidArgumentException("Need the target player instance");
-        }
+		$this->setVictim($params[0]);
+		$this->sliderData = [
+			Ids::RECRUIT_ID => Utils::getText($this->getVictim()->getName(), "RECRUIT_RANK_NAME"),
+			Ids::MEMBER_ID => Utils::getText($this->getVictim()->getName(), "MEMBER_RANK_NAME"),
+			Ids::COOWNER_ID => Utils::getText($this->getVictim()->getName(), "COOWNER_RANK_NAME"),
+		];
+		$player->sendForm($this->getForm());
+	}
 
-        $this->setVictim($params[0]);
-        $this->sliderData = [
-            Ids::RECRUIT_ID => Utils::getText($this->getVictim()->getName(), "RECRUIT_RANK_NAME"),
-            Ids::MEMBER_ID => Utils::getText($this->getVictim()->getName(), "MEMBER_RANK_NAME"),
-            Ids::COOWNER_ID => Utils::getText($this->getVictim()->getName(), "COOWNER_RANK_NAME"),
-        ];
-        $player->sendForm($this->getForm());
-    }
+	public function call(): callable {
+		return function (Player $player, $data) {
+			if ($data === null) {
+				return;
+			}
 
-    public function call(): callable {
-        return function (Player $player, $data) {
-            if ($data === null) {
-                return;
-            }
+			MainAPI::changeRank($this->getVictim()->getName(), $data[0]);
+			$oldRank = $this->getVictim()->getRank();
+			$this->getVictim()->setRank($data[0]);
+			(new MemberChangeRankEvent($this->getFaction(), $this->getVictim(), $oldRank))->call();
+			Utils::processMenu($this->getBackRoute(), $player, [$this->getVictim()]);
+		};
+	}
 
-            MainAPI::changeRank($this->getVictim()->getName(), $data[0]);
-            $oldRank = $this->getVictim()->getRank();
-            $this->getVictim()->setRank($data[0]);
-            (new MemberChangeRankEvent($this->getFaction(), $this->getVictim(), $oldRank))->call();
-            Utils::processMenu($this->getBackRoute(), $player, [$this->getVictim()]);
-        };
-    }
-
-    protected function getForm(): CustomForm {
-        $menu = new CustomForm($this->call());
-        $menu->addStepSlider(Utils::getText($this->getUserEntity()->getName(), "MEMBER_CHANGE_RANK_PANEL_STEP"), $this->getSliderData(), $this->getVictim()->getRank());
-        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MEMBER_CHANGE_RANK_PANEL_TITLE", ['playerName' => $this->getVictim()->getName()]));
-        return $menu;
-    }
+	protected function getForm(): CustomForm {
+		$menu = new CustomForm($this->call());
+		$menu->addStepSlider(Utils::getText($this->getUserEntity()->getName(), "MEMBER_CHANGE_RANK_PANEL_STEP"), $this->getSliderData(), $this->getVictim()->getRank());
+		$menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MEMBER_CHANGE_RANK_PANEL_TITLE", ['playerName' => $this->getVictim()->getName()]));
+		return $menu;
+	}
 }

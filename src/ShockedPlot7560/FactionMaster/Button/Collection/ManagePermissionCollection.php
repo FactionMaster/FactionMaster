@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -41,25 +43,24 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 
 class ManagePermissionCollection extends Collection {
+	const SLUG = "managePermissionCollection";
 
-    const SLUG = "managePermissionCollection";
+	public function __construct() {
+		parent::__construct(self::SLUG);
+		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
+			if ($user->getRank() > Ids::RECRUIT_ID) {
+				$this->register(new ChangePermission("RECRUIT_RANK_NAME", Ids::RECRUIT_ID));
+			}
 
-    public function __construct() {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
-            if ($user->getRank() > Ids::RECRUIT_ID) {
-                $this->register(new ChangePermission("RECRUIT_RANK_NAME", Ids::RECRUIT_ID));
-            }
+			if ($user->getRank() > Ids::MEMBER_ID) {
+				$this->register(new ChangePermission("MEMBER_RANK_NAME", Ids::MEMBER_ID));
+			}
 
-            if ($user->getRank() > Ids::MEMBER_ID) {
-                $this->register(new ChangePermission("MEMBER_RANK_NAME", Ids::MEMBER_ID));
-            }
+			if ($user->getRank() > Ids::COOWNER_ID) {
+				$this->register(new ChangePermission("COOWNER_RANK_NAME", Ids::COOWNER_ID));
+			}
 
-            if ($user->getRank() > Ids::COOWNER_ID) {
-                $this->register(new ChangePermission("COOWNER_RANK_NAME", Ids::COOWNER_ID));
-            }
-
-            $this->register(new Back(RouterFactory::get(ManagePermissionRoute::SLUG)->getBackRoute()));
-        });
-    }
+			$this->register(new Back(RouterFactory::get(ManagePermissionRoute::SLUG)->getBackRoute()));
+		});
+	}
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -33,11 +35,9 @@
 namespace ShockedPlot7560\FactionMaster\Reward;
 
 interface RewardType {
-
-    const ALLY_LIMIT = "allyLimit";
-    const CLAIM_LIMIT = "claimLimit";
-    const HOME_LIMIT = "homeLimit";
-    const MEMBER_LIMIT = "memberLimit";
-    const POWER = "power";
-
+	const ALLY_LIMIT = "allyLimit";
+	const CLAIM_LIMIT = "claimLimit";
+	const HOME_LIMIT = "homeLimit";
+	const MEMBER_LIMIT = "memberLimit";
+	const POWER = "power";
 }

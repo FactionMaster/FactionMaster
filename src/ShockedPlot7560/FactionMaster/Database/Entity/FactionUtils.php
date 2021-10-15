@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -35,18 +37,18 @@ namespace ShockedPlot7560\FactionMaster\Database\Entity;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 
 trait FactionUtils {
+	public function getFactionName(): ?string {
+		return $this->faction;
+	}
 
-    public function getFactionName(): ?string {
-        return $this->faction;
-    }
+	public function setFactionName(?string $factionName): void {
+		$this->faction = $factionName;
+	}
 
-    public function setFactionName(?string $factionName): void {
-        $this->faction = $factionName;
-    }
-
-    public function getFactionEntity(): ?FactionEntity {
-        if ($this->getFactionName() === "" || $this->getFactionName() === null) return null;
-        return MainAPI::getFaction($this->getFactionName());
-    }
-
+	public function getFactionEntity(): ?FactionEntity {
+		if ($this->getFactionName() === "" || $this->getFactionName() === null) {
+			return null;
+		}
+		return MainAPI::getFaction($this->getFactionName());
+	}
 }

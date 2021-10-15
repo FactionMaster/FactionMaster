@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -43,19 +45,18 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 
 class ManageMemberCollection extends Collection {
+	const SLUG = "manageMemberCollection";
 
-    const SLUG = "manageMemberCollection";
+	public function __construct() {
+		parent::__construct(self::SLUG);
+		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, UserEntity $member) {
+			$this->register(new ChangeRank($member));
+			$this->register(new KickOut($member));
+			if ($user->getRank() == Ids::OWNER_ID) {
+				$this->register(new TransferProperty($member));
+			}
 
-    public function __construct() {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, UserEntity $member) {
-            $this->register(new ChangeRank($member));
-            $this->register(new KickOut($member));
-            if ($user->getRank() == Ids::OWNER_ID) {
-                $this->register(new TransferProperty($member));
-            }
-
-            $this->register(new Back(RouterFactory::get(ManageMemberRoute::SLUG)->getBackRoute()));
-        });
-    }
+			$this->register(new Back(RouterFactory::get(ManageMemberRoute::SLUG)->getBackRoute()));
+		});
+	}
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,70 +34,67 @@
 
 namespace ShockedPlot7560\FactionMaster\Route;
 
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\FactionOptionCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class FactionOptionRoute extends RouteBase implements Route {
+	const SLUG = "factionOptionRoute";
 
-    const SLUG = "factionOptionRoute";
+	public function getSlug(): string {
+		return self::SLUG;
+	}
 
-    public function getSlug(): string {
-        return self::SLUG;
-    }
+	public function getPermissions(): array {
+		return [
+			PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION,
+			PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION,
+			PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
+			PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
+			PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS,
+			PermissionIds::PERMISSION_LEVEL_UP,
+			PermissionIds::PERMISSION_CHANGE_FACTION_VISIBILITY,
+			PermissionIds::PERMISSION_CHANGE_FACTION_MESSAGE,
+			PermissionIds::PERMISSION_CHANGE_FACTION_DESCRIPTION
+		];
+	}
 
-    public function getPermissions(): array {
-        return [
-            PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION,
-            PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION,
-            PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
-            PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
-            PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS,
-            PermissionIds::PERMISSION_LEVEL_UP,
-            PermissionIds::PERMISSION_CHANGE_FACTION_VISIBILITY,
-            PermissionIds::PERMISSION_CHANGE_FACTION_MESSAGE,
-            PermissionIds::PERMISSION_CHANGE_FACTION_DESCRIPTION
-        ];
-    }
+	public function getBackRoute(): ?Route {
+		return RouterFactory::get(MainRoute::SLUG);
+	}
 
-    public function getBackRoute(): ?Route {
-        return RouterFactory::get(MainRoute::SLUG);
-    }
+	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+		$this->init($player, $userEntity, $userPermissions, $params);
+		$this->setCollection(CollectionFactory::get(FactionOptionCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity()));
 
-    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
-        $this->init($player, $userEntity, $userPermissions, $params);
-        $this->setCollection(CollectionFactory::get(FactionOptionCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity()));
+		$message = "";
+		if (isset($params[0])) {
+			$message = $params[0];
+		}
 
-        $message = "";
-        if (isset($params[0])) {
-            $message = $params[0];
-        }
+		$player->sendForm($this->getForm($message));
+	}
 
-        $player->sendForm($this->getForm($message));
-    }
+	public function call(): callable {
+		return function (Player $player, $data) {
+			if ($data === null) {
+				return;
+			}
+			$this->getCollection()->process($data, $player);
+		};
+	}
 
-    public function call(): callable
-    {
-        return function (Player $player, $data) {
-            if ($data === null) {
-                return;
-            }
-            $this->getCollection()->process($data, $player);
-        };
-    }
-
-    protected function getForm(string $message = ""): SimpleForm {
-        $menu = new SimpleForm($this->call());
-        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
-        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MANAGE_FACTION_MAIN_TITLE"));
-        if ($message !== "") {
-            $menu->setContent($message);
-        }
-        return $menu;
-    }
-
+	protected function getForm(string $message = ""): SimpleForm {
+		$menu = new SimpleForm($this->call());
+		$menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+		$menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MANAGE_FACTION_MAIN_TITLE"));
+		if ($message !== "") {
+			$menu->setContent($message);
+		}
+		return $menu;
+	}
 }

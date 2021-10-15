@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -35,21 +37,19 @@ namespace ShockedPlot7560\FactionMaster\Button\Collection;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\BreakAlly;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Route\ManageAllianceRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class ManageAllianceCollection extends Collection {
+	const SLUG = "manageAllianceCollection";
 
-    const SLUG = "manageAllianceCollection";
-
-    public function __construct() {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, FactionEntity $ally) {
-            $this->register(new BreakAlly($ally));
-            $this->register(new Back(RouterFactory::get(ManageAllianceRoute::SLUG)->getBackRoute()));
-        });
-    }
+	public function __construct() {
+		parent::__construct(self::SLUG);
+		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, FactionEntity $ally) {
+			$this->register(new BreakAlly($ally));
+			$this->register(new Back(RouterFactory::get(ManageAllianceRoute::SLUG)->getBackRoute()));
+		});
+	}
 }

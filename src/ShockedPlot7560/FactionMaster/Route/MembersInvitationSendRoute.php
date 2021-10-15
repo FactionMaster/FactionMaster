@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,77 +34,76 @@
 
 namespace ShockedPlot7560\FactionMaster\Route;
 
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\MembersInvitationSendCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function count;
 
 class MembersInvitationSendRoute extends RouteBase implements Route {
+	const SLUG = "membersInvitationSendRoute";
 
-    const SLUG = "membersInvitationSendRoute";
+	/** @var InvitationEntity[] */
+	private $invitations;
 
-    /** @var InvitationEntity[] */
-    private $invitations;
+	public function getSlug(): string {
+		return self::SLUG;
+	}
 
-    public function getSlug(): string {
-        return self::SLUG;
-    }
+	public function getPermissions(): array {
+		return [
+			PermissionIds::PERMISSION_DELETE_PENDING_MEMBER_INVITATION
+		];
+	}
 
-    public function getPermissions(): array {
-        return [
-            PermissionIds::PERMISSION_DELETE_PENDING_MEMBER_INVITATION
-        ];
-    }
+	public function getBackRoute(): ?Route {
+		return RouterFactory::get(MembersOptionRoute::SLUG);
+	}
 
-    public function getBackRoute(): ?Route {
-        return RouterFactory::get(MembersOptionRoute::SLUG);
-    }
+	/** @return InvitationEntity[] */
+	protected function getInvitations(): array {
+		return $this->invitations;
+	}
 
-    /** @return InvitationEntity[] */
-    protected function getInvitations(): array {
-        return $this->invitations;
-    }
+	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+		$this->init($player, $userEntity, $userPermissions, $params);
 
-    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
-        $this->init($player, $userEntity, $userPermissions, $params);
+		$this->invitations = MainAPI::getInvitationsBySender($this->getFaction()->getName(), InvitationEntity::MEMBER_INVITATION);
+		$this->setCollection(CollectionFactory::get(MembersInvitationSendCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getInvitations()));
 
-        $this->invitations = MainAPI::getInvitationsBySender($this->getFaction()->getName(), InvitationEntity::MEMBER_INVITATION);
-        $this->setCollection(CollectionFactory::get(MembersInvitationSendCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getInvitations()));
-        
-        $message = "";
-        if (isset($params[0])) {
-            $message = $params[0];
-        }
-        if (count($this->invitations) == 0) {
-            $message .= Utils::getText($this->getUserEntity()->getName(), "NO_PENDING_INVITATION");
-        }
+		$message = "";
+		if (isset($params[0])) {
+			$message = $params[0];
+		}
+		if (count($this->invitations) == 0) {
+			$message .= Utils::getText($this->getUserEntity()->getName(), "NO_PENDING_INVITATION");
+		}
 
-        $player->sendForm($this->getForm($message));
-    }
+		$player->sendForm($this->getForm($message));
+	}
 
-    public function call(): callable {
-        return function (Player $player, $data) {
-            if ($data === null) {
-                return;
-            }
-            $this->getCollection()->process($data, $player);
-            return;
-        };
-    }
+	public function call(): callable {
+		return function (Player $player, $data) {
+			if ($data === null) {
+				return;
+			}
+			$this->getCollection()->process($data, $player);
+			return;
+		};
+	}
 
-    protected function getForm(string $message = ""): SimpleForm {
-        $menu = new SimpleForm($this->call());
-        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
-        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MANAGE_MEMBERS_INVITATION_LIST_TITLE"));
-        if ($message !== "") {
-            $menu->setContent($message);
-        }
-        return $menu;
-    }
-
+	protected function getForm(string $message = ""): SimpleForm {
+		$menu = new SimpleForm($this->call());
+		$menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+		$menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MANAGE_MEMBERS_INVITATION_LIST_TITLE"));
+		if ($message !== "") {
+			$menu->setContent($message);
+		}
+		return $menu;
+	}
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -37,19 +39,17 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class InvitationPending extends Button {
+	const SLUG = "invitationPending";
 
-    const SLUG = "invitationPending";
-
-    public function __construct(string $panelSlug, array $permissions) {
-        $this->setSlug(self::SLUG)
-            ->setContent(function (string $player) {
-                return Utils::getText($player, "BUTTON_INVITATION_PENDING");
-            })
-            ->setCallable(function (Player $player) use ($panelSlug) {
-                Utils::processMenu(RouterFactory::get($panelSlug), $player);
-            })
-            ->setPermissions($permissions)
-            ->setImgPack("textures/img/invit_out");
-    }
-
+	public function __construct(string $panelSlug, array $permissions) {
+		$this->setSlug(self::SLUG)
+			->setContent(function (string $player) {
+				return Utils::getText($player, "BUTTON_INVITATION_PENDING");
+			})
+			->setCallable(function (Player $player) use ($panelSlug) {
+				Utils::processMenu(RouterFactory::get($panelSlug), $player);
+			})
+			->setPermissions($permissions)
+			->setImgPack("textures/img/invit_out");
+	}
 }

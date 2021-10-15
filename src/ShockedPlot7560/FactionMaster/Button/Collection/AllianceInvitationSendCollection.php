@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -34,7 +36,6 @@ namespace ShockedPlot7560\FactionMaster\Button\Collection;
 
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Back;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\InvitationListItem;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
@@ -43,20 +44,19 @@ use ShockedPlot7560\FactionMaster\Route\ManageAllianceInvitationRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class AllianceInvitationSendCollection extends Collection {
+	const SLUG = "allianceInvitationSendCollection";
 
-    const SLUG = "allianceInvitationSendCollection";
-
-    public function __construct() {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, array $invitations) {
-            foreach ($invitations as $invitation) {
-                $this->register(new InvitationListItem(
-                    $invitation,
-                    ManageAllianceInvitationRoute::SLUG,
-                    [PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION]
-                ));
-            }
-            $this->register(new Back(RouterFactory::get(AllianceInvitationSendRoute::SLUG)->getBackRoute()));
-        });
-    }
+	public function __construct() {
+		parent::__construct(self::SLUG);
+		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, array $invitations) {
+			foreach ($invitations as $invitation) {
+				$this->register(new InvitationListItem(
+					$invitation,
+					ManageAllianceInvitationRoute::SLUG,
+					[PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION]
+				));
+			}
+			$this->register(new Back(RouterFactory::get(AllianceInvitationSendRoute::SLUG)->getBackRoute()));
+		});
+	}
 }

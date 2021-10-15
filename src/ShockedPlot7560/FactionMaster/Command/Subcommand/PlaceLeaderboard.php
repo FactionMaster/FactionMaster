@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,53 +34,54 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use ShockedPlot7560\FactionMaster\Utils\Leaderboard;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function array_keys;
+use function implode;
+use function join;
 
 class PlaceLeaderboard extends BaseSubCommand {
+	protected function prepare(): void {
+		$this->setPermission("factionmaster.leaderboard.place");
+		$this->registerArgument(0, new RawStringArgument("slug"));
+	}
 
-    protected function prepare(): void {
-        $this->setPermission("factionmaster.leaderboard.place");
-        $this->registerArgument(0, new RawStringArgument("slug"));
-    }
-
-    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-        if ($sender instanceof Player) {
-            if ($sender->hasPermission("factionmaster.leaderboard.place")) {
-                if (!LeaderboardManager::isRegister($args["slug"])) {
-                    $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_SCOREBOARD_INVALID_SLUG", ["list" => implode(",", array_keys(LeaderboardManager::getAll()))]));
-                    return;
-                }
-                $position = $sender->getPosition();
-                $coord = join("|", [
-                    $position->getFloorX(),
-                    $position->getFloorY(),
-                    $position->getFloorZ(),
-                    $position->getWorld()->getDisplayName()
-                ]);
-                $entity = new Leaderboard($args["slug"], $coord);
-                LeaderboardManager::placeScoreboard($entity);
-                $config = ConfigManager::getLeaderboardConfig();
-                $leaderboards = $config->get('leaderboards');
-                $leaderboards[] = [
-                    "slug" => $args["slug"],
-                    "position" => $coord,
-                    "active" => true
-                ];
-                $config->set("leaderboards", $leaderboards);
-                $config->save();
-                $sender->sendMessage(Utils::getText("", "COMMAND_SCOREBOARD_SUCCESS"));
-                $sender->sendMessage("§5A new feature has been added, you can now put different rankings and put many leaderboards. If you have ideas for new leaderboards ranking, please open an issue on github.");
-            }else{
-                $sender->sendMessage(Utils::getText("", "DONT_PERMISSION"));
-            }
-        }
-    }
-
+	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
+		if ($sender instanceof Player) {
+			if ($sender->hasPermission("factionmaster.leaderboard.place")) {
+				if (!LeaderboardManager::isRegister($args["slug"])) {
+					$sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_SCOREBOARD_INVALID_SLUG", ["list" => implode(",", array_keys(LeaderboardManager::getAll()))]));
+					return;
+				}
+				$position = $sender->getPosition();
+				$coord = join("|", [
+					$position->getFloorX(),
+					$position->getFloorY(),
+					$position->getFloorZ(),
+					$position->getWorld()->getDisplayName()
+				]);
+				$entity = new Leaderboard($args["slug"], $coord);
+				LeaderboardManager::placeScoreboard($entity);
+				$config = ConfigManager::getLeaderboardConfig();
+				$leaderboards = $config->get('leaderboards');
+				$leaderboards[] = [
+					"slug" => $args["slug"],
+					"position" => $coord,
+					"active" => true
+				];
+				$config->set("leaderboards", $leaderboards);
+				$config->save();
+				$sender->sendMessage(Utils::getText("", "COMMAND_SCOREBOARD_SUCCESS"));
+				$sender->sendMessage("§5A new feature has been added, you can now put different rankings and put many leaderboards. If you have ideas for new leaderboards ranking, please open an issue on github.");
+			} else {
+				$sender->sendMessage(Utils::getText("", "DONT_PERMISSION"));
+			}
+		}
+	}
 }

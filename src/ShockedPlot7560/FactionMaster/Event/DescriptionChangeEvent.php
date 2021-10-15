@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -36,22 +38,21 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
 class DescriptionChangeEvent extends FactionEvent implements Forcable {
+	use PlayerEvent;
 
-    use PlayerEvent;
+	protected $player;
+	private $oldDescription;
 
-    protected $player;
-    private $oldDescription;
+	/**
+	 * @param string|FactionEntity $faction
+	 */
+	public function __construct(Player $player, $faction, string $oldDescription, $isForce = false) {
+		parent::__construct($faction, $isForce);
+		$this->player = $player;
+		$this->oldDescription = $oldDescription;
+	}
 
-    /**
-     * @param string|FactionEntity $faction
-     */
-    public function __construct(Player $player, $faction, string $oldDescription, $isForce = false) {
-        parent::__construct($faction, $isForce);
-        $this->player = $player;
-        $this->oldDescription = $oldDescription;
-    }
-
-    public function getOldDescription(): string {
-        return $this->oldDescription;
-    }
+	public function getOldDescription(): string {
+		return $this->oldDescription;
+	}
 }

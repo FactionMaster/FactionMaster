@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -36,16 +38,15 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
 class FactionCreateEvent extends FactionEvent implements Forcable {
+	use PlayerEvent;
 
-    use PlayerEvent;
-    
-    protected $player;
-    
-    /**
-     * @param string|FactionEntity $faction
-     */
-    public function __construct(Player $player, $faction, bool $isForce = false) {
-        parent::__construct($faction, $isForce);
-        $this->player = $player;
-    }
+	protected $player;
+
+	/**
+	 * @param string|FactionEntity $faction
+	 */
+	public function __construct(Player $player, $faction, bool $isForce = false) {
+		parent::__construct($faction, $isForce);
+		$this->player = $player;
+	}
 }

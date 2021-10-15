@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -34,15 +36,14 @@ namespace ShockedPlot7560\FactionMaster\Database\Entity;
 
 abstract class EntityDatabase {
 
-    /** 
-     * DO NOT USE THIS CONSTANT
-     * @see getId()
-     * @var int
-    */
-    public $id;
+	/**
+	 * DO NOT USE THIS CONSTANT
+	 * @see getId()
+	 * @var int
+	 */
+	public $id;
 
-    public function getId(): int {
-        return $this->id;
-    }
-
+	public function getId(): int {
+		return $this->id;
+	}
 }

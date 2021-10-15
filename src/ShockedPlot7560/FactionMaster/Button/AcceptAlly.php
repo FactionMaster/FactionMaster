@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,7 +34,6 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
@@ -46,72 +47,70 @@ use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class AcceptAlly extends Button {
+	const SLUG = "acceptAlly";
 
-    const SLUG = "acceptAlly";
+	public function __construct(InvitationEntity $request) {
+		$this->setSlug(self::SLUG)
+			->setContent(function (string $player) {
+				return Utils::getText($player, "BUTTON_ACCEPT_REQUEST");
+			})
+			->setCallable(function (Player $player) use ($request) {
+				Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
+					function (Player $player, $data) use ($request) {
+						if ($data === null) {
+							return;
+						}
 
-    public function __construct(InvitationEntity $request) {
-        $this->setSlug(self::SLUG)
-            ->setContent(function (string $player) {
-                return Utils::getText($player, "BUTTON_ACCEPT_REQUEST");
-            })
-            ->setCallable(function (Player $player) use ($request) {
-                Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
-                    function (Player $player, $data) use ($request) {
-                        if ($data === null) {
-                            return;
-                        }
-
-                        if ($data) {
-                            $factionPlayer = MainAPI::getFactionOfPlayer($player->getName());
-                            if (!$factionPlayer->haveMaxAlly()) {
-                                $factionRequest = MainAPI::getFaction($request->getSenderString());
-                                if ($factionRequest->haveMaxAlly()) {
-                                    $message = Utils::getText($player->getName(), "SUCCESS_ACCEPT_REQUEST", ['name' => $request->sender]);
-                                    MainAPI::setAlly($request->getReceiverString(), $request->getSenderString());
-                                    Utils::newMenuSendTask(new MenuSendTask(
-                                        function () use ($request) {
-                                            return MainAPI::isAlly($request->getReceiverString(), $request->getSenderString());
-                                        },
-                                        function () use ($request, $player, $message) {
-                                            (new AllianceCreateEvent($player, $request->getSenderString(), $request->getReceiverString()))->call();
-                                            MainAPI::removeInvitation($request->getSenderString(), $request->getReceiverString(), InvitationEntity::ALLIANCE_INVITATION);
-                                            Utils::newMenuSendTask(new MenuSendTask(
-                                                function () use ($request) {
-                                                    return !MainAPI::areInInvitation($request->getSenderString(), $request->getReceiverString(), InvitationEntity::ALLIANCE_INVITATION);
-                                                },
-                                                function () use ($request, $player, $message) {
-                                                    (new InvitationAcceptEvent($player, $request))->call();
-                                                    Utils::processMenu(RouterFactory::get(AllianceRequestReceiveRoute::SLUG), $player, [$message]);
-                                                },
-                                                function () use ($player) {
-                                                    Utils::processMenu(RouterFactory::get(AllianceRequestReceiveRoute::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
-                                                }
-                                            ));
-                                        },
-                                        function () use ($player) {
-                                            Utils::processMenu(RouterFactory::get(AllianceRequestReceiveRoute::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
-                                        }
-                                    ));
-
-                                } else {
-                                    $message = Utils::getText($player->getName(), "MAX_ALLY_REACH_OTHER");
-                                    Utils::processMenu(RouterFactory::get(AllianceRequestReceiveRoute::SLUG), $player, [$message]);
-                                }
-                            } else {
-                                $message = Utils::getText($player->getName(), "MAX_ALLY_REACH");
-                                Utils::processMenu(RouterFactory::get(AllianceRequestReceiveRoute::SLUG), $player, [$message]);
-                            }
-                        } else {
-                            Utils::processMenu(RouterFactory::get(AllianceRequestReceiveRoute::SLUG), $player, [$request]);
-                        }
-                    },
-                    Utils::getText($player->getName(), "CONFIRMATION_TITLE_ACCEPT_REQUEST"),
-                    Utils::getText($player->getName(), "CONFIRMATION_CONTENT_ACCEPT_REQUEST_ALLY"),
-                ]);
-            })
-            ->setPermissions([
-                PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND
-            ])
-            ->setImgPack("textures/img/true");
-    }
+						if ($data) {
+							$factionPlayer = MainAPI::getFactionOfPlayer($player->getName());
+							if (!$factionPlayer->haveMaxAlly()) {
+								$factionRequest = MainAPI::getFaction($request->getSenderString());
+								if ($factionRequest->haveMaxAlly()) {
+									$message = Utils::getText($player->getName(), "SUCCESS_ACCEPT_REQUEST", ['name' => $request->sender]);
+									MainAPI::setAlly($request->getReceiverString(), $request->getSenderString());
+									Utils::newMenuSendTask(new MenuSendTask(
+										function () use ($request) {
+											return MainAPI::isAlly($request->getReceiverString(), $request->getSenderString());
+										},
+										function () use ($request, $player, $message) {
+											(new AllianceCreateEvent($player, $request->getSenderString(), $request->getReceiverString()))->call();
+											MainAPI::removeInvitation($request->getSenderString(), $request->getReceiverString(), InvitationEntity::ALLIANCE_INVITATION);
+											Utils::newMenuSendTask(new MenuSendTask(
+												function () use ($request) {
+													return !MainAPI::areInInvitation($request->getSenderString(), $request->getReceiverString(), InvitationEntity::ALLIANCE_INVITATION);
+												},
+												function () use ($request, $player, $message) {
+													(new InvitationAcceptEvent($player, $request))->call();
+													Utils::processMenu(RouterFactory::get(AllianceRequestReceiveRoute::SLUG), $player, [$message]);
+												},
+												function () use ($player) {
+													Utils::processMenu(RouterFactory::get(AllianceRequestReceiveRoute::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+												}
+											));
+										},
+										function () use ($player) {
+											Utils::processMenu(RouterFactory::get(AllianceRequestReceiveRoute::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+										}
+									));
+								} else {
+									$message = Utils::getText($player->getName(), "MAX_ALLY_REACH_OTHER");
+									Utils::processMenu(RouterFactory::get(AllianceRequestReceiveRoute::SLUG), $player, [$message]);
+								}
+							} else {
+								$message = Utils::getText($player->getName(), "MAX_ALLY_REACH");
+								Utils::processMenu(RouterFactory::get(AllianceRequestReceiveRoute::SLUG), $player, [$message]);
+							}
+						} else {
+							Utils::processMenu(RouterFactory::get(AllianceRequestReceiveRoute::SLUG), $player, [$request]);
+						}
+					},
+					Utils::getText($player->getName(), "CONFIRMATION_TITLE_ACCEPT_REQUEST"),
+					Utils::getText($player->getName(), "CONFIRMATION_CONTENT_ACCEPT_REQUEST_ALLY"),
+				]);
+			})
+			->setPermissions([
+				PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND
+			])
+			->setImgPack("textures/img/true");
+	}
 }

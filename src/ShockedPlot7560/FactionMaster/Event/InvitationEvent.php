@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -35,15 +37,14 @@ namespace ShockedPlot7560\FactionMaster\Event;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 
 abstract class InvitationEvent extends FactionEvent {
+	protected $invitation;
 
-    protected $invitation;
+	public function __construct(InvitationEntity $invitation, ?bool $isForce = null) {
+		parent::__construct(" ", $isForce);
+		$this->invitation = $invitation;
+	}
 
-    public function __construct(InvitationEntity $invitation, ?bool $isForce = null) {
-        parent::__construct(" ", $isForce);
-        $this->invitation = $invitation;
-    }
-
-    public function getInvitation(): InvitationEntity {
-        return $this->invitation;
-    }
+	public function getInvitation(): InvitationEntity {
+		return $this->invitation;
+	}
 }

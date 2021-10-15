@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -36,8 +38,7 @@ use pocketmine\scheduler\Task;
 use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 
 class LeaderboardTask extends Task {
-
-    public function onRun(): void {
-        LeaderboardManager::updateLeaderboards();
-    }
+	public function onRun(): void {
+		LeaderboardManager::updateLeaderboards();
+	}
 }

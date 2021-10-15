@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -38,27 +40,27 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 
 interface Route {
 
-    /**
-     * Return the slug which will be use to call the action
-     * @return string The slug
-     */
-    public function getSlug(): string;
+	/**
+	 * Return the slug which will be use to call the action
+	 * @return string The slug
+	 */
+	public function getSlug(): string;
 
-    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null);
+	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null);
 
-    /**
-     * Function use in the __invoke function when the panel are called
-     * @return callable A function which can be used by the FormAPI method
-     */
-    public function call(): callable;
+	/**
+	 * Function use in the __invoke function when the panel are called
+	 * @return callable A function which can be used by the FormAPI method
+	 */
+	public function call(): callable;
 
-    public function getPermissions(): array;
+	public function getPermissions(): array;
 
-    public function getCollection(): ?Collection;
+	public function getCollection(): ?Collection;
 
-    public function getUserPermissions(): array;
+	public function getUserPermissions(): array;
 
-    public function getUserEntity(): UserEntity;
+	public function getUserEntity(): UserEntity;
 
-    public function getBackRoute(): ?Route;
+	public function getBackRoute(): ?Route;
 }

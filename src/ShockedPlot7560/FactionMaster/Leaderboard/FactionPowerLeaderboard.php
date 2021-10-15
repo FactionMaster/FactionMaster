@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -39,45 +41,44 @@ use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Utils\Leaderboard;
+use function str_replace;
 
 class FactionPowerLeaderboard extends EntityLeaderboard {
+	const SLUG = "factionPower";
 
-    const SLUG = "factionPower";
+	public function getSqlQuery(): string {
+		return "SELECT * FROM " . FactionTable::TABLE_NAME . " ORDER BY power DESC, level DESC, xp DESC, power DESC LIMIT 10";
+	}
 
-    public function getSqlQuery(): string {
-        return "SELECT * FROM " . FactionTable::TABLE_NAME . " ORDER BY power DESC, level DESC, xp DESC, power DESC LIMIT 10";
-    }
+	public function getSlug(): string {
+		return self::SLUG;
+	}
 
-    public function getSlug(): string {
-        return self::SLUG;
-    }
+	public function getConfig(): Config {
+		return ConfigManager::getConfig();
+	}
 
-    public function getConfig(): Config {
-        return ConfigManager::getConfig();
-    }
-
-    public function place(Leaderboard $leaderboard, ?array $players = null): void {
-        $this->main->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
-            $this->getSqlQuery(),
-            [],
-            function (array $result) use ($leaderboard, $players) {
-                /** @var FactionEntity[] $result */
-                $nametag = $leaderboard->getHeaderLign() . "\n";
-                foreach ($result as $faction) {
-                    $newLine = $leaderboard->getBodyLign();
-                    $newLine = str_replace(["{factionName}", "{level}", "{power}"], [$faction->getName(), $faction->getLevel(), $faction->getPower()], $newLine);
-                    $nametag .= $newLine . "\n";
-                }
-                $particule = new FloatingTextParticle($nametag);
-                LeaderboardManager::addSession($leaderboard->getRawCoordonate(), $particule);
-                $leaderboard->getWorld()->addParticle(
-                    $leaderboard->getVector3(),
-                    $particule,
-                    $players
-                );
-            },
-            FactionEntity::class
-        ));    
-    }
-
+	public function place(Leaderboard $leaderboard, ?array $players = null): void {
+		$this->main->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
+			$this->getSqlQuery(),
+			[],
+			function (array $result) use ($leaderboard, $players) {
+				/** @var FactionEntity[] $result */
+				$nametag = $leaderboard->getHeaderLign() . "\n";
+				foreach ($result as $faction) {
+					$newLine = $leaderboard->getBodyLign();
+					$newLine = str_replace(["{factionName}", "{level}", "{power}"], [$faction->getName(), $faction->getLevel(), $faction->getPower()], $newLine);
+					$nametag .= $newLine . "\n";
+				}
+				$particule = new FloatingTextParticle($nametag);
+				LeaderboardManager::addSession($leaderboard->getRawCoordonate(), $particule);
+				$leaderboard->getWorld()->addParticle(
+					$leaderboard->getVector3(),
+					$particule,
+					$players
+				);
+			},
+			FactionEntity::class
+		));
+	}
 }

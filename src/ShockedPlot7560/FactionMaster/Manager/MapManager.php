@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -35,25 +37,24 @@ namespace ShockedPlot7560\FactionMaster\Manager;
 use pocketmine\command\CommandSender;
 
 class MapManager {
+	private static $players = [];
 
-    private static $players = [];
+	public static function add(CommandSender $player): void {
+		self::$players[$player->getName()] = $player;
+	}
 
-    public static function add(CommandSender $player): void {
-        self::$players[$player->getName()] = $player;
-    }
+	public static function remove(CommandSender $player): void {
+		unset(self::$players[$player->getName()]);
+	}
 
-    public static function remove(CommandSender $player): void {
-        unset(self::$players[$player->getName()]);
-    }
+	public static function isRegister(CommandSender $player): bool {
+		return isset(self::$players[$player->getName()]);
+	}
 
-    public static function isRegister(CommandSender $player): bool {
-        return isset(self::$players[$player->getName()]);
-    }
-
-    /**
-     * @return CommandSender[]
-     */
-    public static function getAll(): array{
-        return self::$players;
-    }
+	/**
+	 * @return CommandSender[]
+	 */
+	public static function getAll(): array {
+		return self::$players;
+	}
 }

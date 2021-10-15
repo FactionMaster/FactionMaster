@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -44,20 +46,19 @@ use ShockedPlot7560\FactionMaster\Route\MembersRequestReceiveRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class ManageMemberRequestCollection extends Collection {
+	const SLUG = "manageMemberRequestCollection";
 
-    const SLUG = "manageMemberRequestCollection";
-
-    public function __construct() {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, InvitationEntity $request) {
-            $this->register(new AcceptMemberToFac($request));
-            $this->register(new DeleteRequest(
-                $request, 
-                MembersRequestReceiveRoute::SLUG, 
-                ManageMemberRequestRoute::SLUG, 
-                [PermissionIds::PERMISSION_REFUSE_MEMBER_DEMAND]
-            ));
-            $this->register(new Back(RouterFactory::get(ManageMemberRequestRoute::SLUG)->getBackRoute()));
-        });
-    }
+	public function __construct() {
+		parent::__construct(self::SLUG);
+		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, InvitationEntity $request) {
+			$this->register(new AcceptMemberToFac($request));
+			$this->register(new DeleteRequest(
+				$request,
+				MembersRequestReceiveRoute::SLUG,
+				ManageMemberRequestRoute::SLUG,
+				[PermissionIds::PERMISSION_REFUSE_MEMBER_DEMAND]
+			));
+			$this->register(new Back(RouterFactory::get(ManageMemberRequestRoute::SLUG)->getBackRoute()));
+		});
+	}
 }

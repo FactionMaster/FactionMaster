@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -37,18 +39,16 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeLanguage extends Button {
+	const SLUG = "cchangeLanguage";
 
-    const SLUG = "cchangeLanguage";
-
-    public function __construct() {
-        $this->setSlug(self::SLUG)
-            ->setContent(function ($player) {
-                return Utils::getText($player, "BUTTON_CHANGE_LANGUAGE");
-            })
-            ->setCallable(function ($player) {
-                Utils::processMenu(RouterFactory::get(ChangeLangueRoute::SLUG), $player);
-            })
-            ->setImgPack("textures/img/translate");
-    }
-
+	public function __construct() {
+		$this->setSlug(self::SLUG)
+			->setContent(function ($player) {
+				return Utils::getText($player, "BUTTON_CHANGE_LANGUAGE");
+			})
+			->setCallable(function ($player) {
+				Utils::processMenu(RouterFactory::get(ChangeLangueRoute::SLUG), $player);
+			})
+			->setImgPack("textures/img/translate");
+	}
 }

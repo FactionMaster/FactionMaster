@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,29 +34,29 @@
 
 namespace ShockedPlot7560\FactionMaster\Command;
 
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseCommand;
 use ShockedPlot7560\FactionMaster\Manager\CommandManager;
 use ShockedPlot7560\FactionMaster\Route\MainRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function count;
 
 class FactionCommand extends BaseCommand {
+	protected function prepare(): void {
+		foreach (CommandManager::getCommands() as $command) {
+			$this->registerSubCommand($command);
+		}
+	}
 
-    protected function prepare(): void {
-        foreach (CommandManager::getCommands() as $command) {
-            $this->registerSubCommand($command);
-        }
-    }
-
-    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-        if (!$sender instanceof Player) {
-            return;
-        }
-        if (count($args) == 0) {
-            Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $sender);
-            return;
-        }
-    }
+	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
+		if (!$sender instanceof Player) {
+			return;
+		}
+		if (count($args) == 0) {
+			Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $sender);
+			return;
+		}
+	}
 }

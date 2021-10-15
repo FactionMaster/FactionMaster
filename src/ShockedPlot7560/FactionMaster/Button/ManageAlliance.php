@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -39,24 +41,22 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageAlliance extends Button {
+	const SLUG = "manageAlliance";
 
-    const SLUG = "manageAlliance";
-
-    public function __construct() {
-        $this->setSlug(self::SLUG)
-            ->setContent(function ($player) {
-                return Utils::getText($player, "BUTTON_MANAGE_ALLIANCE");
-            })
-            ->setCallable(function (Player $player) {
-                Utils::processMenu(RouterFactory::get(AllianceOptionRoute::SLUG), $player);
-            })
-            ->setPermissions([
-                PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION,
-                PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION,
-                PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
-                PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
-            ])
-            ->setImgPack("textures/img/option_alliance");
-    }
-
+	public function __construct() {
+		$this->setSlug(self::SLUG)
+			->setContent(function ($player) {
+				return Utils::getText($player, "BUTTON_MANAGE_ALLIANCE");
+			})
+			->setCallable(function (Player $player) {
+				Utils::processMenu(RouterFactory::get(AllianceOptionRoute::SLUG), $player);
+			})
+			->setPermissions([
+				PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION,
+				PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION,
+				PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
+				PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
+			])
+			->setImgPack("textures/img/option_alliance");
+	}
 }

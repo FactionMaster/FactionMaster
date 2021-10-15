@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -38,23 +40,21 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ViewHomes extends Button {
+	const SLUG = "factionHome";
 
-    const SLUG = "factionHome";
-
-    public function __construct() {
-        $this->setSlug(self::SLUG)
-            ->setContent(function ($player) {
-                return Utils::getText($player, "BUTTON_VIEW_FACTION_HOME");
-            })
-            ->setCallable(function ($player) {
-                Utils::processMenu(RouterFactory::get(HomesViewRoute::SLUG), $player);
-            })
-            ->setPermissions([
-                PermissionIds::PERMISSION_TP_FACTION_HOME,
-                PermissionIds::PERMISSION_ADD_FACTION_HOME,
-                PermissionIds::PERMISSION_DELETE_FACTION_HOME
-            ])
-            ->setImgPack("textures/img/house");
-    }
-
+	public function __construct() {
+		$this->setSlug(self::SLUG)
+			->setContent(function ($player) {
+				return Utils::getText($player, "BUTTON_VIEW_FACTION_HOME");
+			})
+			->setCallable(function ($player) {
+				Utils::processMenu(RouterFactory::get(HomesViewRoute::SLUG), $player);
+			})
+			->setPermissions([
+				PermissionIds::PERMISSION_TP_FACTION_HOME,
+				PermissionIds::PERMISSION_ADD_FACTION_HOME,
+				PermissionIds::PERMISSION_DELETE_FACTION_HOME
+			])
+			->setImgPack("textures/img/house");
+	}
 }

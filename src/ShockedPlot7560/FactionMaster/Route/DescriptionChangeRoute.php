@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,85 +34,83 @@
 
 namespace ShockedPlot7560\FactionMaster\Route;
 
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\CustomForm;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\DescriptionChangeEvent;
+use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\CustomForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function is_string;
 
 class DescriptionChangeRoute extends RouteBase implements Route {
+	const SLUG = "descriptionChangeRoute";
 
-    const SLUG = "descriptionChangeRoute";
+	public function getSlug(): string {
+		return self::SLUG;
+	}
 
-    public function getSlug(): string {
-        return self::SLUG;
-    }
+	public function getPermissions(): array {
+		return [
+			PermissionIds::PERMISSION_CHANGE_FACTION_DESCRIPTION,
+		];
+	}
 
-    public function getPermissions(): array {
-        return [
-            PermissionIds::PERMISSION_CHANGE_FACTION_DESCRIPTION,
-        ];
-    }
+	public function getBackRoute(): ?Route {
+		return RouterFactory::get(FactionOptionRoute::SLUG);
+	}
 
-    public function getBackRoute(): ?Route {
-        return RouterFactory::get(FactionOptionRoute::SLUG);
-    }
+	/**
+	 * @param array|null $params Give to first item the message to print if wanted
+	 */
+	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+		$this->init($player, $userEntity, $userPermissions, $params);
 
-    /**
-     * @param Player $player
-     * @param array|null $params Give to first item the message to print if wanted
-     */
-    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
-        $this->init($player, $userEntity, $userPermissions, $params);
+		$message = "";
+		if (isset($params[0]) && is_string($params[0])) {
+			$message = $params[0];
+		}
 
-        $message = "";
-        if (isset($params[0]) && \is_string($params[0])) {
-            $message = $params[0];
-        }
+		$player->sendForm($this->getForm($message));
+	}
 
-        $player->sendForm($this->getForm($message));
-    }
+	public function call(): callable {
+		return function (Player $player, $data) {
+			if ($data === null) {
+				return;
+			}
 
-    public function call(): callable {
-        return function (Player $player, $data) {
-            if ($data === null) {
-                return;
-            }
+			if (isset($data[1]) && is_string($data[1])) {
+				$faction = $this->getFaction();
+				$description = $data[1];
+				MainAPI::changeDescription($faction->getName(), $description);
+				Utils::newMenuSendTask(new MenuSendTask(
+					function () use ($faction, $description) {
+						return MainAPI::getFaction($faction->getName())->getDescription() === $description;
+					},
+					function () use ($player, $faction, $description) {
+						$oldDescription = $faction->getDescription();
+						$faction->setDescription($description);
+						$event = new DescriptionChangeEvent($player, $faction, $oldDescription);
+						$event->call();
+						Utils::processMenu($this->getBackRoute(), $player, [Utils::getText($player->getName(), "SUCCESS_DESCRIPTION_UPDATE")]);
+					},
+					function () use ($player) {
+						Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+					}
+				));
+				return;
+			}
+			Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+		};
+	}
 
-            if (isset($data[1]) && \is_string($data[1])) {
-                $faction = $this->getFaction();
-                $description = $data[1];
-                MainAPI::changeDescription($faction->getName(), $description);
-                Utils::newMenuSendTask(new MenuSendTask(
-                    function () use ($faction, $description) {
-                        return MainAPI::getFaction($faction->getName())->getDescription() === $description;
-                    },
-                    function () use ($player, $faction, $description) {
-                        $oldDescription = $faction->getDescription();
-                        $faction->setDescription($description);
-                        $event = new DescriptionChangeEvent($player, $faction, $oldDescription);
-                        $event->call();
-                        Utils::processMenu($this->getBackRoute(), $player, [Utils::getText($player->getName(), "SUCCESS_DESCRIPTION_UPDATE")]);
-                    },
-                    function () use ($player) {
-                        Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
-                    }
-                ));
-                return;
-            }
-            Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
-        };
-    }
-
-    protected function getForm(string $message = ""): CustomForm {
-        $menu = new CustomForm($this->call());
-        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "CHANGE_DESCRIPTION_TITLE"));
-        $menu->addLabel($message . $this->getFaction()->getDescription());
-        $menu->addInput(Utils::getText($this->getUserEntity()->getName(), "CHANGE_DESCRIPTION_INPUT_CONTENT"), "", $this->getFaction()->getDescription());
-        return $menu;
-    }
+	protected function getForm(string $message = ""): CustomForm {
+		$menu = new CustomForm($this->call());
+		$menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "CHANGE_DESCRIPTION_TITLE"));
+		$menu->addLabel($message . $this->getFaction()->getDescription());
+		$menu->addInput(Utils::getText($this->getUserEntity()->getName(), "CHANGE_DESCRIPTION_INPUT_CONTENT"), "", $this->getFaction()->getDescription());
+		return $menu;
+	}
 }

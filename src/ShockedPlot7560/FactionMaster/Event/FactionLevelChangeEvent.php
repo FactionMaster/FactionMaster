@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,4 +34,5 @@
 
 namespace ShockedPlot7560\FactionMaster\Event;
 
-class FactionLevelChangeEvent extends FactionEvent implements Forcable { }
+class FactionLevelChangeEvent extends FactionEvent implements Forcable {
+}

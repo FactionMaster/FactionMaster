@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -45,88 +47,87 @@ use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class LeaveDelete extends Button {
+	const SLUG = "leavingButton";
 
-    const SLUG = "leavingButton";
+	public function __construct() {
+		$this->setSlug(self::SLUG)
+			->setContent(function ($player) {
+				return Utils::getText($player, "BUTTON_LEAVE_DELETE_FACTION");
+			})
+			->setCallable($this->leaveDeleteButtonFunction())
+			->setImgPack("textures/img/trash");
+	}
 
-    public function __construct() {
-        $this->setSlug(self::SLUG)
-            ->setContent(function ($player) {
-                return Utils::getText($player, "BUTTON_LEAVE_DELETE_FACTION");
-            })
-            ->setCallable($this->leaveDeleteButtonFunction())
-            ->setImgPack("textures/img/trash");
-    }
+	private function leaveDeleteButtonFunction(): callable {
+		return function (Player $player) {
+			$userEntity = MainAPI::getUser($player->getName());
+			$faction = MainAPI::getFactionOfPlayer($player->getName());
+			if ($userEntity->getRank() == Ids::OWNER_ID) {
+				Utils::processMenu(
+					RouterFactory::get(ConfirmationRoute::SLUG),
+					$player,
+					[
+						$this->callConfirmDelete($faction),
+						Utils::getText($player->getName(), "CONFIRMATION_TITLE_DELETE_FACTION", ['factionName' => $faction->getName()]),
+						Utils::getText($player->getName(), "CONFIRMATION_CONTENT_DELETE_FACTION"),
+					]
+				);
+			} else {
+				$faction = MainAPI::getFactionOfPlayer($player->getName());
+				Utils::processMenu(
+					RouterFactory::get(ConfirmationRoute::SLUG),
+					$player,
+					[
+						$this->callConfirmLeave($faction),
+						Utils::getText($player->getName(), "CONFIRMATION_TITLE_LEAVE_FACTION", ['factionName' => $faction->getName()]),
+						Utils::getText($player->getName(), "CONFIRMATION_CONTENT_LEAVE_FACTION"),
+					]
+				);
+			}
+		};
+	}
 
-    private function leaveDeleteButtonFunction(): callable {
-        return function (Player $player) {
-            $userEntity = MainAPI::getUser($player->getName());
-            $faction = MainAPI::getFactionOfPlayer($player->getName());
-            if ($userEntity->getRank() == Ids::OWNER_ID) {
-                Utils::processMenu(
-                    RouterFactory::get(ConfirmationRoute::SLUG),
-                    $player,
-                    [
-                        $this->callConfirmDelete($faction),
-                        Utils::getText($player->getName(), "CONFIRMATION_TITLE_DELETE_FACTION", ['factionName' => $faction->getName()]),
-                        Utils::getText($player->getName(), "CONFIRMATION_CONTENT_DELETE_FACTION"),
-                    ]
-                );
-            } else {
-                $faction = MainAPI::getFactionOfPlayer($player->getName());
-                Utils::processMenu(
-                    RouterFactory::get(ConfirmationRoute::SLUG),
-                    $player,
-                    [
-                        $this->callConfirmLeave($faction),
-                        Utils::getText($player->getName(), "CONFIRMATION_TITLE_LEAVE_FACTION", ['factionName' => $faction->getName()]),
-                        Utils::getText($player->getName(), "CONFIRMATION_CONTENT_LEAVE_FACTION"),
-                    ]
-                );
-            }
-        };
-    }
+	private function callConfirmLeave(FactionEntity $faction): callable {
+		return function (Player $player, $data) use ($faction) {
+			if ($data === null) {
+				return;
+			}
 
-    private function callConfirmLeave(FactionEntity $faction): callable {
-        return function (Player $player, $data) use ($faction) {
-            if ($data === null) {
-                return;
-            }
+			if ($data) {
+				$message = Utils::getText($player->getName(), "SUCCESS_LEAVE_FACTION");
+				MainAPI::removeMember($faction->getName(), $player->getName());
+				(new FactionLeaveEvent($player, $faction))->call();
+				Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player, [$message]);
+			} else {
+				Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player);
+			}
+		};
+	}
 
-            if ($data) {
-                $message = Utils::getText($player->getName(), "SUCCESS_LEAVE_FACTION");
-                MainAPI::removeMember($faction->getName(), $player->getName());
-                (new FactionLeaveEvent($player, $faction))->call();
-                Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player, [$message]);
-            } else {
-                Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player);
-            }
-        };
-    }
+	private function callConfirmDelete(FactionEntity $faction): callable {
+		return function (Player $player, $data) use ($faction) {
+			if ($data === null) {
+				return;
+			}
 
-    private function callConfirmDelete(FactionEntity $faction): callable {
-        return function (Player $player, $data) use ($faction) {
-            if ($data === null) {
-                return;
-            }
-
-            if ($data) {
-                $message = Utils::getText($player->getName(), "SUCCESS_DELETE_FACTION");
-                MainAPI::removeFaction($faction->getName());
-                Utils::newMenuSendTask(new MenuSendTask(
-                    function () use ($faction) {
-                        return !MainAPI::getFaction($faction->getName()) instanceof FactionEntity;
-                    },
-                    function () use ($player, $faction, $message) {
-                        (new FactionDeleteEvent($player, $faction))->call();
-                        Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player, [$message]);
-                    },
-                    function () use ($player) {
-                        Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
-                    }
-                ));
-            } else {
-                Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player);
-            }
-        };
-    }
+			if ($data) {
+				$message = Utils::getText($player->getName(), "SUCCESS_DELETE_FACTION");
+				MainAPI::removeFaction($faction->getName());
+				Utils::newMenuSendTask(new MenuSendTask(
+					function () use ($faction) {
+						return !MainAPI::getFaction($faction->getName()) instanceof FactionEntity;
+					},
+					function () use ($player, $faction, $message) {
+						(new FactionDeleteEvent($player, $faction))->call();
+						Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player, [$message]);
+					},
+					function () use ($player) {
+						Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+					}
+				));
+			} else {
+				Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player);
+			}
+		};
+	}
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,65 +34,64 @@
 
 namespace ShockedPlot7560\FactionMaster\Route;
 
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\JoinInvitationSendCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function count;
 
 class JoinInvitationSendRoute extends RouteBase implements Route {
+	const SLUG = "joinInvitationSendRoute";
 
-    const SLUG = "joinInvitationSendRoute";
+	public function getSlug(): string {
+		return self::SLUG;
+	}
 
-    public function getSlug(): string {
-        return self::SLUG;
-    }
+	public function getPermissions(): array {
+		return [];
+	}
 
-    public function getPermissions(): array {
-        return [];
-    }
+	public function getBackRoute(): ?Route {
+		return RouterFactory::get(JoinFactionRoute::SLUG);
+	}
 
-    public function getBackRoute(): ?Route {
-        return RouterFactory::get(JoinFactionRoute::SLUG);
-    }
+	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+		$this->init($player, $userEntity, $userPermissions, $params);
 
-    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
-        $this->init($player, $userEntity, $userPermissions, $params);
+		$invitations = MainAPI::getInvitationsBySender($player->getName(), "member");
+		$this->setCollection(CollectionFactory::get(JoinInvitationSendCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $invitations));
 
-        $invitations = MainAPI::getInvitationsBySender($player->getName(), "member");
-        $this->setCollection(CollectionFactory::get(JoinInvitationSendCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $invitations));
-        
-        $message = "";
-        if (isset($params[0])) {
-            $message = $params[0];
-        }
-        if (count($invitations) == 0) {
-            $message .= Utils::getText($this->getUserEntity()->getName(), "NO_PENDING_INVITATION");
-        }
+		$message = "";
+		if (isset($params[0])) {
+			$message = $params[0];
+		}
+		if (count($invitations) == 0) {
+			$message .= Utils::getText($this->getUserEntity()->getName(), "NO_PENDING_INVITATION");
+		}
 
-        $player->sendForm($this->getForm($message));
-    }
+		$player->sendForm($this->getForm($message));
+	}
 
-    public function call(): callable {
-        return function (Player $player, $data) {
-            if ($data === null) {
-                return;
-            }
-            $this->getCollection()->process($data, $player);
-            return;
-        };
-    }
+	public function call(): callable {
+		return function (Player $player, $data) {
+			if ($data === null) {
+				return;
+			}
+			$this->getCollection()->process($data, $player);
+			return;
+		};
+	}
 
-    protected function getForm(string $message = ""): SimpleForm {
-        $menu = new SimpleForm($this->call());
-        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
-        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "INVITATION_LIST_TITLE"));
-        if ($message !== "") {
-            $menu->setContent($message);
-        }
-        return $menu;
-    }
-
+	protected function getForm(string $message = ""): SimpleForm {
+		$menu = new SimpleForm($this->call());
+		$menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+		$menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "INVITATION_LIST_TITLE"));
+		if ($message !== "") {
+			$menu->setContent($message);
+		}
+		return $menu;
+	}
 }

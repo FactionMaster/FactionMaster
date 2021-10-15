@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -33,38 +35,36 @@
 namespace ShockedPlot7560\FactionMaster\Button;
 
 use pocketmine\player\Player;
-use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Route\MembersViewRoute;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Member extends Button {
+	const SLUG = "member";
 
-    const SLUG = "member";
-
-    public function __construct(string $name, int $rank) {
-        $this->setSlug(self::SLUG)
-            ->setContent(function (string $player) use ($name, $rank) {
-                $text = $name . "\n";
-                switch ($rank) {
-                    case Ids::RECRUIT_ID:
-                        $text .= "§7" . Utils::getText($player, "RECRUIT_RANK_NAME");
-                        break;
-                    case Ids::MEMBER_ID:
-                        $text .= "§7" . Utils::getText($player, "MEMBER_RANK_NAME");
-                        break;
-                    case Ids::COOWNER_ID:
-                        $text .= "§7" . Utils::getText($player, "COOWNER_RANK_NAME");
-                        break;
-                    case Ids::OWNER_ID:
-                        $text .= "§7" . Utils::getText($player, "OWNER_RANK_NAME");
-                        break;
-                }
-                return $text;
-            })
-            ->setCallable(function (Player $player) {
-                Utils::processMenu(RouterFactory::get(MembersViewRoute::SLUG), $player);
-            });
-    }
-
+	public function __construct(string $name, int $rank) {
+		$this->setSlug(self::SLUG)
+			->setContent(function (string $player) use ($name, $rank) {
+				$text = $name . "\n";
+				switch ($rank) {
+					case Ids::RECRUIT_ID:
+						$text .= "§7" . Utils::getText($player, "RECRUIT_RANK_NAME");
+						break;
+					case Ids::MEMBER_ID:
+						$text .= "§7" . Utils::getText($player, "MEMBER_RANK_NAME");
+						break;
+					case Ids::COOWNER_ID:
+						$text .= "§7" . Utils::getText($player, "COOWNER_RANK_NAME");
+						break;
+					case Ids::OWNER_ID:
+						$text .= "§7" . Utils::getText($player, "OWNER_RANK_NAME");
+						break;
+				}
+				return $text;
+			})
+			->setCallable(function (Player $player) {
+				Utils::processMenu(RouterFactory::get(MembersViewRoute::SLUG), $player);
+			});
+	}
 }

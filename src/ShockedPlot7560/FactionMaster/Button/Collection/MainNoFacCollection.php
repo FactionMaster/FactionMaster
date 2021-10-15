@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -41,17 +43,16 @@ use ShockedPlot7560\FactionMaster\Button\Quit;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 
 class MainNoFacCollection extends Collection {
+	const SLUG = "mainNoFacCollection";
 
-    const SLUG = "mainNoFacCollection";
-
-    public function __construct() {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
-            $this->register(new CreateFaction());
-            $this->register(new JoinFaction());
-            $this->register(new FactionsTop());
-            $this->register(new ChangeLanguage());
-            $this->register(new Quit());
-        });
-    }
+	public function __construct() {
+		parent::__construct(self::SLUG);
+		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
+			$this->register(new CreateFaction());
+			$this->register(new JoinFaction());
+			$this->register(new FactionsTop());
+			$this->register(new ChangeLanguage());
+			$this->register(new Quit());
+		});
+	}
 }

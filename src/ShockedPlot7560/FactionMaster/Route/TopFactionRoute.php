@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,55 +34,53 @@
 
 namespace ShockedPlot7560\FactionMaster\Route;
 
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class TopFactionRoute extends RouteBase implements Route {
+	const SLUG = "topFactionRoute";
 
-    const SLUG = "topFactionRoute";
-    
-    public function getSlug(): string {
-        return self::SLUG;
-    }
+	public function getSlug(): string {
+		return self::SLUG;
+	}
 
-    public function getPermissions(): array {
-        return [];
-    }
+	public function getPermissions(): array {
+		return [];
+	}
 
-    public function getBackRoute(): ?Route {
-        return RouterFactory::get(MainRoute::SLUG);
-    }
-    
-    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
-        $this->init($player, $userEntity, $userPermissions, $params);
-        $this->getPlayer()->sendForm($this->getForm($params[0]));
-    }
+	public function getBackRoute(): ?Route {
+		return RouterFactory::get(MainRoute::SLUG);
+	}
 
-    public function call(): callable {
-        return function (Player $player, $data) {
-            if ($data === null) {
-                return;
-            }
-            Utils::processMenu($this->getBackRoute(), $player);
-        };
-    }
+	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+		$this->init($player, $userEntity, $userPermissions, $params);
+		$this->getPlayer()->sendForm($this->getForm($params[0]));
+	}
 
-    protected function getForm(array $top): SimpleForm {
-        $menu = new SimpleForm($this->call());
-        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "TOP_FACTION_TITLE"));
-        $content = '';
-        foreach ($top as $key => $faction) {
-            $content .= Utils::getText($this->getUserEntity()->getName(), "TOP_FACTION_LINE", [
-                'rank' => ($key + 1),
-                'factionName' => $faction->getName(),
-                'level' => $faction->getLevel(),
-            ]);
-        }
-        $menu->addButton(Utils::getText($this->getUserEntity()->getName(), "BUTTON_BACK"));
-        $menu->setContent($content);
-        return $menu;
-    }
+	public function call(): callable {
+		return function (Player $player, $data) {
+			if ($data === null) {
+				return;
+			}
+			Utils::processMenu($this->getBackRoute(), $player);
+		};
+	}
+
+	protected function getForm(array $top): SimpleForm {
+		$menu = new SimpleForm($this->call());
+		$menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "TOP_FACTION_TITLE"));
+		$content = '';
+		foreach ($top as $key => $faction) {
+			$content .= Utils::getText($this->getUserEntity()->getName(), "TOP_FACTION_LINE", [
+				'rank' => ($key + 1),
+				'factionName' => $faction->getName(),
+				'level' => $faction->getLevel(),
+			]);
+		}
+		$menu->addButton(Utils::getText($this->getUserEntity()->getName(), "BUTTON_BACK"));
+		$menu->setContent($content);
+		return $menu;
+	}
 }

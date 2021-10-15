@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -40,119 +42,122 @@ use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ClaimEntity extends EntityDatabase {
+	use FactionUtils;
+	use ServerIp;
 
-    use FactionUtils;
-    use ServerIp;
+	/**
+	 * DO NOT USE THIS CONSTANT
+	 * @see getFactionName(), getFactionEntity()
+	 * @var string
+	 */
+	public $faction;
+	/**
+	 * DO NOT USE THIS CONSTANT
+	 * @see getX()
+	 * @var int
+	 */
+	public $x;
+	/**
+	 * DO NOT USE THIS CONSTANT
+	 * @see getZ()
+	 * @var int
+	 */
+	public $z;
+	/**
+	 * DO NOT USE THIS CONSTANT
+	 * @see getLevel(), getLevelName()
+	 * @var string
+	 */
+	public $world;
+	/**
+	 * DO NOT USE THIS CONSTANT
+	 * @see getServerIp()
+	 * @var string
+	 */
+	public $server;
+	/**
+	 * DO NOT USE THIS CONSTANT
+	 * @see getFlag()
+	 * @var int|null
+	 */
+	public $flag;
 
-    /** 
-     * DO NOT USE THIS CONSTANT
-     * @see getFactionName(), getFactionEntity()
-     * @var string
-    */
-    public $faction;
-    /** 
-     * DO NOT USE THIS CONSTANT
-     * @see getX()
-     * @var int
-    */
-    public $x;
-    /** 
-     * DO NOT USE THIS CONSTANT
-     * @see getZ()
-     * @var int
-    */
-    public $z;
-    /** 
-     * DO NOT USE THIS CONSTANT
-     * @see getLevel(), getLevelName()
-     * @var string
-    */
-    public $world;
-    /** 
-     * DO NOT USE THIS CONSTANT
-     * @see getServerIp()
-     * @var string
-    */
-    public $server;
-    /** 
-     * DO NOT USE THIS CONSTANT
-     * @see getFlag()
-     * @var int|null
-    */
-    public $flag;
+	public function setX(int $x): void {
+		$this->x = $x;
+	}
 
-    public function setX(int $x): void {
-        $this->x = $x;
-    }
+	public function setZ(int $z): void {
+		$this->z = $z;
+	}
 
-    public function setZ(int $z): void {
-        $this->z = $z;
-    }
+	public function setLevelName(string $levelName): void {
+		$this->world = $levelName;
+	}
 
-    public function setLevelName(string $levelName): void {
-        $this->world = $levelName;
-    }
+	public function setFlag(?int $flag): void {
+		$this->flag = $flag;
+	}
 
-    public function setFlag(?int $flag): void {
-        $this->flag = $flag;
-    }
+	/**
+	 * @param Vector2|Vector3 $vector
+	 */
+	public function setVector($vector): void {
+		if ($vector instanceof Vector2) {
+			$this->setX($vector->getX());
+			$this->setZ($vector->getY());
+		} elseif ($vector instanceof Vector3) {
+			$this->setX($vector->getX());
+			$this->setZ($vector->getZ());
+		}
+	}
 
-    /**
-     * @param Vector2|Vector3 $vector
-     */
-    public function setVector($vector): void {
-        if ($vector instanceof Vector2) {
-            $this->setX($vector->getX());
-            $this->setZ($vector->getY());
-        } elseif ($vector instanceof Vector3) {
-            $this->setX($vector->getX());
-            $this->setZ($vector->getZ());
-        }
-    }
+	public function getFactionName(): string {
+		return $this->faction;
+	}
 
-    public function getFactionName(): string {
-        return $this->faction;
-    }
+	public function getFactionEntity(): ?FactionEntity {
+		if ($this->getFlag() === null) {
+			if ($this->getFactionName() === "") {
+				return null;
+			}
+			return MainAPI::getFaction($this->getFactionName());
+		} else {
+			return null;
+		}
+	}
 
-    public function getFactionEntity(): ?FactionEntity {
-        if ($this->getFlag() === null) {
-            if ($this->getFactionName() === "") return null;
-            return MainAPI::getFaction($this->getFactionName());
-        } else {
-            return null;
-        }
-    }
+	public function getX(): int {
+		return $this->x;
+	}
 
-    public function getX(): int {
-        return $this->x;
-    }
+	public function getZ(): int {
+		return $this->z;
+	}
 
-    public function getZ(): int {
-        return $this->z;
-    }
+	public function getLevelName(): string {
+		return $this->world;
+	}
 
-    public function getLevelName(): string {
-        return $this->world;
-    }
+	public function getLevel(): ?World {
+		if (!$this->isActive()) {
+			return null;
+		}
+		return Main::getInstance()->getServer()->getWorldManager()->getWorldByName($this->getLevelName());
+	}
 
-    public function getLevel(): ?World {
-        if (!$this->isActive()) return null;
-        return Main::getInstance()->getServer()->getWorldManager()->getWorldByName($this->getLevelName());
-    }
+	public function getFlag(): ?int {
+		return $this->flag;
+	}
 
-    public function getFlag(): ?int {
-        return $this->flag;
-    }
+	public function toString(): string {
+		return Utils::claimToString($this->getX(), $this->getZ(), $this->getLevelName());
+	}
 
-    public function toString(): string {
-        return Utils::claimToString($this->getX(), $this->getZ(), $this->getLevelName());
-    }
+	public function __toString() {
+		return $this->toString();
+	}
 
-    public function __toString() {
-        return $this->toString();
-    }
-
-    public function getVector(): Vector2 {
-        return new Vector2($this->getX(), $this->getZ());
-    }
+	public function getVector(): Vector2 {
+		return new Vector2($this->getX(), $this->getZ());
+	}
 }

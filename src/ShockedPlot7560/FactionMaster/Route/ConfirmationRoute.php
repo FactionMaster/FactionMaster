@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -33,53 +35,51 @@
 namespace ShockedPlot7560\FactionMaster\Route;
 
 use InvalidArgumentException;
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\ModalForm;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\ModalForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ConfirmationRoute extends RouteBase implements Route {
+	const SLUG = "confirmationRoute";
 
-    const SLUG = "confirmationRoute";
+	/** @var Route */
+	public $backMenu;
 
-    /** @var Route */
-    public $backMenu;
+	public function getSlug(): string {
+		return self::SLUG;
+	}
 
-    public function getSlug(): string {
-        return self::SLUG;
-    }
+	public function getPermissions(): array {
+		return [];
+	}
 
-    public function getPermissions(): array {
-        return [];
-    }
+	public function getBackRoute(): ?Route {
+		return $this->backMenu;
+	}
 
-    public function getBackRoute(): ?Route {
-        return $this->backMenu;
-    }
+	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+		$this->init($player, $userEntity, $userPermissions, $params);
 
-    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
-        $this->init($player, $userEntity, $userPermissions, $params);
+		if (!isset($params[0])) {
+			throw new InvalidArgumentException("First item must be set");
+		}
 
-        if (!isset($params[0])) {
-            throw new InvalidArgumentException("First item must be set");
-        }
+		$this->backMenu = $params[0];
 
-        $this->backMenu = $params[0];
+		$player->sendForm($this->getForm($params));
+	}
 
-        $player->sendForm($this->getForm($params));
-    }
+	public function call(): callable {
+		return $this->backMenu;
+	}
 
-    public function call(): callable {
-        return $this->backMenu;
-    }
-
-    protected function getForm(array $params): ModalForm {
-        $menu = new ModalForm($this->call());
-        $menu->setTitle($params[1]);
-        $menu->setContent($params[2]);
-        $menu->setButton1(isset($params[3]) ? $params[3] : Utils::getText($this->getUserEntity()->getName(), "BUTTON_MODAL_YES"));
-        $menu->setButton2(isset($params[4]) ? $params[4] : Utils::getText($this->getUserEntity()->getName(), "BUTTON_MODAL_NO"));
-        return $menu;
-    }
-
+	protected function getForm(array $params): ModalForm {
+		$menu = new ModalForm($this->call());
+		$menu->setTitle($params[1]);
+		$menu->setContent($params[2]);
+		$menu->setButton1(isset($params[3]) ? $params[3] : Utils::getText($this->getUserEntity()->getName(), "BUTTON_MODAL_YES"));
+		$menu->setButton2(isset($params[4]) ? $params[4] : Utils::getText($this->getUserEntity()->getName(), "BUTTON_MODAL_NO"));
+		return $menu;
+	}
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -42,45 +44,44 @@ use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class DeleteInvitation extends Button {
+	const SLUG = "deleteInvitation";
 
-    const SLUG = "deleteInvitation";
+	public function __construct(InvitationEntity $invitation, string $panelSlug, array $permissions = []) {
+		$this->setSlug(self::SLUG)
+			->setContent(function (string $player) {
+				return Utils::getText($player, "BUTTON_DELETE_INVITATION");
+			})
+			->setCallable(function (Player $player) use ($invitation, $panelSlug) {
+				Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
+					function (Player $player, $data) use ($invitation, $panelSlug) {
+						if ($data === null) {
+							return;
+						}
 
-    public function __construct(InvitationEntity $invitation, string $panelSlug, array $permissions = []) {
-        $this->setSlug(self::SLUG)
-            ->setContent(function (string $player) {
-                return Utils::getText($player, "BUTTON_DELETE_INVITATION");
-            })
-            ->setCallable(function (Player $player) use ($invitation, $panelSlug) {
-                Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
-                    function (Player $player, $data) use ($invitation, $panelSlug) {
-                        if ($data === null) {
-                            return;
-                        }
-
-                        if ($data) {
-                            $message = Utils::getText($player->getName(), "SUCCESS_DELETE_INVITATION", ['name' => $invitation->getReceiverString()]);
-                            MainAPI::removeInvitation($invitation->getSenderString(), $invitation->getReceiverString(), $invitation->getType());
-                            Utils::newMenuSendTask(new MenuSendTask(
-                                function () use ($invitation) {
-                                    return !MainAPI::areInInvitation($invitation->getSenderString(), $invitation->getReceiverString(), $invitation->getType());
-                                },
-                                function () use ($invitation, $player, $panelSlug, $message) {
-                                    (new InvitationDeleteEvent($player, $invitation))->call();
-                                    Utils::processMenu(RouterFactory::get($panelSlug), $player, [$message]);
-                                },
-                                function () use ($player, $panelSlug) {
-                                    Utils::processMenu(RouterFactory::get($panelSlug), $player, [Utils::getText($player->getName(), "ERROR")]);
-                                }
-                            ));
-                        } else {
-                            Utils::processMenu(RouterFactory::get($panelSlug), $player, [$invitation]);
-                        }
-                    },
-                    Utils::getText($player->getName(), "CONFIRMATION_TITLE_DELETE_INVITATION"),
-                    Utils::getText($player->getName(), "CONFIRMATION_CONTENT_DELETE_INVITATION"),
-                ]);
-            })
-            ->setPermissions($permissions)
-            ->setImgPack("textures/img/trash");
-    }
+						if ($data) {
+							$message = Utils::getText($player->getName(), "SUCCESS_DELETE_INVITATION", ['name' => $invitation->getReceiverString()]);
+							MainAPI::removeInvitation($invitation->getSenderString(), $invitation->getReceiverString(), $invitation->getType());
+							Utils::newMenuSendTask(new MenuSendTask(
+								function () use ($invitation) {
+									return !MainAPI::areInInvitation($invitation->getSenderString(), $invitation->getReceiverString(), $invitation->getType());
+								},
+								function () use ($invitation, $player, $panelSlug, $message) {
+									(new InvitationDeleteEvent($player, $invitation))->call();
+									Utils::processMenu(RouterFactory::get($panelSlug), $player, [$message]);
+								},
+								function () use ($player, $panelSlug) {
+									Utils::processMenu(RouterFactory::get($panelSlug), $player, [Utils::getText($player->getName(), "ERROR")]);
+								}
+							));
+						} else {
+							Utils::processMenu(RouterFactory::get($panelSlug), $player, [$invitation]);
+						}
+					},
+					Utils::getText($player->getName(), "CONFIRMATION_TITLE_DELETE_INVITATION"),
+					Utils::getText($player->getName(), "CONFIRMATION_CONTENT_DELETE_INVITATION"),
+				]);
+			})
+			->setPermissions($permissions)
+			->setImgPack("textures/img/trash");
+	}
 }

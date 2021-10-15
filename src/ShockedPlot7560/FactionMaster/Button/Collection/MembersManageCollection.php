@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -42,22 +44,21 @@ use ShockedPlot7560\FactionMaster\Route\MembersManageRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class MembersManageCollection extends Collection {
+	const SLUG = "membersManageCollection";
 
-    const SLUG = "membersManageCollection";
+	public function __construct() {
+		parent::__construct(self::SLUG);
+		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, FactionEntity $faction) {
+			foreach ($faction->getMembers() as $name => $rank) {
+				if ($name === $user->getName()) {
+					continue;
+				}
 
-    public function __construct() {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, FactionEntity $faction) {
-            foreach ($faction->getMembers() as $name => $rank) {
-                if ($name === $user->getName()) {
-                    continue;
-                }
-
-                if ($rank < $user->getRank()) {
-                    $this->register(new ManageMember(MainAPI::getUser($name)));
-                }
-            }
-            $this->register(new Back(RouterFactory::get(MembersManageRoute::SLUG)->getBackRoute()));
-        });
-    }
+				if ($rank < $user->getRank()) {
+					$this->register(new ManageMember(MainAPI::getUser($name)));
+				}
+			}
+			$this->register(new Back(RouterFactory::get(MembersManageRoute::SLUG)->getBackRoute()));
+		});
+	}
 }

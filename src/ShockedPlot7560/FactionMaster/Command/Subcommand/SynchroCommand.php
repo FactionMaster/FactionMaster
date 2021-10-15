@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,23 +34,20 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Task\SyncServerTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class SynchroCommand extends BaseSubCommand {
+	protected function prepare(): void {
+		$this->setPermission("factionmaster.synchro.launch");
+	}
 
-    protected function prepare(): void {
-        $this->setPermission("factionmaster.synchro.launch");
-    }
-
-    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-        if ($sender->hasPermission("factionmaster.synchro.launch")) {
-            $this->getPlugin()->getScheduler()->scheduleTask(new SyncServerTask($this->getPlugin()));
-            $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_SYNCHRO") . ", launch!");
-        }
-    }
-
+	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
+		if ($sender->hasPermission("factionmaster.synchro.launch")) {
+			$this->getPlugin()->getScheduler()->scheduleTask(new SyncServerTask($this->getPlugin()));
+			$sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_SYNCHRO") . ", launch!");
+		}
+	}
 }

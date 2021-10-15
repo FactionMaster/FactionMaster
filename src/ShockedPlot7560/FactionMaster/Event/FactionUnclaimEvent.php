@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -37,23 +39,21 @@ use pocketmine\world\format\Chunk;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
 class FactionUnclaimEvent extends FactionEvent implements Forcable {
+	use PlayerEvent;
 
-    use PlayerEvent;
+	protected $player;
+	private $chunk;
 
-    protected $player;
-    private $chunk;
+	/**
+	 * @param string|FactionEntity $faction
+	 */
+	public function __construct(Player $player, $faction, Chunk $chunk, bool $isForce = false) {
+		parent::__construct($faction, $isForce);
+		$this->player = $player;
+		$this->chunk = $chunk;
+	}
 
-    /**
-     * @param string|FactionEntity $faction
-     */
-    public function __construct(Player $player, $faction, Chunk $chunk, bool $isForce = false) {
-        parent::__construct($faction, $isForce);
-        $this->player = $player;
-        $this->chunk = $chunk;
-    }
-
-    public function getChunk(): Chunk {
-        return $this->chunk;
-    }
-
+	public function getChunk(): Chunk {
+		return $this->chunk;
+	}
 }

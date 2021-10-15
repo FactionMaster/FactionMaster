@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -37,20 +39,18 @@ use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\DeleteInvitation;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\ManageJoinInvitationRoute;
 use ShockedPlot7560\FactionMaster\Route\ManageMemberInvitationRoute;
 use ShockedPlot7560\FactionMaster\Route\MembersInvitationSendRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class ManageMemberInvitationCollection extends Collection {
+	const SLUG = "manageMemberInvitationCollection";
 
-    const SLUG = "manageMemberInvitationCollection";
-
-    public function __construct() {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, InvitationEntity $invitation) {
-            $this->register(new DeleteInvitation($invitation, MembersInvitationSendRoute::SLUG));
-            $this->register(new Back(RouterFactory::get(ManageMemberInvitationRoute::SLUG)->getBackRoute()));
-        });
-    }
+	public function __construct() {
+		parent::__construct(self::SLUG);
+		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, InvitationEntity $invitation) {
+			$this->register(new DeleteInvitation($invitation, MembersInvitationSendRoute::SLUG));
+			$this->register(new Back(RouterFactory::get(ManageMemberInvitationRoute::SLUG)->getBackRoute()));
+		});
+	}
 }

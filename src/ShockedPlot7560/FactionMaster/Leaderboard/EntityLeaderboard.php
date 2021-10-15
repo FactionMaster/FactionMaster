@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -36,22 +38,20 @@ use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Leaderboard;
 
 abstract class EntityLeaderboard {
+	protected $main;
 
-    protected $main;
+	public function __construct(Main $main) {
+		$this->main = $main;
+	}
 
-    public function __construct(Main $main) {
-        $this->main = $main;
-    }
+	abstract public function getSlug(): string;
 
-    abstract public function getSlug(): string;
+	abstract public function getSqlQuery(): string;
 
-    abstract public function getSqlQuery(): string;
+	abstract public function getConfig(): Config;
 
-    abstract public function getConfig(): Config;
-
-    /**
-     * @param Leaderboard $leaderboard
-     * @param Player[]|null $players
-     */
-    abstract public function place(Leaderboard $leaderboard, ?array $players = null): void;
+	/**
+	 * @param Player[]|null $players
+	 */
+	abstract public function place(Leaderboard $leaderboard, ?array $players = null): void;
 }

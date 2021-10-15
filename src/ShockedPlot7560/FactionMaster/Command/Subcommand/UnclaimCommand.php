@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,57 +34,57 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionUnclaimEvent;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function floor;
 
 class UnclaimCommand extends BaseSubCommand {
+	protected function prepare(): void {
+	}
 
-    protected function prepare(): void {}
+	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
+		if (!$sender instanceof Player) {
+			return;
+		}
 
-    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-        if (!$sender instanceof Player) {
-            return;
-        }
-
-        $player = $sender;
-        $z = floor($player->getPosition()->getFloorX()/16);
-        $x = floor($player->getPosition()->getFloorZ()/16);
-        $chunk = $player->getWorld()->getChunk($x, $z);
-        $world = $player->getWorld()->getDisplayName();
-        $factionClaim = MainAPI::getFactionClaim($world, $x, $z);
-        $userEntity = MainAPI::getUser($sender->getName());
-        if ($factionClaim === null) {
-            $sender->sendMessage(Utils::getText($sender->getName(), "NOT_CLAIMED"));
-            return;
-        } elseif ($factionClaim->getFactionName() === $userEntity->getFactionName()) {
-            $permissions = MainAPI::getMemberPermission($sender->getName());
-            if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_REMOVE_CLAIM)) {
-                MainAPI::removeClaim($sender, $userEntity->getFactionName());
-                Utils::newMenuSendTask(new MenuSendTask(
-                    function () use ($world, $x, $z) {
-                        return !MainAPI::getFactionClaim($world, $x, $z) instanceof ClaimEntity;
-                    },
-                    function () use ($player, $factionClaim, $chunk, $sender) {
-                        (new FactionUnclaimEvent($player, $factionClaim, $chunk))->call();
-                        $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_UNCLAIM"));
-                    },
-                    function () use ($sender) {
-                        $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
-                    }
-                ));
-                return;
-            } else {
-                $sender->sendMessage(Utils::getText($sender->getName(), "DONT_PERMISSION"));
-                return;
-            }
-        }
-    }
-
+		$player = $sender;
+		$z = floor($player->getPosition()->getFloorX()/16);
+		$x = floor($player->getPosition()->getFloorZ()/16);
+		$chunk = $player->getWorld()->getChunk($x, $z);
+		$world = $player->getWorld()->getDisplayName();
+		$factionClaim = MainAPI::getFactionClaim($world, $x, $z);
+		$userEntity = MainAPI::getUser($sender->getName());
+		if ($factionClaim === null) {
+			$sender->sendMessage(Utils::getText($sender->getName(), "NOT_CLAIMED"));
+			return;
+		} elseif ($factionClaim->getFactionName() === $userEntity->getFactionName()) {
+			$permissions = MainAPI::getMemberPermission($sender->getName());
+			if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_REMOVE_CLAIM)) {
+				MainAPI::removeClaim($sender, $userEntity->getFactionName());
+				Utils::newMenuSendTask(new MenuSendTask(
+					function () use ($world, $x, $z) {
+						return !MainAPI::getFactionClaim($world, $x, $z) instanceof ClaimEntity;
+					},
+					function () use ($player, $factionClaim, $chunk, $sender) {
+						(new FactionUnclaimEvent($player, $factionClaim, $chunk))->call();
+						$sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_UNCLAIM"));
+					},
+					function () use ($sender) {
+						$sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
+					}
+				));
+				return;
+			} else {
+				$sender->sendMessage(Utils::getText($sender->getName(), "DONT_PERMISSION"));
+				return;
+			}
+		}
+	}
 }

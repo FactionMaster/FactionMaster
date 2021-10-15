@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -35,18 +37,17 @@ namespace ShockedPlot7560\FactionMaster\Event;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
 class FactionPowerEvent extends FactionEvent implements Forcable {
+	private $power;
 
-    private $power;
+	/**
+	 * @param string|FactionEntity $faction
+	 */
+	public function __construct($faction, int $power, bool $isForce = false) {
+		parent::__construct($faction, $isForce);
+		$this->power = $power;
+	}
 
-    /**
-     * @param string|FactionEntity $faction
-     */
-    public function __construct($faction, int $power, bool $isForce = false) {
-        parent::__construct($faction, $isForce);
-        $this->power = $power;
-    }
-
-    public function getPower(): int {
-        return $this->power;
-    }
+	public function getPower(): int {
+		return $this->power;
+	}
 }

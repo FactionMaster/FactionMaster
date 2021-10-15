@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -37,22 +39,21 @@ use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 
 class FactionPropertyTransferEvent extends FactionEvent implements Forcable {
+	use PlayerEvent;
 
-    use PlayerEvent;
+	protected $player;
+	private $target;
 
-    protected $player;
-    private $target;
+	/**
+	 * @param string|FactionEntity $faction
+	 */
+	public function __construct(Player $player, $faction, UserEntity $target, bool $isForce = false) {
+		parent::__construct($faction, $isForce);
+		$this->player = $player;
+		$this->target = $target;
+	}
 
-    /**
-     * @param string|FactionEntity $faction
-     */
-    public function __construct(Player $player, $faction, UserEntity $target, bool $isForce = false) {
-        parent::__construct($faction, $isForce);
-        $this->player = $player;
-        $this->target = $target;
-    }
-
-    public function getTarget(): UserEntity {
-        return $this->target;
-    }
+	public function getTarget(): UserEntity {
+		return $this->target;
+	}
 }

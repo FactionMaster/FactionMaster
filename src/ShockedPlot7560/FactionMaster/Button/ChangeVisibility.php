@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -34,26 +36,24 @@ namespace ShockedPlot7560\FactionMaster\Button;
 
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\VisibilityChangeRoute as RouteChangeVisibility;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\VisibilityChangeRoute as RouteChangeVisibility;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeVisibility extends Button {
+	const SLUG = "changeVisibility";
 
-    const SLUG = "changeVisibility";
-
-    public function __construct() {
-        $this->setSlug(self::SLUG)
-            ->setContent(function ($player) {
-                return Utils::getText($player, "BUTTON_CHANGE_VISIBILITY");
-            })
-            ->setCallable(function (Player $player) {
-                Utils::processMenu(RouterFactory::get(RouteChangeVisibility::SLUG), $player);
-            })
-            ->setPermissions([
-                PermissionIds::PERMISSION_CHANGE_FACTION_VISIBILITY
-            ])
-            ->setImgPack("textures/img/visibility");
-    }
-
+	public function __construct() {
+		$this->setSlug(self::SLUG)
+			->setContent(function ($player) {
+				return Utils::getText($player, "BUTTON_CHANGE_VISIBILITY");
+			})
+			->setCallable(function (Player $player) {
+				Utils::processMenu(RouterFactory::get(RouteChangeVisibility::SLUG), $player);
+			})
+			->setPermissions([
+				PermissionIds::PERMISSION_CHANGE_FACTION_VISIBILITY
+			])
+			->setImgPack("textures/img/visibility");
+	}
 }

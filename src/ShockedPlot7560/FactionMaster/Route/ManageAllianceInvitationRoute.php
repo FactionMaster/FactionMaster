@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -33,59 +35,58 @@
 namespace ShockedPlot7560\FactionMaster\Route;
 
 use InvalidArgumentException;
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\ManageAllianceInvitationCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageAllianceInvitationRoute extends InvitationBase implements Route {
+	const SLUG = "manageAllianceInvitationRoute";
 
-    const SLUG = "manageAllianceInvitationRoute";
+	public function getSlug(): string {
+		return self::SLUG;
+	}
 
-    public function getSlug(): string {
-        return self::SLUG;
-    }
+	public function getPermissions(): array {
+		return [
+			PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION
+		];
+	}
 
-    public function getPermissions(): array {
-        return [
-            PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION
-        ];
-    }
+	public function getBackRoute(): ?Route {
+		return RouterFactory::get(AllianceRequestReceiveRoute::SLUG);
+	}
 
-    public function getBackRoute(): ?Route {
-        return RouterFactory::get(AllianceRequestReceiveRoute::SLUG);
-    }
+	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+		$this->init($player, $userEntity, $userPermissions, $params);
 
-    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
-        $this->init($player, $userEntity, $userPermissions, $params);
+		if (!isset($params[0]) || !$params[0] instanceof InvitationEntity) {
+			throw new InvalidArgumentException("Need the target player instance");
+		}
 
-        if (!isset($params[0]) || !$params[0] instanceof InvitationEntity) {
-            throw new InvalidArgumentException("Need the target player instance");
-        }
+		$this->setInvitation($params[0]);
+		$this->setCollection(CollectionFactory::get(ManageAllianceInvitationCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getInvitation()));
 
-        $this->setInvitation($params[0]);
-        $this->setCollection(CollectionFactory::get(ManageAllianceInvitationCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getInvitation()));
+		$player->sendForm($this->getForm());
+	}
 
-        $player->sendForm($this->getForm());
-    }
+	public function call(): callable {
+		return function (Player $player, $data) {
+			if ($data === null) {
+				return;
+			}
+			$this->getCollection()->process($data, $player);
+		};
+	}
 
-    public function call(): callable {
-        return function (Player $player, $data) {
-            if ($data === null) {
-                return;
-            }
-            $this->getCollection()->process($data, $player);
-        };
-    }
-
-    protected function getForm(): SimpleForm {
-        $menu = new SimpleForm($this->call());
-        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
-        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "INVITATION_TITLE", ['name' => $this->getInvitation()->getReceiverString()]));
-        return $menu;
-    }
+	protected function getForm(): SimpleForm {
+		$menu = new SimpleForm($this->call());
+		$menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+		$menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "INVITATION_TITLE", ['name' => $this->getInvitation()->getReceiverString()]));
+		return $menu;
+	}
 }

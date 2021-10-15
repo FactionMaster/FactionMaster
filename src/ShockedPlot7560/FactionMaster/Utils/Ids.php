@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -33,26 +35,24 @@
 namespace ShockedPlot7560\FactionMaster\Utils;
 
 interface Ids {
+	const RECRUIT_ID = 0;
+	const MEMBER_ID = 1;
+	const COOWNER_ID = 2;
+	const OWNER_ID = 3;
 
-    const RECRUIT_ID = 0;
-    const MEMBER_ID = 1;
-    const COOWNER_ID = 2;
-    const OWNER_ID = 3;
+	const PUBLIC_VISIBILITY = 0;
+	const PRIVATE_VISIBILITY = 1;
+	const INVITATION_VISIBILITY = 2;
 
-    const PUBLIC_VISIBILITY = 0;
-    const PRIVATE_VISIBILITY = 1;
-    const INVITATION_VISIBILITY = 2;
+	const HUD_FACTIONMASTER_FACTION_NAME = "factionmaster.faction.name";
+	const HUD_FACTIONMASTER_FACTION_POWER = "factionmaster.faction.power";
+	const HUD_FACTIONMASTER_FACTION_LEVEL = "factionmaster.faction.level";
+	const HUD_FACTIONMASTER_FACTION_XP = "factionmaster.faction.xp";
+	const HUD_FACTIONMASTER_FACTION_MESSAGE = "factionmaster.faction.message";
+	const HUD_FACTIONMASTER_FACTION_DESCRIPTION = "factionmaster.faction.description";
+	const HUD_FACTIONMASTER_FACTION_VISIBILITY = "factionmaster.faction.visibility";
+	const HUD_FACTIONMASTER_PLAYER_RANK = "factionmaster.player.rank";
 
-    const HUD_FACTIONMASTER_FACTION_NAME = "factionmaster.faction.name";
-    const HUD_FACTIONMASTER_FACTION_POWER = "factionmaster.faction.power";
-    const HUD_FACTIONMASTER_FACTION_LEVEL = "factionmaster.faction.level";
-    const HUD_FACTIONMASTER_FACTION_XP = "factionmaster.faction.xp";
-    const HUD_FACTIONMASTER_FACTION_MESSAGE = "factionmaster.faction.message";
-    const HUD_FACTIONMASTER_FACTION_DESCRIPTION = "factionmaster.faction.description";
-    const HUD_FACTIONMASTER_FACTION_VISIBILITY = "factionmaster.faction.visibility";
-    const HUD_FACTIONMASTER_PLAYER_RANK = "factionmaster.player.rank";
-
-    const FLAG_WARZONE = 0;
-    const FLAG_SPAWN = 1;
-
+	const FLAG_WARZONE = 0;
+	const FLAG_SPAWN = 1;
 }

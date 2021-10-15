@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,45 +34,43 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Event\FactionHomeTpEvent;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class HomeTpCommand extends BaseSubCommand {
+	protected function prepare(): void {
+		$this->registerArgument(0, new RawStringArgument("name", false));
+	}
 
-    protected function prepare(): void {
-        $this->registerArgument(0, new RawStringArgument("name", false));
-    }
+	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
+		if (!$sender instanceof Player) {
+			return;
+		}
 
-    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-        if (!$sender instanceof Player) {
-            return;
-        }
-
-        if (!isset($args['name'])) {
-            $this->sendUsage();
-            return;
-        }
-        $permissions = MainAPI::getMemberPermission($sender->getName());
-        $userEntity = MainAPI::getUser($sender->getName());
-        if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_TP_FACTION_HOME)) {
-            $home = MainAPI::getFactionHome($userEntity->getFactionName(), $args["name"]);
-            if ($home !== null) {
-                $sender->teleport(new Vector3($home->getX(), $home->getY(), $home->getZ()));
-                (new FactionHomeTpEvent($sender, $userEntity->getFactionName(), $args['name'], $home))->call();
-                $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_TELEPORT"));
-            } else {
-                $sender->sendMessage(Utils::getText($sender->getName(), "HOME_DONT_EXIST"));
-            }
-        } else {
-            $sender->sendMessage(Utils::getText($sender->getName(), "DONT_PERMISSION"));
-        }
-    }
-
+		if (!isset($args['name'])) {
+			$this->sendUsage();
+			return;
+		}
+		$permissions = MainAPI::getMemberPermission($sender->getName());
+		$userEntity = MainAPI::getUser($sender->getName());
+		if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_TP_FACTION_HOME)) {
+			$home = MainAPI::getFactionHome($userEntity->getFactionName(), $args["name"]);
+			if ($home !== null) {
+				$sender->teleport(new Vector3($home->getX(), $home->getY(), $home->getZ()));
+				(new FactionHomeTpEvent($sender, $userEntity->getFactionName(), $args['name'], $home))->call();
+				$sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_TELEPORT"));
+			} else {
+				$sender->sendMessage(Utils::getText($sender->getName(), "HOME_DONT_EXIST"));
+			}
+		} else {
+			$sender->sendMessage(Utils::getText($sender->getName(), "DONT_PERMISSION"));
+		}
+	}
 }

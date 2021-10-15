@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -37,10 +39,9 @@ use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Manager\MapManager;
 
 class MapTask extends Task {
-
-    public function onRun(): void {
-        foreach (MapManager::getAll() as $player) {
-            Main::getInstance()->getServer()->dispatchCommand($player, "f map");
-        }
-    }
+	public function onRun(): void {
+		foreach (MapManager::getAll() as $player) {
+			Main::getInstance()->getServer()->dispatchCommand($player, "f map");
+		}
+	}
 }

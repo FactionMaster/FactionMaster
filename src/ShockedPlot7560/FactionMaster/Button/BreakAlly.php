@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -45,48 +47,46 @@ use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class BreakAlly extends Button {
+	const SLUG = "breakAlly";
 
-    const SLUG = "breakAlly";
+	public function __construct(FactionEntity $ally) {
+		$this->setSlug(self::SLUG)
+			->setContent(function (string $player) {
+				return Utils::getText($player, "BUTTON_BREAK_ALLIANCE");
+			})
+			->setCallable(function (Player $player) use ($ally) {
+				Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
+					function (Player $player, $data) use ($ally) {
+						$faction = MainAPI::getFactionOfPlayer($player->getName());
+						if ($data === null) {
+							return;
+						}
 
-    public function __construct(FactionEntity $ally) {
-        $this->setSlug(self::SLUG)
-            ->setContent(function (string $player) {
-                return Utils::getText($player, "BUTTON_BREAK_ALLIANCE");
-            })
-            ->setCallable(function (Player $player) use ($ally) {
-                Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
-                    function (Player $player, $data) use ($ally) {
-                        $faction = MainAPI::getFactionOfPlayer($player->getName());
-                        if ($data === null) {
-                            return;
-                        }
-
-                        if ($data === true) {
-                            MainAPI::removeAlly($faction->getName(), $ally->getName());
-                            Utils::newMenuSendTask(new MenuSendTask(
-                                function () use ($faction, $ally) {
-                                    return MainAPI::isAlly($faction->getName(), $ally->getName());
-                                },
-                                function () use ($player, $faction, $ally) {
-                                    $event = new AllianceBreakEvent($player, $faction, $ally);
-                                    $event->call();
-                                    Utils::processMenu(RouterFactory::get(AllianceOptionRoute::SLUG), $player, [Utils::getText($player->getName(), "SUCCESS_BREAK_ALLIANCE", ['name' => $ally->name])]);
-                                },
-                                function () use ($player) {
-                                    Utils::processMenu(RouterFactory::get(AllianceOptionRoute::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
-                                }
-                            ));
-                        } else {
-                            Utils::processMenu(RouterFactory::get(ManageAllianceRoute::SLUG), $player, [$ally]);
-                        }
-                    },
-                    Utils::getText($player->getName(), "CONFIRMATION_TITLE_BREAK_ALLIANCE"),
-                    Utils::getText($player->getName(), "CONFIRMATION_CONTENT_BREAK_ALLIANCE"),
-                ]);
-            })
-            ->setPermissions([
-                PermissionIds::PERMISSION_BREAK_ALLIANCE
-            ]);
-    }
-
+						if ($data === true) {
+							MainAPI::removeAlly($faction->getName(), $ally->getName());
+							Utils::newMenuSendTask(new MenuSendTask(
+								function () use ($faction, $ally) {
+									return MainAPI::isAlly($faction->getName(), $ally->getName());
+								},
+								function () use ($player, $faction, $ally) {
+									$event = new AllianceBreakEvent($player, $faction, $ally);
+									$event->call();
+									Utils::processMenu(RouterFactory::get(AllianceOptionRoute::SLUG), $player, [Utils::getText($player->getName(), "SUCCESS_BREAK_ALLIANCE", ['name' => $ally->name])]);
+								},
+								function () use ($player) {
+									Utils::processMenu(RouterFactory::get(AllianceOptionRoute::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+								}
+							));
+						} else {
+							Utils::processMenu(RouterFactory::get(ManageAllianceRoute::SLUG), $player, [$ally]);
+						}
+					},
+					Utils::getText($player->getName(), "CONFIRMATION_TITLE_BREAK_ALLIANCE"),
+					Utils::getText($player->getName(), "CONFIRMATION_CONTENT_BREAK_ALLIANCE"),
+				]);
+			})
+			->setPermissions([
+				PermissionIds::PERMISSION_BREAK_ALLIANCE
+			]);
+	}
 }

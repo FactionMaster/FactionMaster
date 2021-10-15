@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,10 +34,10 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
@@ -44,22 +46,21 @@ use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class FactionTopCommand extends BaseSubCommand {
+	protected function prepare(): void {
+	}
 
-    protected function prepare(): void {}
+	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
+		if (!$sender instanceof Player) {
+			return;
+		}
 
-    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-        if (!$sender instanceof Player) {
-            return;
-        }
-
-        Main::getInstance()->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
-            LeaderboardManager::$queryList["faction"],
-            [],
-            function (array $result) use ($sender) {
-                Utils::processMenu(RouterFactory::get(TopFactionRoute::SLUG), $sender, [$result]);
-            },
-            FactionEntity::class
-        ));
-    }
-
+		Main::getInstance()->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
+			LeaderboardManager::$queryList["faction"],
+			[],
+			function (array $result) use ($sender) {
+				Utils::processMenu(RouterFactory::get(TopFactionRoute::SLUG), $sender, [$result]);
+			},
+			FactionEntity::class
+		));
+	}
 }

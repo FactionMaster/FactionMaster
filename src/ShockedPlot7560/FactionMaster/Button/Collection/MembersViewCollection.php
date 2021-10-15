@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -34,24 +36,22 @@ namespace ShockedPlot7560\FactionMaster\Button\Collection;
 
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Back;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\Member;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Route\MembersViewRoute;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class MembersViewCollection extends Collection {
+	const SLUG = "membersViewCollection";
 
-    const SLUG = "membersViewCollection";
-
-    public function __construct() {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, FactionEntity $faction) {
-            foreach ($faction->getMembers() as $name => $rank) {
-                $this->register(new Member($name, $rank));
-            }
-            $this->register(new Back(RouterFactory::get(MembersViewRoute::SLUG)->getBackRoute()));
-        });
-    }
+	public function __construct() {
+		parent::__construct(self::SLUG);
+		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, FactionEntity $faction) {
+			foreach ($faction->getMembers() as $name => $rank) {
+				$this->register(new Member($name, $rank));
+			}
+			$this->register(new Back(RouterFactory::get(MembersViewRoute::SLUG)->getBackRoute()));
+		});
+	}
 }

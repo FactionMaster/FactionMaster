@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -35,15 +37,14 @@ use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 
 abstract class InvitationBase extends RouteBase {
 
-    /** @var InvitationEntity */
-    protected $invitation;
+	/** @var InvitationEntity */
+	protected $invitation;
 
-    public function getInvitation(): InvitationEntity {
-        return $this->invitation;
-    }
+	public function getInvitation(): InvitationEntity {
+		return $this->invitation;
+	}
 
-    public function setInvitation(InvitationEntity $invitation): void {
-        $this->invitation = $invitation;
-    }
-
+	public function setInvitation(InvitationEntity $invitation): void {
+		$this->invitation = $invitation;
+	}
 }

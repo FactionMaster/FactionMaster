@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -42,33 +44,31 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Home extends Button {
+	const SLUG = "home";
 
-    const SLUG = "home";
-
-    public function __construct(string $name, HomeEntity $home) {
-        $this->setSlug(self::SLUG)
-            ->setContent(function (string $player) use ($name, $home) {
-                return Utils::getText($player, "BUTTON_LISTING_HOME", [
-                    'name' => $name,
-                    'x' => $home->getX(),
-                    'y' => $home->getY(),
-                    'z' => $home->getZ(),
-                ]);
-            })
-            ->setCallable(function (Player $player) use ($home) {
-                $level = $home->getLevel();
-                if ($level instanceof World) {
-                    $position = new Position($home->getX(), $home->getY(), $home->getZ(), $level);
-                    $player->teleport($position);
-                    $player->sendMessage(Utils::getText($player->getName(), "SUCCESS_TELEPORT_HOME"));
-                    Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player);
-                }
-            })
-            ->setPermissions([
-                PermissionIds::PERMISSION_TP_FACTION_HOME,
-                PermissionIds::PERMISSION_ADD_FACTION_HOME,
-                PermissionIds::PERMISSION_DELETE_FACTION_HOME
-            ]);
-    }
-
+	public function __construct(string $name, HomeEntity $home) {
+		$this->setSlug(self::SLUG)
+			->setContent(function (string $player) use ($name, $home) {
+				return Utils::getText($player, "BUTTON_LISTING_HOME", [
+					'name' => $name,
+					'x' => $home->getX(),
+					'y' => $home->getY(),
+					'z' => $home->getZ(),
+				]);
+			})
+			->setCallable(function (Player $player) use ($home) {
+				$level = $home->getLevel();
+				if ($level instanceof World) {
+					$position = new Position($home->getX(), $home->getY(), $home->getZ(), $level);
+					$player->teleport($position);
+					$player->sendMessage(Utils::getText($player->getName(), "SUCCESS_TELEPORT_HOME"));
+					Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player);
+				}
+			})
+			->setPermissions([
+				PermissionIds::PERMISSION_TP_FACTION_HOME,
+				PermissionIds::PERMISSION_ADD_FACTION_HOME,
+				PermissionIds::PERMISSION_DELETE_FACTION_HOME
+			]);
+	}
 }

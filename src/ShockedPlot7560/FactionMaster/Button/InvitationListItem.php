@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -38,18 +40,16 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class InvitationListItem extends Button {
+	const SLUG = "invitationItem";
 
-    const SLUG = "invitationItem";
-
-    public function __construct(InvitationEntity $invitation, string $panelSlug, array $permissions = []) {
-        $this->setSlug(self::SLUG)
-            ->setContent(function (string $player) use ($invitation) {
-                return $invitation->getReceiverString();
-            })
-            ->setCallable(function (Player $player) use ($invitation, $panelSlug) {
-                Utils::processMenu(RouterFactory::get($panelSlug), $player, [$invitation]);
-            })
-            ->setPermissions($permissions);
-    }
-
+	public function __construct(InvitationEntity $invitation, string $panelSlug, array $permissions = []) {
+		$this->setSlug(self::SLUG)
+			->setContent(function (string $player) use ($invitation) {
+				return $invitation->getReceiverString();
+			})
+			->setCallable(function (Player $player) use ($invitation, $panelSlug) {
+				Utils::processMenu(RouterFactory::get($panelSlug), $player, [$invitation]);
+			})
+			->setPermissions($permissions);
+	}
 }

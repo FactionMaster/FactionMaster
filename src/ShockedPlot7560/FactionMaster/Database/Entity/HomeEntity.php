@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -39,115 +41,116 @@ use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class HomeEntity extends EntityDatabase {
+	use FactionUtils;
+	use ServerIp;
 
-    use FactionUtils;
-    use ServerIp;
+	/**
+	 * DO NOT USE THIS CONSTANT
+	 * @see getFactionName(), getfactionEntity
+	 * @var string
+	 */
+	public $faction;
+	/**
+	 * DO NOT USE THIS CONSTANT
+	 * @see getName()
+	 * @var string
+	 */
+	public $name;
+	/**
+	 * DO NOT USE THIS CONSTANT
+	 * @see getX()
+	 * @var int
+	 */
+	public $x;
+	/**
+	 * DO NOT USE THIS CONSTANT
+	 * @see getY()
+	 * @var int
+	 */
+	public $y;
+	/**
+	 * DO NOT USE THIS CONSTANT
+	 * @see getZ()
+	 * @var int
+	 */
+	public $z;
+	/**
+	 * DO NOT USE THIS CONSTANT
+	 * @see getLevelName(), getLevel()
+	 * @var string
+	 */
+	public $world;
 
-    /** 
-     * DO NOT USE THIS CONSTANT
-     * @see getFactionName(), getfactionEntity
-     * @var string
-    */
-    public $faction;
-    /** 
-     * DO NOT USE THIS CONSTANT
-     * @see getName()
-     * @var string
-    */
-    public $name;
-    /** 
-     * DO NOT USE THIS CONSTANT
-     * @see getX()
-     * @var int
-    */
-    public $x;
-    /** 
-     * DO NOT USE THIS CONSTANT
-     * @see getY()
-     * @var int
-    */
-    public $y;
-    /** 
-     * DO NOT USE THIS CONSTANT
-     * @see getZ()
-     * @var int
-    */
-    public $z;
-    /** 
-     * DO NOT USE THIS CONSTANT
-     * @see getLevelName(), getLevel()
-     * @var string
-    */
-    public $world;
+	public function setName(string $name): void {
+		$this->name = $name;
+	}
 
-    public function setName(string $name): void {
-        $this->name = $name;
-    }
+	public function setX(int $x): void {
+		$this->x = $x;
+	}
 
-    public function setX(int $x): void {
-        $this->x = $x;
-    }
+	public function setY(int $y): void {
+		$this->y = $y;
+	}
 
-    public function setY(int $y): void {
-        $this->y = $y;
-    }
+	public function setZ(int $z): void {
+		$this->z = $z;
+	}
 
-    public function setZ(int $z): void {
-        $this->z = $z;
-    }
+	public function setWorldName(string $worldName): void {
+		$this->world = $worldName;
+	}
 
-    public function setWorldName(string $worldName): void {
-        $this->world = $worldName;
-    }
+	public function setVector(Vector3 $vector): void {
+		$this->setX($vector->getX());
+		$this->setY($vector->getY());
+		$this->setX($vector->getX());
+	}
 
-    public function setVector(Vector3 $vector): void {
-        $this->setX($vector->getX());
-        $this->setY($vector->getY());
-        $this->setX($vector->getX());
-    }
+	public function getName(): string {
+		return $this->name;
+	}
 
-    public function getName(): string {
-        return $this->name;
-    }
+	public function getLevelName(): string {
+		return $this->world;
+	}
 
-    public function getLevelName(): string {
-        return $this->world;
-    }
+	public function getLevel(): ?World {
+		if (!$this->isActive()) {
+			return null;
+		}
+		return Main::getInstance()->getServer()->getWorldManager()->getWorldByName($this->getLevelName());
+	}
 
-    public function getLevel(): ?World {
-        if (!$this->isActive()) return null;
-        return Main::getInstance()->getServer()->getWorldManager()->getWorldByName($this->getLevelName());
-    }
+	public function toString(): string {
+		return Utils::homeToString($this->getX(), $this->getY(), $this->getZ(), $this->getLevelName());
+	}
 
-    public function toString(): string {
-        return Utils::homeToString($this->getX(), $this->getY(), $this->getZ(), $this->getLevelName());
-    }
+	public function __toString(): string {
+		return $this->toString();
+	}
 
-    public function __toString(): string{
-        return $this->toString();
-    }
+	public function toArray(): array {
+		return Utils::homeToArray($this->getX(), $this->getY(), $this->getZ(), $this->getLevelName());
+	}
 
-    public function toArray(): array {
-        return Utils::homeToArray($this->getX(), $this->getY(), $this->getZ(), $this->getLevelName());
-    }
+	public function getX(): int {
+		return $this->x;
+	}
 
-    public function getX(): int {
-        return $this->x;
-    }
+	public function getY(): int {
+		return $this->y;
+	}
 
-    public function getY(): int {
-        return $this->y;
-    }
+	public function getZ(): int {
+		return $this->z;
+	}
 
-    public function getZ(): int {
-        return $this->z;
-    }
+	public function getVector(): Vector3 {
+		return new Vector3($this->getX(), $this->getY(), $this->getZ());
+	}
 
-    public function getVector(): Vector3 {
-        return new Vector3($this->getX(), $this->getY(), $this->getZ());
-    }
-
-    public function getPosition(): Position {
-        return new Position($this->getX(), $this->getY(), $this->getZ(), $this->getLevel());
-    }
+	public function getPosition(): Position {
+		return new Position($this->getX(), $this->getY(), $this->getZ(), $this->getLevel());
+	}
 }

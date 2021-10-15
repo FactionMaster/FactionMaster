@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -36,92 +38,94 @@ use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\libs\JackMD\ConfigUpdater\ConfigUpdater;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function count;
+use function is_countable;
+use function mkdir;
 
 class ConfigManager {
+	const CONFIG_VERSION = 11;
+	const LEVEL_VERSION = 0;
+	const TRANSLATION_VERSION = 1;
+	const LANG_FILE_VERSION = [
+		"en_EN" => 6,
+		"fr_FR" => 4,
+		"es_SPA" => 2,
+		"tr_TR" => 1
+	];
 
-    const CONFIG_VERSION = 11;
-    const LEVEL_VERSION = 0;
-    const TRANSLATION_VERSION = 1;
-    const LANG_FILE_VERSION = [
-        "en_EN" => 6,
-        "fr_FR" => 4,
-        "es_SPA" => 2,
-        "tr_TR" => 1
-    ];
+	/** @var Config */
+	private static $config;
+	/** @var Config */
+	private static $level;
+	/** @var Config */
+	private static $translation;
+	/** @var Config */
+	private static $version;
+	/** @var Config[] */
+	private static $lang;
+	/** @var Config */
+	private static $leaderboard;
 
-    /** @var Config */
-    private static $config;
-    /** @var Config */
-    private static $level;
-    /** @var Config */
-    private static $translation;
-    /** @var Config */
-    private static $version;
-    /** @var Config[] */
-    private static $lang;
-    /** @var Config */
-    private static $leaderboard;
+	public static function init(Main $main): void {
+		@mkdir(Utils::getDataFolder());
+		@mkdir(Utils::getLangFile());
 
-    public static function init(Main $main): void {
-        @mkdir(Utils::getDataFolder());
-        @mkdir(Utils::getLangFile());
+		$main->saveDefaultConfig();
+		$main->saveResource('translation.yml');
+		$main->saveResource('level.yml');
+		$main->saveResource('version.yml');
+		$main->saveResource('leaderboard.yml');
 
-        $main->saveDefaultConfig();
-        $main->saveResource('translation.yml');
-        $main->saveResource('level.yml');
-        $main->saveResource('version.yml');
-        $main->saveResource('leaderboard.yml');
+		self::$config = Utils::getConfigFile("config");
+		self::$level = Utils::getConfigFile("level");
+		self::$translation = Utils::getConfigFile("translation");
+		self::$version = Utils::getConfigFile("version");
+		self::$leaderboard = Utils::getConfigFile("leaderboard");
 
-        self::$config = Utils::getConfigFile("config");
-        self::$level = Utils::getConfigFile("level");
-        self::$translation = Utils::getConfigFile("translation");
-        self::$version = Utils::getConfigFile("version");
-        self::$leaderboard = Utils::getConfigFile("leaderboard"); 
+		ConfigUpdater::checkUpdate($main, self::getConfig(), "file-version", self::CONFIG_VERSION);
+		ConfigUpdater::checkUpdate($main, self::getLevelConfig(), "file-version", self::LEVEL_VERSION);
+		ConfigUpdater::checkUpdate($main, self::getTranslationConfig(), "file-version", self::TRANSLATION_VERSION);
 
-        ConfigUpdater::checkUpdate($main, self::getConfig(), "file-version", self::CONFIG_VERSION);
-        ConfigUpdater::checkUpdate($main, self::getLevelConfig(), "file-version", self::LEVEL_VERSION);
-        ConfigUpdater::checkUpdate($main, self::getTranslationConfig(), "file-version", self::TRANSLATION_VERSION);
+		if (is_countable(self::getTranslationConfig()->get("languages"))) {
+			if (count(self::getTranslationConfig()->get("languages")) > 0) {
+				foreach (self::getTranslationConfig()->get("languages") as $language) {
+					$main->saveResource("lang/$language.yml");
+					ConfigUpdater::checkUpdate($main, Utils::getConfigLangFile($language), "file-version", self::LANG_FILE_VERSION[$language]);
+					self::$lang[$language] = Utils::getConfigLangFile($language);
+				}
+			}
+		} else {
+			Main::getInstance()->getLogger()->error("A corrupted file has been detected, please reload your server, the base file was updated normally");
+			return;
+		}
+	}
 
-        if (is_countable(self::getTranslationConfig()->get("languages"))) {
-            if (count(self::getTranslationConfig()->get("languages")) > 0) {
-                foreach (self::getTranslationConfig()->get("languages") as $language) {
-                    $main->saveResource("lang/$language.yml");
-                    ConfigUpdater::checkUpdate($main, Utils::getConfigLangFile($language), "file-version", self::LANG_FILE_VERSION[$language]);
-                    self::$lang[$language] = Utils::getConfigLangFile($language);
-                }
-            }
-        } else {
-            Main::getInstance()->getLogger()->error("A corrupted file has been detected, please reload your server, the base file was updated normally");
-            return;
-        }
-    }
+	public static function getConfig(): ?Config {
+		return self::$config;
+	}
 
-    public static function getConfig(): ?Config {
-        return self::$config;
-    }
+	public static function getVersionConfig(): ?Config {
+		return self::$version;
+	}
 
-    public static function getVersionConfig(): ?Config {
-        return self::$version;
-    }
+	public static function getLevelConfig(): ?Config {
+		return self::$level;
+	}
 
-    public static function getLevelConfig(): ?Config {
-        return self::$level;
-    }
+	public static function getTranslationConfig(): ?Config {
+		return self::$translation;
+	}
 
-    public static function getTranslationConfig(): ?Config {
-        return self::$translation;
-    }
+	public static function getLangConfig(string $lang): ?Config {
+		return self::$lang[$lang] ?? null;
+	}
 
-    public static function getLangConfig(string $lang): ?Config {
-        return self::$lang[$lang] ?? null;
-    }
+	public static function getLeaderboardConfig(): Config {
+		return self::$leaderboard;
+	}
 
-    public static function getLeaderboardConfig(): Config {
-        return self::$leaderboard;
-    }
-
-    /** @return Config[] */
-    public static function getLangsConfig(): array {
-        return self::$lang;
-    }
+	/** @return Config[] */
+	public static function getLangsConfig(): array {
+		return self::$lang;
+	}
 }

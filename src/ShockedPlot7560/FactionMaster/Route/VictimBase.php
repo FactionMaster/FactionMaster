@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -35,15 +37,14 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 
 abstract class VictimBase extends RouteBase {
 
-    /** @var UserEntity */
-    protected $victim;
+	/** @var UserEntity */
+	protected $victim;
 
-    public function getVictim(): UserEntity {
-        return $this->victim;
-    }
+	public function getVictim(): UserEntity {
+		return $this->victim;
+	}
 
-    public function setVictim(UserEntity $victim): void {
-        $this->victim = $victim;
-    }
-
+	public function setVictim(UserEntity $victim): void {
+		$this->victim = $victim;
+	}
 }

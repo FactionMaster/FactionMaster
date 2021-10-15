@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -42,14 +44,13 @@ use ShockedPlot7560\FactionMaster\Route\ManageJoinInvitationRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class ManageJoinInvitationCollection extends Collection {
+	const SLUG = "manageJoinInvitationCollection";
 
-    const SLUG = "manageJoinInvitationCollection";
-
-    public function __construct() {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, InvitationEntity $invitationEntity) {
-            $this->register(new DeleteInvitation($invitationEntity, JoinInvitationSendRoute::SLUG));
-            $this->register(new Back(RouterFactory::get(ManageJoinInvitationRoute::SLUG)));
-        });
-    }
+	public function __construct() {
+		parent::__construct(self::SLUG);
+		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, InvitationEntity $invitationEntity) {
+			$this->register(new DeleteInvitation($invitationEntity, JoinInvitationSendRoute::SLUG));
+			$this->register(new Back(RouterFactory::get(ManageJoinInvitationRoute::SLUG)));
+		});
+	}
 }

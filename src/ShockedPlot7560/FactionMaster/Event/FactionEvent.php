@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -35,44 +37,46 @@ namespace ShockedPlot7560\FactionMaster\Event;
 use pocketmine\event\Event;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
+use function get_class;
 
 abstract class FactionEvent extends Event {
-
-    protected $faction;
+	protected $faction;
 	/** @var bool */
 	private $isForcable = false;
 
-    /**
-     * @param string|FactionEntity $faction
-     */
-    public function __construct($faction, ?bool $isForce = null) {
+	/**
+	 * @param string|FactionEntity $faction
+	 */
+	public function __construct($faction, ?bool $isForce = null) {
 		if ($isForce !== null && $this instanceof Forcable) {
 			$this->setForcable($isForce);
 		}
-        $this->faction = $faction;
-    }
+		$this->faction = $faction;
+	}
 
-    public function getFaction(): ?FactionEntity {
-        if ($this->faction instanceof FactionEntity) return $this->faction;
-        return MainAPI::getFaction($this->faction);
-    }
+	public function getFaction(): ?FactionEntity {
+		if ($this->faction instanceof FactionEntity) {
+			return $this->faction;
+		}
+		return MainAPI::getFaction($this->faction);
+	}
 
-    /**
+	/**
 	 * @throws \BadMethodCallException
 	 */
-	public function isForcable() : bool{
-		if(!($this instanceof Forcable)){
+	public function isForcable() : bool {
+		if (!($this instanceof Forcable)) {
 			throw new \BadMethodCallException(get_class($this) . " is not Forcable");
 		}
 
 		return $this->isForcable;
 	}
 
-    /**
+	/**
 	 * @throws \BadMethodCallException
 	 */
-	public function setForcable(bool $value = true) : void{
-		if(!($this instanceof Forcable)){
+	public function setForcable(bool $value = true) : void {
+		if (!($this instanceof Forcable)) {
 			throw new \BadMethodCallException(get_class($this) . " is not Forcable");
 		}
 

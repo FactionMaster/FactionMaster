@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -40,19 +42,18 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Ally extends Button {
+	const SLUG = "ally";
 
-    const SLUG = "ally";
-
-    public function __construct(FactionEntity $ally) {
-        $this->setSlug(self::SLUG)
-            ->setContent(function (string $player) use ($ally) {
-                return $ally->getName();
-            })
-            ->setCallable(function (Player $player) use ($ally) {
-                Utils::processMenu(RouterFactory::get(ManageAllianceRoute::SLUG), $player, [$ally]);
-            })
-            ->setPermissions([
-                PermissionIds::PERMISSION_BREAK_ALLIANCE
-            ]);
-    }
+	public function __construct(FactionEntity $ally) {
+		$this->setSlug(self::SLUG)
+			->setContent(function (string $player) use ($ally) {
+				return $ally->getName();
+			})
+			->setCallable(function (Player $player) use ($ally) {
+				Utils::processMenu(RouterFactory::get(ManageAllianceRoute::SLUG), $player, [$ally]);
+			})
+			->setPermissions([
+				PermissionIds::PERMISSION_BREAK_ALLIANCE
+			]);
+	}
 }

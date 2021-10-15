@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -34,7 +36,6 @@ namespace ShockedPlot7560\FactionMaster\Button\Collection;
 
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Back;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\RequestListItem;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
@@ -43,23 +44,22 @@ use ShockedPlot7560\FactionMaster\Route\MembersRequestReceiveRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class MembersRequestReceiveCollection extends Collection {
+	const SLUG = "membersRequestReceiveCollection";
 
-    const SLUG = "membersRequestReceiveCollection";
-
-    public function __construct() {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, array $requests) {
-            foreach ($requests as $request) {
-                $this->register(new RequestListItem(
-                    $request, 
-                    ManageMemberRequestRoute::SLUG, 
-                    [
-                        PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND, 
-                        PermissionIds::PERMISSION_REFUSE_MEMBER_DEMAND
-                    ]
-                ));
-            }
-            $this->register(new Back(RouterFactory::get(MembersRequestReceiveRoute::SLUG)->getBackRoute()));
-        });
-    }
+	public function __construct() {
+		parent::__construct(self::SLUG);
+		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, array $requests) {
+			foreach ($requests as $request) {
+				$this->register(new RequestListItem(
+					$request,
+					ManageMemberRequestRoute::SLUG,
+					[
+						PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND,
+						PermissionIds::PERMISSION_REFUSE_MEMBER_DEMAND
+					]
+				));
+			}
+			$this->register(new Back(RouterFactory::get(MembersRequestReceiveRoute::SLUG)->getBackRoute()));
+		});
+	}
 }

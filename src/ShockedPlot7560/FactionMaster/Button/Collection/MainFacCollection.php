@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -44,20 +46,19 @@ use ShockedPlot7560\FactionMaster\Button\ViewMembers;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 
 class MainFacCollection extends Collection {
+	const SLUG = "mainFacCollection";
 
-    const SLUG = "mainFacCollection";
-
-    public function __construct() {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
-            $this->register(new ViewMembers());
-            $this->register(new ViewHomes());
-            $this->register(new ManageMembers());
-            $this->register(new ManageFaction());
-            $this->register(new FactionsTop());
-            $this->register(new ChangeLanguage());
-            $this->register(new LeaveDelete());
-            $this->register(new Quit());
-        });
-    }
+	public function __construct() {
+		parent::__construct(self::SLUG);
+		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
+			$this->register(new ViewMembers());
+			$this->register(new ViewHomes());
+			$this->register(new ManageMembers());
+			$this->register(new ManageFaction());
+			$this->register(new FactionsTop());
+			$this->register(new ChangeLanguage());
+			$this->register(new LeaveDelete());
+			$this->register(new Quit());
+		});
+	}
 }

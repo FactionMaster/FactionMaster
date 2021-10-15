@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -39,53 +41,55 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ExtensionManager {
 
-    /** @var Extension[] */
-    private static $extensions = [];
+	/** @var Extension[] */
+	private static $extensions = [];
 
-    public static function registerExtension(Extension $extension): void {
-        self::$extensions[$extension->getExtensionName()] = $extension;
-    }
+	public static function registerExtension(Extension $extension): void {
+		self::$extensions[$extension->getExtensionName()] = $extension;
+	}
 
-    public static function disableExtension(string $name): void {
-        if (isset(self::$extensions[$name])) {
-            unset(self::$extensions[$name]);
-        }
-    }
+	public static function disableExtension(string $name): void {
+		if (isset(self::$extensions[$name])) {
+			unset(self::$extensions[$name]);
+		}
+	}
 
-    public static function load(): void {
-        foreach (self::$extensions as $extension) {
-            $extension->execute();
-        }
-        self::loadLangFile();
-    }
+	public static function load(): void {
+		foreach (self::$extensions as $extension) {
+			$extension->execute();
+		}
+		self::loadLangFile();
+	}
 
-    /** @return Extension[] */
-    public static function getExtensions(): array{
-        return self::$extensions;
-    }
+	/** @return Extension[] */
+	public static function getExtensions(): array {
+		return self::$extensions;
+	}
 
-    public static function loadLangFile(): void {
-        $langConfigExtension = [];
-        foreach (self::getExtensions() as $extension) {
-            try {
-                $langConfigExtension[$extension->getExtensionName()] = $extension->getLangConfig();
-            } catch (\Throwable $th) {
-                Main::getInstance()->getLogger()->error("Can not load the translate files of : " . $extension->getExtensionName() . ", check the return value of the function getLangConfig() and verify its key and value. If you are not the author of this extension, please inform him");
-            }
-        }
-        foreach ($langConfigExtension as $extensionName => $langConfig) {
-            foreach ($langConfig as $langSlug => $langConfigFile) {
-                if (!$langConfigFile instanceof Config) {
-                    Main::getInstance()->getLogger()->error("Can not load the translate files of : $extensionName, check the return value of the function getLangConfig() and verify its key and value. If you are not the author of this extension, please inform him");
-                } else {
-                    $langMain = new Config(Utils::getDataFolder() . "lang/$langSlug.yml", Config::YAML);
-                    foreach ($langConfigFile->getAll() as $key => $value) {
-                        if ($key === "file-version") continue;
-                        $langMain->__set($key, $value);
-                    }
-                    $langMain->save();
-                }
-            }
-        }
-    }
+	public static function loadLangFile(): void {
+		$langConfigExtension = [];
+		foreach (self::getExtensions() as $extension) {
+			try {
+				$langConfigExtension[$extension->getExtensionName()] = $extension->getLangConfig();
+			} catch (\Throwable $th) {
+				Main::getInstance()->getLogger()->error("Can not load the translate files of : " . $extension->getExtensionName() . ", check the return value of the function getLangConfig() and verify its key and value. If you are not the author of this extension, please inform him");
+			}
+		}
+		foreach ($langConfigExtension as $extensionName => $langConfig) {
+			foreach ($langConfig as $langSlug => $langConfigFile) {
+				if (!$langConfigFile instanceof Config) {
+					Main::getInstance()->getLogger()->error("Can not load the translate files of : $extensionName, check the return value of the function getLangConfig() and verify its key and value. If you are not the author of this extension, please inform him");
+				} else {
+					$langMain = new Config(Utils::getDataFolder() . "lang/$langSlug.yml", Config::YAML);
+					foreach ($langConfigFile->getAll() as $key => $value) {
+						if ($key === "file-version") {
+							continue;
+						}
+						$langMain->__set($key, $value);
+					}
+					$langMain->save();
+				}
+			}
+		}
+	}
 }

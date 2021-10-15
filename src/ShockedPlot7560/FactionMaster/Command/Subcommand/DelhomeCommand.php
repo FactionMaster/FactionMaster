@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,62 +34,60 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\HomeEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionHomeDeleteEvent;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class DelhomeCommand extends BaseSubCommand {
+	protected function prepare(): void {
+		$this->registerArgument(0, new RawStringArgument("name", false));
+	}
 
-    protected function prepare(): void {
-        $this->registerArgument(0, new RawStringArgument("name", false));
-    }
+	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
+		if (!$sender instanceof Player) {
+			return;
+		}
 
-    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-        if (!$sender instanceof Player) {
-            return;
-        }
-
-        if (!isset($args["name"])) {
-            $this->sendUsage();
-            return;
-        }
-        $permissions = MainAPI::getMemberPermission($sender->getName());
-        $userEntity = MainAPI::getUser($sender->getName());
-        if ($permissions === null) {
-            $sender->sendMessage(Utils::getText($sender->getName(), "NEED_FACTION"));
-            return;
-        }
-        if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_DELETE_FACTION_HOME)) {
-            if (MainAPI::getFactionHome($userEntity->getFactionName(), $args["name"]) instanceof HomeEntity) {
-                MainAPI::removeHome($userEntity->getFactionName(), $args['name']);
-                Utils::newMenuSendTask(new MenuSendTask(
-                    function () use ($userEntity, $args) {
-                        return !MainAPI::getFactionHome($userEntity->getFactionName(), $args['name']) instanceof HomeEntity;
-                    },
-                    function () use ($sender, $userEntity, $args) {
-                        (new FactionHomeDeleteEvent($sender, $userEntity->getFactionName(), $args['name']))->call();
-                        $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_DELETE"));
-                    },
-                    function () use ($sender) {
-                        $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
-                    }
-                ));
-                return;
-            } else {
-                $sender->sendMessage(Utils::getText($sender->getName(), "HOME_DONT_EXIST"));
-                return;
-            }
-        } else {
-            $sender->sendMessage(Utils::getText($sender->getName(), "DONT_PERMISSION"));
-            return;
-        }
-    }
-
+		if (!isset($args["name"])) {
+			$this->sendUsage();
+			return;
+		}
+		$permissions = MainAPI::getMemberPermission($sender->getName());
+		$userEntity = MainAPI::getUser($sender->getName());
+		if ($permissions === null) {
+			$sender->sendMessage(Utils::getText($sender->getName(), "NEED_FACTION"));
+			return;
+		}
+		if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_DELETE_FACTION_HOME)) {
+			if (MainAPI::getFactionHome($userEntity->getFactionName(), $args["name"]) instanceof HomeEntity) {
+				MainAPI::removeHome($userEntity->getFactionName(), $args['name']);
+				Utils::newMenuSendTask(new MenuSendTask(
+					function () use ($userEntity, $args) {
+						return !MainAPI::getFactionHome($userEntity->getFactionName(), $args['name']) instanceof HomeEntity;
+					},
+					function () use ($sender, $userEntity, $args) {
+						(new FactionHomeDeleteEvent($sender, $userEntity->getFactionName(), $args['name']))->call();
+						$sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_DELETE"));
+					},
+					function () use ($sender) {
+						$sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
+					}
+				));
+				return;
+			} else {
+				$sender->sendMessage(Utils::getText($sender->getName(), "HOME_DONT_EXIST"));
+				return;
+			}
+		} else {
+			$sender->sendMessage(Utils::getText($sender->getName(), "DONT_PERMISSION"));
+			return;
+		}
+	}
 }

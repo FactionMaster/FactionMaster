@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -37,18 +39,16 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class CreateFaction extends Button {
+	const SLUG = "createFaction";
 
-    const SLUG = "createFaction";
-
-    public function __construct() {
-        $this->setSlug(self::SLUG)
-            ->setContent(function ($player) {
-                return Utils::getText($player, "BUTTON_CREATE_FACTION");
-            })
-            ->setCallable(function ($player) {
-                Utils::processMenu(RouterFactory::get(CreateFactionRoute::SLUG), $player);
-            })
-            ->setImgPack("textures/img/create_fac");
-    }
-
+	public function __construct() {
+		$this->setSlug(self::SLUG)
+			->setContent(function ($player) {
+				return Utils::getText($player, "BUTTON_CREATE_FACTION");
+			})
+			->setCallable(function ($player) {
+				Utils::processMenu(RouterFactory::get(CreateFactionRoute::SLUG), $player);
+			})
+			->setImgPack("textures/img/create_fac");
+	}
 }

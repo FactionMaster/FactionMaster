@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,65 +34,64 @@
 
 namespace ShockedPlot7560\FactionMaster\Route;
 
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Collection\AllianceOptionCollection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function count;
 
 class AllianceOptionRoute extends RouteBase implements Route {
+	const SLUG = "allianceOptionRoute";
 
-    const SLUG = "allianceOptionRoute";
+	public function getSlug(): string {
+		return self::SLUG;
+	}
 
-    public function getSlug(): string {
-        return self::SLUG;
-    }
+	public function getPermissions(): array {
+		return [
+			PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
+			PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
+			PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION,
+			PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION,
+			PermissionIds::PERMISSION_BREAK_ALLIANCE
+		];
+	}
 
-    public function getPermissions(): array {
-        return [
-            PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
-            PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
-            PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION,
-            PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION,
-            PermissionIds::PERMISSION_BREAK_ALLIANCE
-        ];
-    }
+	public function getBackRoute(): ?Route {
+		return RouterFactory::get(FactionOptionRoute::SLUG);
+	}
 
-    public function getBackRoute(): ?Route {
-        return RouterFactory::get(FactionOptionRoute::SLUG);
-    }
+	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+		$this->init($player, $userEntity, $userPermissions, $params);
 
-    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
-        $this->init($player, $userEntity, $userPermissions, $params);
+		$this->setCollection(CollectionFactory::get(AllianceOptionCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getFaction()));
 
-        $this->setCollection(CollectionFactory::get(AllianceOptionCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getFaction()));
+		$message = isset($params[0]) ? $params[0] : "";
+		if (count($this->getFaction()->getAlly()) == 0) {
+			$message .= Utils::getText($this->getUserEntity()->getName(), "NO_ALLY");
+		}
+		$player->sendForm($this->getForm($message));
+	}
 
-        $message = isset($params[0]) ? $params[0] : "";
-        if (count($this->getFaction()->getAlly()) == 0) {
-            $message .= Utils::getText($this->getUserEntity()->getName(), "NO_ALLY");
-        }
-        $player->sendForm($this->getForm($message));
-    }
+	public function call(): callable {
+		return function (Player $player, $data) {
+			if ($data === null) {
+				return;
+			}
+			$this->getCollection()->process($data, $player);
+		};
+	}
 
-    public function call(): callable {
-        return function (Player $player, $data) {
-            if ($data === null) {
-                return;
-            }
-            $this->getCollection()->process($data, $player);
-        };
-    }
-
-    protected function getForm(string $message = ""): SimpleForm {
-        $menu = new SimpleForm($this->call());
-        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
-        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MANAGE_ALLIANCE_MAIN_TITLE"));
-        if ($message !== "") {
-            $menu->setContent($message);
-        }
-        return $menu;
-    }
-
+	protected function getForm(string $message = ""): SimpleForm {
+		$menu = new SimpleForm($this->call());
+		$menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+		$menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MANAGE_ALLIANCE_MAIN_TITLE"));
+		if ($message !== "") {
+			$menu->setContent($message);
+		}
+		return $menu;
+	}
 }

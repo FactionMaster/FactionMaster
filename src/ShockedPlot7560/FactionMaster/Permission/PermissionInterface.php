@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -33,15 +35,13 @@
 namespace ShockedPlot7560\FactionMaster\Permission;
 
 interface PermissionInterface {
+	public function __construct(string $slug, callable $callable, int $id);
 
-    public function __construct(string $slug, callable $callable, int $id);
+	public function getId(): int;
 
-    public function getId(): int;
+	public function getSlug(): string;
 
-    public function getSlug(): string;
+	public function getCallable(): callable ;
 
-    public function getCallable(): callable ;
-
-    public function getName(string $playerName): string;
-
+	public function getName(string $playerName): string;
 }
