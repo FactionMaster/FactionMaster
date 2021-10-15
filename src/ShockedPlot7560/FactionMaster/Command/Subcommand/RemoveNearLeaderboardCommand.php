@@ -39,6 +39,7 @@ use pocketmine\player\Player;
 use pocketmine\world\Position;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
 use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -46,7 +47,6 @@ class RemoveNearLeaderboardCommand extends BaseSubCommand {
 
     protected function prepare(): void {
         $this->setPermission("factionmaster.leaderboard.place");
-        $this->registerArgument(0, new RawStringArgument("slug", true));
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
@@ -58,7 +58,7 @@ class RemoveNearLeaderboardCommand extends BaseSubCommand {
                     $coordonate = explode("|", $coordonate);
                     if ($sender->getWorld()->getDisplayName() === $coordonate[3]) {
                         $level = Main::getInstance()->getServer()->getWorldManager()->getWorldByName($coordonate[3]);
-                        $coordonate = new Position($coordonate[0], $coordonate[1], $coordonate[2], $level);
+                        $coordonate = new Position((int) $coordonate[0], (int) $coordonate[1], (int) $coordonate[2], $level);
                         $playerVector = new Vector3(
                             $sender->getPosition()->getX(),
                             $sender->getPosition()->getY(),
@@ -80,6 +80,16 @@ class RemoveNearLeaderboardCommand extends BaseSubCommand {
                     $prec->getZ(),
                     $prec->getWorld()->getDisplayName()
                 ]);
+                $leaderboards = ConfigManager::getLeaderboardConfig()->get("leaderboards");
+                foreach ($leaderboards as $index => $data) {
+                    $pos = explode("|", $data["position"]);
+                    if (floor((int)$pos[0]) == $prec->getFloorX() && floor((int)$pos[1]) == $prec->getFloorY() && floor((int)$pos[2]) == $prec->getFloorZ() && $pos[3] == $prec->getWorld()->getDisplayName()) {
+                        unset($leaderboards[$index]);
+                    }
+                }
+                $config = ConfigManager::getLeaderboardConfig();
+                $config->set("leaderboards", $leaderboards);
+                $config->save();
                 LeaderboardManager::dispawnLeaderboard($coordonate);
                 //TODO: send remove leaderboard success
             }else{

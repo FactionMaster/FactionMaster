@@ -40,9 +40,9 @@ use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Utils\Leaderboard;
 
-class FactionLeaderboard extends EntityLeaderboard {
+class FactionLevelLeaderboard extends EntityLeaderboard {
 
-    const SLUG = "faction";
+    const SLUG = "factionLevel";
 
     public function getSqlQuery(): string {
         return "SELECT * FROM " . FactionTable::TABLE_NAME . " ORDER BY level DESC, xp DESC, power DESC LIMIT 10";

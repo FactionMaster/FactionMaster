@@ -57,23 +57,24 @@ class PlaceLeaderboard extends BaseSubCommand {
                 }
                 $position = $sender->getPosition();
                 $coord = join("|", [
-                    $position->getX(),
-                    $position->getY(),
-                    $position->getZ(),
+                    $position->getFloorX(),
+                    $position->getFloorY(),
+                    $position->getFloorZ(),
                     $position->getWorld()->getDisplayName()
                 ]);
                 $entity = new Leaderboard($args["slug"], $coord);
                 LeaderboardManager::placeScoreboard($entity);
                 $config = ConfigManager::getLeaderboardConfig();
-                $config->set("leaderboards", [
-                    [
-                        "slug" => "faction",
-                        "position" => $coord,
-                        "active" => true
-                    ]
-                ]);
+                $leaderboards = $config->get('leaderboards');
+                $leaderboards[] = [
+                    "slug" => $args["slug"],
+                    "position" => $coord,
+                    "active" => true
+                ];
+                $config->set("leaderboards", $leaderboards);
                 $config->save();
                 $sender->sendMessage(Utils::getText("", "COMMAND_SCOREBOARD_SUCCESS"));
+                $sender->sendMessage("§5A new feature has been added, you can now put different rankings and put many leaderboards. If you have ideas for new leaderboards ranking, please open an issue on github.");
             }else{
                 $sender->sendMessage(Utils::getText("", "DONT_PERMISSION"));
             }

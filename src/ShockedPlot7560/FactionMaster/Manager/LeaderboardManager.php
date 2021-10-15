@@ -35,7 +35,8 @@ use Exception;
 use pocketmine\math\Vector3;
 use pocketmine\world\particle\FloatingTextParticle;
 use ShockedPlot7560\FactionMaster\Leaderboard\EntityLeaderboard;
-use ShockedPlot7560\FactionMaster\Leaderboard\FactionLeaderboard;
+use ShockedPlot7560\FactionMaster\Leaderboard\FactionLevelLeaderboard;
+use ShockedPlot7560\FactionMaster\Leaderboard\FactionPowerLeaderboard;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Leaderboard;
 
@@ -51,7 +52,8 @@ class LeaderboardManager {
     public static function init(Main $main) {
         self::$main = $main;
 
-        self::registerLeaderboard(new FactionLeaderboard($main));
+        self::registerLeaderboard(new FactionLevelLeaderboard($main));
+        self::registerLeaderboard(new FactionPowerLeaderboard($main));
     }
 
     public static function registerLeaderboard(EntityLeaderboard $leaderboard, bool $override = false): void {
