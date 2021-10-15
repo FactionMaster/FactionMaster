@@ -33,6 +33,7 @@
 namespace ShockedPlot7560\FactionMaster\Manager;
 
 use pocketmine\utils\Config;
+use ShockedPlot7560\FactionMaster\libs\JackMD\ConfigUpdater\ConfigUpdater;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -77,15 +78,15 @@ class ConfigManager {
         self::$version = Utils::getConfigFile("version");
         self::$leaderboard = Utils::getConfigFile("leaderboard"); 
 
-        //ConfigUpdater::checkUpdate($main, self::getConfig(), "file-version", self::CONFIG_VERSION);
-        //ConfigUpdater::checkUpdate($main, self::getLevelConfig(), "file-version", self::LEVEL_VERSION);
-        //ConfigUpdater::checkUpdate($main, self::getTranslationConfig(), "file-version", self::TRANSLATION_VERSION);
+        ConfigUpdater::checkUpdate($main, self::getConfig(), "file-version", self::CONFIG_VERSION);
+        ConfigUpdater::checkUpdate($main, self::getLevelConfig(), "file-version", self::LEVEL_VERSION);
+        ConfigUpdater::checkUpdate($main, self::getTranslationConfig(), "file-version", self::TRANSLATION_VERSION);
 
         if (is_countable(self::getTranslationConfig()->get("languages"))) {
             if (count(self::getTranslationConfig()->get("languages")) > 0) {
                 foreach (self::getTranslationConfig()->get("languages") as $language) {
                     $main->saveResource("lang/$language.yml");
-                    //ConfigUpdater::checkUpdate($main, Utils::getConfigLangFile($language), "file-version", self::LANG_FILE_VERSION[$language]);
+                    ConfigUpdater::checkUpdate($main, Utils::getConfigLangFile($language), "file-version", self::LANG_FILE_VERSION[$language]);
                     self::$lang[$language] = Utils::getConfigLangFile($language);
                 }
             }
