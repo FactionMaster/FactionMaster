@@ -1,0 +1,91 @@
+<?php
+
+/*
+ *
+ *      ______           __  _                __  ___           __
+ *     / ____/___ ______/ /_(_)___  ____     /  |/  /___ ______/ /____  _____
+ *    / /_  / __ `/ ___/ __/ / __ \/ __ \   / /|_/ / __ `/ ___/ __/ _ \/ ___/
+ *   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /
+ *  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/
+ *
+ * FactionMaster - A Faction plugin for PocketMine-MP
+ * This file is part of FactionMaster
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * @author ShockedPlot7560
+ * @link https://github.com/ShockedPlot7560
+ *
+ *
+ */
+
+namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
+
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
+use pocketmine\command\CommandSender;
+use pocketmine\math\Vector3;
+use pocketmine\player\Player;
+use pocketmine\world\Position;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
+use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
+
+class RemoveNearLeaderboardCommand extends BaseSubCommand {
+
+    protected function prepare(): void {
+        $this->setPermission("factionmaster.leaderboard.place");
+        $this->registerArgument(0, new RawStringArgument("slug", true));
+    }
+
+    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
+        if ($sender instanceof Player) {
+            if ($sender->hasPermission("factionmaster.leaderboard.remove")) {
+                /** @var Position|null $prec */
+                $prec = null;
+                foreach (array_keys(LeaderboardManager::getAllSession()) as $coordonate) {
+                    $coordonate = explode("|", $coordonate);
+                    if ($sender->getWorld()->getDisplayName() === $coordonate[3]) {
+                        $level = Main::getInstance()->getServer()->getWorldManager()->getWorldByName($coordonate[3]);
+                        $coordonate = new Position($coordonate[0], $coordonate[1], $coordonate[2], $level);
+                        $playerVector = new Vector3(
+                            $sender->getPosition()->getX(),
+                            $sender->getPosition()->getY(),
+                            $sender->getPosition()->getZ()
+                        );
+                        $distance = $coordonate->distance($playerVector);
+                        if ($prec == null || $prec->distance($playerVector) > $distance) {
+                            $prec = $coordonate;
+                        }
+                    }
+                }
+                if ($prec == null) {
+                    // TODO: send no board find
+                    return;
+                }
+                $coordonate = join("|", [
+                    $prec->getX(),
+                    $prec->getY(),
+                    $prec->getZ(),
+                    $prec->getWorld()->getDisplayName()
+                ]);
+                LeaderboardManager::dispawnLeaderboard($coordonate);
+                //TODO: send remove leaderboard success
+            }else{
+                $sender->sendMessage(Utils::getText("", "DONT_PERMISSION"));
+            }
+        }
+    }
+
+}

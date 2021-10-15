@@ -83,6 +83,13 @@ class LeaderboardManager {
         return self::$leaderboards;
     }
 
+    /**
+     * @return FloatingTextParticle[][]
+     */
+    public static function getAllSession(): array {
+        return self::$session;
+    }
+
     public static function addSession(string $coordonate, FloatingTextParticle $particle): void {
         self::$session[$coordonate][] = $particle;
     }
@@ -95,7 +102,7 @@ class LeaderboardManager {
         }
     }
 
-    public static function dispawnLeaderboard(?string $slug = null, string $coordinates): void {
+    public static function dispawnLeaderboard(string $coordinates): void {
         if (isset(self::$session[$coordinates])) {
             /** @var FloatingTextParticle[] $particle */
             $particles = self::$session[$coordinates];
@@ -108,7 +115,7 @@ class LeaderboardManager {
                     }
                 }
             }
-            unset(self::$session[$coordinates]);
+            unset(self::$session[join("|", $coordinates)]);
         }
     }
 }

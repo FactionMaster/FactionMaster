@@ -41,16 +41,16 @@ use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use ShockedPlot7560\FactionMaster\Utils\Leaderboard;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class PlaceScoreboard extends BaseSubCommand {
+class PlaceLeaderboard extends BaseSubCommand {
 
     protected function prepare(): void {
-        $this->setPermission("factionmaster.scoreboard.place");
+        $this->setPermission("factionmaster.leaderboard.place");
         $this->registerArgument(0, new RawStringArgument("slug"));
     }
 
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
         if ($sender instanceof Player) {
-            if ($sender->hasPermission("factionmaster.scoreboard.place")) {
+            if ($sender->hasPermission("factionmaster.leaderboard.place")) {
                 if (!LeaderboardManager::isRegister($args["slug"])) {
                     $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_SCOREBOARD_INVALID_SLUG", ["list" => implode(",", array_keys(LeaderboardManager::getAll()))]));
                     return;
@@ -62,7 +62,6 @@ class PlaceScoreboard extends BaseSubCommand {
                     $position->getZ(),
                     $position->getWorld()->getDisplayName()
                 ]);
-                //LeaderboardManager::dispawnLeaderboard($args["slug"]);
                 $entity = new Leaderboard($args["slug"], $coord);
                 LeaderboardManager::placeScoreboard($entity);
                 $config = ConfigManager::getLeaderboardConfig();

@@ -69,8 +69,8 @@ class HelpCommand extends BaseSubCommand {
         if ($sender->hasPermission("factionmaster.extension.list")) {
             $sender->sendMessage($this->getString("/f extension", "COMMAND_EXTENSION_DESCRIPTION"));
         }
-        if ($sender->hasPermission("factionmaster.scoreboard.place")) {
-            $sender->sendMessage($this->getString("/f scoreboard", "COMMAND_SCOREBOARD_DESCRIPTION"));
+        if ($sender->hasPermission("factionmaster.leaderboard.place")) {
+            $sender->sendMessage($this->getString("/f leaderboard", "COMMAND_SCOREBOARD_DESCRIPTION"));
         }
         if ($sender->hasPermission("factionmaster.synchro.launch")) {
             $sender->sendMessage($this->getString("/f synchro", "COMMAND_SYNCHRO"));

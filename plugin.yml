@@ -8,8 +8,11 @@ softdepend: ["ScoreHud"]
 virions: ["Commando", "libFormAPI"]
 
 permissions:
-  factionmaster.scoreboard.place:
-    description: "Allow the player to place scoreboard"
+  factionmaster.leaderboard.place:
+    description: "Allow the player to place leaderboard"
+    default: "op"
+  factionmaster.leaderboard.remove:
+    description: "Allow the player to remove leaderboard"
     default: "op"
   factionmaster.synchro.launch:
     description: "Allow the player to launch database synchronisation"
