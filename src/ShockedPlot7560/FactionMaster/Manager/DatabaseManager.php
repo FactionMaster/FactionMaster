@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -40,69 +42,66 @@ use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
 use ShockedPlot7560\FactionMaster\Database\Table\TableInterface;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\Main;
-use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 
 class DatabaseManager {
+	const MYSQL_PROVIDER = "MYSQL";
+	const SQLITE_PROVIDER = "SQLITE";
 
-    const MYSQL_PROVIDER = "MYSQL";
-    const SQLITE_PROVIDER = "SQLITE";
+	/** @var PDO|null */
+	private static $pdo;
+	/** @var TableInterface[] */
+	private static $tables;
 
-    /** @var PDO|null */
-    private static $pdo;
-    /** @var TableInterface[] */
-    private static $tables;
+	public static function init(Main $Main): void {
+		$provider = ConfigManager::getConfig()->get('PROVIDER');
+		switch ($provider) {
+			case self::MYSQL_PROVIDER:
+				$databaseConfig = ConfigManager::getConfig()->get("MYSQL_database");
+				$pdo = new PDO(
+					"mysql:host=" . $databaseConfig['host'] . ";dbname=" . $databaseConfig['name'],
+					$databaseConfig['user'],
+					$databaseConfig['pass']
+				);
+				break;
+			case self::SQLITE_PROVIDER:
+				$databaseConfig = ConfigManager::getConfig()->get("SQLITE_database");
+				$pdo = new PDO("sqlite:" . $databaseConfig['name'] . ".sqlite");
+				break;
+			default:
+				$Main->getLogger()->alert("Please give a valid PROVIDER in config.yml, use only : " . self::MYSQL_PROVIDER . " or " . self::SQLITE_PROVIDER);
+				$Main->getServer()->getPluginManager()->disablePlugin($Main);
+				return;
+		}
 
-    public static function init(Main $Main): void {
-        $provider = ConfigManager::getConfig()->get('PROVIDER');
-        switch ($provider) {
-            case self::MYSQL_PROVIDER:
-                $databaseConfig = ConfigManager::getConfig()->get("MYSQL_database");
-                $pdo = new PDO(
-                    "mysql:host=" . $databaseConfig['host'] . ";dbname=" . $databaseConfig['name'],
-                    $databaseConfig['user'],
-                    $databaseConfig['pass']
-                );
-                break;
-            case self::SQLITE_PROVIDER:
-                $databaseConfig = ConfigManager::getConfig()->get("SQLITE_database");
-                $pdo = new PDO("sqlite:" . $databaseConfig['name'] . ".sqlite");
-                break;
-            default:
-                $Main->getLogger()->alert("Please give a valid PROVIDER in config.yml, use only : " . self::MYSQL_PROVIDER . " or " . self::SQLITE_PROVIDER);
-                $Main->getServer()->getPluginManager()->disablePlugin($Main);
-                return;
-        }
+		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		self::$pdo = $pdo;
+		self::initTable();
+	}
 
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        self::$pdo = $pdo;
-        self::initTable();
-    }
+	public static function getPDO(): ?PDO {
+		return self::$pdo;
+	}
 
-    public static function getPDO(): ?PDO {
-        return self::$pdo;
-    }
+	/** @return TableInterface[] */
+	public static function getTables(): array {
+		return self::$tables;
+	}
 
-    /** @return TableInterface[] */
-    public static function getTables(): array{
-        return self::$tables;
-    }
+	public static function getTable(string $slug): ?TableInterface {
+		return self::getTables()[$slug] ?? null;
+	}
 
-    public static function getTable(string $slug): ?TableInterface {
-        return self::getTables()[$slug] ?? null;
-    }
-
-    private static function initTable(): void {
-        $tables = [
-            FactionTable::class,
-            UserTable::class,
-            InvitationTable::class,
-            ClaimTable::class,
-            HomeTable::class,
-        ];
-        foreach ($tables as $table) {
-            $table = (new $table(self::getPDO()))->init();
-            self::$tables[$table::SLUG] = $table;
-        }
-    }
-
+	private static function initTable(): void {
+		$tables = [
+			FactionTable::class,
+			UserTable::class,
+			InvitationTable::class,
+			ClaimTable::class,
+			HomeTable::class,
+		];
+		foreach ($tables as $table) {
+			$table = (new $table(self::getPDO()))->init();
+			self::$tables[$table::SLUG] = $table;
+		}
+	}
 }

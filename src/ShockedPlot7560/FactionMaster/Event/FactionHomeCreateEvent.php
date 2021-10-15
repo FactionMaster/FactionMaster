@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -37,31 +39,29 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
 class FactionHomeCreateEvent extends FactionEvent implements Forcable {
+	use PlayerEvent;
 
-    use PlayerEvent;
+	protected $player;
+	private $name;
 
-    protected $player;
-    private $name;
+	/**
+	 * @param string|FactionEntity $faction
+	 */
+	public function __construct(Player $player, $faction, string $name, bool $isForce = false) {
+		parent::__construct($faction, $isForce);
+		$this->player = $player;
+		$this->name = $name;
+	}
 
-    /**
-     * @param string|FactionEntity $faction
-     */
-    public function __construct(Player $player, $faction, string $name, bool $isForce = false) {
-        parent::__construct($faction, $isForce);
-        $this->player = $player;
-        $this->name = $name;
-    }
+	public function getName(): string {
+		return $this->name;
+	}
 
-    public function getName(): string {
-        return $this->name;
-    }
+	public function getVector(): Vector3 {
+		return new Vector3($this->getPlayer()->getX(), $this->getPlayer()->getY(), $this->getPlayer()->getZ());
+	}
 
-    public function getVector(): Vector3 {
-        return new Vector3($this->getPlayer()->getX(), $this->getPlayer()->getY(), $this->getPlayer()->getZ());
-    }
-
-    public function getWorldName(): string {
-        return $this->getPlayer()->getLevel()->getName();
-    }
-
+	public function getWorldName(): string {
+		return $this->getPlayer()->getLevel()->getName();
+	}
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,77 +34,75 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\HomeEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionHomeCreateEvent;
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function count;
 
 class SethomeCommand extends BaseSubCommand {
+	protected function prepare(): void {
+		$this->registerArgument(0, new RawStringArgument("name", false));
+	}
 
-    protected function prepare(): void {
-        $this->registerArgument(0, new RawStringArgument("name", false));
-    }
+	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
+		if (!$sender instanceof Player) {
+			return;
+		}
 
-    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-        if (!$sender instanceof Player) {
-            return;
-        }
-
-        if (!isset($args["name"])) {
-            $this->sendUsage();
-            return;
-        }
-        $permissions = MainAPI::getMemberPermission($sender->getName());
-        $userEntity = MainAPI::getUser($sender->getName());
-        if ($permissions === null) {
-            $sender->sendMessage(Utils::getText($sender->getName(), "NEED_FACTION"));
-            return;
-        }
-        if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_ADD_FACTION_HOME)) {
-            $player = $sender->getPlayer();
-            if (!MainAPI::getFactionHome($userEntity->getFactionName(), $args["name"]) instanceof HomeEntity) {
-                $faction = MainAPI::getFaction($userEntity->getFactionName());
-                if (count(MainAPI::getFactionHomes($userEntity->getFactionName())) < $faction->getMaxHome()) {
-                    $Chunk = $player->getLevel()->getChunkAtPosition($player);
-                    if (ConfigManager::getConfig()->get("allow-home-ennemy-claim") && MainAPI::getFactionClaim($player->getLevel()->getName(), $Chunk->getX(), $Chunk->getZ()) === null) {
-                        MainAPI::addHome($player, $userEntity->getFactionName(), $args['name']);
-                        Utils::newMenuSendTask(new MenuSendTask(
-                            function () use ($userEntity, $args) {
-                                return MainAPI::getFactionHome($userEntity->getFactionName(), $args['name']) instanceof HomeEntity;
-                            },
-                            function () use ($sender, $faction, $args) {
-                                (new FactionHomeCreateEvent($sender, $faction, $args['name']))->call();
-                                $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_CREATE"));
-                            },
-                            function () use ($sender) {
-                                $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
-                            }
-                        ));
-                        return;
-                    } else {
-                        $sender->sendMessage(Utils::getText($sender->getName(), "CANT_SETHOME_ENNEMY_CLAIM"));
-                        return;
-                    }
-                } else {
-                    $sender->sendMessage(Utils::getText($sender->getName(), "MAX_HOME_REACH"));
-                    return;
-                }
-            } else {
-                $sender->sendMessage(Utils::getText($sender->getName(), "ALREADY_HOME_NAME"));
-                return;
-            }
-        } else {
-            $sender->sendMessage(Utils::getText($sender->getName(), "DONT_PERMISSION"));
-            return;
-        }
-    }
-
+		if (!isset($args["name"])) {
+			$this->sendUsage();
+			return;
+		}
+		$permissions = MainAPI::getMemberPermission($sender->getName());
+		$userEntity = MainAPI::getUser($sender->getName());
+		if ($permissions === null) {
+			$sender->sendMessage(Utils::getText($sender->getName(), "NEED_FACTION"));
+			return;
+		}
+		if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_ADD_FACTION_HOME)) {
+			$player = $sender->getPlayer();
+			if (!MainAPI::getFactionHome($userEntity->getFactionName(), $args["name"]) instanceof HomeEntity) {
+				$faction = MainAPI::getFaction($userEntity->getFactionName());
+				if (count(MainAPI::getFactionHomes($userEntity->getFactionName())) < $faction->getMaxHome()) {
+					$Chunk = $player->getLevel()->getChunkAtPosition($player);
+					if (ConfigManager::getConfig()->get("allow-home-ennemy-claim") && MainAPI::getFactionClaim($player->getLevel()->getName(), $Chunk->getX(), $Chunk->getZ()) === null) {
+						MainAPI::addHome($player, $userEntity->getFactionName(), $args['name']);
+						Utils::newMenuSendTask(new MenuSendTask(
+							function () use ($userEntity, $args) {
+								return MainAPI::getFactionHome($userEntity->getFactionName(), $args['name']) instanceof HomeEntity;
+							},
+							function () use ($sender, $faction, $args) {
+								(new FactionHomeCreateEvent($sender, $faction, $args['name']))->call();
+								$sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_CREATE"));
+							},
+							function () use ($sender) {
+								$sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
+							}
+						));
+						return;
+					} else {
+						$sender->sendMessage(Utils::getText($sender->getName(), "CANT_SETHOME_ENNEMY_CLAIM"));
+						return;
+					}
+				} else {
+					$sender->sendMessage(Utils::getText($sender->getName(), "MAX_HOME_REACH"));
+					return;
+				}
+			} else {
+				$sender->sendMessage(Utils::getText($sender->getName(), "ALREADY_HOME_NAME"));
+				return;
+			}
+		} else {
+			$sender->sendMessage(Utils::getText($sender->getName(), "DONT_PERMISSION"));
+			return;
+		}
+	}
 }

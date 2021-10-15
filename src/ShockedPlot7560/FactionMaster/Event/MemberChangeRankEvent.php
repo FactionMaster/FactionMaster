@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,29 +34,27 @@
 
 namespace ShockedPlot7560\FactionMaster\Event;
 
-use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 
 class MemberChangeRankEvent extends FactionEvent implements Forcable {
+	private $target;
+	private $oldRank;
 
-    private $target;
-    private $oldRank;
+	/**
+	 * @param string|FactionEntity $faction
+	 */
+	public function __construct($faction, UserEntity $target, ?int $oldRank, bool $isForce = false) {
+		parent::__construct($faction, $isForce);
+		$this->target = $target;
+		$this->oldRank = $oldRank;
+	}
 
-    /**
-     * @param string|FactionEntity $faction
-     */
-    public function __construct($faction, UserEntity $target, ?int $oldRank, bool $isForce = false) {
-        parent::__construct($faction, $isForce);
-        $this->target = $target;
-        $this->oldRank = $oldRank;
-    }
+	public function getTarget(): UserEntity {
+		return $this->target;
+	}
 
-    public function getTarget(): UserEntity {
-        return $this->target;
-    }
-
-    public function getOldRank(): ?int {
-        return $this->oldRank;
-    }
+	public function getOldRank(): ?int {
+		return $this->oldRank;
+	}
 }

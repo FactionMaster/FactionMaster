@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -35,18 +37,17 @@ namespace ShockedPlot7560\FactionMaster\Event;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
 class FactionXPChangeEvent extends FactionEvent implements Forcable {
+	private $amount;
 
-    private $amount;
+	/**
+	 * @param string|FactionEntity $faction
+	 */
+	public function __construct($faction, int $amount, bool $isForce = false) {
+		parent::__construct($faction, $isForce);
+		$this->amount = $amount;
+	}
 
-    /**
-     * @param string|FactionEntity $faction
-     */
-    public function __construct($faction, int $amount, bool $isForce = false) {
-        parent::__construct($faction, $isForce);
-        $this->amount = $amount;
-    }
-
-    public function getAmount(): int {
-        return $this->amount;
-    }
+	public function getAmount(): int {
+		return $this->amount;
+	}
 }

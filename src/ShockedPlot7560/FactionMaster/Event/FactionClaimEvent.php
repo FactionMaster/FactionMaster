@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -38,28 +40,27 @@ use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Reward\RewardInterface;
 
 class FactionClaimEvent extends FactionEvent implements Forcable {
+	use PlayerEvent;
 
-    use PlayerEvent;
+	protected $player;
+	private $chunk;
+	private $costReward;
 
-    protected $player;
-    private $chunk;
-    private $costReward;
+	/**
+	 * @param string|FactionEntity $faction
+	 */
+	public function __construct(Player $player, $faction, Chunk $chunk, RewardInterface $costReward, bool $isForce = false) {
+		parent::__construct($faction, $isForce);
+		$this->player = $player;
+		$this->chunk = $chunk;
+		$this->costReward = $costReward;
+	}
 
-    /**
-     * @param string|FactionEntity $faction
-     */
-    public function __construct(Player $player, $faction, Chunk $chunk, RewardInterface $costReward, bool $isForce = false) {
-        parent::__construct($faction, $isForce);
-        $this->player = $player;
-        $this->chunk = $chunk;
-        $this->costReward = $costReward;
-    }
+	public function getChunk(): Chunk {
+		return $this->chunk;
+	}
 
-    public function getChunk(): Chunk {
-        return $this->chunk;
-    }
-
-    public function getCostReward(): RewardInterface {
-        return $this->costReward;
-    }
+	public function getCostReward(): RewardInterface {
+		return $this->costReward;
+	}
 }

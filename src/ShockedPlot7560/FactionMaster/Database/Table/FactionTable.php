@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -38,23 +40,23 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class FactionTable implements TableInterface {
 
-    /** @var PDO */
-    private $PDO;
+	/** @var PDO */
+	private $PDO;
 
-    const TABLE_NAME = "factionmaster_faction";
-    const SLUG = "factionmaster_faction";
+	const TABLE_NAME = "factionmaster_faction";
+	const SLUG = "factionmaster_faction";
 
-    public function init(): self {
-        $tableName = self::TABLE_NAME;
-        $auto_increment = Utils::getConfig("PROVIDER") === DatabaseManager::MYSQL_PROVIDER ? "AUTO_INCREMENT" : "AUTOINCREMENT";
-        $visibility = Utils::getConfig("default-faction-visibility");
-        $xp = Utils::getConfig("default-faction-xp");
-        $maxPlayer = Utils::getConfig("default-player-limit");
-        $maxAlly = Utils::getConfig("default-ally-limit");
-        $maxClaim = Utils::getConfig("default-claim-limit");
-        $maxHome = Utils::getConfig("default-home-limit");
-        $power = Utils::getConfig("default-power");
-        $this->PDO->query("CREATE TABLE IF NOT EXISTS `$tableName` ( 
+	public function init(): self {
+		$tableName = self::TABLE_NAME;
+		$auto_increment = Utils::getConfig("PROVIDER") === DatabaseManager::MYSQL_PROVIDER ? "AUTO_INCREMENT" : "AUTOINCREMENT";
+		$visibility = Utils::getConfig("default-faction-visibility");
+		$xp = Utils::getConfig("default-faction-xp");
+		$maxPlayer = Utils::getConfig("default-player-limit");
+		$maxAlly = Utils::getConfig("default-ally-limit");
+		$maxClaim = Utils::getConfig("default-claim-limit");
+		$maxHome = Utils::getConfig("default-home-limit");
+		$power = Utils::getConfig("default-power");
+		$this->PDO->query("CREATE TABLE IF NOT EXISTS `$tableName` ( 
             `id` INTEGER PRIMARY KEY $auto_increment, 
             `name` TEXT NOT NULL, 
             `members` TEXT NOT NULL, 
@@ -71,11 +73,10 @@ class FactionTable implements TableInterface {
             `power` SMALLINT UNSIGNED NOT NULL DEFAULT '$power', 
             `permissions` TEXT NOT NULL, 
             `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)");
-        return $this;
-    }
+		return $this;
+	}
 
-    public function __construct(PDO $PDO) {
-        $this->PDO = $PDO;
-    }
-
+	public function __construct(PDO $PDO) {
+		$this->PDO = $PDO;
+	}
 }

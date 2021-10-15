@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -33,66 +35,65 @@
 namespace ShockedPlot7560\FactionMaster\Route;
 
 use InvalidArgumentException;
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\ManageAllianceCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageAllianceRoute extends RouteBase implements Route {
+	const SLUG = "manageAllianceRoute";
 
-    const SLUG = "manageAllianceRoute";
+	/** @var FactionEntity */
+	private $alliance;
 
-    /** @var FactionEntity */
-    private $alliance;
+	public function getSlug(): string {
+		return self::SLUG;
+	}
 
-    public function getSlug(): string {
-        return self::SLUG;
-    }
+	public function getPermissions(): array {
+		return [
+			PermissionIds::PERMISSION_BREAK_ALLIANCE
+		];
+	}
 
-    public function getPermissions(): array {
-        return [
-            PermissionIds::PERMISSION_BREAK_ALLIANCE
-        ];
-    }
+	public function getBackRoute(): ?Route {
+		return RouterFactory::get(AllianceOptionRoute::SLUG);
+	}
 
-    public function getBackRoute(): ?Route {
-        return RouterFactory::get(AllianceOptionRoute::SLUG);
-    }
+	protected function getAlliance(): FactionEntity {
+		return $this->alliance;
+	}
 
-    protected function getAlliance(): FactionEntity {
-        return $this->alliance;
-    }
+	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+		$this->init($player, $userEntity, $userPermissions, $params);
 
-    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
-        $this->init($player, $userEntity, $userPermissions, $params);
+		if (!isset($params[0]) || !$params[0] instanceof FactionEntity) {
+			throw new InvalidArgumentException("Need the target faction instance");
+		}
 
-        if (!isset($params[0]) || !$params[0] instanceof FactionEntity) {
-            throw new InvalidArgumentException("Need the target faction instance");
-        }
+		$this->alliance = $params[0];
+		$this->setCollection(CollectionFactory::get(ManageAllianceCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getAlliance()));
 
-        $this->alliance = $params[0];
-        $this->setCollection(CollectionFactory::get(ManageAllianceCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getAlliance()));
+		$player->sendForm($this->getForm());
+	}
 
-        $player->sendForm($this->getForm());
-    }
+	public function call(): callable {
+		return function (Player $player, $data) {
+			if ($data === null) {
+				return;
+			}
+			$this->getCollection()->process($data, $player);
+		};
+	}
 
-    public function call(): callable {
-        return function (Player $player, $data) {
-            if ($data === null) {
-                return;
-            }
-            $this->getCollection()->process($data, $player);
-        };
-    }
-
-    protected function getForm(): SimpleForm {
-        $menu = new SimpleForm($this->call());
-        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
-        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MANAGE_ALLIANCE_TITLE", ['name' => $this->getAlliance()->getName()]));
-        return $menu;
-    }
+	protected function getForm(): SimpleForm {
+		$menu = new SimpleForm($this->call());
+		$menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+		$menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MANAGE_ALLIANCE_TITLE", ['name' => $this->getAlliance()->getName()]));
+		return $menu;
+	}
 }

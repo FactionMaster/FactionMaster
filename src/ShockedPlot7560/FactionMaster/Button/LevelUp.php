@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -39,21 +41,19 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class LevelUp extends Button {
+	const SLUG = "levelUp";
 
-    const SLUG = "levelUp";
-
-    public function __construct() {
-        $this->setSlug(self::SLUG)
-            ->setContent(function ($player) {
-                return Utils::getText($player, "BUTTON_LEVEL_UP");
-            })
-            ->setCallable(function (Player $player) {
-                Utils::processMenu(RouterFactory::get(RouteLevelUp::SLUG), $player);
-            })
-            ->setPermissions([
-                PermissionIds::PERMISSION_LEVEL_UP
-            ])
-            ->setImgPack("textures/img/level_up");
-    }
-
+	public function __construct() {
+		$this->setSlug(self::SLUG)
+			->setContent(function ($player) {
+				return Utils::getText($player, "BUTTON_LEVEL_UP");
+			})
+			->setCallable(function (Player $player) {
+				Utils::processMenu(RouterFactory::get(RouteLevelUp::SLUG), $player);
+			})
+			->setPermissions([
+				PermissionIds::PERMISSION_LEVEL_UP
+			])
+			->setImgPack("textures/img/level_up");
+	}
 }

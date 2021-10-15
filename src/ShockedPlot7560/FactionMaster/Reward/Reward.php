@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -34,25 +36,25 @@ namespace ShockedPlot7560\FactionMaster\Reward;
 
 class Reward {
 
-    /** @var string */
-    protected $nameSlug = "UNKNOW";
-    /** @var string|null */
-    protected $type = null;
-    protected $value;
+	/** @var string */
+	protected $nameSlug = "UNKNOW";
+	/** @var string|null */
+	protected $type = null;
+	protected $value;
 
-    public function getName(string $playerName): string {
-        return $this->nameSlug;
-    }
+	public function getName(string $playerName): string {
+		return $this->nameSlug;
+	}
 
-    public function getType(): ?string {
-        return $this->type;
-    }
+	public function getType(): ?string {
+		return $this->type;
+	}
 
-    public function getValue() {
-        return $this->value;
-    }
+	public function getValue() {
+		return $this->value;
+	}
 
-    public function setValue($value): void {
-        $this->value = $value;
-    }
+	public function setValue($value): void {
+		$this->value = $value;
+	}
 }

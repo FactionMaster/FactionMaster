@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -41,25 +43,23 @@ use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class FactionsTop extends Button {
+	const SLUG = "factionsTop";
 
-    const SLUG = "factionsTop";
-
-    public function __construct() {
-        $this->setSlug(self::SLUG)
-            ->setContent(function ($player) {
-                return Utils::getText($player, "BUTTON_TOP_FACTION");
-            })
-            ->setCallable(function ($player) {
-                Main::getInstance()->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
-                    LeaderboardManager::$queryList["faction"],
-                    [],
-                    function (array $result) use ($player) {
-                        Utils::processMenu(RouterFactory::get(TopFactionRoute::SLUG), $player, [$result]);
-                    },
-                    FactionEntity::class
-                ));
-            })
-            ->setImgPack("textures/img/top");
-    }
-
+	public function __construct() {
+		$this->setSlug(self::SLUG)
+			->setContent(function ($player) {
+				return Utils::getText($player, "BUTTON_TOP_FACTION");
+			})
+			->setCallable(function ($player) {
+				Main::getInstance()->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
+					LeaderboardManager::$queryList["faction"],
+					[],
+					function (array $result) use ($player) {
+						Utils::processMenu(RouterFactory::get(TopFactionRoute::SLUG), $player, [$result]);
+					},
+					FactionEntity::class
+				));
+			})
+			->setImgPack("textures/img/top");
+	}
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -35,8 +37,7 @@ namespace ShockedPlot7560\FactionMaster\Database\Table;
 use PDO;
 
 interface TableInterface {
+	public function init();
 
-    public function init();
-
-    public function __construct(PDO $PDO);
+	public function __construct(PDO $PDO);
 }

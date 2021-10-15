@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -38,68 +40,67 @@ use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use ShockedPlot7560\FactionMaster\Manager\DatabaseManager;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function call_user_func;
 
 class DatabaseTask extends AsyncTask {
+	private $provider;
+	private $db;
+	private $query;
+	private $args;
+	private $callable;
+	private $class;
 
-    private $provider;
-    private $db;
-    private $query;
-    private $args;
-    private $callable;
-    private $class;
+	public function __construct(string $query, array $args, ?callable $callable = null, ?string $class = null) {
+		$this->query = $query;
+		$this->args = $args;
+		$this->class = $class;
+		$this->callable = $callable;
+		$this->provider = Utils::getConfig("PROVIDER");
+		switch ($this->provider) {
+			case DatabaseManager::MYSQL_PROVIDER:
+				$databaseConfig = Utils::getConfig("MYSQL_database");
+				$this->db = [$databaseConfig['host'], $databaseConfig['user'], $databaseConfig['pass'], $databaseConfig['name']];
+				break;
 
-    public function __construct(string $query, array $args, ?callable $callable = null, ?string $class = null) {
-        $this->query = $query;
-        $this->args = $args;
-        $this->class = $class;
-        $this->callable = $callable;
-        $this->provider = Utils::getConfig("PROVIDER");
-        switch ($this->provider) {
-            case DatabaseManager::MYSQL_PROVIDER:
-                $databaseConfig = Utils::getConfig("MYSQL_database");
-                $this->db = array($databaseConfig['host'], $databaseConfig['user'], $databaseConfig['pass'], $databaseConfig['name']);
-                break;
+			case DatabaseManager::SQLITE_PROVIDER:
+				$this->db = Utils::getConfig("SQLITE_database")["name"];
+				break;
+		}
+	}
 
-            case DatabaseManager::SQLITE_PROVIDER:
-                $this->db = Utils::getConfig("SQLITE_database")["name"];
-                break;
-        }
-    }
+	public function onRun(): void {
+		$provider = $this->provider;
+		$db = (array) $this->db;
+		switch ($provider) {
+			case DatabaseManager::MYSQL_PROVIDER:
+				$db = new PDO(
+					"mysql:host=" . $db[0] . ";dbname=" . $db[3],
+					$db[1],
+					$db[2]
+				);
+				break;
+			case DatabaseManager::SQLITE_PROVIDER:
+				$db = new PDO("sqlite:" . $db[0] . ".sqlite");
+				break;
+			default:
+				$db = new PDO("sqlite:" . $db[0] . ".sqlite");
+				break;
+		}
+		try {
+			$query = $db->prepare($this->query);
+			$query->execute((array) $this->args);
+			$results = "";
+			if ($this->class !== null) {
+				$query->setFetchMode(PDO::FETCH_CLASS, $this->class);
+				$results = $query->fetchAll();
+			}
+			$this->setResult($results);
+		} catch (\Throwable $th) {
+			throw new Exception($th->getMessage(), 1);
+		}
+	}
 
-    public function onRun(): void {
-        $provider = $this->provider;
-        $db = (array) $this->db;
-        switch ($provider) {
-            case DatabaseManager::MYSQL_PROVIDER:
-                $db = new PDO(
-                    "mysql:host=" . $db[0] . ";dbname=" . $db[3],
-                    $db[1],
-                    $db[2]
-                );
-                break;
-            case DatabaseManager::SQLITE_PROVIDER:
-                $db = new PDO("sqlite:" . $db[0] . ".sqlite");
-                break;
-            default:
-                $db = new PDO("sqlite:" . $db[0] . ".sqlite");
-                break;
-        }
-        try {
-            $query = $db->prepare($this->query);
-            $query->execute((array) $this->args);
-            $results = "";
-            if ($this->class !== null) {
-                $query->setFetchMode(PDO::FETCH_CLASS, $this->class);
-                $results = $query->fetchAll();
-            }
-            $this->setResult($results);        
-        } catch (\Throwable $th) {
-            throw new Exception($th->getMessage(), 1);
-        }
-        
-    }
-
-    public function onCompletion(Server $server): void {
-        call_user_func($this->callable, $this->getResult());
-    }
+	public function onCompletion(Server $server): void {
+		call_user_func($this->callable, $this->getResult());
+	}
 }

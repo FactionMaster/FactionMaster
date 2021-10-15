@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -35,7 +37,6 @@ namespace ShockedPlot7560\FactionMaster\Button\Collection;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\AcceptAlly;
 use ShockedPlot7560\FactionMaster\Button\Back;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\DeleteRequest;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
@@ -45,20 +46,19 @@ use ShockedPlot7560\FactionMaster\Route\ManageAllianceRequestRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class ManageAllianceRequestCollection extends Collection {
+	const SLUG = "manageAllianceRequestCollection";
 
-    const SLUG = "manageAllianceRequestCollection";
-
-    public function __construct() {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, InvitationEntity $request) {
-            $this->register(new AcceptAlly($request));
-            $this->register(new DeleteRequest(
-                $request, 
-                AllianceRequestReceiveRoute::SLUG, 
-                ManageAllianceRequestRoute::SLUG, 
-                [PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND]
-            ));
-            $this->register(new Back(RouterFactory::get(ManageAllianceRequestRoute::SLUG)->getBackRoute()));
-        });
-    }
+	public function __construct() {
+		parent::__construct(self::SLUG);
+		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, InvitationEntity $request) {
+			$this->register(new AcceptAlly($request));
+			$this->register(new DeleteRequest(
+				$request,
+				AllianceRequestReceiveRoute::SLUG,
+				ManageAllianceRequestRoute::SLUG,
+				[PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND]
+			));
+			$this->register(new Back(RouterFactory::get(ManageAllianceRequestRoute::SLUG)->getBackRoute()));
+		});
+	}
 }

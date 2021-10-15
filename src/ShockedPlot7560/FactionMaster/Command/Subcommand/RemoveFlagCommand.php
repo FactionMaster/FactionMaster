@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,51 +34,49 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class RemoveFlagCommand extends BaseSubCommand {
+	protected function prepare(): void {
+		$this->setPermission("factionmaster.flag.remove");
+	}
 
-    protected function prepare(): void {
-        $this->setPermission("factionmaster.flag.remove");
-    }
-
-    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-        if ($sender instanceof Player) {
-            if ($sender->hasPermission("factionmaster.flag.remove")) {
-                $player = $sender->getPlayer();
-                $chunk = $player->getLevel()->getChunkAtPosition($player);
-                $x = $chunk->getX();
-                $z = $chunk->getZ();
-                $world = $player->getLevel()->getName();
-                $factionClaim = MainAPI::getFactionClaim($world, $x, $z);
-                if ($factionClaim === null) {
-                    $sender->sendMessage(Utils::getText($sender->getName(), "NOT_CLAIMED"));
-                    return;
-                } elseif ($factionClaim->getFlag() !== null) {
-                    MainAPI::removeClaim($sender->getPlayer(), $factionClaim->getFactionName());
-                    Utils::newMenuSendTask(new MenuSendTask(
-                        function () use ($world, $x, $z) {
-                            return !MainAPI::getFactionClaim($world, $x, $z) instanceof ClaimEntity;
-                        },
-                        function () use ($sender) {
-                            $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_REMOVE_FLAG"));
-                        },
-                        function () use ($sender) {
-                            $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
-                        }
-                    ));
-                    return;
-                }
-            }else{
-                $sender->sendMessage(Utils::getText("", "DONT_PERMISSION"));
-            }            
-        }
-    }
-
+	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
+		if ($sender instanceof Player) {
+			if ($sender->hasPermission("factionmaster.flag.remove")) {
+				$player = $sender->getPlayer();
+				$chunk = $player->getLevel()->getChunkAtPosition($player);
+				$x = $chunk->getX();
+				$z = $chunk->getZ();
+				$world = $player->getLevel()->getName();
+				$factionClaim = MainAPI::getFactionClaim($world, $x, $z);
+				if ($factionClaim === null) {
+					$sender->sendMessage(Utils::getText($sender->getName(), "NOT_CLAIMED"));
+					return;
+				} elseif ($factionClaim->getFlag() !== null) {
+					MainAPI::removeClaim($sender->getPlayer(), $factionClaim->getFactionName());
+					Utils::newMenuSendTask(new MenuSendTask(
+						function () use ($world, $x, $z) {
+							return !MainAPI::getFactionClaim($world, $x, $z) instanceof ClaimEntity;
+						},
+						function () use ($sender) {
+							$sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_REMOVE_FLAG"));
+						},
+						function () use ($sender) {
+							$sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
+						}
+					));
+					return;
+				}
+			} else {
+				$sender->sendMessage(Utils::getText("", "DONT_PERMISSION"));
+			}
+		}
+	}
 }

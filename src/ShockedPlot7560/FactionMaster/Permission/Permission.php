@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,32 +34,32 @@
 
 namespace ShockedPlot7560\FactionMaster\Permission;
 
+use function call_user_func;
+
 class Permission implements PermissionInterface {
+	private $slug;
+	private $callable;
+	private $id;
 
-    private $slug;
-    private $callable;
-    private $id;
+	public function __construct(string $slug, callable $callable, int $id) {
+		$this->slug = $slug;
+		$this->callable = $callable;
+		$this->id = $id;
+	}
 
-    public function __construct(string $slug, callable $callable, int $id) {
-        $this->slug = $slug;
-        $this->callable = $callable;
-        $this->id = $id;
-    }
+	public function getId(): int {
+		return $this->id;
+	}
 
-    public function getId(): int {
-        return $this->id;
-    }
+	public function getSlug(): string {
+		return $this->slug;
+	}
 
-    public function getSlug(): string {
-        return $this->slug;
-    }
+	public function getCallable(): callable {
+		return $this->callable;
+	}
 
-    public function getCallable(): callable {
-        return $this->callable;
-    }
-
-    public function getName(string $playerName): string {
-        return call_user_func($this->getCallable(), $playerName);
-    }
-
+	public function getName(string $playerName): string {
+		return call_user_func($this->getCallable(), $playerName);
+	}
 }

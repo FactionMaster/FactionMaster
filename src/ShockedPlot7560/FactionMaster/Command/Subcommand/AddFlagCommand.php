@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,69 +34,68 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function count;
 
 class AddFlagCommand extends BaseSubCommand {
+	protected function prepare(): void {
+		$this->registerArgument(0, new RawStringArgument("areaName"));
+		$this->registerArgument(1, new RawStringArgument("type"));
+		$this->setPermission("factionmaster.flag.add");
+	}
 
-    protected function prepare(): void {
-        $this->registerArgument(0, new RawStringArgument("areaName"));
-        $this->registerArgument(1, new RawStringArgument("type"));
-        $this->setPermission("factionmaster.flag.add");
-    }
-
-    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-        if ($sender instanceof Player) {
-            if (count($args) > 0) {
-                if ($sender->hasPermission("factionmaster.flag.add")) {
-                    $player = $sender->getPlayer();
-                    $chunk = $player->getLevel()->getChunkAtPosition($player);
-                    $x = $chunk->getX();
-                    $z = $chunk->getZ();
-                    $world = $player->getLevel()->getName();
-                    if (MainAPI::getFactionClaim($world, $x, $z) !== null) {
-                        $sender->sendMessage(Utils::getText($sender->getName(), "ALREADY_CLAIM"));
-                        return;
-                    }
-                    switch ($args["type"]) {
-                        case 'warzone':
-                        case 'wz':
-                            $flag = Ids::FLAG_WARZONE;
-                            break;
-                        case 'spawn':
-                        case 'spwn':
-                            $flag = Ids::FLAG_SPAWN;
-                            break;
-                        default:
-                            $sender->sendMessage(Utils::getText($sender->getName(), "FLAG_ADD_COMMAND"));
-                            return;
-                    }
-                    MainAPI::addClaim($sender->getPlayer(), $args["areaName"], $flag);
-                    Utils::newMenuSendTask(new MenuSendTask(
-                        function () use ($world, $x, $z) {
-                            return MainAPI::getFactionClaim($world, $x, $z) instanceof ClaimEntity;
-                        },
-                        function () use ($sender) {
-                            $sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_ADD_FLAG"));
-                        },
-                        function () use ($sender) {
-                            $sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
-                        }
-                    ));
-                }else{
-                    $sender->sendMessage(Utils::getText("", "DONT_PERMISSION"));
-                }            
-            }else{
-                $this->sendUsage();
-            }
-        }
-    }
-
+	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
+		if ($sender instanceof Player) {
+			if (count($args) > 0) {
+				if ($sender->hasPermission("factionmaster.flag.add")) {
+					$player = $sender->getPlayer();
+					$chunk = $player->getLevel()->getChunkAtPosition($player);
+					$x = $chunk->getX();
+					$z = $chunk->getZ();
+					$world = $player->getLevel()->getName();
+					if (MainAPI::getFactionClaim($world, $x, $z) !== null) {
+						$sender->sendMessage(Utils::getText($sender->getName(), "ALREADY_CLAIM"));
+						return;
+					}
+					switch ($args["type"]) {
+						case 'warzone':
+						case 'wz':
+							$flag = Ids::FLAG_WARZONE;
+							break;
+						case 'spawn':
+						case 'spwn':
+							$flag = Ids::FLAG_SPAWN;
+							break;
+						default:
+							$sender->sendMessage(Utils::getText($sender->getName(), "FLAG_ADD_COMMAND"));
+							return;
+					}
+					MainAPI::addClaim($sender->getPlayer(), $args["areaName"], $flag);
+					Utils::newMenuSendTask(new MenuSendTask(
+						function () use ($world, $x, $z) {
+							return MainAPI::getFactionClaim($world, $x, $z) instanceof ClaimEntity;
+						},
+						function () use ($sender) {
+							$sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_ADD_FLAG"));
+						},
+						function () use ($sender) {
+							$sender->sendMessage(Utils::getText($sender->getName(), "ERROR"));
+						}
+					));
+				} else {
+					$sender->sendMessage(Utils::getText("", "DONT_PERMISSION"));
+				}
+			} else {
+				$this->sendUsage();
+			}
+		}
+	}
 }

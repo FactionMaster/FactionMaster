@@ -1,14 +1,14 @@
 <?php
 
+declare(strict_types=1);
 
 namespace ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\store;
 
-
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\exception\CommandoException;
 use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\mcpe\protocol\types\CommandEnum;
 use pocketmine\network\mcpe\protocol\UpdateSoftEnumPacket;
 use pocketmine\Server;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\exception\CommandoException;
 
 class SoftEnumStore {
 	/** @var CommandEnum[] */
@@ -26,7 +26,7 @@ class SoftEnumStore {
 	}
 
 	public static function addEnum(CommandEnum $enum):void {
-		if($enum->enumName === null){
+		if ($enum->enumName === null) {
 			throw new CommandoException("Invalid enum");
 		}
 		static::$enums[$enum->enumName] = $enum;
@@ -34,7 +34,7 @@ class SoftEnumStore {
 	}
 
 	public static function updateEnum(string $enumName, array $values):void {
-		if(($enum = self::getEnumByName($enumName)) === null){
+		if (($enum = self::getEnumByName($enumName)) === null) {
 			throw new CommandoException("Unknown enum named " . $enumName);
 		}
 		$enum->enumValues = $values;
@@ -42,7 +42,7 @@ class SoftEnumStore {
 	}
 
 	public static function removeEnum(string $enumName):void {
-		if(($enum = self::getEnumByName($enumName)) === null){
+		if (($enum = self::getEnumByName($enumName)) === null) {
 			throw new CommandoException("Unknown enum named " . $enumName);
 		}
 		unset(static::$enums[$enumName]);

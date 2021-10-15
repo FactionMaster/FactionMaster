@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -56,47 +58,47 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class CommandManager {
 
-    /** @var BaseSubCommand[] */
-    private static $commands = [];
+	/** @var BaseSubCommand[] */
+	private static $commands = [];
 
-    public static function init(): void {
-        self::registerCommand(new FactionCreateCommand("create", Utils::getText("", "COMMAND_CREATE_DESCRIPTION")));
-        self::registerCommand(new FactionTopCommand("top", Utils::getText("", "COMMAND_TOP_DESCRIPTION")));
-        self::registerCommand(new FactionManageCommand("manage", Utils::getText("", "COMMAND_MANAGE_DESCRIPTION")));
-        self::registerCommand(new ClaimCommand("claim", Utils::getText("", "COMMAND_CLAIM_DESCRIPTION")));
-        self::registerCommand(new UnclaimCommand("unclaim", Utils::getText("", "COMMAND_UNCLAIM_DESCRIPTION")));
-        self::registerCommand(new SethomeCommand("sethome", Utils::getText("", "COMMAND_SETHOME_DESCRIPTION")));
-        self::registerCommand(new DelhomeCommand("delhome", Utils::getText("", "COMMAND_DELHOME_DESCRIPTION")));
-        self::registerCommand(new HomeTpCommand("tp", Utils::getText("", "COMMAND_TP_DESCRIPTION")));
-        self::registerCommand(new HomeCommand("home", Utils::getText("", "COMMAND_HOME_DESCRIPTION")));
-        self::registerCommand(new MapCommand("map", Utils::getText("", "COMMAND_MAP_DESCRIPTION")));
-        self::registerCommand(new HelpCommand("help", Utils::getText("", "COMMAND_HELP_DESCRIPTION")));
-        self::registerCommand(new InfoCommand("info", Utils::getText("", "COMMAND_INFO_DESCRIPTION")));
-        self::registerCommand(new ClaimInfoCommand("claiminfo", Utils::getText("", "COMMAND_CLAIM_INFO_DESCRIPTION")));
-        self::registerCommand(new ExtensionCommand("extension", Utils::getText("", "COMMAND_EXTENSION_DESCRIPTION")));
-        self::registerCommand(new PlaceScoreboard("scoreboard", "Place scoreboard"));
-        self::registerCommand(new AddFlagCommand("addflag", Utils::getText("", "COMMAND_ADD_FLAG")));
-        self::registerCommand(new RemoveFlagCommand("removeflag", Utils::getText("", "COMMAND_REMOVE_FLAG")));
-        self::registerCommand(new SynchroCommand("synchro", Utils::getText("", "COMMAND_SYNCHRO")));
-        self::registerCommand(new SettingsCommand("settings", "Give all the FactionMaster settings"));
-    }
+	public static function init(): void {
+		self::registerCommand(new FactionCreateCommand("create", Utils::getText("", "COMMAND_CREATE_DESCRIPTION")));
+		self::registerCommand(new FactionTopCommand("top", Utils::getText("", "COMMAND_TOP_DESCRIPTION")));
+		self::registerCommand(new FactionManageCommand("manage", Utils::getText("", "COMMAND_MANAGE_DESCRIPTION")));
+		self::registerCommand(new ClaimCommand("claim", Utils::getText("", "COMMAND_CLAIM_DESCRIPTION")));
+		self::registerCommand(new UnclaimCommand("unclaim", Utils::getText("", "COMMAND_UNCLAIM_DESCRIPTION")));
+		self::registerCommand(new SethomeCommand("sethome", Utils::getText("", "COMMAND_SETHOME_DESCRIPTION")));
+		self::registerCommand(new DelhomeCommand("delhome", Utils::getText("", "COMMAND_DELHOME_DESCRIPTION")));
+		self::registerCommand(new HomeTpCommand("tp", Utils::getText("", "COMMAND_TP_DESCRIPTION")));
+		self::registerCommand(new HomeCommand("home", Utils::getText("", "COMMAND_HOME_DESCRIPTION")));
+		self::registerCommand(new MapCommand("map", Utils::getText("", "COMMAND_MAP_DESCRIPTION")));
+		self::registerCommand(new HelpCommand("help", Utils::getText("", "COMMAND_HELP_DESCRIPTION")));
+		self::registerCommand(new InfoCommand("info", Utils::getText("", "COMMAND_INFO_DESCRIPTION")));
+		self::registerCommand(new ClaimInfoCommand("claiminfo", Utils::getText("", "COMMAND_CLAIM_INFO_DESCRIPTION")));
+		self::registerCommand(new ExtensionCommand("extension", Utils::getText("", "COMMAND_EXTENSION_DESCRIPTION")));
+		self::registerCommand(new PlaceScoreboard("scoreboard", "Place scoreboard"));
+		self::registerCommand(new AddFlagCommand("addflag", Utils::getText("", "COMMAND_ADD_FLAG")));
+		self::registerCommand(new RemoveFlagCommand("removeflag", Utils::getText("", "COMMAND_REMOVE_FLAG")));
+		self::registerCommand(new SynchroCommand("synchro", Utils::getText("", "COMMAND_SYNCHRO")));
+		self::registerCommand(new SettingsCommand("settings", "Give all the FactionMaster settings"));
+	}
 
-    public static function registerCommand(BaseSubCommand $command): void {
-        self::$commands[$command->getName()] = $command;
-    }
+	public static function registerCommand(BaseSubCommand $command): void {
+		self::$commands[$command->getName()] = $command;
+	}
 
-    public static function disableCommand(string $name): void {
-        if (isset(self::$commands[$name])) {
-            unset(self::$commands[$name]);
-        }
-    }
+	public static function disableCommand(string $name): void {
+		if (isset(self::$commands[$name])) {
+			unset(self::$commands[$name]);
+		}
+	}
 
-    public static function isCommandEnable(string $name): bool {
-        return isset(self::$commands[$name]);
-    }
+	public static function isCommandEnable(string $name): bool {
+		return isset(self::$commands[$name]);
+	}
 
-    /** @return BaseSubCommand[] */
-    public static function getCommands(): array{
-        return self::$commands;
-    }
+	/** @return BaseSubCommand[] */
+	public static function getCommands(): array {
+		return self::$commands;
+	}
 }

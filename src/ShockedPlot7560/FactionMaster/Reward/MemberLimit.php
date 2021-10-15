@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -35,28 +37,26 @@ namespace ShockedPlot7560\FactionMaster\Reward;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 
 class MemberLimit extends Reward implements RewardInterface {
+	public function __construct($value = 0) {
+		$this->value = $value;
+		$this->nameSlug = "REWARD_MEMBER_LIMIT_NAME";
+		$this->type = RewardType::MEMBER_LIMIT;
+	}
 
-    public function __construct($value = 0) {
-        $this->value = $value;
-        $this->nameSlug = "REWARD_MEMBER_LIMIT_NAME";
-        $this->type = RewardType::MEMBER_LIMIT;
-    }
+	public function executeGet(string $factionName, $value = null): bool {
+		if ($value !== null) {
+			$this->setValue($value);
+		}
 
-    public function executeGet(string $factionName, $value = null): bool {
-        if ($value !== null) {
-            $this->setValue($value);
-        }
+		$result = MainAPI::updateFactionOption($factionName, 'max_player', $this->getValue());
+		return $result === false ? false : true;
+	}
 
-        $result = MainAPI::updateFactionOption($factionName, 'max_player', $this->getValue());
-        return $result === false ? false : true;
-    }
+	public function executeCost(string $factionName, $value = null) {
+		if ($value !== null) {
+			$this->setValue($value);
+		}
 
-    public function executeCost(string $factionName, $value = null) {
-        if ($value !== null) {
-            $this->setValue($value);
-        }
-
-        return MainAPI::updateFactionOption($factionName, 'max_player', $this->getValue() * -1) === false ? "ERROR" : true;
-    }
-
+		return MainAPI::updateFactionOption($factionName, 'max_player', $this->getValue() * -1) === false ? "ERROR" : true;
+	}
 }

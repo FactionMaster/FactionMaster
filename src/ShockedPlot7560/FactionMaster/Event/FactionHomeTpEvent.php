@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -38,41 +40,39 @@ use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\HomeEntity;
 
 class FactionHomeTpEvent extends FactionEvent implements Forcable {
+	use PlayerEvent;
 
-    use PlayerEvent;
+	protected $player;
+	private $home;
+	private $name;
 
-    protected $player;
-    private $home;
-    private $name;
+	/**
+	 * @param string|FactionEntity $faction
+	 */
+	public function __construct(Player $player, $faction, string $name, HomeEntity $home, bool $isForce = false) {
+		parent::__construct($faction, $isForce);
+		$this->player = $player;
+		$this->home = $home;
+		$this->name = $name;
+	}
 
-    /**
-     * @param string|FactionEntity $faction
-     */
-    public function __construct(Player $player, $faction, string $name, HomeEntity $home, bool $isForce = false) {
-        parent::__construct($faction, $isForce);
-        $this->player = $player;
-        $this->home = $home;
-        $this->name = $name;
-    }
+	public function getPlayer(): Player {
+		return $this->player;
+	}
 
-    public function getPlayer(): Player {
-        return $this->player;
-    }
+	public function getName(): string {
+		return $this->name;
+	}
 
-    public function getName(): string {
-        return $this->name;
-    }
+	public function getVector(): Vector3 {
+		return new Vector3($this->getHome()->getX(), $this->getHome()->getY(), $this->getHome()->getZ());
+	}
 
-    public function getVector(): Vector3 {
-        return new Vector3($this->getHome()->getX(), $this->getHome()->getY(), $this->getHome()->getZ());
-    }
+	public function getHome(): HomeEntity {
+		return $this->home;
+	}
 
-    public function getHome(): HomeEntity {
-        return $this->home;
-    }
-
-    public function getWorldName(): string {
-        return $this->getHome()->getLevelName();
-    }
-
+	public function getWorldName(): string {
+		return $this->getHome()->getLevelName();
+	}
 }

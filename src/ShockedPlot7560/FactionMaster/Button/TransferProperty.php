@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -47,83 +49,82 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function json_encode;
 
 class TransferProperty extends Button {
+	const SLUG = "transferProperty";
 
-    const SLUG = "transferProperty";
+	public function __construct(UserEntity $member) {
+		$this->setSlug(self::SLUG)
+			->setContent(function (string $player) {
+				return Utils::getText($player, "BUTTON_TRANSFER_PROPERTY");
+			})
+			->setCallable(function (Player $player) use ($member) {
+				Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
+					function (Player $player, $data) use ($member) {
+						if ($data === null) {
+							return;
+						}
 
-    public function __construct(UserEntity $member) {
-        $this->setSlug(self::SLUG)
-            ->setContent(function (string $player) {
-                return Utils::getText($player, "BUTTON_TRANSFER_PROPERTY");
-            })
-            ->setCallable(function (Player $player) use ($member) {
-                Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
-                    function (Player $player, $data) use ($member) {
-                        if ($data === null) {
-                            return;
-                        }
-
-                        if ($data) {
-                            $message = Utils::getText($player->getName(), "SUCCESS_TRANSFER_PROPERTY", ['playerName' => $member->getName()]);
-                            $faction = MainAPI::getFactionOfPlayer($player->getName());
-                            $faction->setMemberRank($player->getName(), Ids::COOWNER_ID);
-                            $faction->setMemberRank($member->getName(), Ids::OWNER_ID);
-                            Main::getInstance()->getServer()->getAsyncPool()->submitTask(
-                                new DatabaseTask(
-                                    "UPDATE " . FactionTable::TABLE_NAME . " SET members = :members WHERE name = :name",
-                                    [
-                                        'members' => json_encode($faction->getMembers()),
-                                        'name' => $faction->getName(),
-                                    ],
-                                    function () use ($faction) {
-                                        MainAPI::$factions[$faction->getName()] = $faction;
-                                    }
-                                )
-                            );
-                            $user = MainAPI::getUser($player->getName());
-                            $user->setRank(Ids::COOWNER_ID);
-                            Main::getInstance()->getServer()->getAsyncPool()->submitTask(
-                                new DatabaseTask(
-                                    "UPDATE " . UserTable::TABLE_NAME . " SET rank = :rank WHERE name = :name",
-                                    [
-                                        'rank' => Ids::COOWNER_ID,
-                                        'name' => $user->getName(),
-                                    ],
-                                    function () use ($user, $faction) {
-                                        MainAPI::$users[$user->getName()] = $user;
-                                        (new MemberChangeRankEvent($faction, $user, Ids::OWNER_ID))->call();
-                                    }
-                                )
-                            );
-                            $userj = MainAPI::getUser($member->getName());
-                            $oldRank = $userj->getRank();
-                            $userj->setRank(Ids::OWNER_ID);
-                            Main::getInstance()->getServer()->getAsyncPool()->submitTask(
-                                new DatabaseTask(
-                                    "UPDATE " . UserTable::TABLE_NAME . " SET rank = :rank WHERE name = :name",
-                                    [
-                                        'rank' => Ids::OWNER_ID,
-                                        'name' => $userj->getName(),
-                                    ],
-                                    function () use ($userj, $user, $player, $member, $message, $faction, $oldRank) {
-                                        MainAPI::$users[$userj->getName()] = $userj;
-                                        MainAPI::$users[$user->getName()] = $user;
-                                        (new MemberChangeRankEvent($faction, $userj, $oldRank))->call();
-                                        (new FactionPropertyTransferEvent($player, $faction, $member))->call();
-                                        Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player, [$message]);
-                                    }
-                                )
-                            );
-                        } else {
-                            Utils::processMenu(RouterFactory::get(MembersManageMember::SLUG), $player, [$member]);
-                        }
-                    },
-                    Utils::getText($player->getName(), "CONFIRMATION_TITLE_TRANSFER_PROPERTY"),
-                    Utils::getText($player->getName(), "CONFIRMATION_CONTENT_TRANSFER_PROPERTY"),
-                ]);
-            })
-            ->setImgPack("textures/img/transfer");
-    }
-
+						if ($data) {
+							$message = Utils::getText($player->getName(), "SUCCESS_TRANSFER_PROPERTY", ['playerName' => $member->getName()]);
+							$faction = MainAPI::getFactionOfPlayer($player->getName());
+							$faction->setMemberRank($player->getName(), Ids::COOWNER_ID);
+							$faction->setMemberRank($member->getName(), Ids::OWNER_ID);
+							Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+								new DatabaseTask(
+									"UPDATE " . FactionTable::TABLE_NAME . " SET members = :members WHERE name = :name",
+									[
+										'members' => json_encode($faction->getMembers()),
+										'name' => $faction->getName(),
+									],
+									function () use ($faction) {
+										MainAPI::$factions[$faction->getName()] = $faction;
+									}
+								)
+							);
+							$user = MainAPI::getUser($player->getName());
+							$user->setRank(Ids::COOWNER_ID);
+							Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+								new DatabaseTask(
+									"UPDATE " . UserTable::TABLE_NAME . " SET rank = :rank WHERE name = :name",
+									[
+										'rank' => Ids::COOWNER_ID,
+										'name' => $user->getName(),
+									],
+									function () use ($user, $faction) {
+										MainAPI::$users[$user->getName()] = $user;
+										(new MemberChangeRankEvent($faction, $user, Ids::OWNER_ID))->call();
+									}
+								)
+							);
+							$userj = MainAPI::getUser($member->getName());
+							$oldRank = $userj->getRank();
+							$userj->setRank(Ids::OWNER_ID);
+							Main::getInstance()->getServer()->getAsyncPool()->submitTask(
+								new DatabaseTask(
+									"UPDATE " . UserTable::TABLE_NAME . " SET rank = :rank WHERE name = :name",
+									[
+										'rank' => Ids::OWNER_ID,
+										'name' => $userj->getName(),
+									],
+									function () use ($userj, $user, $player, $member, $message, $faction, $oldRank) {
+										MainAPI::$users[$userj->getName()] = $userj;
+										MainAPI::$users[$user->getName()] = $user;
+										(new MemberChangeRankEvent($faction, $userj, $oldRank))->call();
+										(new FactionPropertyTransferEvent($player, $faction, $member))->call();
+										Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player, [$message]);
+									}
+								)
+							);
+						} else {
+							Utils::processMenu(RouterFactory::get(MembersManageMember::SLUG), $player, [$member]);
+						}
+					},
+					Utils::getText($player->getName(), "CONFIRMATION_TITLE_TRANSFER_PROPERTY"),
+					Utils::getText($player->getName(), "CONFIRMATION_CONTENT_TRANSFER_PROPERTY"),
+				]);
+			})
+			->setImgPack("textures/img/transfer");
+	}
 }

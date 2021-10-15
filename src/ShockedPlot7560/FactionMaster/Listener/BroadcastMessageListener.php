@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -38,46 +40,46 @@ use ShockedPlot7560\FactionMaster\Event\FactionDeleteEvent;
 use ShockedPlot7560\FactionMaster\Event\FactionPropertyTransferEvent;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function str_replace;
 
 class BroadcastMessageListener implements Listener {
+	private $main;
 
-    private $main;
+	public function __construct(Main $main) {
+		$this->main = $main;
+	}
 
-    public function __construct(Main $main) {
-        $this->main = $main;
-    }
+	public function onFactionCreate(FactionCreateEvent $event) {
+		if (Utils::getConfig("broadcast-faction-create") === true) {
+			$message = Utils::getConfig("broadcast-faction-create-message");
+			$message = str_replace(["{playerName}", "{factionName}"], [
+				$event->getPlayer()->getName(),
+				$event->getFaction()->getName()
+			], $message);
+			$this->main->getServer()->broadcastMessage($message);
+		}
+	}
 
-    public function onFactionCreate(FactionCreateEvent $event) {
-        if (Utils::getConfig("broadcast-faction-create") === true) {
-            $message = Utils::getConfig("broadcast-faction-create-message");
-            $message = str_replace(["{playerName}", "{factionName}"], [
-                $event->getPlayer()->getName(),
-                $event->getFaction()->getName()
-            ], $message);
-            $this->main->getServer()->broadcastMessage($message);
-        }
-    }
+	public function onFactionDelete(FactionDeleteEvent $event) {
+		if (Utils::getConfig("broadcast-faction-delete") === true) {
+			$message = Utils::getConfig("broadcast-faction-delete-message");
+			$message = str_replace(["{playerName}", "{factionName}"], [
+				$event->getPlayer()->getName(),
+				$event->getFaction()->getName()
+			], $message);
+			$this->main->getServer()->broadcastMessage($message);
+		}
+	}
 
-    public function onFactionDelete(FactionDeleteEvent $event) {
-        if (Utils::getConfig("broadcast-faction-delete") === true) {
-            $message = Utils::getConfig("broadcast-faction-delete-message");
-            $message = str_replace(["{playerName}", "{factionName}"], [
-                $event->getPlayer()->getName(),
-                $event->getFaction()->getName()
-            ], $message);
-            $this->main->getServer()->broadcastMessage($message);
-        }
-    }
-
-    public function onFactionTransfer(FactionPropertyTransferEvent $event) {
-        if (Utils::getConfig("broadcast-faction-transferProperty") === true) {
-            $message = Utils::getConfig("broadcast-faction-transferProperty-message");
-            $message = str_replace(["{playerName}", "{targetName}", "{factionName}"], [
-                $event->getPlayer()->getName(),
-                $event->getTarget()->getName(),
-                $event->getFaction()->getName()
-            ], $message);
-            $this->main->getServer()->broadcastMessage($message);
-        }
-    }
+	public function onFactionTransfer(FactionPropertyTransferEvent $event) {
+		if (Utils::getConfig("broadcast-faction-transferProperty") === true) {
+			$message = Utils::getConfig("broadcast-faction-transferProperty-message");
+			$message = str_replace(["{playerName}", "{targetName}", "{factionName}"], [
+				$event->getPlayer()->getName(),
+				$event->getTarget()->getName(),
+				$event->getFaction()->getName()
+			], $message);
+			$this->main->getServer()->broadcastMessage($message);
+		}
+	}
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -34,58 +36,55 @@ namespace ShockedPlot7560\FactionMaster\Button\Collection;
 
 class CollectionFactory {
 
-    /** @var array */
-    private static $list;
+	/** @var array */
+	private static $list;
 
-    public static function init(): void {
+	public static function init(): void {
+		self::register(new ManageAllianceInvitationCollection());
+		self::register(new AllianceInvitationSendCollection());
+		self::register(new ManageAllianceRequestCollection());
+		self::register(new AllianceRequestReceiveCollection());
+		self::register(new JoinFactionCollection());
+		self::register(new ManageJoinInvitationCollection());
+		self::register(new JoinInvitationSendCollection());
+		self::register(new ManageJoinRequestCollection());
+		self::register(new JoinRequestReceiveCollection());
+		self::register(new ChangeLangueCollection());
+		self::register(new MainFacCollection());
+		self::register(new MainNoFacCollection());
+		self::register(new ManageAllianceCollection());
+		self::register(new AllianceOptionCollection());
+		self::register(new FactionOptionCollection());
+		self::register(new ManageMemberInvitationCollection());
+		self::register(new MembersInvitationSendCollection());
+		self::register(new ManageMemberCollection());
+		self::register(new MembersManageCollection());
+		self::register(new MembersOptionCollection());
+		self::register(new ManageMemberRequestCollection());
+		self::register(new MembersRequestReceiveCollection());
+		self::register(new ManagePermissionCollection());
+		self::register(new HomesViewCollection());
+		self::register(new MembersViewCollection());
+	}
 
-        self::register(new ManageAllianceInvitationCollection());
-        self::register(new AllianceInvitationSendCollection());
-        self::register(new ManageAllianceRequestCollection());
-        self::register(new AllianceRequestReceiveCollection());
-        self::register(new JoinFactionCollection());
-        self::register(new ManageJoinInvitationCollection());
-        self::register(new JoinInvitationSendCollection());
-        self::register(new ManageJoinRequestCollection());
-        self::register(new JoinRequestReceiveCollection());
-        self::register(new ChangeLangueCollection());
-        self::register(new MainFacCollection());
-        self::register(new MainNoFacCollection());
-        self::register(new ManageAllianceCollection());
-        self::register(new AllianceOptionCollection());
-        self::register(new FactionOptionCollection());
-        self::register(new ManageMemberInvitationCollection());
-        self::register(new MembersInvitationSendCollection());
-        self::register(new ManageMemberCollection());
-        self::register(new MembersManageCollection());
-        self::register(new MembersOptionCollection());
-        self::register(new ManageMemberRequestCollection());
-        self::register(new MembersRequestReceiveCollection());
-        self::register(new ManagePermissionCollection());
-        self::register(new HomesViewCollection());
-        self::register(new MembersViewCollection());
+	public static function register(Collection $collection, bool $override = false): void {
+		$slug = $collection->getSlug();
+		if (self::isRegistered($slug) && $override === false) {
+			return;
+		}
 
-    }
+		self::$list[$slug] = $collection;
+	}
 
-    public static function register(Collection $collection, bool $override = false): void {
-        $slug = $collection->getSlug();
-        if (self::isRegistered($slug) && $override === false) {
-            return;
-        }
+	public static function get(string $slug): ?Collection {
+		return self::$list[$slug] ?? null;
+	}
 
-        self::$list[$slug] = $collection;
-    }
+	public static function isRegistered(string $slug): bool {
+		return isset(self::$list[$slug]);
+	}
 
-    public static function get(string $slug): ?Collection {
-        return self::$list[$slug] ?? null;
-    }
-
-    public static function isRegistered(string $slug): bool {
-        return isset(self::$list[$slug]);
-    }
-
-    public static function getAll(): array{
-        return self::$list;
-    }
-
+	public static function getAll(): array {
+		return self::$list;
+	}
 }

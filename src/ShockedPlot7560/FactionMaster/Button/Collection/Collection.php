@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,77 +34,79 @@
 
 namespace ShockedPlot7560\FactionMaster\Button\Collection;
 
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\Button;
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Manager\ImageManager;
+use function array_values;
+use function call_user_func_array;
+use function count;
 
 class Collection {
 
-    /** @var Button[] */
-    protected $buttonsList;
-    /** @var string */
-    protected $slug;
-    /** @var callable[] */
-    protected $processFunction;
+	/** @var Button[] */
+	protected $buttonsList;
+	/** @var string */
+	protected $slug;
+	/** @var callable[] */
+	protected $processFunction;
 
-    public function __construct(string $slug) {
-        $this->slug = $slug;
-    }
+	public function __construct(string $slug) {
+		$this->slug = $slug;
+	}
 
-    public function registerCallable(string $slug, callable $callable) {
-        $this->processFunction[$slug] = $callable;
-    }
+	public function registerCallable(string $slug, callable $callable) {
+		$this->processFunction[$slug] = $callable;
+	}
 
-    public function register(Button $button, ?int $index = null, bool $override = false): void {
-        if ($index === null) {
-            $this->buttonsList[] = $button;
-        } else {
-            if ($override) {
-                $this->buttonsList[$index] = $button;
-            } else {
-                $newElement = $button;
-                for ($i = $index; $i < count($this->buttonsList); $i++) {
-                    $oldElement = $this->buttonsList[$i];
-                    $this->buttonsList[$i] = $newElement;
-                    $newElement = $oldElement;
-                }
-                $this->buttonsList[$i + 1] = $newElement;
-                $this->buttonsList = array_values($this->buttonsList);
-            }
-        }
-    }
+	public function register(Button $button, ?int $index = null, bool $override = false): void {
+		if ($index === null) {
+			$this->buttonsList[] = $button;
+		} else {
+			if ($override) {
+				$this->buttonsList[$index] = $button;
+			} else {
+				$newElement = $button;
+				for ($i = $index; $i < count($this->buttonsList); $i++) {
+					$oldElement = $this->buttonsList[$i];
+					$this->buttonsList[$i] = $newElement;
+					$newElement = $oldElement;
+				}
+				$this->buttonsList[$i + 1] = $newElement;
+				$this->buttonsList = array_values($this->buttonsList);
+			}
+		}
+	}
 
-    public function generateButtons(SimpleForm $form, string $playerName): SimpleForm {
-        foreach ($this->buttonsList as $key => $button) {
-            if ($button->hasAccess($playerName)) {
-                if (ImageManager::isImageEnable() === true && $button->getImgPath() !== "") {
-                    $form->addButton($button->getContent($playerName), $button->getImgType(), $button->getImgPath());
-                } else {
-                    $form->addButton($button->getContent($playerName));
-                }
-            } else {
-                unset($this->buttonsList[$key]);
-            }
-        }
-        $this->buttonsList = array_values($this->buttonsList);
-        return $form;
-    }
+	public function generateButtons(SimpleForm $form, string $playerName): SimpleForm {
+		foreach ($this->buttonsList as $key => $button) {
+			if ($button->hasAccess($playerName)) {
+				if (ImageManager::isImageEnable() === true && $button->getImgPath() !== "") {
+					$form->addButton($button->getContent($playerName), $button->getImgType(), $button->getImgPath());
+				} else {
+					$form->addButton($button->getContent($playerName));
+				}
+			} else {
+				unset($this->buttonsList[$key]);
+			}
+		}
+		$this->buttonsList = array_values($this->buttonsList);
+		return $form;
+	}
 
-    public function process(int $keyButtonPress, Player $player): void {
-        $this->buttonsList[$keyButtonPress]->call($player);
-    }
+	public function process(int $keyButtonPress, Player $player): void {
+		$this->buttonsList[$keyButtonPress]->call($player);
+	}
 
-    public function getSlug(): string {
-        return $this->slug;
-    }
+	public function getSlug(): string {
+		return $this->slug;
+	}
 
-    public function init(...$parameter): self {
-        $this->buttonsList = [];
-        foreach ($this->processFunction as $callable) {
-            call_user_func_array($callable, $parameter);
-        }
-        return $this;
-    }
+	public function init(...$parameter): self {
+		$this->buttonsList = [];
+		foreach ($this->processFunction as $callable) {
+			call_user_func_array($callable, $parameter);
+		}
+		return $this;
+	}
 }

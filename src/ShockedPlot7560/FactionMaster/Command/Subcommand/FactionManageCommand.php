@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,29 +34,28 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Route\FactionOptionRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class FactionManageCommand extends BaseSubCommand {
+	protected function prepare(): void {
+	}
 
-    protected function prepare(): void {}
+	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
+		if (!$sender instanceof Player) {
+			return;
+		}
 
-    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-        if (!$sender instanceof Player) {
-            return;
-        }
-
-        $userEntity = MainAPI::getUser($sender->getName());
-        if ($userEntity->getFactionName() !== null) {
-            Utils::processMenu(RouterFactory::get(FactionOptionRoute::SLUG), $sender->getPlayer());
-        } else {
-            $sender->sendMessage(Utils::getText($sender->getName(), "NEED_FACTION"));
-        }
-    }
-
+		$userEntity = MainAPI::getUser($sender->getName());
+		if ($userEntity->getFactionName() !== null) {
+			Utils::processMenu(RouterFactory::get(FactionOptionRoute::SLUG), $sender->getPlayer());
+		} else {
+			$sender->sendMessage(Utils::getText($sender->getName(), "NEED_FACTION"));
+		}
+	}
 }

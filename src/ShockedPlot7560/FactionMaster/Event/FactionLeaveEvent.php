@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -35,18 +37,17 @@ namespace ShockedPlot7560\FactionMaster\Event;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
 class FactionLeaveEvent extends FactionEvent implements Forcable {
+	protected $target;
 
-    protected $target;
+	/**
+	 * @param string|FactionEntity $faction
+	 */
+	public function __construct($target, $faction, bool $isForce = false) {
+		parent::__construct($faction, $isForce);
+		$this->target = $target;
+	}
 
-    /**
-     * @param string|FactionEntity $faction
-     */
-    public function __construct($target, $faction, bool $isForce = false) {
-        parent::__construct($faction, $isForce);
-        $this->target = $target;
-    }
-
-    public function getTarget() {
-        return $this->target;
-    }
+	public function getTarget() {
+		return $this->target;
+	}
 }

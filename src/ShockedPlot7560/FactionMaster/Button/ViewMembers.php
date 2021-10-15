@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,23 +34,21 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
-use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Route\MembersViewRoute;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ViewMembers extends Button {
+	const SLUG = "factionMembers";
 
-    const SLUG = "factionMembers";
-
-    public function __construct() {
-        $this->setSlug(self::SLUG)
-            ->setContent(function ($player) {
-                return Utils::getText($player, "BUTTON_VIEW_FACTION_MEMBERS");
-            })
-            ->setCallable(function ($player) {
-                Utils::processMenu(RouterFactory::get(MembersViewRoute::SLUG), $player);
-            })
-            ->setImgPack("textures/img/member");
-    }
-
+	public function __construct() {
+		$this->setSlug(self::SLUG)
+			->setContent(function ($player) {
+				return Utils::getText($player, "BUTTON_VIEW_FACTION_MEMBERS");
+			})
+			->setCallable(function ($player) {
+				Utils::processMenu(RouterFactory::get(MembersViewRoute::SLUG), $player);
+			})
+			->setImgPack("textures/img/member");
+	}
 }

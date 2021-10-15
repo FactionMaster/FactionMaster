@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -40,36 +42,35 @@ use ShockedPlot7560\FactionMaster\Button\RequestPending;
 use ShockedPlot7560\FactionMaster\Button\SendInvitation;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
+use ShockedPlot7560\FactionMaster\Route\MembersInvitationSendRoute;
 use ShockedPlot7560\FactionMaster\Route\MembersOptionRoute;
 use ShockedPlot7560\FactionMaster\Route\MembersRequestReceiveRoute;
-use ShockedPlot7560\FactionMaster\Route\MembersInvitationSendRoute;
 use ShockedPlot7560\FactionMaster\Route\MembersSendInvitationRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class MembersOptionCollection extends Collection {
+	const SLUG = "membersOptionCollection";
 
-    const SLUG = "membersOptionCollection";
-
-    public function __construct() {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
-            $this->register(new SendInvitation(
-                MembersSendInvitationRoute::SLUG,
-                [PermissionIds::PERMISSION_SEND_MEMBER_INVITATION]
-            ));
-            $this->register(new InvitationPending(
-                MembersInvitationSendRoute::SLUG,
-                [PermissionIds::PERMISSION_DELETE_PENDING_MEMBER_INVITATION]
-            ));
-            $this->register(new RequestPending(
-                MembersRequestReceiveRoute::SLUG,
-                [
-                    PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND,
-                    PermissionIds::PERMISSION_REFUSE_MEMBER_DEMAND
-                ]
-            ));
-            $this->register(new ManageMembersMain());
-            $this->register(new Back(RouterFactory::get(MembersOptionRoute::SLUG)->getBackRoute()));
-        });
-    }
+	public function __construct() {
+		parent::__construct(self::SLUG);
+		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
+			$this->register(new SendInvitation(
+				MembersSendInvitationRoute::SLUG,
+				[PermissionIds::PERMISSION_SEND_MEMBER_INVITATION]
+			));
+			$this->register(new InvitationPending(
+				MembersInvitationSendRoute::SLUG,
+				[PermissionIds::PERMISSION_DELETE_PENDING_MEMBER_INVITATION]
+			));
+			$this->register(new RequestPending(
+				MembersRequestReceiveRoute::SLUG,
+				[
+					PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND,
+					PermissionIds::PERMISSION_REFUSE_MEMBER_DEMAND
+				]
+			));
+			$this->register(new ManageMembersMain());
+			$this->register(new Back(RouterFactory::get(MembersOptionRoute::SLUG)->getBackRoute()));
+		});
+	}
 }

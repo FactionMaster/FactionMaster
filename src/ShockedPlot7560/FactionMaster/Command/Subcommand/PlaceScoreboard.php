@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,51 +34,53 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function array_keys;
+use function implode;
+use function in_array;
+use function join;
 
 class PlaceScoreboard extends BaseSubCommand {
+	protected function prepare(): void {
+		$this->setPermission("factionmaster.scoreboard.place");
+		$this->registerArgument(0, new RawStringArgument("slug"));
+	}
 
-    protected function prepare(): void {
-        $this->setPermission("factionmaster.scoreboard.place");
-        $this->registerArgument(0, new RawStringArgument("slug"));
-    }
-
-    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-        if ($sender instanceof Player) {
-            if ($sender->hasPermission("factionmaster.scoreboard.place")) {
-                if (!in_array($args["slug"], array_keys(LeaderboardManager::$queryList))) {
-                    $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_SCOREBOARD_INVALID_SLUG", ["list" => implode(",", array_keys(LeaderboardManager::$queryList))]));
-                    return;
-                }
-                $position = $sender->getPosition();
-                $coord = join("|", [
-                    $position->getX(),
-                    $position->getY(),
-                    $position->getZ(),
-                    $position->getLevel()->getName()
-                ]);
-                LeaderboardManager::closeLeaderboard($args["slug"]);
-                LeaderboardManager::placeScoreboard($args["slug"], $coord);
-                $config = ConfigManager::getLeaderboardConfig();
-                $config->set("leaderboards", [
-                    [
-                        "slug" => "faction",
-                        "position" => $coord,
-                        "active" => true
-                    ]
-                ]);
-                $config->save();
-                $sender->sendMessage(Utils::getText("", "COMMAND_SCOREBOARD_SUCCESS"));
-            }else{
-                $sender->sendMessage(Utils::getText("", "DONT_PERMISSION"));
-            }
-        }
-    }
-
+	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
+		if ($sender instanceof Player) {
+			if ($sender->hasPermission("factionmaster.scoreboard.place")) {
+				if (!in_array($args["slug"], array_keys(LeaderboardManager::$queryList), true)) {
+					$sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_SCOREBOARD_INVALID_SLUG", ["list" => implode(",", array_keys(LeaderboardManager::$queryList))]));
+					return;
+				}
+				$position = $sender->getPosition();
+				$coord = join("|", [
+					$position->getX(),
+					$position->getY(),
+					$position->getZ(),
+					$position->getLevel()->getName()
+				]);
+				LeaderboardManager::closeLeaderboard($args["slug"]);
+				LeaderboardManager::placeScoreboard($args["slug"], $coord);
+				$config = ConfigManager::getLeaderboardConfig();
+				$config->set("leaderboards", [
+					[
+						"slug" => "faction",
+						"position" => $coord,
+						"active" => true
+					]
+				]);
+				$config->save();
+				$sender->sendMessage(Utils::getText("", "COMMAND_SCOREBOARD_SUCCESS"));
+			} else {
+				$sender->sendMessage(Utils::getText("", "DONT_PERMISSION"));
+			}
+		}
+	}
 }

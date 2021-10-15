@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -40,74 +42,76 @@ use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function count;
+use function explode;
+use function str_replace;
 
 class ScoreboardEntity extends FactionMasterEntity {
-    
-    private $tick = 200;
+	private $tick = 200;
 
-    public function getName(): string {
-        return self::getEntityName();
-    }
+	public function getName(): string {
+		return self::getEntityName();
+	}
 
-    public static function getEntityName(): string {
-        return "ScoreboardEntity";
-    }
+	public static function getEntityName(): string {
+		return "ScoreboardEntity";
+	}
 
-    public function initEntity(): void {
-        parent::initEntity();
-        $this->setImmobile(true);
-        $this->setScale(0.0000001);
-        $this->setHealth(1000);
-        $this->setNameTagAlwaysVisible(true);
-    }
+	public function initEntity(): void {
+		parent::initEntity();
+		$this->setImmobile(true);
+		$this->setScale(0.0000001);
+		$this->setHealth(1000);
+		$this->setNameTagAlwaysVisible(true);
+	}
 
-    public function onUpdate(int $currentTick): bool {
-        if ($this->tick == 200) {
-            $id = $this->getId();
-            $level = $this->getLevel();
-            if ($level instanceof Level) {
-                $levelName = $level->getName();
-                Main::getInstance()->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
-                    LeaderboardManager::$queryList["faction"],
-                    [],
-                    function (array $result) use ($levelName, $id) {
-                        $nametag = Utils::getConfig("faction-scoreboard-header") . "\n";
-                        foreach ($result as $faction) {
-                            $newLine = Utils::getConfig("faction-scoreboard-lign");
-                            $newLine = str_replace(["{factionName}", "{level}", "{power}"], [$faction->getName(), $faction->getLevel(), $faction->getPower()], $newLine);
-                            $nametag .= $newLine . "\n";
-                        }
-                        $entity = Main::getInstance()->getServer()->getLevelByName($levelName)->getEntity($id);
-                        if ($entity !== null) {
-                            $entity->setNameTag($nametag);
-                        }
-                    },
-                    FactionEntity::class
-                ));        
-            }
-            $coordinates = ConfigManager::getLeaderboardConfig()->get("faction-position");
-            if ($coordinates !== false && $coordinates !== "") {
-                $coordinates = explode("|", $coordinates);
-                if (count($coordinates) == 4) {
-                    $levelName = $coordinates[3];
-                    $level = Main::getInstance()->getServer()->getLevelByName($levelName);
-                    if ($level instanceof Level) {
-                        $position = new Position((float)$coordinates[0], (float)$coordinates[1], (float)$coordinates[2], $level);
-                        if ($this->getPosition() !== $position) {
-                            $level->loadChunk((float)$coordinates[0] >> 4, (float)$coordinates[2] >> 4);
-                            $this->teleport($position);
-                        }
-                    } else {
-                        Main::getInstance()->getLogger()->notice("An unknow world was set in leaderboard.yml, can't load faction leaderboard");
-                    }            
-                }
-            }
-            $this->tick--;
-        }elseif ($this->tick == 0) {
-            $this->tick = 200;
-        }else{
-            $this->tick--;
-        }
-        return parent::onUpdate($currentTick);
-    }
+	public function onUpdate(int $currentTick): bool {
+		if ($this->tick == 200) {
+			$id = $this->getId();
+			$level = $this->getLevel();
+			if ($level instanceof Level) {
+				$levelName = $level->getName();
+				Main::getInstance()->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
+					LeaderboardManager::$queryList["faction"],
+					[],
+					function (array $result) use ($levelName, $id) {
+						$nametag = Utils::getConfig("faction-scoreboard-header") . "\n";
+						foreach ($result as $faction) {
+							$newLine = Utils::getConfig("faction-scoreboard-lign");
+							$newLine = str_replace(["{factionName}", "{level}", "{power}"], [$faction->getName(), $faction->getLevel(), $faction->getPower()], $newLine);
+							$nametag .= $newLine . "\n";
+						}
+						$entity = Main::getInstance()->getServer()->getLevelByName($levelName)->getEntity($id);
+						if ($entity !== null) {
+							$entity->setNameTag($nametag);
+						}
+					},
+					FactionEntity::class
+				));
+			}
+			$coordinates = ConfigManager::getLeaderboardConfig()->get("faction-position");
+			if ($coordinates !== false && $coordinates !== "") {
+				$coordinates = explode("|", $coordinates);
+				if (count($coordinates) == 4) {
+					$levelName = $coordinates[3];
+					$level = Main::getInstance()->getServer()->getLevelByName($levelName);
+					if ($level instanceof Level) {
+						$position = new Position((float) $coordinates[0], (float) $coordinates[1], (float) $coordinates[2], $level);
+						if ($this->getPosition() !== $position) {
+							$level->loadChunk((float) $coordinates[0] >> 4, (float) $coordinates[2] >> 4);
+							$this->teleport($position);
+						}
+					} else {
+						Main::getInstance()->getLogger()->notice("An unknow world was set in leaderboard.yml, can't load faction leaderboard");
+					}
+				}
+			}
+			$this->tick--;
+		} elseif ($this->tick == 0) {
+			$this->tick = 200;
+		} else {
+			$this->tick--;
+		}
+		return parent::onUpdate($currentTick);
+	}
 }

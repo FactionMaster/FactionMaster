@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -33,42 +35,38 @@
 namespace ShockedPlot7560\FactionMaster\Reward;
 
 class RewardFactory {
+	private static $list;
 
-    private static $list;
+	public static function init() {
+		self::registerReward(new AllyLimit());
+		self::registerReward(new ClaimLimit());
+		self::registerReward(new HomeLimit());
+		self::registerReward(new MemberLimit());
+		self::registerReward(new Power());
+	}
 
-    public static function init() {
+	/**
+	 * Use to register or overwrite a new Reward
+	 */
+	public static function registerReward(RewardInterface $reward, bool $override = false): void {
+		$type = $reward->getType();
+		if (self::isRegistered($type) && $override === false) {
+			return;
+		}
 
-        self::registerReward(new AllyLimit());
-        self::registerReward(new ClaimLimit());
-        self::registerReward(new HomeLimit());
-        self::registerReward(new MemberLimit());
-        self::registerReward(new Power());
+		self::$list[$type] = $reward;
+	}
 
-    }
+	public static function get(string $type): ?RewardInterface {
+		return self::$list[$type] ?? null;
+	}
 
-    /**
-     * Use to register or overwrite a new Reward
-     */
-    public static function registerReward(RewardInterface $reward, bool $override = false): void {
-        $type = $reward->getType();
-        if (self::isRegistered($type) && $override === false) {
-            return;
-        }
+	public static function isRegistered(string $type): bool {
+		return isset(self::$list[$type]);
+	}
 
-        self::$list[$type] = $reward;
-    }
-
-    public static function get(string $type): ?RewardInterface {
-        return self::$list[$type] ?? null;
-    }
-
-    public static function isRegistered(string $type): bool {
-        return isset(self::$list[$type]);
-    }
-
-    /** @return RewardInterface[] */
-    public static function getAll(): array{
-        return self::$list;
-    }
-
+	/** @return RewardInterface[] */
+	public static function getAll(): array {
+		return self::$list;
+	}
 }

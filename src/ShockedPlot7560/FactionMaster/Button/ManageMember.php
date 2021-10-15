@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -40,21 +42,19 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageMember extends Button {
+	const SLUG = "member";
 
-    const SLUG = "member";
-
-    public function __construct(UserEntity $user) {
-        $this->setSlug(self::SLUG)
-            ->setContent(function (string $player) use ($user) {
-                return $user->getName();
-            })
-            ->setCallable(function (Player $player) use ($user) {
-                Utils::processMenu(RouterFactory::get(MembersManageMember::SLUG), $player, [$user]);
-            })
-            ->setPermissions([
-                PermissionIds::PERMISSION_KICK_MEMBER,
-                PermissionIds::PERMISSION_CHANGE_MEMBER_RANK
-            ]);
-    }
-
+	public function __construct(UserEntity $user) {
+		$this->setSlug(self::SLUG)
+			->setContent(function (string $player) use ($user) {
+				return $user->getName();
+			})
+			->setCallable(function (Player $player) use ($user) {
+				Utils::processMenu(RouterFactory::get(MembersManageMember::SLUG), $player, [$user]);
+			})
+			->setPermissions([
+				PermissionIds::PERMISSION_KICK_MEMBER,
+				PermissionIds::PERMISSION_CHANGE_MEMBER_RANK
+			]);
+	}
 }

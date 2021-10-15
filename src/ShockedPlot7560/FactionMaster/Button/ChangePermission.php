@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -39,20 +41,18 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangePermission extends Button {
+	const SLUG = "changePermission";
 
-    const SLUG = "changePermission";
-
-    public function __construct(string $nameSlug, int $rankId) {
-        $this->setSlug(self::SLUG)
-            ->setContent(function (string $player) use ($nameSlug) {
-                return Utils::getText($player, $nameSlug);
-            })
-            ->setCallable(function (Player $player) use ($rankId) {
-                Utils::processMenu(RouterFactory::get(PermissionChangeRoute::SLUG), $player, [$rankId]);
-            })
-            ->setPermissions([
-                PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS
-            ]);
-    }
-
+	public function __construct(string $nameSlug, int $rankId) {
+		$this->setSlug(self::SLUG)
+			->setContent(function (string $player) use ($nameSlug) {
+				return Utils::getText($player, $nameSlug);
+			})
+			->setCallable(function (Player $player) use ($rankId) {
+				Utils::processMenu(RouterFactory::get(PermissionChangeRoute::SLUG), $player, [$rankId]);
+			})
+			->setPermissions([
+				PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS
+			]);
+	}
 }

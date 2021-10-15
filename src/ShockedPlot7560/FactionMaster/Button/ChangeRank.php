@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -40,20 +42,18 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeRank extends Button {
+	const SLUG = "changeRank";
 
-    const SLUG = "changeRank";
-
-    public function __construct(UserEntity $member) {
-        $this->setSlug(self::SLUG)
-            ->setContent(function (string $player) {
-                return Utils::getText($player, "BUTTON_CHANGE_RANK");
-            })
-            ->setCallable(function (Player $player) use ($member) {
-                Utils::processMenu(RouterFactory::get(ManageMemberRankRoute::SLUG), $player, [$member]);
-            })
-            ->setPermissions([
-                PermissionIds::PERMISSION_CHANGE_MEMBER_RANK
-            ]);
-    }
-
+	public function __construct(UserEntity $member) {
+		$this->setSlug(self::SLUG)
+			->setContent(function (string $player) {
+				return Utils::getText($player, "BUTTON_CHANGE_RANK");
+			})
+			->setCallable(function (Player $player) use ($member) {
+				Utils::processMenu(RouterFactory::get(ManageMemberRankRoute::SLUG), $player, [$member]);
+			})
+			->setPermissions([
+				PermissionIds::PERMISSION_CHANGE_MEMBER_RANK
+			]);
+	}
 }

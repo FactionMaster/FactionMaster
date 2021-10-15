@@ -29,14 +29,12 @@ declare(strict_types=1);
 
 namespace ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args;
 
-
 use pocketmine\command\CommandSender;
 use pocketmine\network\mcpe\protocol\types\CommandEnum;
 use function array_keys;
 use function array_map;
 use function implode;
 use function preg_match;
-use function spl_object_hash;
 use function strtolower;
 
 abstract class StringEnumArgument extends BaseArgument {
@@ -55,7 +53,7 @@ abstract class StringEnumArgument extends BaseArgument {
 	}
 
 	public function canParse(string $testString, CommandSender $sender): bool {
-		return (bool)preg_match(
+		return (bool) preg_match(
 			"/^(" . implode("|", array_map("\\strtolower", $this->getEnumValues())) . ")$/iu",
 			$testString
 		);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,75 +34,76 @@
 
 namespace ShockedPlot7560\FactionMaster\Utils;
 
+use function count;
+
 class QueryBuildeur {
+	const AND_MODE = 1;
 
-    const AND_MODE = 1;
+	const SIMPLE_INSERT_MODE = 2;
+	const PREPARE_INSERT_MODE = 3;
 
-    const SIMPLE_INSERT_MODE = 2;
-    const PREPARE_INSERT_MODE = 3;
+	const SET_MODE = 4;
 
-    const SET_MODE = 4;  
+	public static function buildConditions(array $conditions, int $mode = self::AND_MODE) : string {
+		$conditionsString = "";
+		switch ($mode) {
+			case self::AND_MODE:
+				foreach ($conditions as $key => $value) {
+					if (count($conditions) > 1) {
+						$conditionsString .= "$key = :$key AND ";
+						unset($conditions[$key]);
+					} else {
+						$conditionsString .= "$key = :$key";
+					}
+				}
+				break;
+		}
+		return $conditionsString;
+	}
 
-    public static function buildConditions(array $conditions, int $mode = self::AND_MODE) : string {
-        $conditionsString = "";
-        switch ($mode) {
-            case self::AND_MODE:
-                foreach ($conditions as $key => $value) {
-                    if (\count($conditions) > 1) {
-                        $conditionsString .= "$key = :$key AND ";
-                        unset($conditions[$key]);
-                    }else{
-                        $conditionsString .= "$key = :$key";
-                    }
-                }                
-                break;
-        }
-        return $conditionsString;
-    }
+	public static function buildInsert(array $data, int $mode = self::SIMPLE_INSERT_MODE) : string {
+		$insertString = "";
+		foreach ($data as $key => $value) {
+			switch ($mode) {
+				case self::SIMPLE_INSERT_MODE:
+					if (count($data) > 1) {
+						$patern = "$key, ";
+					} else {
+						$patern = "$key";
+					}
+					break;
+				case self::PREPARE_INSERT_MODE:
+					if (count($data) > 1) {
+						$patern = ":$key, ";
+					} else {
+						$patern = ":$key";
+					}
+					break;
+				default:
+					$patern = "";
+					break;
+			}
+			$insertString .= $patern;
+			unset($data[$key]);
+		}
 
-    public static function buildInsert(array $data, int $mode = self::SIMPLE_INSERT_MODE) : string {
-        $insertString = "";
-        foreach ($data as $key => $value) {
-            switch ($mode) {
-                case self::SIMPLE_INSERT_MODE:
-                    if (\count($data) > 1) {
-                        $patern = "$key, ";
-                    }else{
-                        $patern = "$key";
-                    }          
-                    break;
-                case self::PREPARE_INSERT_MODE:
-                    if (\count($data) > 1) {
-                        $patern = ":$key, ";
-                    }else{
-                        $patern = ":$key";
-                    }              
-                    break;
-                default:
-                    $patern = "";
-                    break;
-            }
-            $insertString .= $patern;
-            unset($data[$key]);
-        }       
-        
-        return $insertString;
-    }
+		return $insertString;
+	}
 
-    public static function buildSet(array $data, int $mode = self::SET_MODE) : string {
-        $setString = "";
-        switch ($mode) {
-            case self::SET_MODE:
-                foreach ($data as $key => $value) {
-                    if (\count($data) > 1) {
-                        $setString .= "$key = :$key, ";
-                        unset($data[$key]);
-                    }else{
-                        $setString .= "$key = :$key";
-                    }
-                }                
-                break;
-        }
-        return $setString;
-    }
+	public static function buildSet(array $data, int $mode = self::SET_MODE) : string {
+		$setString = "";
+		switch ($mode) {
+			case self::SET_MODE:
+				foreach ($data as $key => $value) {
+					if (count($data) > 1) {
+						$setString .= "$key = :$key, ";
+						unset($data[$key]);
+					} else {
+						$setString .= "$key = :$key";
+					}
+				}
+				break;
+		}
+		return $setString;
+	}
 }

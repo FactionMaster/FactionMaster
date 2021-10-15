@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -41,17 +43,16 @@ use ShockedPlot7560\FactionMaster\Route\HomesViewRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class HomesViewCollection extends Collection {
+	const SLUG = "homesViewCollection";
 
-    const SLUG = "homesViewCollection";
-
-    public function __construct() {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
-            $homes = MainAPI::getFactionHomes($user->getFactionName());
-            foreach ($homes as $name => $home) {
-                $this->register(new Home($name, $home));
-            }
-            $this->register(new Back(RouterFactory::get(HomesViewRoute::SLUG)->getBackRoute()));
-        });
-    }
+	public function __construct() {
+		parent::__construct(self::SLUG);
+		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
+			$homes = MainAPI::getFactionHomes($user->getFactionName());
+			foreach ($homes as $name => $home) {
+				$this->register(new Home($name, $home));
+			}
+			$this->register(new Back(RouterFactory::get(HomesViewRoute::SLUG)->getBackRoute()));
+		});
+	}
 }

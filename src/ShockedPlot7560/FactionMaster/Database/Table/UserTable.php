@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -38,27 +40,27 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class UserTable implements TableInterface {
 
-    /** @var PDO */
-    private $PDO;
+	/** @var PDO */
+	private $PDO;
 
-    const TABLE_NAME = "factionmaster_user";
-    const SLUG = "factionmaster_user";
+	const TABLE_NAME = "factionmaster_user";
+	const SLUG = "factionmaster_user";
 
-    public function init(): self {
-        $tableName = self::TABLE_NAME;
-        $auto_increment = Utils::getConfig("PROVIDER") === DatabaseManager::MYSQL_PROVIDER ? "AUTO_INCREMENT" : "AUTOINCREMENT";
-        $dftLang = Utils::getConfigLang("default-language");
-        $this->PDO->query("CREATE TABLE IF NOT EXISTS `$tableName` ( 
+	public function init(): self {
+		$tableName = self::TABLE_NAME;
+		$auto_increment = Utils::getConfig("PROVIDER") === DatabaseManager::MYSQL_PROVIDER ? "AUTO_INCREMENT" : "AUTOINCREMENT";
+		$dftLang = Utils::getConfigLang("default-language");
+		$this->PDO->query("CREATE TABLE IF NOT EXISTS `$tableName` ( 
             `id` INTEGER PRIMARY KEY $auto_increment, 
             `name` VARCHAR(255) NOT NULL, 
             `faction` TEXT DEFAULT NULL,
             `rank` TINYINT UNSIGNED DEFAULT NULL, 
             `language` VARCHAR(255) NOT NULL DEFAULT '$dftLang'
         )");
-        return $this;
-    }
+		return $this;
+	}
 
-    public function __construct(PDO $PDO) {
-        $this->PDO = $PDO;
-    }
+	public function __construct(PDO $PDO) {
+		$this->PDO = $PDO;
+	}
 }

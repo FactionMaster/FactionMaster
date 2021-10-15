@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -36,20 +38,19 @@ use pocketmine\event\Event;
 use pocketmine\Player;
 
 class PlayerChangeLanguageEvent extends Event {
+	private $player;
+	private $languageSlug;
 
-    private $player;
-    private $languageSlug;
+	public function __construct(Player $player, string $languageSlug) {
+		$this->player = $player;
+		$this->languageSlug = $languageSlug;
+	}
 
-    public function __construct(Player $player, string $languageSlug) {
-        $this->player = $player;
-        $this->languageSlug = $languageSlug;
-    }
+	public function getPlayer(): Player {
+		return $this->player;
+	}
 
-    public function getPlayer(): Player {
-        return $this->player;
-    }
-
-    public function getLanguageSlug(): string {
-        return $this->languageSlug;
-    }
+	public function getLanguageSlug(): string {
+		return $this->languageSlug;
+	}
 }

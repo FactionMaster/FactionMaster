@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,38 +34,36 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class SettingsCommand extends BaseSubCommand {
+	protected function prepare(): void {
+	}
 
-    protected function prepare(): void {
-    }
-
-    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-        $sender->sendMessage("§2FactionMaster settings:");
-        $sender->sendMessage("  §8>> §7Database Provider: " . Utils::getConfig("PROVIDER"));
-        $sender->sendMessage("  §8>> §7Default home limit: §a" . Utils::getConfig("default-home-limit"));
-        $sender->sendMessage("  §8>> §7Default claim limit: §a" . Utils::getConfig("default-claim-limit"));
-        $sender->sendMessage("  §8>> §7Default member limit: §a" . Utils::getConfig("default-player-limit"));
-        $sender->sendMessage("  §8>> §7Default ally limit: §a" . Utils::getConfig("default-ally-limit"));
-        $sender->sendMessage("  §8>> §7Default visibility: §a" . Utils::getConfig("default-faction-visibility"));
-        $sender->sendMessage("  §8>> §7Default xp: §a" . Utils::getConfig("default-faction-xp"));
-        $sender->sendMessage("  §8>> §7Default power: §a" . Utils::getConfig("default-power"));
-        $sender->sendMessage("  §8>> §7Default level: §a" . Utils::getConfig("default-faction-level"));
-        $sender->sendMessage("  §8>> §7Default description: §a" . Utils::getConfig("default-faction-description") ?? "none");
-        $sender->sendMessage("  §8>> §7Default message: §a" . Utils::getConfig("default-faction-message") ?? "none");
-        $map = Utils::getConfig("f-map-task");
-        $sender->sendMessage("  §8>> §7F map task: " . ($map === false ? "§cno" : "§ayes"));
-        $sender->sendMessage("  §8>> §7Claim alert: " . (Utils::getConfig("message-alert") === true ? "§ayes" : "§cno"));
-        $sender->sendMessage("  §8>> §7Image button: " . (Utils::getConfig("image-active") === true ? "§ayes" : "§cno"));
-        $sender->sendMessage("  §8>> §7Faction chat: " . (Utils::getConfig("faction-chat-active") === true ? "§ayes" : "§cno"));
-        $sender->sendMessage("  §8>> §7Alliance chat: " . (Utils::getConfig("ally-chat-active") === true ? "§ayes" : "§cno"));
-        $sender->sendMessage("§7Broadcast: ");
-        $sender->sendMessage("§8>> §7Faction create: " . (Utils::getConfig("broadcast-faction-create") === true ? "§ayes" : "§cno"));
-        $sender->sendMessage("§8>> §7Faction delete: " . (Utils::getConfig("broadcast-faction-delete") === true ? "§ayes" : "§cno"));
-        $sender->sendMessage("§8>> §7Faction transferProperty: " . (Utils::getConfig("broadcast-faction-transferProperty") === true ? "§ayes" : "§cno"));
-
-    }
+	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
+		$sender->sendMessage("§2FactionMaster settings:");
+		$sender->sendMessage("  §8>> §7Database Provider: " . Utils::getConfig("PROVIDER"));
+		$sender->sendMessage("  §8>> §7Default home limit: §a" . Utils::getConfig("default-home-limit"));
+		$sender->sendMessage("  §8>> §7Default claim limit: §a" . Utils::getConfig("default-claim-limit"));
+		$sender->sendMessage("  §8>> §7Default member limit: §a" . Utils::getConfig("default-player-limit"));
+		$sender->sendMessage("  §8>> §7Default ally limit: §a" . Utils::getConfig("default-ally-limit"));
+		$sender->sendMessage("  §8>> §7Default visibility: §a" . Utils::getConfig("default-faction-visibility"));
+		$sender->sendMessage("  §8>> §7Default xp: §a" . Utils::getConfig("default-faction-xp"));
+		$sender->sendMessage("  §8>> §7Default power: §a" . Utils::getConfig("default-power"));
+		$sender->sendMessage("  §8>> §7Default level: §a" . Utils::getConfig("default-faction-level"));
+		$sender->sendMessage("  §8>> §7Default description: §a" . Utils::getConfig("default-faction-description") ?? "none");
+		$sender->sendMessage("  §8>> §7Default message: §a" . Utils::getConfig("default-faction-message") ?? "none");
+		$map = Utils::getConfig("f-map-task");
+		$sender->sendMessage("  §8>> §7F map task: " . ($map === false ? "§cno" : "§ayes"));
+		$sender->sendMessage("  §8>> §7Claim alert: " . (Utils::getConfig("message-alert") === true ? "§ayes" : "§cno"));
+		$sender->sendMessage("  §8>> §7Image button: " . (Utils::getConfig("image-active") === true ? "§ayes" : "§cno"));
+		$sender->sendMessage("  §8>> §7Faction chat: " . (Utils::getConfig("faction-chat-active") === true ? "§ayes" : "§cno"));
+		$sender->sendMessage("  §8>> §7Alliance chat: " . (Utils::getConfig("ally-chat-active") === true ? "§ayes" : "§cno"));
+		$sender->sendMessage("§7Broadcast: ");
+		$sender->sendMessage("§8>> §7Faction create: " . (Utils::getConfig("broadcast-faction-create") === true ? "§ayes" : "§cno"));
+		$sender->sendMessage("§8>> §7Faction delete: " . (Utils::getConfig("broadcast-faction-delete") === true ? "§ayes" : "§cno"));
+		$sender->sendMessage("§8>> §7Faction transferProperty: " . (Utils::getConfig("broadcast-faction-transferProperty") === true ? "§ayes" : "§cno"));
+	}
 }

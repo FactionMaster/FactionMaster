@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -34,4 +36,5 @@ namespace ShockedPlot7560\FactionMaster\Permission;
 
 use Exception;
 
-class PermissionException extends Exception { }
+class PermissionException extends Exception {
+}

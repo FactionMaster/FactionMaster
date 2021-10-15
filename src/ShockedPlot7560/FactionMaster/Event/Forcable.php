@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -33,8 +35,7 @@
 namespace ShockedPlot7560\FactionMaster\Event;
 
 interface Forcable {
-
-    public function isForcable() : bool;
+	public function isForcable() : bool;
 
 	/**
 	 * @return void

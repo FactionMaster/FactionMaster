@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -36,13 +38,12 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 
 class InvitationDeleteEvent extends InvitationEvent implements Forcable {
+	use PlayerEvent;
 
-    use PlayerEvent;
+	protected $player;
 
-    protected $player;
-
-    public function __construct(Player $player, InvitationEntity $invitation, bool $force = false) {
-        parent::__construct($invitation, $force);
-        $this->player = $player;
-    }
+	public function __construct(Player $player, InvitationEntity $invitation, bool $force = false) {
+		parent::__construct($invitation, $force);
+		$this->player = $player;
+	}
 }

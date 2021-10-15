@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -35,20 +37,23 @@ namespace ShockedPlot7560\FactionMaster\Task;
 use pocketmine\scheduler\Task;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
+use function in_array;
 
 class LeaderboardTask extends Task {
-
-    public function onRun(int $currentTick): void {
-        $scanSlug = [];
-        $leaderboards = ConfigManager::getLeaderboardConfig()->get("leaderboards");
-        if ($leaderboards === false) $leaderboards = [];
-        foreach ($leaderboards as $leaderboard) {
-            if (!in_array($leaderboard["slug"], $scanSlug)) {
-                LeaderboardManager::closeLeaderboard($leaderboard["slug"]);
-                $scanSlug[] = $leaderboard["slug"];
-            }
-            if ($leaderboard["active"] == true)
-                LeaderboardManager::placeScoreboard($leaderboard["slug"], $leaderboard["position"]);
-        }
-    }
+	public function onRun(int $currentTick): void {
+		$scanSlug = [];
+		$leaderboards = ConfigManager::getLeaderboardConfig()->get("leaderboards");
+		if ($leaderboards === false) {
+			$leaderboards = [];
+		}
+		foreach ($leaderboards as $leaderboard) {
+			if (!in_array($leaderboard["slug"], $scanSlug, true)) {
+				LeaderboardManager::closeLeaderboard($leaderboard["slug"]);
+				$scanSlug[] = $leaderboard["slug"];
+			}
+			if ($leaderboard["active"] == true) {
+				LeaderboardManager::placeScoreboard($leaderboard["slug"], $leaderboard["position"]);
+			}
+		}
+	}
 }

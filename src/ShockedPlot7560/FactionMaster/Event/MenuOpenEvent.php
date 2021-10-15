@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -38,18 +40,17 @@ use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Route\Route;
 
 class MenuOpenEvent extends Event implements Cancellable {
+	use PlayerEvent;
 
-    use PlayerEvent;
+	protected  $player;
+	private $route;
 
-    protected  $player;
-    private $route;
+	public function __construct(Player $player, Route $route) {
+		$this->player = $player;
+		$this->route = $route;
+	}
 
-    public function __construct(Player $player, Route $route) {
-        $this->player = $player;
-        $this->route = $route;
-    }
-
-    public function getRoute(): Route {
-        return $this->route;
-    }
+	public function getRoute(): Route {
+		return $this->route;
+	}
 }

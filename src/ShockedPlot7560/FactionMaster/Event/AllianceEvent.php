@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,25 +34,25 @@
 
 namespace ShockedPlot7560\FactionMaster\Event;
 
-use pocketmine\event\Event;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
 abstract class AllianceEvent extends FactionEvent {
+	protected $alliance;
 
-    protected $alliance;
+	/**
+	 * @param string|FactionEntity $alliance
+	 * @param string|FactionEntity $faction
+	 */
+	public function __construct($alliance, $faction, $isForce = null) {
+		parent::__construct($faction, $isForce);
+		$this->alliance = $alliance;
+	}
 
-    /**
-     * @param string|FactionEntity $alliance
-     * @param string|FactionEntity $faction
-     */
-    public function __construct($alliance, $faction, $isForce = null) {
-        parent::__construct($faction, $isForce);
-        $this->alliance = $alliance;
-    }
-
-    public function getAlliance(): ?FactionEntity {
-        if ($this->alliance instanceof FactionEntity) return $this->alliance;
-        return MainAPI::getFaction($this->alliance);
-    }
+	public function getAlliance(): ?FactionEntity {
+		if ($this->alliance instanceof FactionEntity) {
+			return $this->alliance;
+		}
+		return MainAPI::getFaction($this->alliance);
+	}
 }

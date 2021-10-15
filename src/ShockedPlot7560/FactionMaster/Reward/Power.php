@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -35,33 +37,31 @@ namespace ShockedPlot7560\FactionMaster\Reward;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 
 class Power extends Reward implements RewardInterface {
+	public function __construct($value = 0) {
+		$this->value = $value;
+		$this->nameSlug = "REWARD_POWER_NAME";
+		$this->type = RewardType::POWER;
+	}
 
-    public function __construct($value = 0) {
-        $this->value = $value;
-        $this->nameSlug = "REWARD_POWER_NAME";
-        $this->type = RewardType::POWER;
-    }
+	public function executeGet(string $factionName, $value = null): bool {
+		if ($value !== null) {
+			$this->setValue($value);
+		}
 
-    public function executeGet(string $factionName, $value = null): bool {
-        if ($value !== null) {
-            $this->setValue($value);
-        }
+		MainAPI::changePower($factionName, $this->getValue());
+		return true;
+	}
 
-        MainAPI::changePower($factionName, $this->getValue());
-        return true;
-    }
+	public function executeCost(string $factionName, $value = null) {
+		if ($value !== null) {
+			$this->setValue($value);
+		}
 
-    public function executeCost(string $factionName, $value = null) {
-        if ($value !== null) {
-            $this->setValue($value);
-        }
-
-        $faction = MainAPI::getFaction($factionName);
-        if (($faction->getPower() - $this->getValue()) < 0) {
-            return "NO_ENOUGH_POWER";
-        }
-        MainAPI::changePower($faction->getName(), $this->getValue() * -1);
-        return true;
-    }
-
+		$faction = MainAPI::getFaction($factionName);
+		if (($faction->getPower() - $this->getValue()) < 0) {
+			return "NO_ENOUGH_POWER";
+		}
+		MainAPI::changePower($faction->getName(), $this->getValue() * -1);
+		return true;
+	}
 }

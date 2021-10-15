@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -38,29 +40,27 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageFaction extends Button {
+	const SLUG = "manageFaction";
 
-    const SLUG = "manageFaction";
-
-    public function __construct() {
-        $this->setSlug(self::SLUG)
-            ->setContent(function ($player) {
-                return Utils::getText($player, "BUTTON_MANAGE_FACTION");
-            })
-            ->setCallable(function ($player) {
-                Utils::processMenu(RouterFactory::get(FactionOptionRoute::SLUG), $player);
-            })
-            ->setPermissions([
-                PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION,
-                PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION,
-                PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
-                PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
-                PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS,
-                PermissionIds::PERMISSION_LEVEL_UP,
-                PermissionIds::PERMISSION_CHANGE_FACTION_VISIBILITY,
-                PermissionIds::PERMISSION_CHANGE_FACTION_MESSAGE,
-                PermissionIds::PERMISSION_CHANGE_FACTION_DESCRIPTION
-            ])
-            ->setImgPack("textures/img/option_faction");
-    }
-
+	public function __construct() {
+		$this->setSlug(self::SLUG)
+			->setContent(function ($player) {
+				return Utils::getText($player, "BUTTON_MANAGE_FACTION");
+			})
+			->setCallable(function ($player) {
+				Utils::processMenu(RouterFactory::get(FactionOptionRoute::SLUG), $player);
+			})
+			->setPermissions([
+				PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION,
+				PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION,
+				PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
+				PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
+				PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS,
+				PermissionIds::PERMISSION_LEVEL_UP,
+				PermissionIds::PERMISSION_CHANGE_FACTION_VISIBILITY,
+				PermissionIds::PERMISSION_CHANGE_FACTION_MESSAGE,
+				PermissionIds::PERMISSION_CHANGE_FACTION_DESCRIPTION
+			])
+			->setImgPack("textures/img/option_faction");
+	}
 }

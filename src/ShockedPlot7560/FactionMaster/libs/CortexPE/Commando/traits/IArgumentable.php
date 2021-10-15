@@ -29,9 +29,8 @@ declare(strict_types=1);
 
 namespace ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\traits;
 
-
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\BaseArgument;
 use pocketmine\command\CommandSender;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\BaseArgument;
 
 interface IArgumentable {
 	public function generateUsageMessage(): string;

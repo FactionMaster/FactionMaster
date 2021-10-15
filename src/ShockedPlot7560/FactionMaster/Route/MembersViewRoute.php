@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -32,65 +34,63 @@
 
 namespace ShockedPlot7560\FactionMaster\Route;
 
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\MembersViewCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\Route;
+use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function count;
 
 class MembersViewRoute extends RouteBase implements Route {
+	const SLUG = "membersViewRoute";
 
-    const SLUG = "membersViewRoute";
+	public function getSlug(): string {
+		return self::SLUG;
+	}
 
-    public function getSlug(): string {
-        return self::SLUG;
-    }
+	public function getPermissions(): array {
+		return [];
+	}
 
-    public function getPermissions(): array {
-        return [];
-    }
+	public function getBackRoute(): ?Route {
+		return RouterFactory::get(MainRoute::SLUG);
+	}
 
-    public function getBackRoute(): ?Route {
-        return RouterFactory::get(MainRoute::SLUG);
-    }
+	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+		$this->init($player, $userEntity, $userPermissions, $params);
 
-    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
-        $this->init($player, $userEntity, $userPermissions, $params);
+		$faction = MainAPI::getFactionOfPlayer($this->getPlayer()->getName());
+		$this->setCollection(CollectionFactory::get(MembersViewCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $faction));
 
-        $faction = MainAPI::getFactionOfPlayer($this->getPlayer()->getName());
-        $this->setCollection(CollectionFactory::get(MembersViewCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $faction));
-        
-        $message = "";
-        if (isset($this->getParams()[0])) {
-            $message = $params[0];
-        }
-        if (count($faction->getMembers()) == 0) {
-            $message .= Utils::getText($this->getUserEntity()->getName(), "NO_MEMBERS");
-        }
-        $this->getPlayer()->sendForm($this->getForm($message));
-    }
+		$message = "";
+		if (isset($this->getParams()[0])) {
+			$message = $params[0];
+		}
+		if (count($faction->getMembers()) == 0) {
+			$message .= Utils::getText($this->getUserEntity()->getName(), "NO_MEMBERS");
+		}
+		$this->getPlayer()->sendForm($this->getForm($message));
+	}
 
-    public function call(): callable {
-        return function (Player $player, $data) {
-            if ($data === null) {
-                return;
-            }
-            $this->getCollection()->process($data, $player);
-            return;
-        };
-    }
+	public function call(): callable {
+		return function (Player $player, $data) {
+			if ($data === null) {
+				return;
+			}
+			$this->getCollection()->process($data, $player);
+			return;
+		};
+	}
 
-    protected function getForm(string $message = ""): SimpleForm {
-        $menu = new SimpleForm($this->call());
-        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
-        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MEMBERS_LIST_TITLE"));
-        if ($message !== "") {
-            $menu->setContent($message);
-        }
-        return $menu;
-    }
-
+	protected function getForm(string $message = ""): SimpleForm {
+		$menu = new SimpleForm($this->call());
+		$menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+		$menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MEMBERS_LIST_TITLE"));
+		if ($message !== "") {
+			$menu->setContent($message);
+		}
+		return $menu;
+	}
 }

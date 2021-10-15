@@ -41,7 +41,7 @@ use function json_decode;
 use function version_compare;
 use function vsprintf;
 
-class UpdateNotifyTask extends AsyncTask{
+class UpdateNotifyTask extends AsyncTask {
 
 	/** @var string */
 	private const POGGIT_RELEASES_URL = "https://poggit.pmmp.io/releases.json?name=";
@@ -51,24 +51,24 @@ class UpdateNotifyTask extends AsyncTask{
 	/** @var string */
 	private $pluginVersion;
 
-	public function __construct(string $pluginName, string $pluginVersion){
+	public function __construct(string $pluginName, string $pluginVersion) {
 		$this->pluginName = $pluginName;
 		$this->pluginVersion = $pluginVersion;
 	}
 
-	public function onRun() : void{
+	public function onRun() : void {
 		$json = Internet::getURL(self::POGGIT_RELEASES_URL . $this->pluginName, 10, [], $err);
 		$highestVersion = $this->pluginVersion;
 		$artifactUrl = "";
 		$api = "";
-		if($json !== false){
+		if ($json !== false) {
 			$releases = json_decode($json, true);
-			if($releases === null || !is_array($releases) || !$releases){
+			if ($releases === null || !is_array($releases) || !$releases) {
 				$this->setResult([null, null, null, $err ?? "Unable to resolve host: " . self::POGGIT_RELEASES_URL . $this->pluginName]);
 				return;
 			}
-			foreach($releases as $release){
-				if(version_compare($highestVersion, $release["version"], ">=")){
+			foreach ($releases as $release) {
+				if (version_compare($highestVersion, $release["version"], ">=")) {
 					continue;
 				}
 				$highestVersion = $release["version"];
@@ -80,21 +80,21 @@ class UpdateNotifyTask extends AsyncTask{
 		$this->setResult([$highestVersion, $artifactUrl, $api, $err]);
 	}
 
-	public function onCompletion(Server $server) : void{
+	public function onCompletion(Server $server) : void {
 		$plugin = Server::getInstance()->getPluginManager()->getPlugin($this->pluginName);
 
-		if($plugin === null){
+		if ($plugin === null) {
 			return;
 		}
 
 		[$highestVersion, $artifactUrl, $api, $err] = $this->getResult();
 
-		if($err !== null){
+		if ($err !== null) {
 			$plugin->getLogger()->error("Update notify error: " . $err);
 			return;
 		}
 
-		if($highestVersion !== $this->pluginVersion){
+		if ($highestVersion !== $this->pluginVersion) {
 			$artifactUrl = $artifactUrl . "/" . $this->pluginName . "_" . $highestVersion . ".phar";
 			$plugin->getLogger()->notice(vsprintf("Version %s has been released for API %s. Download the new release at %s", [$highestVersion, $api, $artifactUrl]));
 		}

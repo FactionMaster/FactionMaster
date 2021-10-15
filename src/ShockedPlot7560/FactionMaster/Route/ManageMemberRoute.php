@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -33,59 +35,58 @@
 namespace ShockedPlot7560\FactionMaster\Route;
 
 use InvalidArgumentException;
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\ManageMemberCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageMemberRoute extends VictimBase implements Route {
+	const SLUG = "manageMemberRoute";
 
-    const SLUG = "manageMemberRoute";
+	public function getSlug(): string {
+		return self::SLUG;
+	}
 
-    public function getSlug(): string {
-        return self::SLUG;
-    }
+	public function getPermissions(): array {
+		return [
+			PermissionIds::PERMISSION_CHANGE_MEMBER_RANK,
+			PermissionIds::PERMISSION_KICK_MEMBER
+		];
+	}
 
-    public function getPermissions(): array {
-        return [
-            PermissionIds::PERMISSION_CHANGE_MEMBER_RANK, 
-            PermissionIds::PERMISSION_KICK_MEMBER
-        ];
-    }
+	public function getBackRoute(): ?Route {
+		return RouterFactory::get(MembersOptionRoute::SLUG);
+	}
 
-    public function getBackRoute(): ?Route {
-        return RouterFactory::get(MembersOptionRoute::SLUG);
-    }
+	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
+		$this->init($player, $userEntity, $userPermissions, $params);
 
-    public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
-        $this->init($player, $userEntity, $userPermissions, $params);
+		if (!isset($params[0]) || !$params[0] instanceof UserEntity) {
+			throw new InvalidArgumentException("Need the target player instance");
+		}
 
-        if (!isset($params[0]) || !$params[0] instanceof UserEntity) {
-            throw new InvalidArgumentException("Need the target player instance");
-        }
+		$this->setVictim($params[0]);
 
-        $this->setVictim($params[0]);
+		$this->setCollection(CollectionFactory::get(ManageMemberCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getVictim()));
+		$player->sendForm($this->getForm());
+	}
 
-        $this->setCollection(CollectionFactory::get(ManageMemberCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getVictim()));
-        $player->sendForm($this->getForm());
-    }
+	public function call(): callable {
+		return function (Player $player, $data) {
+			if ($data === null) {
+				return;
+			}
+			$this->getCollection()->process($data, $player);
+		};
+	}
 
-    public function call(): callable {
-        return function (Player $player, $data) {
-            if ($data === null) {
-                return;
-            }
-            $this->getCollection()->process($data, $player);
-        };
-    }
-
-    protected function getForm(): SimpleForm {
-        $menu = new SimpleForm($this->call());
-        $menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
-        $menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MANAGE_MEMBER_PANEL_TITLE", ['playerName' => $this->getVictim()->getName()]));
-        return $menu;
-    }
+	protected function getForm(): SimpleForm {
+		$menu = new SimpleForm($this->call());
+		$menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
+		$menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MANAGE_MEMBER_PANEL_TITLE", ['playerName' => $this->getVictim()->getName()]));
+		return $menu;
+	}
 }

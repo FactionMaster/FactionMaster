@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -41,16 +43,15 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeLangueCollection extends Collection {
+	const SLUG = "changeLangueCollection";
 
-    const SLUG = "changeLangueCollection";
-
-    public function __construct() {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
-            foreach (Utils::getConfigLang("languages-name") as $langue) {
-                $this->register(new Langue($langue));
-            }
-            $this->register(new Back(RouterFactory::get(ChangeLangueRoute::SLUG)->getBackRoute()));
-        });
-    }
+	public function __construct() {
+		parent::__construct(self::SLUG);
+		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
+			foreach (Utils::getConfigLang("languages-name") as $langue) {
+				$this->register(new Langue($langue));
+			}
+			$this->register(new Back(RouterFactory::get(ChangeLangueRoute::SLUG)->getBackRoute()));
+		});
+	}
 }

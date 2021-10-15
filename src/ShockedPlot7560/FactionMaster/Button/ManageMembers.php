@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -38,26 +40,24 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageMembers extends Button {
+	const SLUG = "manageMembers";
 
-    const SLUG = "manageMembers";
-
-    public function __construct() {
-        $this->setSlug(self::SLUG)
-            ->setContent(function ($player) {
-                return Utils::getText($player, "BUTTON_MANAGE_MEMBERS");
-            })
-            ->setCallable(function ($player) {
-                Utils::processMenu(RouterFactory::get(MembersOptionRoute::SLUG), $player);
-            })
-            ->setPermissions([
-                PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND,
-                PermissionIds::PERMISSION_REFUSE_MEMBER_DEMAND,
-                PermissionIds::PERMISSION_DELETE_PENDING_MEMBER_INVITATION,
-                PermissionIds::PERMISSION_KICK_MEMBER,
-                PermissionIds::PERMISSION_CHANGE_MEMBER_RANK,
-                PermissionIds::PERMISSION_SEND_MEMBER_INVITATION
-            ])
-            ->setImgPack("textures/img/option_member");
-    }
-
+	public function __construct() {
+		$this->setSlug(self::SLUG)
+			->setContent(function ($player) {
+				return Utils::getText($player, "BUTTON_MANAGE_MEMBERS");
+			})
+			->setCallable(function ($player) {
+				Utils::processMenu(RouterFactory::get(MembersOptionRoute::SLUG), $player);
+			})
+			->setPermissions([
+				PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND,
+				PermissionIds::PERMISSION_REFUSE_MEMBER_DEMAND,
+				PermissionIds::PERMISSION_DELETE_PENDING_MEMBER_INVITATION,
+				PermissionIds::PERMISSION_KICK_MEMBER,
+				PermissionIds::PERMISSION_CHANGE_MEMBER_RANK,
+				PermissionIds::PERMISSION_SEND_MEMBER_INVITATION
+			])
+			->setImgPack("textures/img/option_member");
+	}
 }

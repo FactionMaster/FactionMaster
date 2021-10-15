@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -37,18 +39,16 @@ use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Back extends Button {
+	const SLUG = "back";
 
-    const SLUG = "back";
-
-    public function __construct(Route $backPanel) {
-        $this->setSlug(self::SLUG)
-            ->setContent(function (string $player) {
-                return Utils::getText($player, "BUTTON_BACK");
-            })
-            ->setCallable(function (Player $player) use ($backPanel) {
-                Utils::processMenu($backPanel, $player);
-            })
-            ->setImgPack("textures/img/back");
-    }
-
+	public function __construct(Route $backPanel) {
+		$this->setSlug(self::SLUG)
+			->setContent(function (string $player) {
+				return Utils::getText($player, "BUTTON_BACK");
+			})
+			->setCallable(function (Player $player) use ($backPanel) {
+				Utils::processMenu($backPanel, $player);
+			})
+			->setImgPack("textures/img/back");
+	}
 }

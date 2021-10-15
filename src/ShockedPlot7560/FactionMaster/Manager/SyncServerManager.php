@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -51,201 +53,202 @@ use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function count;
 
 class SyncServerManager {
 
-    /** @var array */
-    private static $list;
-    /** @var Main */
-    private static $main;
+	/** @var array */
+	private static $list;
+	/** @var Main */
+	private static $main;
 
-    public static function init(Main $main): void {
-        self::$main = $main;
-        self::addItem(
-            "SELECT * FROM " . FactionTable::TABLE_NAME, 
-            [],
-            function (array $result) {
-                if (count($result) > 0) {
-                    MainAPI::$factions = [];
-                }
+	public static function init(Main $main): void {
+		self::$main = $main;
+		self::addItem(
+			"SELECT * FROM " . FactionTable::TABLE_NAME,
+			[],
+			function (array $result) {
+				if (count($result) > 0) {
+					MainAPI::$factions = [];
+				}
 
-                foreach ($result as $faction) {
-                    if ($faction instanceof FactionEntity) {
-                        MainAPI::$factions[$faction->getName()] = $faction;
-                        if (Main::getInstance()->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
-                            $server = Main::getInstance()->getServer();
-                            foreach ($faction->getMembers() as $name => $rank) {
-                                $player = $server->getPlayer($name);
-                                if ($player instanceof Player) {
-                                    $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
-                                        Ids::HUD_FACTIONMASTER_FACTION_NAME,
-                                        $faction->getName()
-                                    ));
-                                    $ev->call();
-                                    $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
-                                        Ids::HUD_FACTIONMASTER_FACTION_POWER,
-                                        $faction->getPower()
-                                    ));
-                                    $ev->call();
-                                    $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
-                                        Ids::HUD_FACTIONMASTER_FACTION_LEVEL,
-                                        $faction->getLevel()
-                                    ));
-                                    $ev->call();
-                                    $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
-                                        Ids::HUD_FACTIONMASTER_FACTION_XP,
-                                        $faction->getXP()
-                                    ));
-                                    $ev->call();
-                                    $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
-                                        Ids::HUD_FACTIONMASTER_FACTION_MESSAGE,
-                                        $faction->getMessage()
-                                    ));
-                                    $ev->call();
-                                    $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
-                                        Ids::HUD_FACTIONMASTER_FACTION_DESCRIPTION,
-                                        $faction->getDescription()
-                                    ));
-                                    switch ($faction->getVisibilityId()) {
-                                        case Ids::PUBLIC_VISIBILITY:
-                                            $visibility = "§a" . Utils::getText($player->getName(), "PUBLIC_VISIBILITY_NAME");
-                                            break;
-                                        case Ids::PRIVATE_VISIBILITY:
-                                            $visibility = "§4" . Utils::getText($player->getName(), "PRIVATE_VISIBILITY_NAME");
-                                            break;
-                                        case Ids::INVITATION_VISIBILITY:
-                                            $visibility = "§6" . Utils::getText($player->getName(), "INVITATION_VISIBILITY_NAME");
-                                            break;
-                                        default:
-                                            $visibility = "Unknow";
-                                            break;
-                                    }
-                                    $ev->call();
-                                    $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
-                                        Ids::HUD_FACTIONMASTER_FACTION_VISIBILITY,
-                                        $visibility
-                                    ));   
-                                    $ev->call();
-                                }
-                            }                        
-                        }
-                    }
-                }
-            },
-            FactionEntity::class
-        );
-        self::addItem(
-            "SELECT * FROM " . InvitationTable::TABLE_NAME,
-            [],
-            function (array $result) {
-                if (count($result) > 0) {
-                    MainAPI::$invitation = [];
-                }
+				foreach ($result as $faction) {
+					if ($faction instanceof FactionEntity) {
+						MainAPI::$factions[$faction->getName()] = $faction;
+						if (Main::getInstance()->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
+							$server = Main::getInstance()->getServer();
+							foreach ($faction->getMembers() as $name => $rank) {
+								$player = $server->getPlayer($name);
+								if ($player instanceof Player) {
+									$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+										Ids::HUD_FACTIONMASTER_FACTION_NAME,
+										$faction->getName()
+									));
+									$ev->call();
+									$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+										Ids::HUD_FACTIONMASTER_FACTION_POWER,
+										$faction->getPower()
+									));
+									$ev->call();
+									$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+										Ids::HUD_FACTIONMASTER_FACTION_LEVEL,
+										$faction->getLevel()
+									));
+									$ev->call();
+									$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+										Ids::HUD_FACTIONMASTER_FACTION_XP,
+										$faction->getXP()
+									));
+									$ev->call();
+									$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+										Ids::HUD_FACTIONMASTER_FACTION_MESSAGE,
+										$faction->getMessage()
+									));
+									$ev->call();
+									$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+										Ids::HUD_FACTIONMASTER_FACTION_DESCRIPTION,
+										$faction->getDescription()
+									));
+									switch ($faction->getVisibilityId()) {
+										case Ids::PUBLIC_VISIBILITY:
+											$visibility = "§a" . Utils::getText($player->getName(), "PUBLIC_VISIBILITY_NAME");
+											break;
+										case Ids::PRIVATE_VISIBILITY:
+											$visibility = "§4" . Utils::getText($player->getName(), "PRIVATE_VISIBILITY_NAME");
+											break;
+										case Ids::INVITATION_VISIBILITY:
+											$visibility = "§6" . Utils::getText($player->getName(), "INVITATION_VISIBILITY_NAME");
+											break;
+										default:
+											$visibility = "Unknow";
+											break;
+									}
+									$ev->call();
+									$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+										Ids::HUD_FACTIONMASTER_FACTION_VISIBILITY,
+										$visibility
+									));
+									$ev->call();
+								}
+							}
+						}
+					}
+				}
+			},
+			FactionEntity::class
+		);
+		self::addItem(
+			"SELECT * FROM " . InvitationTable::TABLE_NAME,
+			[],
+			function (array $result) {
+				if (count($result) > 0) {
+					MainAPI::$invitation = [];
+				}
 
-                foreach ($result as $invitation) {
-                    if ($invitation instanceof InvitationEntity) {
-                        MainAPI::$invitation[$invitation->getSenderString() . "|" . $invitation->getReceiverString()] = $invitation;
-                    }
+				foreach ($result as $invitation) {
+					if ($invitation instanceof InvitationEntity) {
+						MainAPI::$invitation[$invitation->getSenderString() . "|" . $invitation->getReceiverString()] = $invitation;
+					}
+				}
+			},
+			InvitationEntity::class
+		);
+		self::addItem(
+			"SELECT * FROM " . UserTable::TABLE_NAME,
+			[],
+			function (array $result) {
+				if (count($result) > 0) {
+					MainAPI::$users = [];
+				}
 
-                }
-            },
-            InvitationEntity::class
-        );
-        self::addItem(
-            "SELECT * FROM " . UserTable::TABLE_NAME,
-            [],
-            function (array $result) {
-                if (count($result) > 0) {
-                    MainAPI::$users = [];
-                }
+				foreach ($result as $user) {
+					if ($user instanceof UserEntity) {
+						MainAPI::$users[$user->getName()] = $user;
+						if (Main::getInstance()->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
+							$player = Main::getInstance()->getServer()->getPlayer($user->getName());
+							if ($player instanceof Player) {
+								if ($user->getRank() !== null && $user->getFactionName() !== null) {
+									switch ($user->rank) {
+										case Ids::RECRUIT_ID:
+											$rank = Utils::getText($user->getName(), "RECRUIT_RANK_NAME");
+											break;
+										case Ids::MEMBER_ID:
+											$rank = Utils::getText($user->getName(), "MEMBER_RANK_NAME");
+											break;
+										case Ids::COOWNER_ID:
+											$rank = Utils::getText($user->getName(), "COOWNER_RANK_NAME");
+											break;
+										case Ids::OWNER_ID:
+											$rank = Utils::getText($user->getName(), "OWNER_RANK_NAME");
+											break;
+										default:
+											$rank = "Unknow";
+											break;
+									}
+									$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+										Ids::HUD_FACTIONMASTER_PLAYER_RANK,
+										$rank
+									));
+									$ev->call();
+								}
+							}
+						}
+					}
+				}
+			},
+			UserEntity::class
+		);
+		self::addItem(
+			"SELECT * FROM " . HomeTable::TABLE_NAME,
+			[],
+			function (array $result) {
+				if (count($result) > 0) {
+					MainAPI::$home = [];
+				}
 
-                foreach ($result as $user) {
-                    if ($user instanceof UserEntity) {
-                        MainAPI::$users[$user->getName()] = $user;
-                        if (Main::getInstance()->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
-                            $player = Main::getInstance()->getServer()->getPlayer($user->getName());
-                            if ($player instanceof Player) {
-                                if ($user->getRank() !== null && $user->getFactionName() !== null) {
-                                    switch ($user->rank) {
-                                        case Ids::RECRUIT_ID:
-                                            $rank = Utils::getText($user->getName(), "RECRUIT_RANK_NAME");
-                                            break;
-                                        case Ids::MEMBER_ID:
-                                            $rank = Utils::getText($user->getName(), "MEMBER_RANK_NAME");
-                                            break;
-                                        case Ids::COOWNER_ID:
-                                            $rank = Utils::getText($user->getName(), "COOWNER_RANK_NAME");
-                                            break;
-                                        case Ids::OWNER_ID:
-                                            $rank = Utils::getText($user->getName(), "OWNER_RANK_NAME");
-                                            break;
-                                        default: 
-                                            $rank = "Unknow";
-                                            break;
-                                    }   
-                                    $ev = new PlayerTagUpdateEvent($player, new ScoreTag(
-                                        Ids::HUD_FACTIONMASTER_PLAYER_RANK,
-                                        $rank
-                                    ));                             
-                                    $ev->call();
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            UserEntity::class
-        );
-        self::addItem(
-            "SELECT * FROM " . HomeTable::TABLE_NAME,
-            [],
-            function (array $result) {
-                if (count($result) > 0) {
-                    MainAPI::$home = [];
-                }
+				foreach ($result as $home) {
+					if ($home instanceof HomeEntity) {
+						MainAPI::$home[$home->getFactionName()][$home->getName()] = $home;
+					}
+				}
+			},
+			HomeEntity::class
+		);
 
-                foreach ($result as $home) {
-                    if ($home instanceof HomeEntity) {
-                        MainAPI::$home[$home->getFactionName()][$home->getName()] = $home;
-                    }
+		self::addItem(
+			"SELECT * FROM " . ClaimTable::TABLE_NAME,
+			[],
+			function (array $result) {
+				if (count($result) > 0) {
+					MainAPI::$claim = [];
+				}
 
-                }
-            },
-            HomeEntity::class
-        );
+				foreach ($result as $claim) {
+					if (!$claim->isActive()) {
+						continue;
+					}
+					if (!isset(MainAPI::$claim[$claim->getFactionName()])) {
+						MainAPI::$claim[$claim->getFactionName()] = [$claim];
+					} else {
+						MainAPI::$claim[$claim->getFactionName()][] = $claim;
+					}
+				}
+			},
+			ClaimEntity::class
+		);
+	}
 
-        self::addItem(
-            "SELECT * FROM " . ClaimTable::TABLE_NAME,
-            [],
-            function (array $result) {
-                if (count($result) > 0) {
-                    MainAPI::$claim = [];
-                }
+	public static function addItem(string $query, array $args, callable $success, string $entity): void {
+		self::$list[] = [
+			$query,
+			$args,
+			$success,
+			$entity
+		];
+	}
 
-                foreach ($result as $claim) {
-                    if (!$claim->isActive()) continue;
-                    if (!isset(MainAPI::$claim[$claim->getFactionName()])) {
-                        MainAPI::$claim[$claim->getFactionName()] = [$claim];
-                    } else {
-                        MainAPI::$claim[$claim->getFactionName()][] = $claim;
-                    }
-                }
-            },
-            ClaimEntity::class
-        );
-    }
-
-    public static function addItem(string $query, array $args, callable $success, string $entity): void {
-        self::$list[] = [
-            $query, 
-            $args, 
-            $success, 
-            $entity
-        ];
-    }
-
-    /** @return DatabaseTask[] */
-    public static function getAll(): array {
-        return self::$list;
-    }
+	/** @return DatabaseTask[] */
+	public static function getAll(): array {
+		return self::$list;
+	}
 }

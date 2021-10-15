@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -39,22 +41,20 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageMembersMain extends Button {
+	const SLUG = "manageMembersMain";
 
-    const SLUG = "manageMembersMain";
-
-    public function __construct() {
-        $this->setSlug(self::SLUG)
-            ->setContent(function (string $player) {
-                return Utils::getText($player, "BUTTON_MANAGE_MEMBERS");
-            })
-            ->setCallable(function (Player $player) {
-                Utils::processMenu(RouterFactory::get(MembersManageRoute::SLUG), $player);
-            })
-            ->setPermissions([
-                PermissionIds::PERMISSION_CHANGE_MEMBER_RANK,
-                PermissionIds::PERMISSION_KICK_MEMBER
-            ])
-            ->setImgPack("textures/img/option_member");
-    }
-
+	public function __construct() {
+		$this->setSlug(self::SLUG)
+			->setContent(function (string $player) {
+				return Utils::getText($player, "BUTTON_MANAGE_MEMBERS");
+			})
+			->setCallable(function (Player $player) {
+				Utils::processMenu(RouterFactory::get(MembersManageRoute::SLUG), $player);
+			})
+			->setPermissions([
+				PermissionIds::PERMISSION_CHANGE_MEMBER_RANK,
+				PermissionIds::PERMISSION_KICK_MEMBER
+			])
+			->setImgPack("textures/img/option_member");
+	}
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -39,21 +41,19 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeDescription extends Button {
+	const SLUG = "changeDescription";
 
-    const SLUG = "changeDescription";
-
-    public function __construct() {
-        $this->setSlug(self::SLUG)
-            ->setContent(function ($player) {
-                return Utils::getText($player, "BUTTON_CHANGE_DESCRIPTION");
-            })
-            ->setCallable(function (Player $player) {
-                Utils::processMenu(RouterFactory::get(RouteChangeDescription::SLUG), $player);
-            })
-            ->setPermissions([
-                PermissionIds::PERMISSION_CHANGE_FACTION_DESCRIPTION
-            ])
-            ->setImgPack("textures/img/description");
-    }
-
+	public function __construct() {
+		$this->setSlug(self::SLUG)
+			->setContent(function ($player) {
+				return Utils::getText($player, "BUTTON_CHANGE_DESCRIPTION");
+			})
+			->setCallable(function (Player $player) {
+				Utils::processMenu(RouterFactory::get(RouteChangeDescription::SLUG), $player);
+			})
+			->setPermissions([
+				PermissionIds::PERMISSION_CHANGE_FACTION_DESCRIPTION
+			])
+			->setImgPack("textures/img/description");
+	}
 }

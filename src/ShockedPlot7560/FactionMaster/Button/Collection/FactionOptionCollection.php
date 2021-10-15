@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -38,7 +40,6 @@ use ShockedPlot7560\FactionMaster\Button\ChangeDescription;
 use ShockedPlot7560\FactionMaster\Button\ChangeMessage;
 use ShockedPlot7560\FactionMaster\Button\ChangePermissionMain;
 use ShockedPlot7560\FactionMaster\Button\ChangeVisibility;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\LevelUp;
 use ShockedPlot7560\FactionMaster\Button\ManageAlliance;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
@@ -46,19 +47,18 @@ use ShockedPlot7560\FactionMaster\Route\FactionOptionRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class FactionOptionCollection extends Collection {
+	const SLUG = "factionOptionCollection";
 
-    const SLUG = "factionOptionCollection";
-
-    public function __construct() {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
-            $this->register(new ChangeDescription());
-            $this->register(new ChangeMessage());
-            $this->register(New ChangeVisibility());
-            $this->register(new LevelUp());
-            $this->register(new ChangePermissionMain());
-            $this->register(new ManageAlliance());
-            $this->register(new Back(RouterFactory::get(FactionOptionRoute::SLUG)->getBackRoute()));
-        });
-    }
+	public function __construct() {
+		parent::__construct(self::SLUG);
+		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
+			$this->register(new ChangeDescription());
+			$this->register(new ChangeMessage());
+			$this->register(New ChangeVisibility());
+			$this->register(new LevelUp());
+			$this->register(new ChangePermissionMain());
+			$this->register(new ManageAlliance());
+			$this->register(new Back(RouterFactory::get(FactionOptionRoute::SLUG)->getBackRoute()));
+		});
+	}
 }

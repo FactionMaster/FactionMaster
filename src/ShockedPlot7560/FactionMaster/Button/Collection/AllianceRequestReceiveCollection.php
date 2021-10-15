@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -34,7 +36,6 @@ namespace ShockedPlot7560\FactionMaster\Button\Collection;
 
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\Button\Back;
-use ShockedPlot7560\FactionMaster\Button\Collection\Collection;
 use ShockedPlot7560\FactionMaster\Button\RequestListItem;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
@@ -43,23 +44,22 @@ use ShockedPlot7560\FactionMaster\Route\ManageAllianceRequestRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class AllianceRequestReceiveCollection extends Collection {
+	const SLUG = "allianceRequestReceiveCollection";
 
-    const SLUG = "allianceRequestReceiveCollection";
-
-    public function __construct() {
-        parent::__construct(self::SLUG);
-        $this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, array $requests) {
-            foreach ($requests as $request) {
-                $this->register(new RequestListItem(
-                    $request,
-                    ManageAllianceRequestRoute::SLUG,
-                    [
-                        PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
-                        PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
-                    ]
-                ));
-            }
-            $this->register(new Back(RouterFactory::get(AllianceRequestReceiveRoute::SLUG)->getBackRoute()));
-        });
-    }
+	public function __construct() {
+		parent::__construct(self::SLUG);
+		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, array $requests) {
+			foreach ($requests as $request) {
+				$this->register(new RequestListItem(
+					$request,
+					ManageAllianceRequestRoute::SLUG,
+					[
+						PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
+						PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
+					]
+				));
+			}
+			$this->register(new Back(RouterFactory::get(AllianceRequestReceiveRoute::SLUG)->getBackRoute()));
+		});
+	}
 }

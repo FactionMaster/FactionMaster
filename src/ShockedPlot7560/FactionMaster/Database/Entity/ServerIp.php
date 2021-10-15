@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -36,24 +38,23 @@ use ShockedPlot7560\FactionMaster\Main;
 
 trait ServerIp {
 
-    /** @var string */
-    public $server;
+	/** @var string */
+	public $server;
 
-    public function getServerIp(): string {
-        return $this->server;
-    }
+	public function getServerIp(): string {
+		return $this->server;
+	}
 
-    public function setServer(string $serverIp): void {
-        $this->server = $serverIp;
-    }
+	public function setServer(string $serverIp): void {
+		$this->server = $serverIp;
+	}
 
-    /**
-     * Return true if is on the good server, else return false
-     * This check is based on the ip of the server in question.
-     * Each element has an ip corresponding to the server on which it is located
-     */
-    public function isActive(): bool {
-        return Main::getInstance()->getServer()->getIp() === $this->getServerIp();
-    }
-
+	/**
+	 * Return true if is on the good server, else return false
+	 * This check is based on the ip of the server in question.
+	 * Each element has an ip corresponding to the server on which it is located
+	 */
+	public function isActive(): bool {
+		return Main::getInstance()->getServer()->getIp() === $this->getServerIp();
+	}
 }

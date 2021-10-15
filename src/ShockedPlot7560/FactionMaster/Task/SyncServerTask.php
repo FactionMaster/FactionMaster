@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -33,26 +35,24 @@
 namespace ShockedPlot7560\FactionMaster\Task;
 
 use pocketmine\scheduler\Task;
-use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Manager\SyncServerManager;
 
 class SyncServerTask extends Task {
+	private $main;
 
-    private $main;
+	public function __construct(Main $main) {
+		$this->main = $main;
+	}
 
-    public function __construct(Main $main) {
-        $this->main = $main;
-    }
-
-    public function onRun(int $currentTick): void {
-        foreach (SyncServerManager::getAll() as $task) {
-            $this->main->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
-                $task[0],
-                $task[1],
-                $task[2],
-                $task[3]
-            ));
-        }
-    }
+	public function onRun(int $currentTick): void {
+		foreach (SyncServerManager::getAll() as $task) {
+			$this->main->getServer()->getAsyncPool()->submitTask(new DatabaseTask(
+				$task[0],
+				$task[1],
+				$task[2],
+				$task[3]
+			));
+		}
+	}
 }

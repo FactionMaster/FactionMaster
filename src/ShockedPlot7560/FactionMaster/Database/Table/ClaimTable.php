@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -38,16 +40,16 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ClaimTable implements TableInterface {
 
-    /** @var PDO */
-    private $PDO;
+	/** @var PDO */
+	private $PDO;
 
-    const TABLE_NAME = "factionmaster_claim";
-    const SLUG = "factionmaster_claim";
+	const TABLE_NAME = "factionmaster_claim";
+	const SLUG = "factionmaster_claim";
 
-    public function init(): self {
-        $tableName = self::TABLE_NAME;
-        $auto_increment = Utils::getConfig("PROVIDER") === DatabaseManager::MYSQL_PROVIDER ? "AUTO_INCREMENT" : "AUTOINCREMENT";
-        $this->PDO->query("CREATE TABLE IF NOT EXISTS `$tableName` ( 
+	public function init(): self {
+		$tableName = self::TABLE_NAME;
+		$auto_increment = Utils::getConfig("PROVIDER") === DatabaseManager::MYSQL_PROVIDER ? "AUTO_INCREMENT" : "AUTOINCREMENT";
+		$this->PDO->query("CREATE TABLE IF NOT EXISTS `$tableName` ( 
             `id` INTEGER PRIMARY KEY $auto_increment, 
             `faction` TEXT NOT NULL, 
             `x` INT NOT NULL, 
@@ -56,11 +58,10 @@ class ClaimTable implements TableInterface {
             `server` VARCHAR(255) NOT NULL, 
             `flags` TINYINT UNSIGNED NULL DEFAULT NULL)
         ");
-        return $this;
-    }
+		return $this;
+	}
 
-    public function __construct(PDO $PDO) {
-        $this->PDO = $PDO;
-    }
-
+	public function __construct(PDO $PDO) {
+		$this->PDO = $PDO;
+	}
 }

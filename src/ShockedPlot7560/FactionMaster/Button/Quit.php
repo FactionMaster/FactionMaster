@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -35,18 +37,16 @@ namespace ShockedPlot7560\FactionMaster\Button;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Quit extends Button {
+	const SLUG = "quit";
 
-    const SLUG = "quit";
-
-    public function __construct() {
-        $this->setSlug(self::SLUG)
-            ->setContent(function ($player) {
-                return Utils::getText($player, "BUTTON_QUIT");
-            })
-            ->setCallable(function ($player) {
-                return;
-            })
-            ->setImgPack("textures/img/back");
-    }
-
+	public function __construct() {
+		$this->setSlug(self::SLUG)
+			->setContent(function ($player) {
+				return Utils::getText($player, "BUTTON_QUIT");
+			})
+			->setCallable(function ($player) {
+				return;
+			})
+			->setImgPack("textures/img/back");
+	}
 }

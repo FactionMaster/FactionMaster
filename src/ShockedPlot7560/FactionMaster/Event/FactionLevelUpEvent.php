@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -37,29 +39,28 @@ use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Reward\RewardInterface;
 
 class FactionLevelUpEvent extends FactionEvent implements Forcable {
+	use PlayerEvent;
 
-    use PlayerEvent;
+	protected $player;
+	private $oldLevel;
+	private $reward;
+	private $cost;
 
-    protected $player;
-    private $oldLevel;
-    private $reward;
-    private $cost;
+	/**
+	 * @param FactionEntity|string $faction
+	 */
+	public function __construct(Player $player, $faction, RewardInterface $cost, RewardInterface $reward, bool $isForce = false) {
+		parent::__construct($faction, $isForce);
+		$this->player = $player;
+		$this->reward = $reward;
+		$this->cost = $cost;
+	}
 
-    /**
-     * @param FactionEntity|string $faction
-     */
-    public function __construct(Player $player, $faction, RewardInterface $cost, RewardInterface $reward, bool $isForce = false) {
-        parent::__construct($faction, $isForce);
-        $this->player = $player;
-        $this->reward = $reward;
-        $this->cost = $cost;
-    }
+	public function getReward(): RewardInterface {
+		return $this->reward;
+	}
 
-    public function getReward(): RewardInterface {
-        return $this->reward;
-    }
-
-    public function getCost(): RewardInterface {
-        return $this->cost;
-    }
+	public function getCost(): RewardInterface {
+		return $this->cost;
+	}
 }

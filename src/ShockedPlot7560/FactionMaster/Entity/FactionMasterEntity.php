@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  *
  *      ______           __  _                __  ___           __
@@ -38,23 +40,23 @@ use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\Player;
 
 abstract class FactionMasterEntity extends Entity {
-    
-    public $gravity = 0;
-    public $height = 0.01;
-    public $width = 0.01;
+	public $gravity = 0;
+	public $height = 0.01;
+	public $width = 0.01;
 
-    const NETWORK_ID = EntityIds::NPC;
+	const NETWORK_ID = EntityIds::NPC;
 
-    public function tryChangeMovement(): void {}
+	public function tryChangeMovement(): void {
+	}
 
-    public function onCollideWithPlayer(Player $player): void { }
+	public function onCollideWithPlayer(Player $player): void {
+	}
 
-    public function attack(EntityDamageEvent $source): void {
-        $source->setBaseDamage(0);
-        $source->setCancelled(true);
-        return;
-    }
+	public function attack(EntityDamageEvent $source): void {
+		$source->setBaseDamage(0);
+		$source->setCancelled(true);
+		return;
+	}
 
-    abstract public static function getEntityName(): string;
-
+	abstract public static function getEntityName(): string;
 }
