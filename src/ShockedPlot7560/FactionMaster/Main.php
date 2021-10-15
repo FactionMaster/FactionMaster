@@ -58,6 +58,7 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Task\LeaderboardTask;
 use ShockedPlot7560\FactionMaster\Task\MapTask;
 use ShockedPlot7560\FactionMaster\Task\SyncServerTask;
+use ShockedPlot7560\FactionMaster\Utils\Leaderboard;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Main extends PluginBase implements Listener {
@@ -75,8 +76,6 @@ class Main extends PluginBase implements Listener {
     private static $tableQuery;
 
     public function onLoad(): void {
-        $factionTable = FactionTable::TABLE_NAME;
-
         self::$instance = $this;
 
         ConfigManager::init($this);
@@ -116,14 +115,16 @@ class Main extends PluginBase implements Listener {
             $leaderboards = ConfigManager::getLeaderboardConfig()->get("leaderboards");
             if ($leaderboards === false) $leaderboards = [];
             foreach ($leaderboards as $leaderboard) {
-                if ($leaderboard["active"] == true)
-                    LeaderboardManager::placeScoreboard($leaderboard["slug"], $leaderboard["position"]);
+                if ($leaderboard["active"] == true) {
+                    $entity = new Leaderboard($leaderboard["slug"], $leaderboard["position"]);
+                    LeaderboardManager::placeScoreboard($entity);
+                }
             }
             
             ExtensionManager::load();
 
             $this->getScheduler()->scheduleRepeatingTask(new SyncServerTask($this), (int) Utils::getConfig("sync-time"));
-            $this->getScheduler()->scheduleRepeatingTask(new LeaderboardTask(), 80);
+
             if (Utils::getConfig("f-map-task") !== false) {
                 $time = (int) Utils::getConfig("f-map-task");
                 if ($time > 0) {

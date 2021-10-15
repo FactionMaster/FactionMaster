@@ -27,7 +27,7 @@
  #
 
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
-file-version: 9
+file-version: 10
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
 
 # --------------------- DATABASE --------------------------
@@ -175,12 +175,12 @@ message-alert-flag-enabled: false
 # SEE leaderboard.yml to enabled and updated position of the leaderboard !
 
 # This is the scoreboard header, display on the top
-faction-scoreboard-header: "- Top 10 faction -"
+faction-leaderboard-header: "- Top 10 faction -"
 # Lign patern for each faction
 # you can use this parameter : 
 # {factionName} / {level} / {power}
 # to purpose a parameter suggestion, please open an issue on github
-faction-scoreboard-lign: "{factionName}: Level {level}"
+faction-leaderboard-body: "{factionName}: Level {level}"
 
 # --------------------- PLUGIN CONFIGURATION --------------------------
 #       DONT CHANGE IF YOU DONT KNOW WHAT YOU ARE DOING

@@ -66,11 +66,13 @@ use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
+use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use ShockedPlot7560\FactionMaster\Route\MainRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
+use ShockedPlot7560\FactionMaster\Utils\Leaderboard;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class EventListener implements Listener {
@@ -265,11 +267,18 @@ class EventListener implements Listener {
         }
     }
 
-    public function onJoind(PlayerJoinEvent $event): void {
-        Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $event->getPlayer());
+    public function onJoin(PlayerJoinEvent $event): void {
+        $leaderboards = ConfigManager::getLeaderboardConfig()->get("leaderboards");
+        if ($leaderboards === false) $leaderboards = [];
+        foreach ($leaderboards as $leaderboard) {
+            if ($leaderboard["active"] == true) {
+                $entity = new Leaderboard($leaderboard["slug"], $leaderboard["position"], ConfigManager::getConfig());
+                LeaderboardManager::placeScoreboard($entity, [$event->getPlayer()]);
+            }
+        }
     }
 
-    public function onJoin(PlayerLoginEvent $event): void {
+    public function onLogin(PlayerLoginEvent $event): void {
         $playerName = $event->getPlayer()->getName();
         $userEntity = MainAPI::getUser($playerName);
         if ($userEntity === null) {

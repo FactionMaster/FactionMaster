@@ -38,6 +38,7 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
+use ShockedPlot7560\FactionMaster\Utils\Leaderboard;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class PlaceScoreboard extends BaseSubCommand {
@@ -50,8 +51,8 @@ class PlaceScoreboard extends BaseSubCommand {
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
         if ($sender instanceof Player) {
             if ($sender->hasPermission("factionmaster.scoreboard.place")) {
-                if (!in_array($args["slug"], array_keys(LeaderboardManager::$queryList))) {
-                    $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_SCOREBOARD_INVALID_SLUG", ["list" => implode(",", array_keys(LeaderboardManager::$queryList))]));
+                if (!LeaderboardManager::isRegister($args["slug"])) {
+                    $sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_SCOREBOARD_INVALID_SLUG", ["list" => implode(",", array_keys(LeaderboardManager::getAll()))]));
                     return;
                 }
                 $position = $sender->getPosition();
@@ -61,8 +62,9 @@ class PlaceScoreboard extends BaseSubCommand {
                     $position->getZ(),
                     $position->getWorld()->getDisplayName()
                 ]);
-                LeaderboardManager::closeLeaderboard($args["slug"]);
-                LeaderboardManager::placeScoreboard($args["slug"], $coord);
+                //LeaderboardManager::dispawnLeaderboard($args["slug"]);
+                $entity = new Leaderboard($args["slug"], $coord);
+                LeaderboardManager::placeScoreboard($entity);
                 $config = ConfigManager::getLeaderboardConfig();
                 $config->set("leaderboards", [
                     [

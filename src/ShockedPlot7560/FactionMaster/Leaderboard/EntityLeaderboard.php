@@ -29,40 +29,29 @@
  *
  *
  */
+namespace ShockedPlot7560\FactionMaster\Leaderboard;
 
-namespace ShockedPlot7560\FactionMaster\Entity;
+use pocketmine\utils\Config;
+use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Utils\Leaderboard;
 
-use pocketmine\data\bedrock\EntityLegacyIds;
-use pocketmine\entity\Entity;
-use pocketmine\entity\EntitySizeInfo;
-use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\player\Player;
+abstract class EntityLeaderboard {
 
-abstract class FactionMasterEntity extends Entity {
-    
-    public $gravity = 0;
-    public $height = 0.01;
-    public $width = 0.01;
+    protected $main;
 
-    const NETWORK_ID = EntityLegacyIds::NPC;
-
-    public function tryChangeMovement(): void {}
-
-    public function onCollideWithPlayer(Player $player): void { }
-
-    public function attack(EntityDamageEvent $source): void {
-        $source->setBaseDamage(0);
-        $source->cancel();
-        return;
+    public function __construct(Main $main) {
+        $this->main = $main;
     }
 
-    abstract public static function getEntityName(): string;
+    abstract public function getSlug(): string;
 
-    public function getInitialSizeInfo(): EntitySizeInfo {
-        return new EntitySizeInfo($this->height, $this->width);
-    }
+    abstract public function getSqlQuery(): string;
 
-    public static function getNetworkTypeId(): string {
-        return self::NETWORK_ID;
-    }
+    abstract public function getConfig(): Config;
+
+    /**
+     * @param Leaderboard $leaderboard
+     * @param Player[]|null $players
+     */
+    abstract public function place(Leaderboard $leaderboard, ?array $players = null): void;
 }

@@ -32,15 +32,13 @@
 
 namespace ShockedPlot7560\FactionMaster\Manager;
 
-use Countable;
 use pocketmine\utils\Config;
-use ShockedPlot7560\FactionMaster\libs\JackMD\ConfigUpdater\ConfigUpdater;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ConfigManager {
 
-    const CONFIG_VERSION = 9;
+    const CONFIG_VERSION = 10;
     const LEVEL_VERSION = 0;
     const TRANSLATION_VERSION = 1;
     const LANG_FILE_VERSION = [

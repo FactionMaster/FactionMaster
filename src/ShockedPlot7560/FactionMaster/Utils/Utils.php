@@ -39,6 +39,7 @@ use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\player\Player;
 use pocketmine\scheduler\TaskHandler;
 use pocketmine\utils\Config;
+use pocketmine\world\Position;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\MenuOpenEvent;
@@ -81,7 +82,6 @@ class Utils {
                     }
                 }
             }
-            var_dump($good);
             if ($good) {
                 $ev = new MenuOpenEvent($player, $route);
                 $ev->call();
@@ -194,5 +194,14 @@ class Utils {
 
     public static function getLangFile(): string {
         return self::getDataFolder() . "lang/";
+    }
+
+    public static function getRawCoordonate(Position $position): string {
+        return join("|", [
+            $position->getX(),
+            $position->getY(),
+            $position->getZ(),
+            $position->getWorld()->getDisplayName()
+        ]);
     }
 }

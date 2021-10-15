@@ -31,78 +31,84 @@
  */
 namespace ShockedPlot7560\FactionMaster\Manager;
 
-use Closure;
-use pocketmine\data\bedrock\EntityLegacyIds;
-use pocketmine\entity\Entity;
-use pocketmine\entity\EntityDataHelper;
-use pocketmine\entity\EntityFactory;
-use pocketmine\entity\Location;
-use pocketmine\level\Level;
-use pocketmine\level\Position;
-use pocketmine\world\World;
-use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
-use ShockedPlot7560\FactionMaster\Entity\FactionMasterEntity;
-use ShockedPlot7560\FactionMaster\Entity\ScoreboardEntity;
-use pocketmine\nbt\tag\CompoundTag;
+use Exception;
+use pocketmine\math\Vector3;
+use pocketmine\world\particle\FloatingTextParticle;
+use ShockedPlot7560\FactionMaster\Leaderboard\EntityLeaderboard;
+use ShockedPlot7560\FactionMaster\Leaderboard\FactionLeaderboard;
 use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\Utils\Leaderboard;
 
 class LeaderboardManager {
 
     /** @var Main */
     private static $main;
-    /** @var array */
-    public static $scoreboardEntity;
-
-    public static $queryList = [];
-    public static $entityClass = [];
+    /** @var FloatingTextParticle[][] */
+    private static $session = [];
+    /** @var EntityLeaderboard[] */
+    public static $leaderboards = [];
 
     public static function init(Main $main) {
         self::$main = $main;
-        $factionTable = FactionTable::TABLE_NAME;
-        self::$queryList["faction"] = "SELECT * FROM $factionTable ORDER BY level DESC, xp DESC, power DESC LIMIT 10";
-        self::$entityClass["faction"] = ScoreboardEntity::class;
+
+        self::registerLeaderboard(new FactionLeaderboard($main));
     }
 
-    public static function placeScoreboard(string $slug, string $coordinates): void {
-        if (isset(self::$queryList[$slug])) {
-            EntityFactory::getInstance()->register(self::$entityClass[$slug], function(World $world, CompoundTag $nbt) use ($slug) {
-                return new self::$entityClass[$slug](EntityDataHelper::parseLocation($nbt, $world), $nbt);
-            }, [self::$entityClass[$slug]::getEntityName()], EntityLegacyIds::NPC);
-            if ($coordinates !== false && $coordinates !== "") {
-                $coordinates = explode("|", $coordinates);
-                if (count($coordinates) == 4) {
-                    $levelName = $coordinates[3];
-                    $level = self::$main->getServer()->getWorldManager()->getWorldByName($levelName);
-                    if ($level instanceof World) {
-                        $level->loadChunk((float)$coordinates[0] >> 4, (float)$coordinates[2] >> 4);
-                        /** @var Entity */
-                        $entity = new self::$entityClass[$slug](new Location($coordinates[0], $coordinates[1], $coordinates[2], 0.0, 0.0, $level));
-                        $entity->spawnToAll();
-                    } else {
-                        self::$main->getLogger()->notice("An unknow world was set in leaderboard.yml, can't load faction leaderboard");
-                    }            
-                }
-            }        
+    public static function registerLeaderboard(EntityLeaderboard $leaderboard, bool $override = false): void {
+        if (self::isRegister($leaderboard->getSlug()) && !$override) {
+            throw new Exception("Leaderboard id already register, conflicts detected");
+        }
+
+        self::$leaderboards[$leaderboard->getSlug()] = $leaderboard;
+    }
+
+    public static function removeLeaderboard(string $slug): void {
+        if (isset(self::$leaderboards[$slug])) {
+            unset(self::$leaderboards[$slug]);
         }
     }
 
-    public static function closeLeaderboard(?string $slug = null): void {
-        if ($slug === null) {
-            foreach (Main::getInstance()->getServer()->getWorldManager()->getWorlds() as $level) {
-                foreach ($level->getEntities() as $entity) {
-                    if ($entity instanceof FactionMasterEntity) {
-                        $entity->close();
+    public static function isRegister(string $slug): bool {
+        return isset(self::$leaderboards[$slug]);
+    }
+
+    public static function getLeaderboard(string $slug): ?EntityLeaderboard {
+        return self::$leaderboards[$slug] ?? null;
+    }
+
+    /**
+     * @return EntityLeaderboard[]
+     */
+    public static function getAll(): array{
+        return self::$leaderboards;
+    }
+
+    public static function addSession(string $coordonate, FloatingTextParticle $particle): void {
+        self::$session[$coordonate][] = $particle;
+    }
+
+    public static function placeScoreboard(Leaderboard $leaderboard, ?array $players = null): void {
+        if (self::isRegister($leaderboard->getSlug())) {
+            if (($class = self::getLeaderboard($leaderboard->getSlug())) instanceof EntityLeaderboard) {
+                $class->place($leaderboard, $players);
+            }
+        }
+    }
+
+    public static function dispawnLeaderboard(?string $slug = null, string $coordinates): void {
+        if (isset(self::$session[$coordinates])) {
+            /** @var FloatingTextParticle[] $particle */
+            $particles = self::$session[$coordinates];
+            $coordinates = explode("|", $coordinates);
+            foreach ($particles as $particle) {
+                $particle->setInvisible(true);
+                foreach ($particle->encode(new Vector3((int) $coordinates[0], (int) $coordinates[1], (int) $coordinates[2])) as $packet) {
+                    foreach (self::$main->getServer()->getOnlinePlayers() as $player) {
+                        $player->getNetworkSession()->sendDataPacket($packet);
                     }
                 }
             }
-        } else {
-            foreach (Main::getInstance()->getServer()->getWorldManager()->getWorlds() as $level) {
-                foreach ($level->getEntities() as $entity) {
-                    if ($entity instanceof self::$entityClass[$slug]) {
-                        $entity->close();
-                    }
-                }
-            }
+            unset(self::$session[$coordinates]);
         }
     }
 }

@@ -83,7 +83,7 @@ class MembersSendInvitationRoute extends RouteBase implements Route {
             }
 
             if ($data[1] !== "") {
-                $targetName = Server::getInstance()->getPlayer($data[1]);
+                $targetName = Server::getInstance()->getPlayerExact($data[1]);
                 $targetName = $targetName === null ? $data[1] : $targetName->getName();
                 $userRequested = MainAPI::getUser($targetName);
                 $faction = $this->getFaction();
