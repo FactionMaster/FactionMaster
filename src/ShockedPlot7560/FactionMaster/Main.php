@@ -99,7 +99,7 @@ class Main extends PluginBase implements Listener {
     public function onEnable(): void {
         
         if ($this->isEnabled()) {
-            //UpdateNotifier::checkUpdate($this->getDescription()->getName(), $this->getDescription()->getVersion());
+            UpdateNotifier::checkUpdate($this->getDescription()->getName(), $this->getDescription()->getVersion());
             $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
             $this->getServer()->getPluginManager()->registerEvents(new BroadcastMessageListener($this), $this);
             if ($this->getServer()->getPluginManager()->getPlugin("ScoreHud") instanceof Plugin) {
