@@ -1,5 +1,8 @@
 <?php
 
+$finder = PhpCsFixer\Finder::create()
+    ->in(__DIR__);
+
 return (new PhpCsFixer\Config)
 	->setRiskyAllowed(true)
 	->setRules([
@@ -61,5 +64,6 @@ return (new PhpCsFixer\Config)
             'allow_single_line_closure' => true, 
             'position_after_functions_and_oop_constructs' => 'same'],
 	])
+	->setFinder($finder)
 	->setIndent("\t")
 	->setLineEnding("\n");
