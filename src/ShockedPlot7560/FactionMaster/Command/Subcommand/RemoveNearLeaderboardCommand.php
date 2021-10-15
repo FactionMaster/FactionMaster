@@ -71,7 +71,7 @@ class RemoveNearLeaderboardCommand extends BaseSubCommand {
                     }
                 }
                 if ($prec == null) {
-                    // TODO: send no board find
+                    $sender->sendMessage(Utils::getText("", "COMMAND_SCOREBOARD_NO_NEAREST"));
                     return;
                 }
                 $coordonate = join("|", [
@@ -91,7 +91,7 @@ class RemoveNearLeaderboardCommand extends BaseSubCommand {
                 $config->set("leaderboards", $leaderboards);
                 $config->save();
                 LeaderboardManager::dispawnLeaderboard($coordonate);
-                //TODO: send remove leaderboard success
+                $sender->sendMessage(Utils::getText("", "COMMAND_SCOREBOARD_REMOVE_SUCCESS"));
             }else{
                 $sender->sendMessage(Utils::getText("", "DONT_PERMISSION"));
             }

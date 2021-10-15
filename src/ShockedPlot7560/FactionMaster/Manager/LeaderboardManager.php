@@ -120,4 +120,16 @@ class LeaderboardManager {
             unset(self::$session[join("|", $coordinates)]);
         }
     }
+
+    public static function updateLeaderboards(): void {
+        $leaderboards = ConfigManager::getLeaderboardConfig()->get("leaderboards");
+        if ($leaderboards === false) $leaderboards = [];
+        foreach ($leaderboards as $leaderboard) {
+            if ($leaderboard["active"] == true) {
+                LeaderboardManager::dispawnLeaderboard($leaderboard["position"]);
+                $entity = new Leaderboard($leaderboard["slug"], $leaderboard["position"]);
+                LeaderboardManager::placeScoreboard($entity);
+            }
+        }
+    }
 }

@@ -82,9 +82,6 @@ class MigrationManager {
                 $leaderborardConfig->save();
                 self::$main->getLogger()->notice("Update your old leaderboard.yml format");
                 self::$main->getLogger()->notice("New resource pack are available, thanks to xAliTura01, you can download it here : https://github.com/FactionMaster/FactionMaster/tree/stable/resource_pack");
-            },
-            "4.0.0-dev1" => function () {
-                self::$main->getLogger()->notice("FactionMaster has been updated to support the new version of PocketMine: 4.0.0. If you encounter any problems, please open a new issue on github : https://github.com/FactionMaster/FactionMaster");
             }
         ];
         self::$configDbToCheck = [

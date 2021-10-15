@@ -112,18 +112,12 @@ class Main extends PluginBase implements Listener {
 
             $this->getServer()->getCommandMap()->register($this->getDescription()->getName(), new FactionCommand($this, "faction", Utils::getText("", "COMMAND_FACTION_DESCRIPTION"), ["f", "fac"]));
 
-            $leaderboards = ConfigManager::getLeaderboardConfig()->get("leaderboards");
-            if ($leaderboards === false) $leaderboards = [];
-            foreach ($leaderboards as $leaderboard) {
-                if ($leaderboard["active"] == true) {
-                    $entity = new Leaderboard($leaderboard["slug"], $leaderboard["position"]);
-                    LeaderboardManager::placeScoreboard($entity);
-                }
-            }
+            LeaderboardManager::updateLeaderboards();
             
             ExtensionManager::load();
 
             $this->getScheduler()->scheduleRepeatingTask(new SyncServerTask($this), (int) Utils::getConfig("sync-time"));
+            $this->getScheduler()->scheduleRepeatingTask(new LeaderboardTask($this), 80);
 
             if (Utils::getConfig("f-map-task") !== false) {
                 $time = (int) Utils::getConfig("f-map-task");

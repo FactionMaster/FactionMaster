@@ -42,8 +42,8 @@ class ConfigManager {
     const LEVEL_VERSION = 0;
     const TRANSLATION_VERSION = 1;
     const LANG_FILE_VERSION = [
-        "en_EN" => 5,
-        "fr_FR" => 3,
+        "en_EN" => 6,
+        "fr_FR" => 4,
         "es_SPA" => 2,
         "tr_TR" => 1
     ];

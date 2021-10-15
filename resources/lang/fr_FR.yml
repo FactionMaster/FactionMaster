@@ -1,6 +1,6 @@
 ---
 # DO NOT EDIT THIS LINE
-file-version: 3
+file-version: 4
 # DO NOT EDIT THIS LINE
 
 
@@ -189,7 +189,8 @@ COMMAND_HELP_DESCRIPTION: "Affiche les commandes"
 COMMAND_INFO_DESCRIPTION_GLOBAL: "Affiche les informations sur une faction"
 COMMAND_CLAIM_INFO_DESCRIPTION: "Affiche les informations sur un chunk"
 COMMAND_EXTENSION_DESCRIPTION: "Affiche la liste des extensions actives"
-COMMAND_SCOREBOARD_DESCRIPTION: "Déplace/active le Leaderboard et donne les données à enregistrer"
+COMMAND_SCOREBOARD_DESCRIPTION: "Ajoute un panneaux des scores à vos pieds"
+COMMAND_SCOREBOARD_REMOVE_DESCRIPTION: "Retire le panneau des scores le plus près de vous"
 COMMAND_ADD_FLAG: "Ajoute un claim considéré comme une zone"
 COMMAND_REMOVE_FLAG: "Retire un claim considéré comme une zone"
 COMMAND_SYNCHRO: "Lance une procédure de synchronisation de la base de donnée"
@@ -243,7 +244,10 @@ COMMAND_INFO_MEMBER_MEMBER: "§7*§oMembre {{name}}"
 COMMAND_INFO_MEMBER_RECRUIT: "§7§oRecrue {{name}}"
 COMMAND_INFO_DATE: "§eCrée-le {{date}}"
 
-COMMAND_SCOREBOARD_SUCCESS: " §a>> §2Position du Leaderboard mis à jours!"
+COMMAND_SCOREBOARD_SUCCESS: " §a>> §2Panneau des scores ajoutés avec succès!"
+COMMAND_SCOREBOARD_REMOVE_SUCCESS: " §a>> §2Retrait du panneau des scores le plus près avec succès!"
+COMMAND_SCOREBOARD_NO_NEAREST: " §4>> §cAucun panneau des scores trouvés autour de vous!"
+COMMAND_SCOREBOARD_INVALID_SLUG: " §4>> §cMauvais slug fournis, veuillez en choisir un parmi la liste: §c{{list}}"
 
 REWARD_POWER_NAME: "Puissance de faction"
 REWARD_MEMBER_LIMIT_NAME: "Limite de membre"
