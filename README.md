@@ -32,7 +32,7 @@ FactionMaster have multiple server support, see the Installation section for mor
 | ``Faction visibility`` | ✔ | ❌ | ❌ | ❌ |
 | ``Editable message`` | ✔ | ❌ | ✔ | ✔ |
 | ``Custom event`` | ✔ | ❌ | ✔ | ❌ |
-| ``Claim title`` | ✔ | ❌ | ❌ | ✔ |
+| ``Claim title`` | ✔ | ❌ | ✔ | ✔ |
 | ``Scoreboard faction top`` | ✔ | ❌ | ❌ | ✔ |
 | ``Banned faction name`` | ✔ | ✔ | ✔ | ✔ |
 
