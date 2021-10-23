@@ -1,7 +1,5 @@
 <?php
 
-
-
 /*
  *
  *      ______           __  _                __  ___           __
@@ -57,6 +55,7 @@ use ShockedPlot7560\FactionMaster\Reward\RewardInterface;
 use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function array_merge;
 use function explode;
 use function floor;
 use function json_encode;

@@ -26,7 +26,6 @@
  *
  */
 
-
 namespace ShockedPlot7560\FactionMaster\libs\CortexPE\Commando;
 
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\constraint\BaseConstraint;

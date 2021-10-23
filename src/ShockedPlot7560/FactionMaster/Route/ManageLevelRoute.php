@@ -1,7 +1,5 @@
 <?php
 
-
-
 /*
  *
  *      ______           __  _                __  ___           __
@@ -46,6 +44,7 @@ use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function floor;
 use function is_array;
+use function is_string;
 
 class ManageLevelRoute extends RouteBase implements Route {
 	const SLUG = "manageLevelRoute";

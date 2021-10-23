@@ -1,7 +1,5 @@
 <?php
 
-
-
 namespace ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\store;
 
 use pocketmine\network\mcpe\protocol\DataPacket;

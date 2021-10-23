@@ -1,7 +1,5 @@
 <?php
 
-
-
 /*
  *
  *      ______           __  _                __  ___           __
@@ -43,6 +41,7 @@ use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
+use function is_string;
 
 class HomesViewRoute extends RouteBase implements Route {
 	const SLUG = "homesViewRoute";

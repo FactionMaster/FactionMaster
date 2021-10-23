@@ -1,7 +1,5 @@
 <?php
 
-
-
 /*
  *
  *      ______           __  _                __  ___           __
@@ -41,6 +39,7 @@ use ShockedPlot7560\FactionMaster\Utils\QueryBuildeur;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function call_user_func;
 use function in_array;
+use function is_null;
 use function strlen;
 use function substr;
 use function version_compare;

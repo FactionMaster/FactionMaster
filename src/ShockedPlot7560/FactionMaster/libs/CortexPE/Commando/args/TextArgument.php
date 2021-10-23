@@ -26,7 +26,6 @@
  *
  */
 
-
 namespace ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args;
 
 use pocketmine\command\CommandSender;
