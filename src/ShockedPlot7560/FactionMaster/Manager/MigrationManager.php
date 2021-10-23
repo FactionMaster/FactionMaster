@@ -123,6 +123,9 @@ class MigrationManager {
 				self::$main->getLogger()->debug("Migration from $versionName finish");
 			}
 		}
+		if ($actualVersion === "") {
+			$actualVersion = $version;
+		}
 		$config = ConfigManager::getVersionConfig();
 		$config->set("migrate-version", $actualVersion);
 		$config->save();
