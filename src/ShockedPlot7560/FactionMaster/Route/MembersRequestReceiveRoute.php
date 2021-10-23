@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+
 
 /*
  *
@@ -78,7 +78,7 @@ class MembersRequestReceiveRoute extends RouteBase implements Route {
 		$this->setCollection(CollectionFactory::get(MembersRequestReceiveCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getRequests()));
 
 		$message = "";
-		if (isset($params[0])) {
+		if (isset($params[0]) && is_string($params[0])) {
 			$message = $params[0];
 		}
 		if (count($this->getRequests()) == 0) {

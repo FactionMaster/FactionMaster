@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+
 
 /*
  *
@@ -68,7 +68,7 @@ class HomesViewRoute extends RouteBase implements Route {
 		$homes = MainAPI::getFactionHomes($this->getUserEntity()->getFactionName());
 
 		$message = "";
-		if (isset($params[0])) {
+		if (isset($params[0]) && is_string($params[0])) {
 			$message = $params[0];
 		}
 		if (count($homes) == 0) {

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+
 
 /*
  *
@@ -112,7 +112,7 @@ class ManageLevelRoute extends RouteBase implements Route {
 		}
 
 		$message = "";
-		if (isset($params[0])) {
+		if (isset($params[0]) && is_string($params[0])) {
 			$message = $params[0];
 		}
 

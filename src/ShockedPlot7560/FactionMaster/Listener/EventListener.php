@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+
 
 /*
  *
@@ -306,7 +306,8 @@ class EventListener implements Listener {
 						]),
 						function ($result) {
 							foreach ($result as $invitation) {
-								MainAPI::$invitation[$invitation->getSenderString() . "|" . $invitation->getReceiverString()] = $invitation;
+								/** @var InvitationEntity $invitation */
+								MainAPI::$invitation[$invitation->getSenderString() . "|" . $invitation->getReceiverString() . "|" . $invitation->getType()] = $invitation;
 							}
 						},
 						InvitationEntity::class

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+
 
 /*
  *
@@ -66,7 +66,7 @@ class MembersManageRoute extends RouteBase implements Route {
 		$this->setCollection(CollectionFactory::get(MembersManageCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getFaction()));
 
 		$message = "";
-		if (isset($params[0])) {
+		if (isset($params[0]) && is_string($params[0])) {
 			$message = $params[0];
 		}
 		if ((count($this->getFaction()->getMembers()) - 1) == 0) {

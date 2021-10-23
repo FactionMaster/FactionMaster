@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+
 
 /*
  *
@@ -61,7 +61,7 @@ class JoinFactionRoute extends RouteBase implements Route {
 		$this->setCollection(CollectionFactory::get(JoinFactionCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity()));
 
 		$message = "";
-		if (isset($params[0])) {
+		if (isset($params[0]) && is_string($params[0])) {
 			$message = $params[0];
 		}
 

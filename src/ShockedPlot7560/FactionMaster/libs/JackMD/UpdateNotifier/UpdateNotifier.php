@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+
 
 /*
  *  _   _           _       _       _   _       _   _  __ _

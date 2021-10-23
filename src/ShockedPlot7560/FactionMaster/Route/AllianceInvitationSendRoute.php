@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+
 
 /*
  *
@@ -77,7 +77,7 @@ class AllianceInvitationSendRoute extends RouteBase implements Route {
 		$this->setCollection(CollectionFactory::get(AllianceInvitationSendCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getInvitations()));
 
 		$message = "";
-		if (isset($params[0])) {
+		if (isset($params[0]) && is_string($params[0])) {
 			$message = $params[0];
 		}
 		if (count($this->invitations) == 0) {

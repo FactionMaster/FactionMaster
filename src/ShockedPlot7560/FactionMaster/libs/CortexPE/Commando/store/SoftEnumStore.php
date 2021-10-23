@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+
 
 namespace ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\store;
 
