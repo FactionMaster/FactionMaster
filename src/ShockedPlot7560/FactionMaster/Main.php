@@ -82,7 +82,7 @@ class Main extends PluginBase implements Listener {
 		ConfigManager::init($this);
 		CommandManager::init();
 		SyncServerManager::init($this);
-		DatabaseManager::init($this);
+		DatabaseManager::init();
 		MainAPI::init(DatabaseManager::getPDO(), $this);
 		PermissionManager::init();
 		ImageManager::init($this);

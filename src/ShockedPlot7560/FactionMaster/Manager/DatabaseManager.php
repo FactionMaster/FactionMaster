@@ -41,7 +41,7 @@ use ShockedPlot7560\FactionMaster\Database\Table\HomeTable;
 use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
 use ShockedPlot7560\FactionMaster\Database\Table\TableInterface;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
-use ShockedPlot7560\FactionMaster\Main;
+use function var_dump;
 
 class DatabaseManager {
 	const MYSQL_PROVIDER = "MYSQL";
@@ -52,11 +52,13 @@ class DatabaseManager {
 	/** @var TableInterface[] */
 	private static $tables;
 
-	public static function init(Main $Main): void {
-		$provider = ConfigManager::getConfig()->get('PROVIDER');
+	public static function init( ): void {
+		$container = ConfigManager::getConfigContainer();
+		$provider = $container->getProvider();
 		switch ($provider) {
 			case self::MYSQL_PROVIDER:
-				$databaseConfig = ConfigManager::getConfig()->get("MYSQL_database");
+				$databaseConfig = $container->getDatabaseData();
+				var_dump($databaseConfig);
 				$pdo = new PDO(
 					"mysql:host=" . $databaseConfig['host'] . ";dbname=" . $databaseConfig['name'],
 					$databaseConfig['user'],
@@ -64,15 +66,11 @@ class DatabaseManager {
 				);
 				break;
 			case self::SQLITE_PROVIDER:
-				$databaseConfig = ConfigManager::getConfig()->get("SQLITE_database");
+				$databaseConfig = $container->getDatabaseData();
+				var_dump($databaseConfig);
 				$pdo = new PDO("sqlite:" . $databaseConfig['name'] . ".sqlite");
 				break;
-			default:
-				$Main->getLogger()->alert("Please give a valid PROVIDER in config.yml, use only : " . self::MYSQL_PROVIDER . " or " . self::SQLITE_PROVIDER);
-				$Main->getServer()->getPluginManager()->disablePlugin($Main);
-				return;
 		}
-
 		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		self::$pdo = $pdo;
 		self::initTable();

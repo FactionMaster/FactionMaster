@@ -125,7 +125,7 @@ class MigrationManager {
 
 	public static function updateConfigDb(): void {
 		$pdo = DatabaseManager::getPDO();
-		$provider = Utils::getConfig("PROVIDER");
+		$provider = ConfigManager::getConfigContainer()->getProvider();
 		switch ($provider) {
 			case DatabaseManager::MYSQL_PROVIDER:
 				foreach (self::$configDbToCheck as $configDB) {
