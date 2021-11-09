@@ -71,7 +71,8 @@ class SethomeCommand extends BaseSubCommand {
 				$faction = MainAPI::getFaction($userEntity->getFactionName());
 				if (count(MainAPI::getFactionHomes($userEntity->getFactionName())) < $faction->getMaxHome()) {
 					$Chunk = $player->getLevel()->getChunkAtPosition($player);
-					if (ConfigManager::getConfig()->get("allow-home-ennemy-claim") && MainAPI::getFactionClaim($player->getLevel()->getName(), $Chunk->getX(), $Chunk->getZ()) === null) {
+					$claim = MainAPI::getFactionClaim($player->getLevel()->getName(), $Chunk->getX(), $Chunk->getZ());
+                    if (ConfigManager::getConfig()->get("allow-home-ennemy-claim") && ($claim === null || $claim->getFactionName() == $faction->getName())) {
 						MainAPI::addHome($player, $userEntity->getFactionName(), $args['name']);
 						Utils::newMenuSendTask(new MenuSendTask(
 							function () use ($userEntity, $args) {
