@@ -61,7 +61,7 @@ class SethomeCommand extends BaseSubCommand {
 		}
 		$permissions = MainAPI::getMemberPermission($sender->getName());
 		$userEntity = MainAPI::getUser($sender->getName());
-		if ($permissions === null) {
+		if ($permissions === null || $userEntity->getFactionName() == null) {
 			$sender->sendMessage(Utils::getText($sender->getName(), "NEED_FACTION"));
 			return;
 		}
