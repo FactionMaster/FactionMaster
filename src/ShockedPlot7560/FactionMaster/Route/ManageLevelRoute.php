@@ -106,7 +106,7 @@ class ManageLevelRoute extends RouteBase implements Route {
 		$this->rewardData = MainAPI::getLevelRewardData($this->getFaction()->getLevel() + 1);
 
 		$this->levelUpReady = false;
-		if ($pourcent >= 30) {
+		if ($pourcent >= 15) {
 			$this->levelUpReady = true;
 		}
 
@@ -162,7 +162,9 @@ class ManageLevelRoute extends RouteBase implements Route {
 
 				foreach ($Data['cost'] as $cost) {
 					$reward = RewardFactory::get($cost['type']);
-					$content .= "\n §5>> §f" . Utils::getText($player->getName(), $reward->getName($player->getName())) . " x" . $cost['value'];
+					if ($reward !== null) {
+						$content .= "\n §5>> §f" . Utils::getText($player->getName(), $reward->getName($player->getName())) . " x" . $cost['value'];
+					}
 				}
 				if ($levelReady === true) {
 					Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
@@ -209,25 +211,30 @@ class ManageLevelRoute extends RouteBase implements Route {
 					}
 
 					$costItem = RewardFactory::get($cost['type']);
-					$result = $costItem->executeCost($factionName, $cost['value']);
+					if ($costItem !== null) {
+						$result = $costItem->executeCost($factionName, $cost['value']);
+					} else {
+						$result = true;
+					}
 					if ($result !== true) {
 						$continue = Utils::getText($this->getUserEntity()->getName(), $result);
 						$finish = true;
 					}
 				}
-				if ($costItem === null || !isset($costItem)) {
-					return;
-				}
 				if ($continue !== true) {
 					Utils::processMenu(RouterFactory::get(self::SLUG), $player, [$continue]);
 				} else {
+					if (($costItem === null || !isset($costItem)) && !$continue) {
+						Utils::processMenu(RouterFactory::get(self::SLUG), $player, []);
+						return;
+					}
 					$faction = $this->getFaction();
 					$reward = $this->getReward();
 					$rewardData = $this->getRewardData();
-					MainAPI::changeLevel($faction->getName(), 1);
+					MainAPI::changeLevel($faction->getName(), 1, $faction->getXP() - Utils::getXpLevel($this->getFaction()->getLevel()));
 					Utils::newMenuSendTask(new MenuSendTask(
 						function () use ($faction) {
-							return MainAPI::getFaction($faction->getName())->getLevel() == $faction->getLevel() + 1;
+							return MainAPI::getFaction($faction->getName())->getLevel() == $faction->getLevel();
 						},
 						function () use ($player, $reward, $faction, $rewardData, $costItem) {
 							$result = $reward->executeGet($faction->getName(), $rewardData['value']);

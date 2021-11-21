@@ -302,7 +302,7 @@ class MainAPI {
 		$user->setRank($rankId);
 		self::submitDatabaseTask(
 			new DatabaseTask(
-				"UPDATE " . FactionTable::TABLE_NAME . " SET members = :members WHERE name = :name",
+				"UPDATE " . FactionTable::TABLE_NAME . " SET " . FactionTable::TABLE_NAME . ".members = :members WHERE " . FactionTable::TABLE_NAME . ".name = :name",
 				[
 					'members' => json_encode($faction->getMembers()),
 					'name' => $factionName,
@@ -314,7 +314,7 @@ class MainAPI {
 		);
 		self::submitDatabaseTask(
 			new DatabaseTask(
-				"UPDATE " . UserTable::TABLE_NAME . " SET faction = :faction, rank = :rank WHERE name = :name",
+				"UPDATE " . UserTable::TABLE_NAME . " SET " . UserTable::TABLE_NAME . ".faction = :faction, " . UserTable::TABLE_NAME . ".rank = :rank WHERE " . UserTable::TABLE_NAME . ".name = :name",
 				[
 					'faction' => $factionName,
 					'rank' => $rankId,
@@ -406,18 +406,19 @@ class MainAPI {
 	/**
 	 * Change the faction level and reset xp to 0
 	 */
-	public static function changeLevel(string $factionName, int $level): void {
+	public static function changeLevel(string $factionName, int $level, int $xp = 0): void {
 		$faction = self::getFaction($factionName);
 		if (!$faction instanceof FactionEntity) {
 			return;
 		}
-
-		$faction->setLevel($level);
+		$faction->setLevel($faction->getLevel() + $level);
+		$faction->setXp($xp);
 		self::submitDatabaseTask(
 			new DatabaseTask(
-				"UPDATE " . FactionTable::TABLE_NAME . " SET level = level + :level, xp = 0 WHERE name = :name",
+				"UPDATE " . FactionTable::TABLE_NAME . " SET level = level + :level, xp = :xp WHERE name = :name",
 				[
 					'level' => $level,
+					"xp" => $xp,
 					'name' => $factionName,
 				],
 				function () use ($factionName, $faction) {

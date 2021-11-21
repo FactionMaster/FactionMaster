@@ -47,18 +47,18 @@ class FactionLevelUpEvent extends FactionEvent implements Forcable {
 	/**
 	 * @param FactionEntity|string $faction
 	 */
-	public function __construct(Player $player, $faction, RewardInterface $cost, RewardInterface $reward, bool $isForce = false) {
+	public function __construct(Player $player, $faction, ?RewardInterface $cost, ?RewardInterface $reward, bool $isForce = false) {
 		parent::__construct($faction, $isForce);
 		$this->player = $player;
 		$this->reward = $reward;
 		$this->cost = $cost;
 	}
 
-	public function getReward(): RewardInterface {
+	public function getReward(): ?RewardInterface {
 		return $this->reward;
 	}
 
-	public function getCost(): RewardInterface {
+	public function getCost(): ?RewardInterface {
 		return $this->cost;
 	}
 }
