@@ -62,7 +62,7 @@ class SethomeCommand extends BaseSubCommand {
 		}
 		$permissions = MainAPI::getMemberPermission($sender->getName());
 		$userEntity = MainAPI::getUser($sender->getName());
-		if ($permissions === null) {
+		if ($permissions === null || $userEntity->getFactionName() == null) {
 			$sender->sendMessage(Utils::getText($sender->getName(), "NEED_FACTION"));
 			return;
 		}
@@ -73,8 +73,8 @@ class SethomeCommand extends BaseSubCommand {
 				if (count(MainAPI::getFactionHomes($userEntity->getFactionName())) < $faction->getMaxHome()) {
 					$z = floor($player->getPosition()->getFloorX()/16);
 					$x = floor($player->getPosition()->getFloorZ()/16);
-					$Chunk = $player->getWorld()->getChunk($x, $z);
-					if (ConfigManager::getConfig()->get("allow-home-ennemy-claim") && MainAPI::getFactionClaim($player->getWorld()->getDisplayName(), $x, $z) === null) {
+					$claim = MainAPI::getFactionClaim($player->getWorld()->getDisplayName(), $x, $z);
+					if (ConfigManager::getConfig()->get("allow-home-ennemy-claim") && ($claim === null || $claim->getFactionName() == $faction->getName())) {
 						MainAPI::addHome($player, $userEntity->getFactionName(), $args['name']);
 						Utils::newMenuSendTask(new MenuSendTask(
 							function () use ($userEntity, $args) {
