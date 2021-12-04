@@ -41,7 +41,6 @@ use ShockedPlot7560\FactionMaster\Database\Table\HomeTable;
 use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
 use ShockedPlot7560\FactionMaster\Database\Table\TableInterface;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
-use function var_dump;
 
 class DatabaseManager {
 	const MYSQL_PROVIDER = "MYSQL";
@@ -53,12 +52,10 @@ class DatabaseManager {
 	private static $tables;
 
 	public static function init( ): void {
-		$container = ConfigManager::getConfigContainer();
-		$provider = $container->getProvider();
+		$provider = ConfigManager::getConfig()->get('PROVIDER');
 		switch ($provider) {
 			case self::MYSQL_PROVIDER:
-				$databaseConfig = $container->getDatabaseData();
-				var_dump($databaseConfig);
+				$databaseConfig = ConfigManager::getConfig()->get("MYSQL_database");
 				$pdo = new PDO(
 					"mysql:host=" . $databaseConfig['host'] . ";dbname=" . $databaseConfig['name'],
 					$databaseConfig['user'],
@@ -66,8 +63,7 @@ class DatabaseManager {
 				);
 				break;
 			case self::SQLITE_PROVIDER:
-				$databaseConfig = $container->getDatabaseData();
-				var_dump($databaseConfig);
+				$databaseConfig = ConfigManager::getConfig()->get("SQLITE_database");
 				$pdo = new PDO("sqlite:" . $databaseConfig['name'] . ".sqlite");
 				break;
 		}

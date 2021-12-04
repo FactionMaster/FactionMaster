@@ -34,8 +34,8 @@ declare(strict_types=1);
 
 namespace ShockedPlot7560\FactionMaster\Manager;
 
-use pocketmine\utils\Config;
 use JackMD\ConfigUpdater\ConfigUpdater;
+use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Manager\Config\ConfigContainer;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -130,13 +130,5 @@ class ConfigManager {
 	/** @return Config[] */
 	public static function getLangsConfig(): array {
 		return self::$lang;
-	}
-
-	public static function getConfigContainer(): ConfigContainer {
-		if (self::$configContainer === null) {
-			self::$configContainer = new ConfigContainer(Utils::getDataFolder() . "config.yml");
-			self::$configContainer->saveConfig();
-		}
-		return self::$configContainer;
 	}
 }
