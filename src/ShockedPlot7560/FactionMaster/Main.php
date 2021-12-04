@@ -52,6 +52,7 @@ use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use ShockedPlot7560\FactionMaster\Manager\MigrationManager;
 use ShockedPlot7560\FactionMaster\Manager\PermissionManager;
 use ShockedPlot7560\FactionMaster\Manager\SyncServerManager;
+use ShockedPlot7560\FactionMaster\Manager\TranslationManager;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Task\LeaderboardTask;
@@ -78,6 +79,7 @@ class Main extends PluginBase implements Listener {
 		self::$instance = $this;
 
 		ConfigManager::init($this);
+		TranslationManager::init($this);
 		CommandManager::init();
 		SyncServerManager::init($this);
 		DatabaseManager::init();

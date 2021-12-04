@@ -35,7 +35,6 @@ namespace ShockedPlot7560\FactionMaster\Manager;
 use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\Extension\Extension;
 use ShockedPlot7560\FactionMaster\Main;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ExtensionManager {
 
@@ -78,14 +77,9 @@ class ExtensionManager {
 				if (!$langConfigFile instanceof Config) {
 					Main::getInstance()->getLogger()->error("Can not load the translate files of : $extensionName, check the return value of the function getLangConfig() and verify its key and value. If you are not the author of this extension, please inform him");
 				} else {
-					$langMain = new Config(Utils::getDataFolder() . "lang/$langSlug.yml", Config::YAML);
-					foreach ($langConfigFile->getAll() as $key => $value) {
-						if ($key === "file-version") {
-							continue;
-						}
-						$langMain->__set($key, $value);
-					}
-					$langMain->save();
+					$all = $langConfigFile->getAll();
+					unset($all["file-version"]);
+					TranslationManager::registerLang($langSlug, $all);
 				}
 			}
 		}

@@ -44,6 +44,7 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\MenuOpenEvent;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Manager\PermissionManager;
+use ShockedPlot7560\FactionMaster\Manager\TranslationManager;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use function compact;
@@ -154,21 +155,7 @@ class Utils {
 
 	public static function getText(string $playerName, string $slug, array $args = []): string {
 		$playerLang = MainAPI::getPlayerLang($playerName);
-		if (isset(self::getConfigLang("languages")[$playerLang])) {
-			$fileName = self::getConfigLang("languages")[$playerLang];
-		} elseif (isset(self::getConfigLang("languages")["EN"])) {
-			$fileName = self::getConfigLang("languages")["EN"];
-		} else {
-			Main::getInstance()->getLogger()->error("Error in lang loading, please remove your plugin_data");
-			Main::getInstance()->getServer()->getPluginManager()->disablePlugin(Main::getInstance());
-			return "";
-		}
-		$config = self::getConfigLangFile($fileName);
-		$textNoReplace = $config->get($slug);
-		if ($textNoReplace === false) {
-			$config = self::getConfigLangFile("en_EN");
-			$textNoReplace = $config->get($slug);
-		}
+		$textNoReplace = TranslationManager::getTranslation($slug, $playerLang);
 		return self::replaceParams($textNoReplace, $args);
 	}
 
