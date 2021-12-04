@@ -34,7 +34,6 @@ namespace ShockedPlot7560\FactionMaster\Button\Collection;
 
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\ChangeLanguage;
-use ShockedPlot7560\FactionMaster\Button\FactionsTop;
 use ShockedPlot7560\FactionMaster\Button\LeaveDelete;
 use ShockedPlot7560\FactionMaster\Button\ManageFaction;
 use ShockedPlot7560\FactionMaster\Button\ManageMembers;
@@ -53,7 +52,6 @@ class MainFacCollection extends Collection {
 			$this->register(new ViewHomes());
 			$this->register(new ManageMembers());
 			$this->register(new ManageFaction());
-			$this->register(new FactionsTop());
 			$this->register(new ChangeLanguage());
 			$this->register(new LeaveDelete());
 			$this->register(new Quit());

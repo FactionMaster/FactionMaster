@@ -35,7 +35,6 @@ namespace ShockedPlot7560\FactionMaster\Button\Collection;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\ChangeLanguage;
 use ShockedPlot7560\FactionMaster\Button\CreateFaction;
-use ShockedPlot7560\FactionMaster\Button\FactionsTop;
 use ShockedPlot7560\FactionMaster\Button\JoinFaction;
 use ShockedPlot7560\FactionMaster\Button\Quit;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
@@ -48,7 +47,6 @@ class MainNoFacCollection extends Collection {
 		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
 			$this->register(new CreateFaction());
 			$this->register(new JoinFaction());
-			$this->register(new FactionsTop());
 			$this->register(new ChangeLanguage());
 			$this->register(new Quit());
 		});
