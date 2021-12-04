@@ -154,7 +154,7 @@ class MigrationManager {
 					$query = $pdo->prepare("PRAGMA table_info(" . $configDB["TABLE_NAME"] . ")");
 					$query->execute();
 					foreach ($query->fetchAll() as $columnData) {
-						$dflt_value = substr($columnData["dflt_value"], 1, strlen($columnData["dflt_value"]) - 2);
+						$dflt_value = substr($columnData["dflt_value"] == null ? "" : $columnData["dflt_value"], 1, strlen($columnData["dflt_value"] == null ? "" : $columnData["dflt_value"]) - 2);
 						foreach (self::$configDbToCheck as $conf) {
 							$value = $conf["CONFIG_INST"]->get($conf["CONFIG_NAME"]);
 							if ($columnData["name"] == $conf["COLUMN_NAME"] && $dflt_value != $value) {
