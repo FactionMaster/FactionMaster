@@ -40,6 +40,7 @@ use ShockedPlot7560\FactionMaster\Button\Collection\MainNoFacCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function is_string;
 
 class MainRoute extends RouteBase implements Route {
 	const SLUG = "mainRoute";
@@ -70,7 +71,7 @@ class MainRoute extends RouteBase implements Route {
 		$this->init($player, $userEntity, $userPermissions, $params);
 
 		$message = '';
-		if (isset($params[0])) {
+		if (isset($params[0]) && is_string($params[0])) {
 			$message = $params[0];
 		}
 

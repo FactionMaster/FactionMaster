@@ -44,6 +44,7 @@ use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function floor;
 use function is_array;
+use function is_string;
 
 class ManageLevelRoute extends RouteBase implements Route {
 	const SLUG = "manageLevelRoute";
@@ -110,7 +111,7 @@ class ManageLevelRoute extends RouteBase implements Route {
 		}
 
 		$message = "";
-		if (isset($params[0])) {
+		if (isset($params[0]) && is_string($params[0])) {
 			$message = $params[0];
 		}
 

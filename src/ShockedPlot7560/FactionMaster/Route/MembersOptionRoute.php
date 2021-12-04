@@ -39,6 +39,7 @@ use ShockedPlot7560\FactionMaster\Button\Collection\MembersOptionCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function is_string;
 
 class MembersOptionRoute extends RouteBase implements Route {
 	const SLUG = "membersOptionRoute";
@@ -65,7 +66,7 @@ class MembersOptionRoute extends RouteBase implements Route {
 		$this->setCollection(CollectionFactory::get(MembersOptionCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity()));
 
 		$message = "";
-		if (isset($params[0])) {
+		if (isset($params[0]) && is_string($params[0])) {
 			$message = $params[0];
 		}
 

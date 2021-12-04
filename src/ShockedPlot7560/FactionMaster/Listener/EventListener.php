@@ -324,7 +324,7 @@ class EventListener implements Listener {
 						]),
 						function ($result) {
 							foreach ($result as $invitation) {
-								MainAPI::$invitation[$invitation->getSenderString() . "|" . $invitation->getReceiverString()] = $invitation;
+								MainAPI::$invitation[$invitation->getSenderString() . "|" . $invitation->getReceiverString() . "|" . $invitation->getType()] = $invitation;
 							}
 						},
 						InvitationEntity::class

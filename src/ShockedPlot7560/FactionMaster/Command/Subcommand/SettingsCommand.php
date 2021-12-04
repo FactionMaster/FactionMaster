@@ -34,6 +34,7 @@ namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
 use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
+use ShockedPlot7560\FactionMaster\Manager\ImageManager;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class SettingsCommand extends BaseSubCommand {
@@ -56,7 +57,7 @@ class SettingsCommand extends BaseSubCommand {
 		$map = Utils::getConfig("f-map-task");
 		$sender->sendMessage("  §8>> §7F map task: " . ($map === false ? "§cno" : "§ayes"));
 		$sender->sendMessage("  §8>> §7Claim alert: " . (Utils::getConfig("message-alert") === true ? "§ayes" : "§cno"));
-		$sender->sendMessage("  §8>> §7Image button: " . (Utils::getConfig("image-active") === true ? "§ayes" : "§cno"));
+		$sender->sendMessage("  §8>> §7Image button: " . (ImageManager::isImageEnable() === true ? "§ayes" : "§cno"));
 		$sender->sendMessage("  §8>> §7Faction chat: " . (Utils::getConfig("faction-chat-active") === true ? "§ayes" : "§cno"));
 		$sender->sendMessage("  §8>> §7Alliance chat: " . (Utils::getConfig("ally-chat-active") === true ? "§ayes" : "§cno"));
 		$sender->sendMessage("§7Broadcast: ");

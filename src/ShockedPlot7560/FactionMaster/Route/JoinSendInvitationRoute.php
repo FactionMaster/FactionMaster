@@ -117,7 +117,7 @@ class JoinSendInvitationRoute extends RouteBase implements Route {
 										},
 										function () use ($player, $factionRequested) {
 											(new FactionJoinEvent($player, $factionRequested))->call();
-											$request = MainAPI::$invitation[$factionRequested->getName() . "|" . $player->getName()];
+											$request = MainAPI::$invitation[$factionRequested->getName() . "|" . $player->getName() . "|" . InvitationEntity::MEMBER_INVITATION];
 											MainAPI::removeInvitation($factionRequested->getName(), $player->getName(), "member");
 											Utils::newMenuSendTask(new MenuSendTask(
 												function () use ($factionRequested, $player) {

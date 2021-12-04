@@ -42,6 +42,7 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
+use function is_string;
 
 class AllianceInvitationSendRoute extends RouteBase implements Route {
 	const SLUG = "allianceInvitationSendRoute";
@@ -75,7 +76,7 @@ class AllianceInvitationSendRoute extends RouteBase implements Route {
 		$this->setCollection(CollectionFactory::get(AllianceInvitationSendCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getInvitations()));
 
 		$message = "";
-		if (isset($params[0])) {
+		if (isset($params[0]) && is_string($params[0])) {
 			$message = $params[0];
 		}
 		if (count($this->invitations) == 0) {

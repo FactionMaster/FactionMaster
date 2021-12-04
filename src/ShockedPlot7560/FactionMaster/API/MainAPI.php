@@ -55,6 +55,7 @@ use ShockedPlot7560\FactionMaster\Reward\RewardInterface;
 use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function array_merge;
 use function explode;
 use function floor;
 use function json_encode;
@@ -98,7 +99,7 @@ class MainAPI {
 			/** @var InvitationEntity[] */
 			$result = $query->fetchAll();
 			foreach ($result as $invitation) {
-				self::$invitation[$invitation->getSenderString() . "|" . $invitation->getReceiverString()] = $invitation;
+				self::$invitation[$invitation->getSenderString() . "|" . $invitation->getReceiverString() . "|" . $invitation->getType()] = $invitation;
 			}
 		} catch (\PDOException $exception) {
 			self::$main->getLogger()->alert("An occured in the server synchronisation, please open an issue on GitHub with this error : " . $exception->getMessage());
@@ -214,6 +215,32 @@ class MainAPI {
 						$user->setRank(null);
 						MainAPI::$users[$name] = $user;
 						(new MemberChangeRankEvent($faction, $user, $oldRank))->call();
+					}
+				}
+			)
+		);
+		self::submitDatabaseTask(
+			new DatabaseTask(
+				"DELETE FROM " . ClaimTable::TABLE_NAME . " WHERE faction = :faction",
+				['faction' => $factionName],
+				function () use ($factionName) {
+					unset(MainAPI::$claim[$factionName]);
+				}
+			)
+		);
+		$invitations = array_merge(
+			self::getInvitationsBySender($factionName, InvitationEntity::MEMBER_INVITATION),
+			self::getInvitationsBySender($factionName, InvitationEntity::ALLIANCE_INVITATION),
+			self::getInvitationsByReceiver($factionName, InvitationEntity::ALLIANCE_INVITATION),
+			self::getInvitationsByReceiver($factionName, InvitationEntity::MEMBER_INVITATION)
+		);
+		self::submitDatabaseTask(
+			new DatabaseTask(
+				"DELETE FROM " . InvitationTable::TABLE_NAME . " WHERE sender = :faction OR receiver = :faction",
+				['faction' => $factionName],
+				function () use ($invitations) {
+					foreach ($invitations as $key => $invitation) {
+						unset(MainAPI::$invitation[$invitation->getSenderString() . "|" . $invitation->getReceiverString() . "|" . $invitation->getType()]);
 					}
 				}
 			)
@@ -675,8 +702,8 @@ class MainAPI {
 								'receiver' => $receiver,
 								'type' => $type,
 							],
-							function ($result) use ($sender, $receiver) {
-								MainAPI::$invitation[$sender . "|" . $receiver] = $result[0];
+							function ($result) use ($sender, $receiver, $type) {
+								MainAPI::$invitation[$sender . "|" . $receiver . "|" . $type] = $result[0];
 							},
 							InvitationEntity::class
 						));
@@ -686,7 +713,7 @@ class MainAPI {
 	}
 
 	public static function areInInvitation(string $sender, string $receiver, string $type): bool {
-		$invitation = self::$invitation[$sender . "|" . $receiver] ?? null;
+		$invitation = self::$invitation[$sender . "|" . $receiver . "|" . $type] ?? null;
 		if (!$invitation instanceof InvitationEntity) {
 			return false;
 		}
@@ -702,8 +729,8 @@ class MainAPI {
 					"receiver" => $receiver,
 					"type" => $type,
 				],
-				function () use ($sender, $receiver) {
-					unset(self::$invitation[$sender . "|" . $receiver]);
+				function () use ($sender, $receiver, $type) {
+					unset(self::$invitation[$sender . "|" . $receiver . "|" . $type]);
 				}
 			)
 		);
@@ -716,7 +743,7 @@ class MainAPI {
 		$inv = [];
 		foreach (self::$invitation as $key => $invitation) {
 			$array = explode("|", $key);
-			if ($array[0] === $sender && $invitation->getType() === $type) {
+			if ($array[0] === $sender && $invitation->getType() === $type && $array[2] === $type) {
 				$inv[] = $invitation;
 			}
 		}
@@ -730,7 +757,7 @@ class MainAPI {
 		$inv = [];
 		foreach (self::$invitation as $key => $invitation) {
 			$array = explode("|", $key);
-			if ($array[1] === $receiver && $invitation->getType() === $type) {
+			if ($array[1] === $receiver && $invitation->getType() === $type && $array[2] === $type) {
 				$inv[] = $invitation;
 			}
 		}

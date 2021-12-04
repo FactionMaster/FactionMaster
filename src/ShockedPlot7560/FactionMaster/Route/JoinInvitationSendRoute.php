@@ -40,6 +40,7 @@ use ShockedPlot7560\FactionMaster\Button\Collection\JoinInvitationSendCollection
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
+use function is_string;
 
 class JoinInvitationSendRoute extends RouteBase implements Route {
 	const SLUG = "joinInvitationSendRoute";
@@ -63,7 +64,7 @@ class JoinInvitationSendRoute extends RouteBase implements Route {
 		$this->setCollection(CollectionFactory::get(JoinInvitationSendCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $invitations));
 
 		$message = "";
-		if (isset($params[0])) {
+		if (isset($params[0]) && is_string($params[0])) {
 			$message = $params[0];
 		}
 		if (count($invitations) == 0) {

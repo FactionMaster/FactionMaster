@@ -145,7 +145,7 @@ class SyncServerManager {
 
 				foreach ($result as $invitation) {
 					if ($invitation instanceof InvitationEntity) {
-						MainAPI::$invitation[$invitation->getSenderString() . "|" . $invitation->getReceiverString()] = $invitation;
+						MainAPI::$invitation[$invitation->getSenderString() . "|" . $invitation->getReceiverString() . "|" . $invitation->getType()] = $invitation;
 					}
 				}
 			},

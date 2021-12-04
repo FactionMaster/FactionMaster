@@ -38,6 +38,7 @@ use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\JoinFactionCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function is_string;
 
 class JoinFactionRoute extends RouteBase implements Route {
 	const SLUG = "joinFactionRoute";
@@ -59,7 +60,7 @@ class JoinFactionRoute extends RouteBase implements Route {
 		$this->setCollection(CollectionFactory::get(JoinFactionCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity()));
 
 		$message = "";
-		if (isset($params[0])) {
+		if (isset($params[0]) && is_string($params[0])) {
 			$message = $params[0];
 		}
 

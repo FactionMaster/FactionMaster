@@ -40,6 +40,7 @@ use ShockedPlot7560\FactionMaster\Button\Collection\JoinRequestReceiveCollection
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
+use function is_string;
 
 class JoinRequestReceiveRoute extends RouteBase implements Route {
 	const SLUG = "joinRequestReceiveRoute";
@@ -63,7 +64,7 @@ class JoinRequestReceiveRoute extends RouteBase implements Route {
 		$this->setCollection(CollectionFactory::get(JoinRequestReceiveCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $requests));
 
 		$message = "";
-		if (isset($params[0])) {
+		if (isset($params[0]) && is_string($params[0])) {
 			$message = $params[0];
 		}
 		if (count($requests) == 0) {
