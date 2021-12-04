@@ -40,7 +40,7 @@ use ShockedPlot7560\FactionMaster\Button\Collection\MainFacCollection;
 use ShockedPlot7560\FactionMaster\Button\Collection\MainNoFacCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
+use jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class MainRoute extends RouteBase implements Route {

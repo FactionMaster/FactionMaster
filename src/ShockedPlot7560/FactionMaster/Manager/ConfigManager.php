@@ -35,7 +35,7 @@ declare(strict_types=1);
 namespace ShockedPlot7560\FactionMaster\Manager;
 
 use pocketmine\utils\Config;
-use ShockedPlot7560\FactionMaster\libs\JackMD\ConfigUpdater\ConfigUpdater;
+use JackMD\ConfigUpdater\ConfigUpdater;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Manager\Config\ConfigContainer;
 use ShockedPlot7560\FactionMaster\Utils\Utils;

@@ -35,7 +35,7 @@ namespace ShockedPlot7560\FactionMaster\Utils;
 use Exception;
 use pocketmine\command\CommandSender;
 use pocketmine\console\ConsoleCommandSender;
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
+use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\player\Player;
 use pocketmine\scheduler\TaskHandler;
 use pocketmine\utils\Config;

@@ -36,7 +36,7 @@ namespace ShockedPlot7560\FactionMaster\Command;
 
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseCommand;
+use CortexPE\Commando\BaseCommand;
 use ShockedPlot7560\FactionMaster\Manager\CommandManager;
 use ShockedPlot7560\FactionMaster\Route\MainRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
