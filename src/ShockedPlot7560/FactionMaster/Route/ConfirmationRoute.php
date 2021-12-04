@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  *
  *      ______           __  _                __  ___           __
@@ -35,9 +33,9 @@ declare(strict_types=1);
 namespace ShockedPlot7560\FactionMaster\Route;
 
 use InvalidArgumentException;
+use jojoe77777\FormAPI\ModalForm;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use jojoe77777\FormAPI\ModalForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ConfirmationRoute extends RouteBase implements Route {

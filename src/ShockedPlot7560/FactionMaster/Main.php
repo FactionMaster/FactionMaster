@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  *
  *      ______           __  _                __  ___           __
@@ -34,14 +32,14 @@ declare(strict_types=1);
 
 namespace ShockedPlot7560\FactionMaster;
 
+use CortexPE\Commando\PacketHooker;
+use JackMD\UpdateNotifier\UpdateNotifier;
 use pocketmine\event\Listener;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginBase;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Command\FactionCommand;
-use CortexPE\Commando\PacketHooker;
-use JackMD\UpdateNotifier\UpdateNotifier;
 use ShockedPlot7560\FactionMaster\Listener\BroadcastMessageListener;
 use ShockedPlot7560\FactionMaster\Listener\EventListener;
 use ShockedPlot7560\FactionMaster\Listener\ScoreHudListener;

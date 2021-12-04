@@ -39,79 +39,78 @@ use pocketmine\world\Position;
 use pocketmine\world\World;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
+use function count;
+use function explode;
 
 class Leaderboard {
 
-    /** @var string */
-    private $slug;
-    /** @var Position */
-    private $position;
+	/** @var string */
+	private $slug;
+	/** @var Position */
+	private $position;
 
-    /**
-     * @param string $slug
-     * @param Position|string[] $position
-     * @param Config $config The config file to search the header and data body
-     */
-    public function __construct(string $slug, Position|string $position) {
-        if (!$position instanceof Position) {
-            $position = explode("|", $position);
-            if (count($position) >= 4) {
-                $world = Main::getInstance()->getServer()->getWorldManager()->getWorldByName($position[3]);
-                if ($world instanceof World) {
-                    $position = new Position((int) $position[0], (int) $position[1], (int) $position[2], $world);
-                } else {
-                    throw new InvalidArgumentException("Invalid world given");
-                }
-            } else {
-                throw new InvalidArgumentException("position argument must be contain valid data");
-            }
-        }
-        $this->position = $position;
-        $this->slug = $slug;
-    }
+	/**
+	 * @param Position|string[] $position
+	 */
+	public function __construct(string $slug, Position|string $position) {
+		if (!$position instanceof Position) {
+			$position = explode("|", $position);
+			if (count($position) >= 4) {
+				$world = Main::getInstance()->getServer()->getWorldManager()->getWorldByName($position[3]);
+				if ($world instanceof World) {
+					$position = new Position((int) $position[0], (int) $position[1], (int) $position[2], $world);
+				} else {
+					throw new InvalidArgumentException("Invalid world given");
+				}
+			} else {
+				throw new InvalidArgumentException("position argument must be contain valid data");
+			}
+		}
+		$this->position = $position;
+		$this->slug = $slug;
+	}
 
-    public function getPosition(): Position {
-        return $this->position;
-    }
+	public function getPosition(): Position {
+		return $this->position;
+	}
 
-    public function getVector3(): Vector3 {
-        return new Vector3(
-            $this->getPosition()->getX(),
-            $this->getPosition()->getY(),
-            $this->getPosition()->getZ()
-        );
-    }
+	public function getVector3(): Vector3 {
+		return new Vector3(
+			$this->getPosition()->getX(),
+			$this->getPosition()->getY(),
+			$this->getPosition()->getZ()
+		);
+	}
 
-    public function getRawCoordonate(): string {
-        return Utils::getRawCoordonate($this->getPosition());
-    }
+	public function getRawCoordonate(): string {
+		return Utils::getRawCoordonate($this->getPosition());
+	}
 
-    public function getSlug(): string {
-        return $this->slug;
-    }
+	public function getSlug(): string {
+		return $this->slug;
+	}
 
-    public function getWorld(): ?World {
-        return $this->getPosition()->getWorld();
-    }
+	public function getWorld(): ?World {
+		return $this->getPosition()->getWorld();
+	}
 
-    public function getConfig(): Config {
-        return LeaderboardManager::getLeaderboard($this->getSlug())->getConfig();
-    }
+	public function getConfig(): Config {
+		return LeaderboardManager::getLeaderboard($this->getSlug())->getConfig();
+	}
 
-    public function getHeaderLign(): string {
-        return $this->getConfig()->get($this->getSlug() . "-leaderboard-header");
-    }
+	public function getHeaderLign(): string {
+		return $this->getConfig()->get($this->getSlug() . "-leaderboard-header");
+	}
 
-    public function getBodyLign(): string {
-        return $this->getConfig()->get($this->getSlug() . "-leaderboard-body");
-    }
+	public function getBodyLign(): string {
+		return $this->getConfig()->get($this->getSlug() . "-leaderboard-body");
+	}
 
-    public function dispawn(): void {
-        LeaderboardManager::dispawnLeaderboard($this->getSlug(), $this->getRawCoordonate());
-    }
+	public function dispawn(): void {
+		LeaderboardManager::dispawnLeaderboard($this->getSlug(), $this->getRawCoordonate());
+	}
 
-    public function spawn(): void {
-        LeaderboardManager::placeScoreboard($this);
-    }
-
+	public function spawn(): void {
+		LeaderboardManager::placeScoreboard($this);
+	}
 }

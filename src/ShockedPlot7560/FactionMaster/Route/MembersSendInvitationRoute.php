@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  *
  *      ______           __  _                __  ___           __
@@ -34,6 +32,7 @@ declare(strict_types=1);
 
 namespace ShockedPlot7560\FactionMaster\Route;
 
+use jojoe77777\FormAPI\CustomForm;
 use pocketmine\player\Player;
 use pocketmine\Server;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
@@ -43,7 +42,6 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionJoinEvent;
 use ShockedPlot7560\FactionMaster\Event\InvitationAcceptEvent;
 use ShockedPlot7560\FactionMaster\Event\InvitationSendEvent;
-use jojoe77777\FormAPI\CustomForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;

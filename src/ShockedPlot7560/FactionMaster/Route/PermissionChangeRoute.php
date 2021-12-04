@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  *
  *      ______           __  _                __  ___           __
@@ -35,11 +33,11 @@ declare(strict_types=1);
 namespace ShockedPlot7560\FactionMaster\Route;
 
 use InvalidArgumentException;
+use jojoe77777\FormAPI\CustomForm;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\PermissionChangeEvent;
-use jojoe77777\FormAPI\CustomForm;
 use ShockedPlot7560\FactionMaster\Manager\PermissionManager;
 use ShockedPlot7560\FactionMaster\Permission\Permission;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;

@@ -26,7 +26,6 @@ return (new PhpCsFixer\Config)
 		'concat_space' => [
 			'spacing' => 'one'
 		],
-		'declare_strict_types' => true,
 		'elseif' => true,
 		'global_namespace_import' => [
 			'import_constants' => true,

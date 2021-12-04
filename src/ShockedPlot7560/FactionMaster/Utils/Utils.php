@@ -33,9 +33,8 @@
 namespace ShockedPlot7560\FactionMaster\Utils;
 
 use Exception;
-use pocketmine\command\CommandSender;
-use pocketmine\console\ConsoleCommandSender;
 use jojoe77777\FormAPI\SimpleForm;
+use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\scheduler\TaskHandler;
 use pocketmine\utils\Config;
@@ -47,161 +46,170 @@ use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Manager\PermissionManager;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
+use function compact;
+use function is_array;
+use function is_string;
+use function join;
+use function pow;
+use function str_replace;
 
 class Utils {
+	const POCKETMINE_PERMISSIONS_CONSTANT = "Pocketmine";
 
-    const POCKETMINE_PERMISSIONS_CONSTANT = "Pocketmine";
+	public static function generateButton(SimpleForm $form, array $buttons): SimpleForm {
+		foreach ($buttons as $button) {
+			$form->addButton($button);
+		}
+		return $form;
+	}
 
-    public static function generateButton(SimpleForm $form, array $buttons): SimpleForm {
-        foreach ($buttons as $button) {
-            $form->addButton($button);
-        }
-        return $form;
-    }
+	public static function processMenu(Route $route, Player|CommandSender $player, ?array $params = null): void {
+		if ($player instanceof CommandSender && !$player instanceof Player) {
+			@throw new Exception("player given must be of type Player", 1);
+		}
+		$userEntity = MainAPI::getUser($player->getName());
+		$userPermissions = MainAPI::getMemberPermission($player->getName());
+		if ($userPermissions === null) {
+			$userPermissions = [];
+		}
+		if ($userEntity instanceof UserEntity) {
+			$good = $route->getPermissions() === [];
+			if ($userEntity->getRank() === Ids::OWNER_ID) {
+				$good = true;
+			}
+			foreach ($route->getPermissions() as $permission) {
+				if (is_string($permission)) {
+					if (self::haveAccess($userPermissions, $userEntity, $permission)) {
+						$good = true;
+					}
+				} elseif (is_array($permission) && $permission[0] === self::POCKETMINE_PERMISSIONS_CONSTANT) {
+					if ($player->hasPermission($permission[1])) {
+						$good = true;
+					}
+				}
+			}
+			if ($good) {
+				$ev = new MenuOpenEvent($player, $route);
+				$ev->call();
+				if ($ev->isCancelled()) {
+					return;
+				}
 
-    public static function processMenu(Route $route, Player|CommandSender $player, ?array $params = null): void {
-        if ($player instanceof CommandSender && !$player instanceof Player) {
-            @throw new Exception("player given must be of type Player", 1);
-        }
-        $userEntity = MainAPI::getUser($player->getName());
-        $userPermissions = MainAPI::getMemberPermission($player->getName());
-        if ($userPermissions === null) {
-            $userPermissions = [];
-        }
-        if ($userEntity instanceof UserEntity) {
-            $good = $route->getPermissions() === [];
-            if ($userEntity->getRank() === Ids::OWNER_ID) $good = true;
-            foreach ($route->getPermissions() as $permission) {
-                if (is_string($permission)) {
-                    if (self::haveAccess($userPermissions, $userEntity, $permission)) {
-                        $good = true;
-                    }
-                } elseif (is_array($permission) && $permission[0] === self::POCKETMINE_PERMISSIONS_CONSTANT) {
-                    if ($player->hasPermission($permission[1])) {
-                        $good = true;
-                    }
-                }
-            }
-            if ($good) {
-                $ev = new MenuOpenEvent($player, $route);
-                $ev->call();
-                if ($ev->isCancelled()) {
-                    return;
-                }
+				$route($player, $userEntity, $userPermissions, $params);
+				return;
+			} else {
+				if ($route->getBackRoute() instanceof Route) {
+					$route = $route->getBackRoute();
+					$route($player, $userEntity, $userPermissions, $params);
+				}
+			}
+		}
+	}
 
-                $route($player, $userEntity, $userPermissions, $params);
-                return;
-            }else{
-                if ($route->getBackRoute() instanceof Route) {
-                    $route = $route->getBackRoute();
-                    $route($player, $userEntity, $userPermissions, $params);
-                }
-            }
-        }
-    }
+	public static function replaceParams(string $string, array $data): string {
+		foreach ($data as $key => $value) {
+			$string = str_replace("{{" . $key . "}}", $value, $string);
+		}
+		return $string;
+	}
 
-    public static function replaceParams(string $string, array $data): string {
-        foreach ($data as $key => $value) {
-            $string = \str_replace("{{" . $key . "}}", $value, $string);
-        }
-        return $string;
-    }
+	/**
+	 * @return string The formated string like x|z|world
+	 */
+	public static function claimToString($x, $z, $world): string {
+		return join("|", [$x, $z, $world]);
+	}
 
-    /**
-     * @return string The formated string like x|z|world
-     */
-    public static function claimToString($x, $z, $world): string {
-        return join("|", [$x, $z, $world]);
-    }
+	/**
+	 * @return string The formated string like x|y|z|world
+	 */
+	public static function homeToString($x, $y, $z, $world): string {
+		return join("|", [$x, $y, $z, $world]);
+	}
 
-    /**
-     * @return string The formated string like x|y|z|world
-     */
-    public static function homeToString($x, $y, $z, $world): string {
-        return join("|", [$x, $y, $z, $world]);
-    }
+	public static function homeToArray($x, $y, $z, $world): array {
+		return compact([$x, $y, $z, $world]);
+	}
 
-    public static function homeToArray($x, $y, $z, $world): array {
-        return compact([$x, $y, $z, $world]);
-    }
+	/**
+	 * @return bool|mixed
+	 */
+	public static function getConfig(string $key) {
+		return self::getConfigFile()->get($key);
+	}
 
-    /**
-     * @return bool|mixed
-     */
-    public static function getConfig(string $key) {
-        return self::getConfigFile()->get($key);
-    }
+	public static function getConfigFile(string $fileName = "config", string $folderPath = null): Config {
+		if ($folderPath === null) {
+			$folderPath = self::getDataFolder();
+		}
+		return new Config($folderPath . "$fileName.yml", Config::YAML);
+	}
 
-    public static function getConfigFile(string $fileName = "config", string $folderPath = null): Config {
-        if ($folderPath === null) $folderPath = self::getDataFolder();
-        return new Config($folderPath . "$fileName.yml", Config::YAML);
-    }
+	/**
+	 * @return bool|mixed
+	 */
+	public static function getConfigLang(string $key) {
+		return self::getConfigFile("translation")->get($key);
+	}
 
-    /**
-     * @return bool|mixed
-     */
-    public static function getConfigLang(string $key) {
-        return self::getConfigFile("translation")->get($key);
-    }
+	public static function getText(string $playerName, string $slug, array $args = []): string {
+		$playerLang = MainAPI::getPlayerLang($playerName);
+		if (isset(self::getConfigLang("languages")[$playerLang])) {
+			$fileName = self::getConfigLang("languages")[$playerLang];
+		} elseif (isset(self::getConfigLang("languages")["EN"])) {
+			$fileName = self::getConfigLang("languages")["EN"];
+		} else {
+			Main::getInstance()->getLogger()->error("Error in lang loading, please remove your plugin_data");
+			Main::getInstance()->getServer()->getPluginManager()->disablePlugin(Main::getInstance());
+			return "";
+		}
+		$config = self::getConfigLangFile($fileName);
+		$textNoReplace = $config->get($slug);
+		if ($textNoReplace === false) {
+			$config = self::getConfigLangFile("en_EN");
+			$textNoReplace = $config->get($slug);
+		}
+		return self::replaceParams($textNoReplace, $args);
+	}
 
-    public static function getText(string $playerName, string $slug, array $args = []): string {
-        $playerLang = MainAPI::getPlayerLang($playerName);
-        if (isset(self::getConfigLang("languages")[$playerLang])) {
-            $fileName = self::getConfigLang("languages")[$playerLang];
-        } elseif (isset(self::getConfigLang("languages")["EN"])) {
-            $fileName = self::getConfigLang("languages")["EN"];
-        } else {
-            Main::getInstance()->getLogger()->error("Error in lang loading, please remove your plugin_data");
-            Main::getInstance()->getServer()->getPluginManager()->disablePlugin(Main::getInstance());
-            return "";
-        }
-        $config = self::getConfigLangFile($fileName);
-        $textNoReplace = $config->get($slug);
-        if ($textNoReplace === false) {
-            $config = self::getConfigLangFile("en_EN");
-            $textNoReplace = $config->get($slug);
-        }
-        return self::replaceParams($textNoReplace, $args);
-    }
+	public static function getConfigLangFile(string $fileName): Config {
+		return self::getConfigFile($fileName, self::getLangFile());
+	}
 
-    public static function getConfigLangFile(string $fileName): Config {
-        return self::getConfigFile($fileName, self::getLangFile());
-    }
+	public static function getXpLevel(int $level): int {
+		return 1000 * pow(1.09, $level);
+	}
 
-    public static function getXpLevel(int $level): int {
-        return 1000 * pow(1.09, $level);
-    }
+	public static function haveAccess(array $permission, UserEntity $userEntity, int $id): bool {
+		if ($userEntity->getRank() == Ids::OWNER_ID) {
+			return true;
+		}
 
-    public static function haveAccess(array $permission, UserEntity $userEntity, int $id): bool {
-        if ($userEntity->getRank() == Ids::OWNER_ID) {
-            return true;
-        }
+		if (!PermissionManager::isRegister($id)) {
+			return false;
+		}
 
-        if (!PermissionManager::isRegister($id)) {
-            return false;
-        }
+		return (isset($permission[$id]) && $permission[$id]);
+	}
 
-        return (isset($permission[$id]) && $permission[$id]);
-    }
+	public static function newMenuSendTask(MenuSendTask $task): TaskHandler {
+		return Main::getInstance()->getScheduler()->scheduleRepeatingTask($task, 1);
+	}
 
-    public static function newMenuSendTask(MenuSendTask $task): TaskHandler {
-        return Main::getInstance()->getScheduler()->scheduleRepeatingTask($task, 1);
-    }
+	public static function getDataFolder(): string {
+		return Main::getInstance()->getDataFolder();
+	}
 
-    public static function getDataFolder(): string {
-        return Main::getInstance()->getDataFolder();
-    }
+	public static function getLangFile(): string {
+		return self::getDataFolder() . "lang/";
+	}
 
-    public static function getLangFile(): string {
-        return self::getDataFolder() . "lang/";
-    }
-
-    public static function getRawCoordonate(Position $position): string {
-        return join("|", [
-            $position->getX(),
-            $position->getY(),
-            $position->getZ(),
-            $position->getWorld()->getDisplayName()
-        ]);
-    }
+	public static function getRawCoordonate(Position $position): string {
+		return join("|", [
+			$position->getX(),
+			$position->getY(),
+			$position->getZ(),
+			$position->getWorld()->getDisplayName()
+		]);
+	}
 }

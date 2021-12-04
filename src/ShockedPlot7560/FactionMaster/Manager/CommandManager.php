@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  *
  *      ______           __  _                __  ___           __
@@ -34,6 +32,7 @@ declare(strict_types=1);
 
 namespace ShockedPlot7560\FactionMaster\Manager;
 
+use CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\AddFlagCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\ClaimCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\ClaimInfoCommand;
@@ -54,7 +53,6 @@ use ShockedPlot7560\FactionMaster\Command\Subcommand\SethomeCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\SettingsCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\SynchroCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\UnclaimCommand;
-use CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class CommandManager {

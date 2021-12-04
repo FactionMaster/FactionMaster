@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  *
  *      ______           __  _                __  ___           __
@@ -34,8 +32,8 @@ declare(strict_types=1);
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use pocketmine\command\CommandSender;
 use CortexPE\Commando\BaseSubCommand;
+use pocketmine\command\CommandSender;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function str_replace;
 

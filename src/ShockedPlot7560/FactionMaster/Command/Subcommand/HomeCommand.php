@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  *
  *      ______           __  _                __  ___           __
@@ -34,10 +32,10 @@ declare(strict_types=1);
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
+use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
-use CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\HomesViewRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
