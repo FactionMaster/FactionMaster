@@ -27,7 +27,7 @@
  #
 
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
-file-version: 11
+file-version: 12
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
 
 # --------------------- DATABASE --------------------------
@@ -76,6 +76,9 @@ max-faction-name-length: 20
 # If it set to true, image will be display near button
 # If it set to false, image will be disabled
 active-image: true
+# If you want to keep using the old system by paste your zip in resource_pack folder of the server, fill it to null
+# else, give the path to the zip like this : resource_pack/path/to/your
+resource-pack-path: null 
 
 faction-chat-active: false
 faction-chat-symbol: "$"

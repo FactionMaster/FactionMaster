@@ -32,8 +32,13 @@
 namespace ShockedPlot7560\FactionMaster\Manager;
 
 use pocketmine\resourcepacks\ResourcePack;
+use pocketmine\resourcepacks\ResourcePackException;
+use pocketmine\resourcepacks\ZippedResourcePack;
+use ReflectionClass;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function is_file;
+use function strtolower;
 
 class ImageManager {
 
@@ -45,6 +50,33 @@ class ImageManager {
 	public static function init(Main $main) {
 		self::$main = $main;
 		if (Utils::getConfig("active-image") == true) {
+			$path = Main::getInstance()->getDataFolder() . Utils::getConfig("resource-pack-path");
+			if (is_file($path)) {
+				try {
+					$manager = $main->getServer()->getResourcePackManager();
+					$ressourcePack = new ZippedResourcePack($path);
+					$reflection = new ReflectionClass($manager);
+					$property = $reflection->getProperty("resourcePacks");
+					$property->setAccessible(true);
+					$currentResourcePacks = $property->getValue($manager);
+					$currentResourcePacks[] = $ressourcePack;
+					$property->setValue($manager, $currentResourcePacks);
+					$property = $reflection->getProperty("uuidList");
+					$property->setAccessible(true);
+					$currentUUIDPacks = $property->getValue($manager);
+					$currentUUIDPacks[strtolower($ressourcePack->getPackId())] = $ressourcePack;
+					$property->setValue($manager, $currentUUIDPacks);
+					$property = $reflection->getProperty("serverForceResources");
+					$property->setAccessible(true);
+					$property->setValue($manager, true);
+					self::setImageEnable(true);
+					return;
+				} catch (ResourcePackException $th) {
+					$main->getLogger()->warning("An error occured in the FactionMaster load : " . $th->getMessage());
+				}
+			} else {
+				$main->getLogger()->warning("The resource_pack given for FactionMaster image doesn't exists");
+			}
 			$uuid = [
 				"dbcac694-6cc7-4c68-8798-bd114218ba16", //official
 				"dc84ba0e-f0f1-4beb-a0da-be2b1115c613" //xAliTura01

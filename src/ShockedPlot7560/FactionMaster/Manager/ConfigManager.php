@@ -42,7 +42,7 @@ use function is_countable;
 use function mkdir;
 
 class ConfigManager {
-	const CONFIG_VERSION = 11;
+	const CONFIG_VERSION = 12;
 	const LEVEL_VERSION = 0;
 	const TRANSLATION_VERSION = 1;
 	const LANG_FILE_VERSION = [
@@ -76,6 +76,16 @@ class ConfigManager {
 		$main->saveResource('level.yml');
 		$main->saveResource('version.yml');
 		$main->saveResource('leaderboard.yml');
+
+		$resourcePack = [
+			"official",
+			"xAliTura01"
+		];
+		@mkdir(Utils::getDataFolder() . "resource_pack/");
+		foreach ($resourcePack as $packName) {
+			@mkdir(Utils::getDataFolder() . "resource_pack/$packName/");
+			$main->saveResource("resource_pack/$packName/FactionMaster-$packName.zip");
+		}
 
 		self::$config = Utils::getConfigFile("config");
 		self::$level = Utils::getConfigFile("level");
