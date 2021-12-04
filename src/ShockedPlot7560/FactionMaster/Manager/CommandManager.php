@@ -40,7 +40,6 @@ use ShockedPlot7560\FactionMaster\Command\Subcommand\DelhomeCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\ExtensionCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\FactionCreateCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\FactionManageCommand;
-use ShockedPlot7560\FactionMaster\Command\Subcommand\FactionTopCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\HelpCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\HomeCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\HomeTpCommand;
@@ -62,7 +61,6 @@ class CommandManager {
 
 	public static function init(): void {
 		self::registerCommand(new FactionCreateCommand("create", Utils::getText("", "COMMAND_CREATE_DESCRIPTION")));
-		self::registerCommand(new FactionTopCommand("top", Utils::getText("", "COMMAND_TOP_DESCRIPTION")));
 		self::registerCommand(new FactionManageCommand("manage", Utils::getText("", "COMMAND_MANAGE_DESCRIPTION")));
 		self::registerCommand(new ClaimCommand("claim", Utils::getText("", "COMMAND_CLAIM_DESCRIPTION")));
 		self::registerCommand(new UnclaimCommand("unclaim", Utils::getText("", "COMMAND_UNCLAIM_DESCRIPTION")));
