@@ -42,13 +42,10 @@ use function strtolower;
 
 class ImageManager {
 
-	/** @var Main */
-	private static $main;
 	/** @var boolean */
 	private static $activeImage = false;
 
 	public static function init(Main $main) {
-		self::$main = $main;
 		if (Utils::getConfig("active-image") == true) {
 			$path = Main::getInstance()->getDataFolder() . Utils::getConfig("resource-pack-path");
 			if (is_file($path)) {

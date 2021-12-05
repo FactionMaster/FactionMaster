@@ -32,6 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Manager;
 
+use Exception;
 use PDO;
 use ShockedPlot7560\FactionMaster\Database\Table\ClaimTable;
 use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
@@ -63,6 +64,10 @@ class DatabaseManager {
 			case self::SQLITE_PROVIDER:
 				$databaseConfig = ConfigManager::getConfig()->get("SQLITE_database");
 				$pdo = new PDO("sqlite:" . $databaseConfig['name'] . ".sqlite");
+				break;
+			default:
+				throw new Exception("Provider given is not defined");
+				return;
 				break;
 		}
 		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

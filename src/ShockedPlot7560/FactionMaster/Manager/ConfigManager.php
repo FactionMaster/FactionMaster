@@ -35,7 +35,6 @@ namespace ShockedPlot7560\FactionMaster\Manager;
 use JackMD\ConfigUpdater\ConfigUpdater;
 use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\Main;
-use ShockedPlot7560\FactionMaster\Manager\Config\ConfigContainer;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 use function is_countable;
@@ -64,8 +63,6 @@ class ConfigManager {
 	private static $lang;
 	/** @var Config */
 	private static $leaderboard;
-	/** @var ConfigContainer */
-	private static $configContainer;
 
 	public static function init(Main $main): void {
 		@mkdir(Utils::getDataFolder());

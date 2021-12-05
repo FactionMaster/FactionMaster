@@ -215,7 +215,7 @@ class ManageLevelRoute extends RouteBase implements Route {
 						$finish = true;
 					}
 				}
-				if ($costItem === null || !isset($costItem)) {
+				if (empty($costItem)) {
 					return;
 				}
 				if ($continue !== true) {

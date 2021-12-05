@@ -108,7 +108,7 @@ class LeaderboardManager {
 
 	public static function dispawnLeaderboard(string $coordinates): void {
 		if (isset(self::$session[$coordinates])) {
-			/** @var FloatingTextParticle[] $particle */
+			/** @var FloatingTextParticle[] $particles */
 			$particles = self::$session[$coordinates];
 			$coordinates = explode("|", $coordinates);
 			foreach ($particles as $particle) {

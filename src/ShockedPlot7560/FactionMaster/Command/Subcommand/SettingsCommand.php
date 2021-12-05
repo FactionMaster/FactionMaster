@@ -52,8 +52,8 @@ class SettingsCommand extends BaseSubCommand {
 		$sender->sendMessage("  §8>> §7Default xp: §a" . Utils::getConfig("default-faction-xp"));
 		$sender->sendMessage("  §8>> §7Default power: §a" . Utils::getConfig("default-power"));
 		$sender->sendMessage("  §8>> §7Default level: §a" . Utils::getConfig("default-faction-level"));
-		$sender->sendMessage("  §8>> §7Default description: §a" . Utils::getConfig("default-faction-description") ?? "none");
-		$sender->sendMessage("  §8>> §7Default message: §a" . Utils::getConfig("default-faction-message") ?? "none");
+		$sender->sendMessage("  §8>> §7Default description: §a" . (Utils::getConfig("default-faction-description") === "" ? "none" : Utils::getConfig("default-faction-description")));
+		$sender->sendMessage("  §8>> §7Default message: §a" . (Utils::getConfig("default-faction-message") === "" ? "none" : Utils::getConfig("default-faction-message")));
 		$map = Utils::getConfig("f-map-task");
 		$sender->sendMessage("  §8>> §7F map task: " . ($map === false ? "§cno" : "§ayes"));
 		$sender->sendMessage("  §8>> §7Claim alert: " . (Utils::getConfig("message-alert") === true ? "§ayes" : "§cno"));

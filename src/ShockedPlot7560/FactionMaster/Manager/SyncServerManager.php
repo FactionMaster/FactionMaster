@@ -57,11 +57,8 @@ class SyncServerManager {
 
 	/** @var array */
 	private static $list;
-	/** @var Main */
-	private static $main;
 
 	public static function init(Main $main): void {
-		self::$main = $main;
 		self::addItem(
 			"SELECT * FROM " . FactionTable::TABLE_NAME,
 			[],

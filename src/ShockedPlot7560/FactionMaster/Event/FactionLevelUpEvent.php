@@ -40,7 +40,6 @@ class FactionLevelUpEvent extends FactionEvent implements Forcable {
 	use PlayerEvent;
 
 	protected $player;
-	private $oldLevel;
 	private $reward;
 	private $cost;
 

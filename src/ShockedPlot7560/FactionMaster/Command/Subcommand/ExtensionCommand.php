@@ -34,6 +34,7 @@ namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
 use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
+use pocketmine\permission\DefaultPermissions;
 use ShockedPlot7560\FactionMaster\Manager\ExtensionManager;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -43,7 +44,7 @@ class ExtensionCommand extends BaseSubCommand {
 	}
 
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-		if (!$sender->isOp()) {
+		if (!$sender->hasPermission(DefaultPermissions::ROOT_OPERATOR)) {
 			$sender->sendMessage(Utils::getText($sender->getName(), "NO_PERMISSION"));
 			return;
 		}
