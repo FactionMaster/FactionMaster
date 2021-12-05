@@ -33,7 +33,7 @@
 namespace ShockedPlot7560\FactionMaster\API;
 
 use PDO;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\HomeEntity;

@@ -34,7 +34,7 @@ namespace ShockedPlot7560\FactionMaster\Command;
 
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseCommand;
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\AddFlagCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\ClaimCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\ClaimInfoCommand;
