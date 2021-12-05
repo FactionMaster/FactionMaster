@@ -3,6 +3,7 @@ build-by-default: true
 branches:
 - stable
 - dev
+- pmmp4
 projects:
   FactionMaster:
     path: ""
