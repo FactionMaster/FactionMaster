@@ -32,8 +32,8 @@
 
 namespace ShockedPlot7560\FactionMaster;
 
-use CortexPE\Commando\PacketHooker;
-use JackMD\UpdateNotifier\UpdateNotifier;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\PacketHooker;
+use ShockedPlot7560\FactionMaster\libs\JackMD\UpdateNotifier\UpdateNotifier;
 use pocketmine\event\Listener;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginBase;
