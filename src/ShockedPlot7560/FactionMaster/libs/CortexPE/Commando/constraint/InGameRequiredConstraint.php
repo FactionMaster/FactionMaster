@@ -31,7 +31,7 @@ namespace ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\constraint;
 
 
 use pocketmine\command\CommandSender;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
 class InGameRequiredConstraint extends BaseConstraint {
