@@ -92,6 +92,10 @@ class MigrationManager {
 			"3.1.4" => function () {
 				self::$main->getLogger()->notice("This version include some minor bug fix");
 				self::$main->getLogger()->notice("To stay informed about the progress of the plugin and participate in discussions, join our discord :)");
+			},
+			"4.0.0" => function () {
+				self::$main->getLogger()->notice("FactionMaster4.0.0 include some new feature and PocketMine 4.0 support");
+				self::$main->getLogger()->notice("You can now make multiple leaderboard, Image resource_pack can now be autoload in the plugin data");
 			}
 		];
 		self::$configDbToCheck = [
