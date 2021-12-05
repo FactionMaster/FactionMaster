@@ -32,8 +32,9 @@
 
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
+use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Task\SyncServerTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -44,7 +45,7 @@ class SynchroCommand extends BaseSubCommand {
 
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
 		if ($sender->hasPermission("factionmaster.synchro.launch")) {
-			$this->getPlugin()->getScheduler()->scheduleTask(new SyncServerTask($this->getPlugin()));
+			Main::getInstance()->getScheduler()->scheduleTask(new SyncServerTask(Main::getInstance()));
 			$sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_SYNCHRO") . ", launch!");
 		}
 	}

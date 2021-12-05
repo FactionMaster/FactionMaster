@@ -32,14 +32,14 @@
 
 namespace ShockedPlot7560\FactionMaster;
 
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\PacketHooker;
-use ShockedPlot7560\FactionMaster\libs\JackMD\UpdateNotifier\UpdateNotifier;
 use pocketmine\event\Listener;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginBase;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Command\FactionCommand;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\PacketHooker;
+use ShockedPlot7560\FactionMaster\libs\JackMD\UpdateNotifier\UpdateNotifier;
 use ShockedPlot7560\FactionMaster\Listener\BroadcastMessageListener;
 use ShockedPlot7560\FactionMaster\Listener\EventListener;
 use ShockedPlot7560\FactionMaster\Listener\ScoreHudListener;
@@ -117,7 +117,7 @@ class Main extends PluginBase implements Listener {
 			ExtensionManager::load();
 
 			$this->getScheduler()->scheduleRepeatingTask(new SyncServerTask($this), (int) Utils::getConfig("sync-time"));
-			$this->getScheduler()->scheduleRepeatingTask(new LeaderboardTask($this), 80);
+			$this->getScheduler()->scheduleRepeatingTask(new LeaderboardTask(), 80);
 
 			if (Utils::getConfig("f-map-task") !== false) {
 				$time = (int) Utils::getConfig("f-map-task");
