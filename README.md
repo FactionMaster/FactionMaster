@@ -1,4 +1,4 @@
-[![](https://poggit.pmmp.io/shield.state/FactionMaster)](https://poggit.pmmp.io/p/FactionMaster) [![](https://poggit.pmmp.io/shield.dl.total/FactionMaster)](https://poggit.pmmp.io/p/FactionMaster)
+[![](https://poggit.pmmp.io/shield.state/FactionMaster)](https://poggit.pmmp.io/p/FactionMaster) [![](https://poggit.pmmp.io/shield.dl.total/FactionMaster)](https://poggit.pmmp.io/p/FactionMaster) [![](https://img.shields.io/discord/896694660473434192?label=discord&color=7289DA&logo=discord)](https://discord.gg/9dyYQjPpnA)
 
 # FactionMaster
 
