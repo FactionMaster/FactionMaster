@@ -29,21 +29,107 @@ declare(strict_types=1);
 
 namespace ShockedPlot7560\FactionMaster\libs\CortexPE\Commando;
 
-use pocketmine\plugin\Plugin;
-use function trim;
 
-abstract class BaseSubCommand extends BaseCommand{
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\constraint\BaseConstraint;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\traits\ArgumentableTrait;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\traits\IArgumentable;
+use pocketmine\command\CommandSender;
+use pocketmine\plugin\Plugin;
+use function explode;
+
+abstract class BaseSubCommand implements IArgumentable, IRunnable {
+	use ArgumentableTrait;
+	/** @var string */
+	private $name;
+	/** @var string[] */
+	private $aliases = [];
+	/** @var string */
+	private $description = "";
+	/** @var string */
+	protected $usageMessage;
+	/** @var string|null */
+	private $permission = null;
+	/** @var CommandSender */
+	protected $currentSender;
 	/** @var BaseCommand */
 	protected $parent;
+	/** @var BaseConstraint[] */
+	private $constraints = [];
 
-	public function __construct(Plugin $plugin, string $name, string $description = "", array $aliases = []){
-		parent::__construct($plugin, $name, $description, $aliases);
+	public function __construct(string $name, string $description = "", array $aliases = []) {
+		$this->name = $name;
+		$this->description = $description;
+		$this->aliases = $aliases;
 
-		$this->usageMessage = "";
+		$this->prepare();
+
+		$this->usageMessage = $this->generateUsageMessage();
 	}
 
-	public function getParent(): ?BaseCommand {
-		return $this->parent;
+	abstract public function onRun(CommandSender $sender, string $aliasUsed, array $args): void;
+
+	/**
+	 * @return string
+	 */
+	public function getName(): string {
+		return $this->name;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function getAliases(): array {
+		return $this->aliases;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getDescription(): string {
+		return $this->description;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getUsageMessage(): string {
+		return $this->usageMessage;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getPermission(): ?string {
+		return $this->permission;
+	}
+
+	/**
+	 * @param string $permission
+	 */
+	public function setPermission(string $permission): void {
+		$this->permission = $permission;
+	}
+
+	public function testPermissionSilent(CommandSender $sender): bool {
+		if(empty($this->permission)) {
+			return true;
+		}
+		foreach(explode(";", $this->permission) as $permission) {
+			if($sender->hasPermission($permission)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * @param CommandSender $currentSender
+	 *
+	 * @internal Used to pass the current sender from the parent command
+	 */
+	public function setCurrentSender(CommandSender $currentSender): void {
+		$this->currentSender = $currentSender;
 	}
 
 	/**
@@ -55,23 +141,29 @@ abstract class BaseSubCommand extends BaseCommand{
 		$this->parent = $parent;
 	}
 
-	public function getUsage(): string{
-		if(empty($this->usageMessage)){
-			$parent = $this->parent;
-			$parentNames = "";
+	public function sendError(int $errorCode, array $args = []): void {
+		$this->parent->sendError($errorCode, $args);
+	}
 
-			while($parent instanceof BaseSubCommand) {
-				$parentNames = $parent->getName() . $parentNames;
-				$parent = $parent->getParent();
-			}
+	public function sendUsage():void {
+		$this->currentSender->sendMessage("/{$this->parent->getName()} {$this->usageMessage}");
+	}
 
-			if($parent instanceof BaseCommand){
-				$parentNames = $parent->getName() . " " . $parentNames;
-			}
+    public function addConstraint(BaseConstraint $constraint) : void {
+        $this->constraints[] = $constraint;
+    }
 
-			$this->usageMessage = $this->generateUsageMessage(trim($parentNames));
-		}
+    /**
+     * @return BaseConstraint[]
+     */
+    public function getConstraints(): array {
+        return $this->constraints;
+    }
 
-		return $this->usageMessage;
+	/**
+	 * @return Plugin
+	 */
+	public function getPlugin(): Plugin {
+		return $this->parent->getPlugin();
 	}
 }

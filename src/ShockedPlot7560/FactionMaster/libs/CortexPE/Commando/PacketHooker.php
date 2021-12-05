@@ -38,12 +38,13 @@ use pocketmine\command\CommandSender;
 use pocketmine\event\Listener;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
-use pocketmine\network\mcpe\protocol\types\command\CommandEnum;
-use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
+use pocketmine\network\mcpe\protocol\types\CommandEnum;
+use pocketmine\network\mcpe\protocol\types\CommandParameter;
 use pocketmine\plugin\Plugin;
 use pocketmine\Server;
+use function array_unique;
 use function array_unshift;
-use function count;
+use function array_values;
 
 class PacketHooker implements Listener {
 	/** @var bool */
@@ -72,24 +73,22 @@ class PacketHooker implements Listener {
 	 * @priority        LOWEST
 	 * @ignoreCancelled true
 	 */
-	public function onPacketSend(DataPacketSendEvent $ev): void
-	{
-		foreach ($ev->getPackets() as $pk) {
-			if ($pk instanceof AvailableCommandsPacket) {
-				$p = $ev->getTargets()[array_keys($ev->getTargets())[0]]->getPlayer();
-				foreach ($pk->commandData as $commandName => $commandData) {
-					$cmd = $this->map->getCommand($commandName);
-					if ($cmd instanceof BaseCommand) {
-						foreach ($cmd->getConstraints() as $constraint) {
-							if (!$constraint->isVisibleTo($p)) {
-								continue 2;
-							}
+	public function onPacketSend(DataPacketSendEvent $ev): void {
+		$pk = $ev->getPacket();
+		if($pk instanceof AvailableCommandsPacket) {
+			$p = $ev->getPlayer();
+			foreach($pk->commandData as $commandName => $commandData) {
+				$cmd = $this->map->getCommand($commandName);
+				if($cmd instanceof BaseCommand) {
+					foreach($cmd->getConstraints() as $constraint){
+						if(!$constraint->isVisibleTo($p)){
+							continue 2;
 						}
-						$pk->commandData[$commandName]->overloads = self::generateOverloads($p, $cmd);
 					}
+					$pk->commandData[$commandName]->overloads = self::generateOverloads($p, $cmd);
 				}
-				$pk->softEnums = SoftEnumStore::getEnums();
 			}
+			$pk->softEnums = SoftEnumStore::getEnums();
 		}
 	}
 
@@ -101,6 +100,9 @@ class PacketHooker implements Listener {
 	 */
 	private static function generateOverloads(CommandSender $cs, BaseCommand $command): array {
 		$overloads = [];
+
+		$scEnum = new CommandEnum();
+		$scEnum->enumName = $command->getName() . "SubCommands";
 
 		foreach($command->getSubCommands() as $label => $subCommand) {
 			if(!$subCommand->testPermissionSilent($cs) || $subCommand->getName() !== $label){ // hide aliases
@@ -115,9 +117,16 @@ class PacketHooker implements Listener {
 			$scParam->paramName = $label;
 			$scParam->paramType = AvailableCommandsPacket::ARG_FLAG_VALID | AvailableCommandsPacket::ARG_FLAG_ENUM;
 			$scParam->isOptional = false;
-			$scParam->enum = new CommandEnum($label, [$label]);
+			$scParam->enum = new CommandEnum();
+			$scParam->enum->enumName = $label;
+			$scParam->enum->enumValues = [$label];
 
-			$overloadList = self::generateOverloads($cs, $subCommand);
+			// it looks uglier imho
+			//$scParam->enum = $scEnum;
+
+			$scEnum->enumValues[] = $label;
+
+			$overloadList = self::generateOverloadList($subCommand);
 			if(!empty($overloadList)){
 				foreach($overloadList as $overload) {
 					array_unshift($overload, $scParam);
@@ -148,24 +157,28 @@ class PacketHooker implements Listener {
 		foreach($input as $k => $charList){
 			$indexes[$k] = 0;
 		}
-        do {
-            /** @var CommandParameter[] $set */
-            $set = [];
-            foreach($indexes as $k => $index){
-                $set[$k] = clone $input[$k][$index]->getNetworkParameterData();
-            }
-            $combinations[] = $set;
+		do {
+			/** @var CommandParameter[] $set */
+			$set = [];
+			foreach($indexes as $k => $index){
+				$param = $set[$k] = clone $input[$k][$index]->getNetworkParameterData();
 
-            foreach($indexes as $k => $v){
-                $indexes[$k]++;
-                $lim = count($input[$k]);
-                if($indexes[$k] >= $lim){
-                    $indexes[$k] = 0;
-                    continue;
-                }
-                break;
-            }
-        } while(count($combinations) !== $outputLength);
+				if(isset($param->enum) && $param->enum instanceof CommandEnum){
+					$param->enum->enumName = "enum#" . spl_object_id($param->enum);
+				}
+			}
+			$combinations[] = $set;
+
+			foreach($indexes as $k => $v){
+				$indexes[$k]++;
+				$lim = count($input[$k]);
+				if($indexes[$k] >= $lim){
+					$indexes[$k] = 0;
+					continue;
+				}
+				break;
+			}
+		} while(count($combinations) !== $outputLength);
 
 		return $combinations;
 	}
