@@ -16,8 +16,10 @@ projects:
       branch: PM4
     - src: ifera-mc/UpdateNotifier/UpdateNotifier
       version: ^2.1.0
+      branch: API-4.0.0
     - src: ifera-mc/ConfigUpdater/ConfigUpdater
       version: ^1.2.0
+      branch: PM4
     - src: muqsit/simplepackethandler/SimplePacketHandler
       version: ^0.0.1
 ...
