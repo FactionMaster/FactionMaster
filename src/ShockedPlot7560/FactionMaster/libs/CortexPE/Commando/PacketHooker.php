@@ -33,27 +33,27 @@ namespace ShockedPlot7560\FactionMaster\libs\CortexPE\Commando;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\exception\HookAlreadyRegistered;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\store\SoftEnumStore;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\traits\IArgumentable;
-use ShockedPlot7560\FactionMaster\libs\muqsit\simplepackethandler\SimplePacketHandler;
 use pocketmine\command\CommandMap;
 use pocketmine\command\CommandSender;
-use pocketmine\event\EventPriority;
 use pocketmine\event\Listener;
 use pocketmine\event\server\DataPacketSendEvent;
-use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
 use pocketmine\network\mcpe\protocol\types\command\CommandEnum;
 use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\plugin\Plugin;
 use pocketmine\Server;
-use function array_unique;
 use function array_unshift;
-use function array_values;
+use function count;
 
 class PacketHooker implements Listener {
 	/** @var bool */
 	private static $isRegistered = false;
-	/** @var bool */
-	private static $isIntercepting = false;
+	/** @var CommandMap */
+	protected $map;
+
+	public function __construct() {
+		$this->map = Server::getInstance()->getCommandMap();
+	}
 
 	public static function isRegistered(): bool {
 		return self::$isRegistered;
@@ -63,28 +63,34 @@ class PacketHooker implements Listener {
 		if(self::$isRegistered) {
 			throw new HookAlreadyRegistered("Event listener is already registered by another plugin.");
 		}
+		$registrant->getServer()->getPluginManager()->registerEvents(new PacketHooker(), $registrant);
+	}
 
-		$interceptor = SimplePacketHandler::createInterceptor($registrant, EventPriority::NORMAL, false);
-		$interceptor->interceptOutgoing(function(AvailableCommandsPacket $pk, NetworkSession $target) : bool{
-			if(self::$isIntercepting)return true;
-			$p = $target->getPlayer();
-			foreach($pk->commandData as $commandName => $commandData) {
-				$cmd = Server::getInstance()->getCommandMap()->getCommand($commandName);
-				if($cmd instanceof BaseCommand) {
-					foreach($cmd->getConstraints() as $constraint){
-						if(!$constraint->isVisibleTo($p)){
-							continue 2;
+	/**
+	 * @param DataPacketSendEvent $ev
+	 *
+	 * @priority        LOWEST
+	 * @ignoreCancelled true
+	 */
+	public function onPacketSend(DataPacketSendEvent $ev): void
+	{
+		foreach ($ev->getPackets() as $pk) {
+			if ($pk instanceof AvailableCommandsPacket) {
+				$p = $ev->getTargets()[array_keys($ev->getTargets())[0]]->getPlayer();
+				foreach ($pk->commandData as $commandName => $commandData) {
+					$cmd = $this->map->getCommand($commandName);
+					if ($cmd instanceof BaseCommand) {
+						foreach ($cmd->getConstraints() as $constraint) {
+							if (!$constraint->isVisibleTo($p)) {
+								continue 2;
+							}
 						}
+						$pk->commandData[$commandName]->overloads = self::generateOverloads($p, $cmd);
 					}
-					$pk->commandData[$commandName]->overloads = self::generateOverloads($p, $cmd);
 				}
+				$pk->softEnums = SoftEnumStore::getEnums();
 			}
-			$pk->softEnums = SoftEnumStore::getEnums();
-			self::$isIntercepting = true;
-			$target->sendDataPacket($pk);
-			self::$isIntercepting = false;
-			return false;
-		});
+		}
 	}
 
 	/**
@@ -111,7 +117,7 @@ class PacketHooker implements Listener {
 			$scParam->isOptional = false;
 			$scParam->enum = new CommandEnum($label, [$label]);
 
-			$overloadList = self::generateOverloadList($subCommand);
+			$overloadList = self::generateOverloads($cs, $subCommand);
 			if(!empty($overloadList)){
 				foreach($overloadList as $overload) {
 					array_unshift($overload, $scParam);
@@ -142,31 +148,24 @@ class PacketHooker implements Listener {
 		foreach($input as $k => $charList){
 			$indexes[$k] = 0;
 		}
-		do {
-			/** @var CommandParameter[] $set */
-			$set = [];
-			foreach($indexes as $k => $index){
-				$param = $set[$k] = clone $input[$k][$index]->getNetworkParameterData();
+        do {
+            /** @var CommandParameter[] $set */
+            $set = [];
+            foreach($indexes as $k => $index){
+                $set[$k] = clone $input[$k][$index]->getNetworkParameterData();
+            }
+            $combinations[] = $set;
 
-				if(isset($param->enum) && $param->enum instanceof CommandEnum){
-					$refClass = new \ReflectionClass(CommandEnum::class);
-					$refProp = $refClass->getProperty("enumName");
-					$refProp->setAccessible(true);
-					$refProp->setValue($param->enum, "enum#" . spl_object_id($param->enum));
-				}
-			}
-			$combinations[] = $set;
-
-			foreach($indexes as $k => $v){
-				$indexes[$k]++;
-				$lim = count($input[$k]);
-				if($indexes[$k] >= $lim){
-					$indexes[$k] = 0;
-					continue;
-				}
-				break;
-			}
-		} while(count($combinations) !== $outputLength);
+            foreach($indexes as $k => $v){
+                $indexes[$k]++;
+                $lim = count($input[$k]);
+                if($indexes[$k] >= $lim){
+                    $indexes[$k] = 0;
+                    continue;
+                }
+                break;
+            }
+        } while(count($combinations) !== $outputLength);
 
 		return $combinations;
 	}

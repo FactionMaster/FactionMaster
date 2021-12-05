@@ -26,16 +26,18 @@ class SoftEnumStore {
 	}
 
 	public static function addEnum(CommandEnum $enum):void {
+		if($enum->getName() === null){
+			throw new CommandoException("Invalid enum");
+		}
 		static::$enums[$enum->getName()] = $enum;
 		self::broadcastSoftEnum($enum, UpdateSoftEnumPacket::TYPE_ADD);
 	}
 
 	public static function updateEnum(string $enumName, array $values):void {
-		if(self::getEnumByName($enumName) === null){
+		if(($enum = self::getEnumByName($enumName)) === null){
 			throw new CommandoException("Unknown enum named " . $enumName);
 		}
-		self::$enums[$enum->getName()] = $enum = new CommandEnum($enumName, $values);
-		self::broadcastSoftEnum($enum, UpdateSoftEnumPacket::TYPE_SET);
+		self::broadcastSoftEnum(new CommandEnum($enum->getName(), $values), UpdateSoftEnumPacket::TYPE_SET);
 	}
 
 	public static function removeEnum(string $enumName):void {

@@ -36,7 +36,6 @@ use function array_keys;
 use function array_map;
 use function implode;
 use function preg_match;
-use function spl_object_hash;
 use function strtolower;
 
 abstract class StringEnumArgument extends BaseArgument {
@@ -45,7 +44,7 @@ abstract class StringEnumArgument extends BaseArgument {
 	public function __construct(string $name, bool $optional = false) {
 		parent::__construct($name, $optional);
 
-		$this->parameterData->enum = new CommandEnum("", $this->getEnumValues());
+		$this->parameterData->enum = new CommandEnum($this->getEnumName(), $this->getEnumValues());
 	}
 
 	public function getNetworkType(): int {
@@ -58,6 +57,10 @@ abstract class StringEnumArgument extends BaseArgument {
 			"/^(" . implode("|", array_map("\\strtolower", $this->getEnumValues())) . ")$/iu",
 			$testString
 		);
+	}
+
+	public function getEnumName(): string {
+		return $this->name;
 	}
 
 	public function getValue(string $string) {
