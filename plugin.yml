@@ -3,7 +3,7 @@ author: ShockedPlot7560
 version: 4.0.0
 api: 4.0.0
 main: ShockedPlot7560\FactionMaster\Main
-description: "Full configurable and modulable faction plugin"
+description: "Full configurable and modulable faction plugin with resource pack"
 softdepend: ["ScoreHud"]
 virions: ["Commando", "libFormAPI", "PacketHandler", "UpdateNotifier", "ConfigUpdater"]
 
