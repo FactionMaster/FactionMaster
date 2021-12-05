@@ -67,7 +67,6 @@ class DatabaseManager {
 				break;
 			default:
 				throw new Exception("Provider given is not defined");
-				return;
 				break;
 		}
 		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
