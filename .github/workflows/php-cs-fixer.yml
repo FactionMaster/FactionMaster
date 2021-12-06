@@ -18,9 +18,15 @@ jobs:
               uses: docker://oskarstark/php-cs-fixer-ga
               with:
                   args: --config=config.php_cs --allow-risky=yes
-
-            - name: Commit changes
-              uses: stefanzweifel/git-auto-commit-action@v4
+                  
+            - name: Create Pull Request
+              uses: peter-evans/create-pull-request@v3
               with:
-                  commit_message: Fix styling
-                  branch: styling-fix
+                token: ${{ secrets.GITHUB_TOKEN }}
+                commit-message: Fix styling
+                title: '[PHP CS fixer] Fix styling'
+                body: >
+                  This PR is auto-generated to commit styling fix.
+                labels: Styling
+                branch: styling-fix
+                reviewers: ShockedPlot7560
