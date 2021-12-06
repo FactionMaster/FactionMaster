@@ -47,7 +47,6 @@ class HelpCommand extends BaseSubCommand {
 		$this->player = $sender;
 		$sender->sendMessage(Utils::getConfig("help-command-header"));
 		$sender->sendMessage($this->getString("/f", "COMMAND_FACTION_DESCRIPTION"));
-		$sender->sendMessage($this->getString("/f top", "COMMAND_TOP_DESCRIPTION"));
 		$sender->sendMessage($this->getString("/f manage", "COMMAND_MANAGE_DESCRIPTION"));
 		$sender->sendMessage($this->getString("/f claim", "COMMAND_CLAIM_DESCRIPTION"));
 		$sender->sendMessage($this->getString("/f unclaim", "COMMAND_UNCLAIM_DESCRIPTION"));
@@ -70,7 +69,7 @@ class HelpCommand extends BaseSubCommand {
 			$sender->sendMessage($this->getString("/f extension", "COMMAND_EXTENSION_DESCRIPTION"));
 		}
 		if ($sender->hasPermission("factionmaster.leaderboard.place")) {
-			$sender->sendMessage($this->getString("/f placeleaderboard", "COMMAND_SCOREBOARD_DESCRIPTION"));
+			$sender->sendMessage($this->getString("/f placeleaderboard <:slug>", "COMMAND_SCOREBOARD_DESCRIPTION"));
 		}
 		if ($sender->hasPermission("factionmaster.leaderboard.place")) {
 			$sender->sendMessage($this->getString("/f removeleaderboard", "COMMAND_SCOREBOARD_REMOVE_DESCRIPTION"));
