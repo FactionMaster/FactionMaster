@@ -53,14 +53,16 @@ FactionMaster have multiple server support, see the Installation section for mor
 * If you wish to use FactionMaster on more than one server at a time, please modify the ``config.yml`` after starting your server for the first time with FactionMaster on it and change the ``PROVIDER: "SQLITE"`` with MYSQL. Enter your database connection details and restart your server.
 
 ## Use resource pack
-* Download factionMaster texture pack available [here](https://github.com/FactionMaster/FactionMaster/tree/stable/resource_pack)
-* Install it on your server as a mandatory Texture pack
-* Put the line : active-image to true in ``config.yml`` file
-* Stop and start your server
+You have two ways to use the images under the Master faction
+  * Define the path to your resource pack directly in the config file with the line : ``resource-pack-path``
+  * Use a .zip of a trusted FactionMaster resource_pack directly in the server folder and configure it by hand.
+    * Download factionMaster texture pack available [here](https://github.com/FactionMaster/FactionMaster/tree/stable/resource_pack)
+    * Install it on your server as a mandatory Texture pack
+    * Put the line : active-image to true in ``config.yml`` file
+    * Stop and start your server
 
 ## Commands
 * ``/f``, ``/faction``, ``/fac``: Opens the main menu of FactionMaster
-* ``/f top``: Open the faction ranking
 * ``/f manage``: Opens the faction management interface
 * ``/f sethome <:name>``: Place a home at the player's location
 * ``/f delhome <:name>``: Remove the faction home
@@ -69,22 +71,26 @@ FactionMaster have multiple server support, see the Installation section for mor
 * ``/f claim``: Claim the current chunk
 * ``/f unclaim``: Remove the current claim
 * ``/f create``: Opens the menu to create a faction
-* ``/f map``: Displays the map listing all claims
+* ``/f map [on/off]``: Displays the map listing all claims
 * ``/f help``: Displays the orders
 * ``/f info <:name>``: Displays information about a faction
 * ``/f claiminfo``: Displays information about a chunk
 * ``/f extension``: Display extensions enabled *For op only*
-* ``/f scoreboard``: Set the location to spawn top faction scoreboard
-* ``/f addflag``: Add a claim considered like an area
-* ``/f removeflag``: Remove a claim considered like an area
+* ``/f placeleaderboards <slug>``: Place a leaderboard to your location
+* ``/f removeleaderboard``: Remove the nearest leaderboard around you
 * ``/f settings``: Give all the FactionMaster settings
 * ``/f synchro``: Submit task to make synchronisation manually of the database
+* ``/f addflag <areaName> <type>``: Add a claim considered like an area
+* ``/f removeflag``: Remove the actual claim considered like an area
 
 ## Extensions
 Extensions, a new way to customize your plugin to your liking. You just have to download the plugin corresponding to the desired extension and place it in the corresponding folder on your server. If you have an urge to stop using the functionality, delete the plugin from your server and the changes will be gone! You can use those approved by the FactionMaster team or do it yourself (*refer to the GitHub*) and submit it to us if you feel like it.
 
 All extensions made by the FactionMaster team and those approved by the FactionMaster team, which are accessible via poggit will be listed here.
 * **Bank system** : [here](https://poggit.pmmp.io/p/FactionMasterBank) *by FactionMaster*
+* **Invitation system improve** : [here](https://poggit.pmmp.io/p/FactionMasterInvitationImprove) *by FactionMaster*
+
+*To submit your extension ideas, create an issue on our [GitHub](https://github.com/FactionMaster/FactionMaster/issues/new/choose) and select the corresponding category*
 
 ## Translators
 To participate in the translation of FactionMaster and probably see yourself here, create a Pull Request on the FactionMaster [GitHub](https://github.com/ShockedPlot7560/FactionMaster/). Once the language has been translated on the main plugin and on all the extensions listed in the ``Extension`` section, it will be added and all its contributors thanked.
@@ -101,37 +107,6 @@ All approved extensions will have a line in the README and and listed in the ``E
 
 ## Config
 ```yaml
- #
- #      ______           __  _                __  ___           __
- #     / ____/___ ______/ /_(_)___  ____     /  |/  /___ ______/ /____  _____
- #    / /_  / __ `/ ___/ __/ / __ \/ __ \   / /|_/ / __ `/ ___/ __/ _ \/ ___/
- #   / __/ / /_/ / /__/ /_/ / /_/ / / / /  / /  / / /_/ (__  ) /_/  __/ /  
- #  /_/    \__,_/\___/\__/_/\____/_/ /_/  /_/  /_/\__,_/____/\__/\___/_/ 
- #
- # FactionMaster - A Faction plugin for PocketMine-MP
- # This file is part of FactionMaster
- # 
- # This program is free software: you can redistribute it and/or modify
- # it under the terms of the GNU Lesser General Public License as published by
- # the Free Software Foundation, either version 3 of the License, or
- # (at your option) any later version.
- #
- # This program is distributed in the hope that it will be useful,
- # but WITHOUT ANY WARRANTY; without even the implied warranty of
- # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- # GNU Lesser General Public License for more details.
- #
- # You should have received a copy of the GNU Lesser General Public License
- # along with this program.  If not, see <https://www.gnu.org/licenses/>.
- #
- # @author ShockedPlot7560 
- # @link https://github.com/ShockedPlot7560
- #
-
-# DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
-file-version: 9
-# DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
-
 # --------------------- DATABASE --------------------------
 
 # Use only SQLITE or MYSQL
@@ -145,7 +120,7 @@ MYSQL_database:
   user: "root"
   pass: ""
 SQLITE_database: 
-  name: "FactionMaster"
+  name: "FactionMasterv3"
 
 # --------------------- GLOBAL CONFIGURATION --------------------------
 
@@ -178,6 +153,9 @@ max-faction-name-length: 20
 # If it set to true, image will be display near button
 # If it set to false, image will be disabled
 active-image: true
+# If you want to keep using the old system by paste your zip in resource_pack folder of the server, fill it to null
+# else, give the path to the zip like this : resource_pack/path/to/your
+resource-pack-path: null 
 
 faction-chat-active: false
 faction-chat-symbol: "$"
@@ -274,15 +252,21 @@ message-alert-cooldown: 10
 message-alert-flag-enabled: false
 # -------------- TOP FACTION'S SCOREBOARD CONFIGURATION -----------------
 
-# SEE leaderboard.yml to enabled and updated position of the leaderboard !
-
-# This is the scoreboard header, display on the top
-faction-scoreboard-header: "- Top 10 faction -"
+# This is the scoreboard header, display on the top for the factionLevel top
+factionLevel-leaderboard-header: "- Top 10 faction -"
 # Lign patern for each faction
 # you can use this parameter : 
 # {factionName} / {level} / {power}
 # to purpose a parameter suggestion, please open an issue on github
-faction-scoreboard-lign: "{factionName}: Level {level}"
+factionLevel-leaderboard-body: "{factionName}: Level {level}"
+
+# This is the scoreboard header, display on the top for the factionPower top
+factionPower-leaderboard-header: "- Top 10 faction -"
+# Lign patern for each faction
+# you can use this parameter : 
+# {factionName} / {level} / {power}
+# to purpose a parameter suggestion, please open an issue on github
+factionPower-leaderboard-body: "{factionName}: Level {level}"
 
 # --------------------- PLUGIN CONFIGURATION --------------------------
 #       DONT CHANGE IF YOU DONT KNOW WHAT YOU ARE DOING
