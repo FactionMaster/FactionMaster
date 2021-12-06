@@ -9,21 +9,15 @@ use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\protocol\ClientboundPacket;
 use pocketmine\network\mcpe\protocol\ServerboundPacket;
 
-interface IPacketInterceptor{
+interface IPacketInterceptor {
 
 	/**
-	 * @param Closure $handler
-	 * @return IPacketInterceptor
-	 *
 	 * @phpstan-template TServerboundPacket of ServerboundPacket
 	 * @phpstan-param Closure(TServerboundPacket, NetworkSession) : bool $handler
 	 */
 	public function interceptIncoming(Closure $handler) : IPacketInterceptor;
 
 	/**
-	 * @param Closure $handler
-	 * @return IPacketInterceptor
-	 *
 	 * @phpstan-template TClientboundPacket of ClientboundPacket
 	 * @phpstan-param Closure(TClientboundPacket, NetworkSession) : bool $handler
 	 */

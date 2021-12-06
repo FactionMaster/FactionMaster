@@ -29,7 +29,6 @@ declare(strict_types=1);
 
 namespace ShockedPlot7560\FactionMaster\libs\CortexPE\Commando;
 
-
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\constraint\BaseConstraint;
 
 /**
@@ -41,19 +40,19 @@ use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\constraint\BaseConstrai
  * @package CortexPE\Commando
  */
 interface IRunnable {
-    public function getName(): string;
+	public function getName(): string;
 
-    /**
-     * @return string[]
-     */
-    public function getAliases(): array;
+	/**
+	 * @return string[]
+	 */
+	public function getAliases(): array;
 
-    public function getUsageMessage():string;
+	public function getUsageMessage():string;
 
-    public function getPermission(); // f*ck. PM didn't declare a return type... reeee
+	public function getPermission(); // f*ck. PM didn't declare a return type... reeee
 
-    /**
-     * @return BaseConstraint[]
-     */
-    public function getConstraints():array;
+	/**
+	 * @return BaseConstraint[]
+	 */
+	public function getConstraints():array;
 }

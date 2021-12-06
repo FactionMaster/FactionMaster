@@ -29,7 +29,6 @@ declare(strict_types=1);
 
 namespace ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args;
 
-
 use pocketmine\command\CommandSender;
 use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
 

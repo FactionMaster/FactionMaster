@@ -29,12 +29,11 @@ declare(strict_types=1);
 
 namespace ShockedPlot7560\FactionMaster\libs\CortexPE\Commando;
 
-
+use pocketmine\command\CommandSender;
+use pocketmine\plugin\Plugin;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\constraint\BaseConstraint;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\traits\ArgumentableTrait;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\traits\IArgumentable;
-use pocketmine\command\CommandSender;
-use pocketmine\plugin\Plugin;
 use function explode;
 
 abstract class BaseSubCommand implements IArgumentable, IRunnable {
@@ -68,9 +67,6 @@ abstract class BaseSubCommand implements IArgumentable, IRunnable {
 
 	abstract public function onRun(CommandSender $sender, string $aliasUsed, array $args): void;
 
-	/**
-	 * @return string
-	 */
 	public function getName(): string {
 		return $this->name;
 	}
@@ -82,40 +78,28 @@ abstract class BaseSubCommand implements IArgumentable, IRunnable {
 		return $this->aliases;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getDescription(): string {
 		return $this->description;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getUsageMessage(): string {
 		return $this->usageMessage;
 	}
 
-	/**
-	 * @return string|null
-	 */
 	public function getPermission(): ?string {
 		return $this->permission;
 	}
 
-	/**
-	 * @param string $permission
-	 */
 	public function setPermission(string $permission): void {
 		$this->permission = $permission;
 	}
 
 	public function testPermissionSilent(CommandSender $sender): bool {
-		if(empty($this->permission)) {
+		if (empty($this->permission)) {
 			return true;
 		}
-		foreach(explode(";", $this->permission) as $permission) {
-			if($sender->hasPermission($permission)) {
+		foreach (explode(";", $this->permission) as $permission) {
+			if ($sender->hasPermission($permission)) {
 				return true;
 			}
 		}
@@ -124,8 +108,6 @@ abstract class BaseSubCommand implements IArgumentable, IRunnable {
 	}
 
 	/**
-	 * @param CommandSender $currentSender
-	 *
 	 * @internal Used to pass the current sender from the parent command
 	 */
 	public function setCurrentSender(CommandSender $currentSender): void {
@@ -133,8 +115,6 @@ abstract class BaseSubCommand implements IArgumentable, IRunnable {
 	}
 
 	/**
-	 * @param BaseCommand $parent
-	 *
 	 * @internal Used to pass the parent context from the parent command
 	 */
 	public function setParent(BaseCommand $parent): void {
@@ -149,20 +129,17 @@ abstract class BaseSubCommand implements IArgumentable, IRunnable {
 		$this->currentSender->sendMessage("/{$this->parent->getName()} {$this->usageMessage}");
 	}
 
-    public function addConstraint(BaseConstraint $constraint) : void {
-        $this->constraints[] = $constraint;
-    }
-
-    /**
-     * @return BaseConstraint[]
-     */
-    public function getConstraints(): array {
-        return $this->constraints;
-    }
+	public function addConstraint(BaseConstraint $constraint) : void {
+		$this->constraints[] = $constraint;
+	}
 
 	/**
-	 * @return Plugin
+	 * @return BaseConstraint[]
 	 */
+	public function getConstraints(): array {
+		return $this->constraints;
+	}
+
 	public function getOwningPlugin(): Plugin {
 		return $this->parent->getOwningPlugin();
 	}

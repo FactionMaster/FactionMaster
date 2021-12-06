@@ -33,20 +33,16 @@ declare(strict_types=1);
 
 namespace ShockedPlot7560\FactionMaster\libs\JackMD\UpdateNotifier;
 
-use ShockedPlot7560\FactionMaster\libs\JackMD\UpdateNotifier\task\UpdateNotifyTask;
 use pocketmine\Server;
+use ShockedPlot7560\FactionMaster\libs\JackMD\UpdateNotifier\task\UpdateNotifyTask;
 
-class UpdateNotifier{
+class UpdateNotifier {
 
 	/**
 	 * Submits an async task which then checks if a new version for the plugin is available.
 	 * If an update is available then it would print a message on the console.
-	 *
-	 * @param string $pluginName
-	 * @param string $pluginVersion
 	 */
-	public static function checkUpdate(string $pluginName, string $pluginVersion) : void{
+	public static function checkUpdate(string $pluginName, string $pluginVersion) : void {
 		Server::getInstance()->getAsyncPool()->submitTask(new UpdateNotifyTask($pluginName, $pluginVersion));
 	}
-
 }

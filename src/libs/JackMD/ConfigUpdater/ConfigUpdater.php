@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types = 1);
 
 /**
@@ -35,8 +36,13 @@ namespace ShockedPlot7560\FactionMaster\libs\JackMD\ConfigUpdater;
 use pocketmine\plugin\Plugin;
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\utils\Config;
+use function basename;
+use function explode;
+use function rename;
+use function str_replace;
+use function trim;
 
-class ConfigUpdater{
+class ConfigUpdater {
 
 	/**
 	 * @param Plugin $plugin        The plugin you are calling this from.
@@ -44,10 +50,9 @@ class ConfigUpdater{
 	 * @param string $configKey     The version key that needs to be checked in the config.
 	 * @param int    $latestVersion The latest version of the config. Needs to be integer.
 	 * @param string $updateMessage The update message that would be shown on console if the plugin is outdated.
-	 * @return bool
 	 */
-	public static function checkUpdate(Plugin $plugin, Config $config, string $configKey, int $latestVersion, string $updateMessage = ""): bool{
-		if(($config->exists($configKey)) && ((int) $config->get($configKey) === $latestVersion)){
+	public static function checkUpdate(Plugin $plugin, Config $config, string $configKey, int $latestVersion, string $updateMessage = ""): bool {
+		if (($config->exists($configKey)) && ((int) $config->get($configKey) === $latestVersion)) {
 			return false;
 		}
 
@@ -56,7 +61,7 @@ class ConfigUpdater{
 		$originalConfig = $configData["configName"];
 		$oldConfig = $configData["oldConfigName"];
 
-		if(trim($updateMessage) === ""){
+		if (trim($updateMessage) === "") {
 			$updateMessage = "Your $originalConfig file is outdated. Your old $originalConfig has been saved as $oldConfig and a new $originalConfig file has been generated. Please update accordingly.";
 		}
 
@@ -64,7 +69,7 @@ class ConfigUpdater{
 
 		$plugin->saveResource($originalConfig);
 
-		$task = new ClosureTask(function() use ($plugin, $updateMessage): void{
+		$task = new ClosureTask(function() use ($plugin, $updateMessage): void {
 			$plugin->getLogger()->critical($updateMessage);
 		});
 
@@ -77,11 +82,8 @@ class ConfigUpdater{
 	/**
 	 * Returns the path to current config, the path to the config in plugins folder, the
 	 * name of the config and the name of config suffixed with old.
-	 *
-	 * @param Config $config
-	 * @return array
 	 */
-	private static function getConfigData(Config $config): array{
+	private static function getConfigData(Config $config): array {
 		$configPath = $config->getPath();
 		$configData = explode(".", basename($configPath));
 

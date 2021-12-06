@@ -7,20 +7,19 @@ namespace ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\libs\muqsit\simpl
 use Closure;
 use pocketmine\plugin\Plugin;
 
-final class PacketMonitor implements IPacketMonitor{
-
+final class PacketMonitor implements IPacketMonitor {
 	private PacketMonitorListener $listener;
 
-	public function __construct(Plugin $register, bool $handleCancelled){
+	public function __construct(Plugin $register, bool $handleCancelled) {
 		$this->listener = new PacketMonitorListener($register, $handleCancelled);
 	}
 
-	public function monitorIncoming(Closure $handler) : IPacketMonitor{
+	public function monitorIncoming(Closure $handler) : IPacketMonitor {
 		$this->listener->monitorIncoming($handler);
 		return $this;
 	}
 
-	public function monitorOutgoing(Closure $handler) : IPacketMonitor{
+	public function monitorOutgoing(Closure $handler) : IPacketMonitor {
 		$this->listener->monitorOutgoing($handler);
 		return $this;
 	}
