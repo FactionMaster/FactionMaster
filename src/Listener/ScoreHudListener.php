@@ -37,6 +37,7 @@ use Ifera\ScoreHud\event\TagsResolveEvent;
 use Ifera\ScoreHud\scoreboard\ScoreTag;
 use pocketmine\event\Listener;
 use pocketmine\player\Player;
+use pocketmine\Server;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
@@ -58,11 +59,11 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ScoreHudListener implements Listener {
 
-	/** @var Main */
-	private $main;
+	/** @var Server */
+	private $server;
 
-	public function __construct(Main $Main) {
-		$this->main = $Main;
+	public function __construct(Main $main) {
+		$this->server = $main->getServer();
 	}
 
 	public function onTagResolve(TagsResolveEvent $event): void {
@@ -284,7 +285,7 @@ class ScoreHudListener implements Listener {
 			));
 			$ev->call();
 		}
-		$targetPlayer = Main::getInstance()->getServer()->getPlayer($event->getTarget()->name);
+		$targetPlayer = $this->server->getPlayerExact($event->getTarget()->name);
 		if (!$targetPlayer instanceof Player) {
 			return;
 		}
@@ -317,7 +318,7 @@ class ScoreHudListener implements Listener {
 	public function onFactionJoin(FactionJoinEvent $event): void {
 		$player = $event->getTarget();
 		if (!$player instanceof Player) {
-			$player =  Main::getInstance()->getServer()->getPlayer($player->getName());
+			$player =  $this->server->getPlayerExact($player->getName());
 		}
 		if (!$player instanceof Player) {
 			return;
@@ -409,9 +410,8 @@ class ScoreHudListener implements Listener {
 
 	public function onPower(FactionPowerEvent $event): void {
 		$faction = $event->getFaction();
-		$server = Main::getInstance()->getServer();
 		foreach ($faction->getMembers() as $name => $rank) {
-			$player = $server->getPlayer($name);
+			$player = $this->server->getPlayerExact($name);
 			if ($player instanceof Player) {
 				$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
 					Ids::HUD_FACTIONMASTER_FACTION_POWER,
@@ -424,9 +424,8 @@ class ScoreHudListener implements Listener {
 
 	public function onLevelChange(FactionLevelChangeEvent $event): void {
 		$faction = $event->getFaction();
-		$server = Main::getInstance()->getServer();
 		foreach ($faction->getMembers() as $name => $rank) {
-			$player = $server->getPlayer($name);
+			$player = $this->server->getPlayerExact($name);
 			if ($player instanceof Player) {
 				$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
 					Ids::HUD_FACTIONMASTER_FACTION_LEVEL,
@@ -439,9 +438,8 @@ class ScoreHudListener implements Listener {
 
 	public function onXPChange(FactionXPChangeEvent $event): void {
 		$faction = $event->getFaction();
-		$server = Main::getInstance()->getServer();
 		foreach ($faction->getMembers() as $name => $rank) {
-			$player = $server->getPlayer($name);
+			$player = $this->server->getPlayerExact($name);
 			if ($player instanceof Player) {
 				$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
 					Ids::HUD_FACTIONMASTER_FACTION_XP,
@@ -454,9 +452,8 @@ class ScoreHudListener implements Listener {
 
 	public function onMessageChange(MessageChangeEvent $event): void {
 		$faction = $event->getFaction();
-		$server = Main::getInstance()->getServer();
 		foreach ($faction->getMembers() as $name => $rank) {
-			$player = $server->getPlayer($name);
+			$player = $this->server->getPlayerExact($name);
 			if ($player instanceof Player) {
 				$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
 					Ids::HUD_FACTIONMASTER_FACTION_MESSAGE,
@@ -469,9 +466,8 @@ class ScoreHudListener implements Listener {
 
 	public function onDescriptionChange(DescriptionChangeEvent $event): void {
 		$faction = $event->getFaction();
-		$server = Main::getInstance()->getServer();
 		foreach ($faction->getMembers() as $name => $rank) {
-			$player = $server->getPlayer($name);
+			$player = $this->server->getPlayerExact($name);
 			if ($player instanceof Player) {
 				$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
 					Ids::HUD_FACTIONMASTER_FACTION_DESCRIPTION,
@@ -484,9 +480,8 @@ class ScoreHudListener implements Listener {
 
 	public function onVisibilityChange(VisibilityChangeEvent $event): void {
 		$faction = $event->getFaction();
-		$server = Main::getInstance()->getServer();
 		foreach ($faction->getMembers() as $name => $rank) {
-			$player = $server->getPlayer($name);
+			$player = $this->server->getPlayerExact($name);
 			if ($player instanceof Player) {
 				switch ($faction->getVisibilityId()) {
 					case Ids::PUBLIC_VISIBILITY:
@@ -513,8 +508,7 @@ class ScoreHudListener implements Listener {
 
 	public function onRankChange(MemberChangeRankEvent $event): void {
 		$user = $event->getTarget();
-		$server = Main::getInstance()->getServer();
-		$player = $server->getPlayer($user->getName());
+		$player = $this->server->getPlayerExact($user->getName());
 		if ($player instanceof Player) {
 			if ($user->getRank() !== null && $user->getFactionName() !== null) {
 				switch ($user->getRank()) {
@@ -594,9 +588,8 @@ class ScoreHudListener implements Listener {
 	}
 
 	public function onFactionDelete(FactionDeleteEvent $event): void {
-		$server = Main::getInstance()->getServer();
 		foreach ($event->getFaction()->getMembers() as $name => $rank) {
-			$player = $server->getPlayer($name);
+			$player = $this->server->getPlayerExact($name);
 			if ($player instanceof Player) {
 				$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
 					Ids::HUD_FACTIONMASTER_FACTION_NAME,

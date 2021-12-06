@@ -276,7 +276,7 @@ class EventListener implements Listener {
 		}
 		foreach ($leaderboards as $leaderboard) {
 			if ($leaderboard["active"] == true) {
-				$entity = new Leaderboard($leaderboard["slug"], $leaderboard["position"], ConfigManager::getConfig());
+				$entity = new Leaderboard($leaderboard["slug"], $leaderboard["position"]);
 				LeaderboardManager::placeScoreboard($entity, [$event->getPlayer()]);
 			}
 		}
