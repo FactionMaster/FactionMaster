@@ -9,7 +9,7 @@ projects:
     path: ""
     icon: "icon.png"
     libs:
-    - src: jojoe77777/FormAPI/libFormAPI
+    - src: FactionMaster/FormAPI/libFormAPI
       version: ^4.0.0
     - src: CortexPE/Commando/Commando
       version: ^3.0.0
