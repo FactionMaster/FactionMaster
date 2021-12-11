@@ -32,9 +32,9 @@
 
 namespace ShockedPlot7560\FactionMaster\Button\Collection;
 
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Button;
+use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Manager\ImageManager;
 use function array_values;
 use function call_user_func_array;

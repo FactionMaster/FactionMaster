@@ -33,7 +33,6 @@
 namespace ShockedPlot7560\FactionMaster\Utils;
 
 use Exception;
-use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\scheduler\TaskHandler;
@@ -42,6 +41,7 @@ use pocketmine\world\Position;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\MenuOpenEvent;
+use ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Main;
 use ShockedPlot7560\FactionMaster\Manager\PermissionManager;
 use ShockedPlot7560\FactionMaster\Manager\TranslationManager;
