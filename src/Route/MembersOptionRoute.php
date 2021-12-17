@@ -36,9 +36,9 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\MembersOptionCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use Vecnavium\FormsUI\SimpleForm;
 use function is_string;
 
 class MembersOptionRoute extends RouteBase implements Route {

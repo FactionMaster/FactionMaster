@@ -36,8 +36,8 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Collection\ChangeLangueCollection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use Vecnavium\FormsUI\SimpleForm;
 
 class ChangeLangueRoute extends RouteBase implements Route {
 	const SLUG = "changeLangueRoute";
