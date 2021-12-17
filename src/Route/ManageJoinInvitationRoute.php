@@ -38,7 +38,7 @@ use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\ManageJoinInvitationCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use FactionMaster\FormAPI\SimpleForm;
+use Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageJoinInvitationRoute extends InvitationBase implements Route {

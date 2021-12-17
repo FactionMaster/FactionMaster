@@ -37,7 +37,7 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\MembersViewCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use FactionMaster\FormAPI\SimpleForm;
+use Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 

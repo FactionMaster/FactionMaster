@@ -6,7 +6,7 @@ main: ShockedPlot7560\FactionMaster\Main
 src-namespace-prefix: ShockedPlot7560\FactionMaster
 description: "Full configurable and modulable faction plugin with resource pack"
 softdepend: ["ScoreHud"]
-virions: ["Commando", "libFormAPI", "PacketHandler", "UpdateNotifier", "ConfigUpdater"]
+virions: ["Commando", "FormsUI", "PacketHandler", "UpdateNotifier", "ConfigUpdater"]
 
 permissions:
   factionmaster.leaderboard.place:

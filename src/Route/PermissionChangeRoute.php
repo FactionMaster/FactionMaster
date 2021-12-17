@@ -37,7 +37,7 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\PermissionChangeEvent;
-use FactionMaster\FormAPI\CustomForm;
+use Vecnavium\FormsUI\CustomForm;
 use ShockedPlot7560\FactionMaster\Manager\PermissionManager;
 use ShockedPlot7560\FactionMaster\Permission\Permission;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
