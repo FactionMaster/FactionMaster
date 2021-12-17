@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI;
+namespace ShockedPlot7560\FactionMaster\libs\FactionMaster\FormAPI;
 
 use pocketmine\form\Form as IForm;
 use pocketmine\player\Player;

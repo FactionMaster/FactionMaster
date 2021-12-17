@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace ShockedPlot7560\FactionMaster\libs\jojoe77777\FormAPI;
+namespace ShockedPlot7560\FactionMaster\libs\FactionMaster\FormAPI;
 
 use function count;
 use function is_array;
