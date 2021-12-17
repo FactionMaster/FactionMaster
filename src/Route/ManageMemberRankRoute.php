@@ -37,10 +37,10 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\MemberChangeRankEvent;
-use Vecnavium\FormsUI\CustomForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use Vecnavium\FormsUI\CustomForm;
 
 class ManageMemberRankRoute extends VictimBase implements Route {
 	const SLUG = "manageMemberRankRoute";

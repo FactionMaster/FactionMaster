@@ -32,7 +32,6 @@
 
 namespace ShockedPlot7560\FactionMaster;
 
-use Vecnavium\FormsUI\ServerSettingsForm;
 use pocketmine\event\Listener;
 use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
@@ -61,6 +60,7 @@ use ShockedPlot7560\FactionMaster\Task\LeaderboardTask;
 use ShockedPlot7560\FactionMaster\Task\MapTask;
 use ShockedPlot7560\FactionMaster\Task\SyncServerTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use Vecnavium\FormsUI\ServerSettingsForm;
 use function var_dump;
 use function version_compare;
 

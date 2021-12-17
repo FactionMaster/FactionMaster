@@ -37,8 +37,8 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\MembersViewCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use Vecnavium\FormsUI\SimpleForm;
 use function count;
 
 class MembersViewRoute extends RouteBase implements Route {
