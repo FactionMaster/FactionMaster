@@ -36,10 +36,10 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\ManagePermissionCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use Vecnavium\FormsUI\SimpleForm;
 use function is_string;
 
 class ManagePermissionRoute extends RouteBase implements Route {

@@ -34,8 +34,8 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use Vecnavium\FormsUI\SimpleForm;
 
 class TopFactionRoute extends RouteBase implements Route {
 	const SLUG = "topFactionRoute";
