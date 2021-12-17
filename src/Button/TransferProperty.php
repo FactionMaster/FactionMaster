@@ -39,7 +39,7 @@ use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\Event\FactionPropertyTransferEvent;
 use ShockedPlot7560\FactionMaster\Event\MemberChangeRankEvent;
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\FactionMaster as Main;
 use ShockedPlot7560\FactionMaster\Route\ConfirmationRoute;
 use ShockedPlot7560\FactionMaster\Route\MainRoute;
 use ShockedPlot7560\FactionMaster\Route\ManageMemberRoute as MembersManageMember;

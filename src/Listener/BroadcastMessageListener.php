@@ -36,7 +36,7 @@ use pocketmine\event\Listener;
 use ShockedPlot7560\FactionMaster\Event\FactionCreateEvent;
 use ShockedPlot7560\FactionMaster\Event\FactionDeleteEvent;
 use ShockedPlot7560\FactionMaster\Event\FactionPropertyTransferEvent;
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\FactionMaster as Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function str_replace;
 

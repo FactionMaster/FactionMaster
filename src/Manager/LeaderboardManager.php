@@ -37,7 +37,7 @@ use pocketmine\world\particle\FloatingTextParticle;
 use ShockedPlot7560\FactionMaster\Leaderboard\EntityLeaderboard;
 use ShockedPlot7560\FactionMaster\Leaderboard\FactionLevelLeaderboard;
 use ShockedPlot7560\FactionMaster\Leaderboard\FactionPowerLeaderboard;
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\FactionMaster as Main;
 use ShockedPlot7560\FactionMaster\Utils\Leaderboard;
 use function explode;
 use function join;

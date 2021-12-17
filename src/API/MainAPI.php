@@ -48,7 +48,7 @@ use ShockedPlot7560\FactionMaster\Event\FactionLevelChangeEvent;
 use ShockedPlot7560\FactionMaster\Event\FactionPowerEvent;
 use ShockedPlot7560\FactionMaster\Event\FactionXPChangeEvent;
 use ShockedPlot7560\FactionMaster\Event\MemberChangeRankEvent;
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\FactionMaster as Main;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Reward\RewardInterface;

@@ -36,7 +36,7 @@ use pocketmine\math\Vector2;
 use pocketmine\math\Vector3;
 use pocketmine\world\World;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\FactionMaster as Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ClaimEntity extends EntityDatabase {

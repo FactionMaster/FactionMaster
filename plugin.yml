@@ -2,7 +2,7 @@ name: FactionMaster
 author: ShockedPlot7560
 version: 4.0.0
 api: 4.0.0 
-main: ShockedPlot7560\FactionMaster\Main
+main: ShockedPlot7560\FactionMaster\FactionMaster
 src-namespace-prefix: ShockedPlot7560\FactionMaster
 description: "Full configurable and modulable faction plugin with resource pack"
 softdepend: ["ScoreHud"]

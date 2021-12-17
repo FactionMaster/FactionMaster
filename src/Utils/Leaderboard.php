@@ -37,7 +37,7 @@ use pocketmine\math\Vector3;
 use pocketmine\utils\Config;
 use pocketmine\world\Position;
 use pocketmine\world\World;
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\FactionMaster as Main;
 use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use function count;
 use function explode;

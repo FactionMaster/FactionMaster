@@ -37,7 +37,7 @@ use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\world\Position;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\FactionMaster as Main;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use ShockedPlot7560\FactionMaster\Utils\Utils;

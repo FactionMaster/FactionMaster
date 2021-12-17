@@ -35,7 +35,7 @@ use pocketmine\resourcepacks\ResourcePack;
 use pocketmine\resourcepacks\ResourcePackException;
 use pocketmine\resourcepacks\ZippedResourcePack;
 use ReflectionClass;
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\FactionMaster as Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function is_file;
 use function strtolower;

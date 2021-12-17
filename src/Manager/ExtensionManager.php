@@ -34,7 +34,7 @@ namespace ShockedPlot7560\FactionMaster\Manager;
 
 use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\Extension\Extension;
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\FactionMaster as Main;
 
 class ExtensionManager {
 

@@ -47,7 +47,7 @@ use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
 use ShockedPlot7560\FactionMaster\Database\Table\HomeTable;
 use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\FactionMaster as Main;
 use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;

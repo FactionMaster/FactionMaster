@@ -53,7 +53,7 @@ use ShockedPlot7560\FactionMaster\Event\FactionXPChangeEvent;
 use ShockedPlot7560\FactionMaster\Event\MemberChangeRankEvent;
 use ShockedPlot7560\FactionMaster\Event\MessageChangeEvent;
 use ShockedPlot7560\FactionMaster\Event\VisibilityChangeEvent;
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\FactionMaster as Main;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 

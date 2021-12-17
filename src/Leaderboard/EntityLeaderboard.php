@@ -33,7 +33,7 @@ namespace ShockedPlot7560\FactionMaster\Leaderboard;
 
 use pocketmine\player\Player;
 use pocketmine\utils\Config;
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\FactionMaster as Main;
 use ShockedPlot7560\FactionMaster\Utils\Leaderboard;
 
 abstract class EntityLeaderboard {

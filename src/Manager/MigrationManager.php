@@ -34,7 +34,7 @@ namespace ShockedPlot7560\FactionMaster\Manager;
 
 use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\FactionMaster as Main;
 use ShockedPlot7560\FactionMaster\Utils\QueryBuildeur;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function call_user_func;

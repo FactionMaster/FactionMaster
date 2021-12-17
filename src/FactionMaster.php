@@ -61,7 +61,7 @@ use ShockedPlot7560\FactionMaster\Task\SyncServerTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function version_compare;
 
-class Main extends PluginBase implements Listener {
+class FactionMaster extends PluginBase implements Listener {
 
 	/** @var Plugin */
 	public $formUI;
@@ -70,7 +70,7 @@ class Main extends PluginBase implements Listener {
 	/** @var boolean */
 	public static $activeImage;
 
-	/** @var Main */
+	/** @var FactionMaster */
 	private static $instance;
 	/** @var array */
 	private static $tableQuery;

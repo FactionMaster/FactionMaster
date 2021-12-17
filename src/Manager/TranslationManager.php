@@ -2,7 +2,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Manager;
 
-use ShockedPlot7560\FactionMaster\Main;
+use ShockedPlot7560\FactionMaster\FactionMaster as Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function array_keys;
 use function in_array;
