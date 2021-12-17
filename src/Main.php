@@ -32,9 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster;
 
-use Vecnavium\FormsUI\ServerSettingsForm;
 use pocketmine\event\Listener;
-use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginBase;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
@@ -61,7 +59,6 @@ use ShockedPlot7560\FactionMaster\Task\LeaderboardTask;
 use ShockedPlot7560\FactionMaster\Task\MapTask;
 use ShockedPlot7560\FactionMaster\Task\SyncServerTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use function var_dump;
 use function version_compare;
 
 class Main extends PluginBase implements Listener {
@@ -80,8 +77,6 @@ class Main extends PluginBase implements Listener {
 
 	public function onLoad(): void {
 		self::$instance = $this;
-
-		var_dump((new ServerSettingsForm(function(Player $player){}))->jsonSerialize());
 
 		ConfigManager::init($this);
 		TranslationManager::init($this);
