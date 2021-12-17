@@ -37,7 +37,7 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\MemberChangeRankEvent;
-use ShockedPlot7560\FactionMaster\libs\FactionMaster\FormAPI\CustomForm;
+use FactionMaster\FormAPI\CustomForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;

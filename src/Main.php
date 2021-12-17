@@ -32,7 +32,7 @@
 
 namespace ShockedPlot7560\FactionMaster;
 
-use ShockedPlot7560\FactionMaster\libs\FactionMaster\FormAPI\ServerSettingsForm;
+use FactionMaster\FormAPI\ServerSettingsForm;
 use pocketmine\event\Listener;
 use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;

@@ -37,7 +37,7 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
 use ShockedPlot7560\FactionMaster\Button\Collection\HomesViewCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\libs\FactionMaster\FormAPI\SimpleForm;
+use FactionMaster\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;

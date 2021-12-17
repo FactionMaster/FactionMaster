@@ -38,7 +38,7 @@ use ShockedPlot7560\FactionMaster\Button\Collection\MainFacCollection;
 use ShockedPlot7560\FactionMaster\Button\Collection\MainNoFacCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\libs\FactionMaster\FormAPI\SimpleForm;
+use FactionMaster\FormAPI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function is_string;
 

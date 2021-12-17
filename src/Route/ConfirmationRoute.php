@@ -32,10 +32,10 @@
 
 namespace ShockedPlot7560\FactionMaster\Route;
 
+use FactionMaster\FormAPI\ModalForm;
 use InvalidArgumentException;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\libs\FactionMaster\FormAPI\ModalForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ConfirmationRoute extends RouteBase implements Route {
