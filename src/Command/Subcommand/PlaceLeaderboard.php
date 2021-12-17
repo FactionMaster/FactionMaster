@@ -34,6 +34,7 @@ namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
+use ShockedPlot7560\FactionMaster\Event\LeaderboardCreateEvent;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
@@ -73,6 +74,7 @@ class PlaceLeaderboard extends BaseSubCommand {
 					"position" => $coord,
 					"active" => true
 				];
+				(new LeaderboardCreateEvent($entity))->call();
 				$config->set("leaderboards", $leaderboards);
 				$config->save();
 				$sender->sendMessage(Utils::getText("", "COMMAND_SCOREBOARD_SUCCESS"));

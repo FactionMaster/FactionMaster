@@ -34,10 +34,11 @@ namespace ShockedPlot7560\FactionMaster\Manager;
 use Exception;
 use pocketmine\math\Vector3;
 use pocketmine\world\particle\FloatingTextParticle;
+use ShockedPlot7560\FactionMaster\Event\LeaderboardUpdateEvent;
+use ShockedPlot7560\FactionMaster\FactionMaster as Main;
 use ShockedPlot7560\FactionMaster\Leaderboard\EntityLeaderboard;
 use ShockedPlot7560\FactionMaster\Leaderboard\FactionLevelLeaderboard;
 use ShockedPlot7560\FactionMaster\Leaderboard\FactionPowerLeaderboard;
-use ShockedPlot7560\FactionMaster\FactionMaster as Main;
 use ShockedPlot7560\FactionMaster\Utils\Leaderboard;
 use function explode;
 use function join;
@@ -111,14 +112,16 @@ class LeaderboardManager {
 			/** @var FloatingTextParticle[] $particles */
 			$particles = self::$session[$coordinates];
 			$coordinates = explode("|", $coordinates);
+			$vector = new Vector3((int) $coordinates[0], (int) $coordinates[1], (int) $coordinates[2]);
 			foreach ($particles as $particle) {
 				$particle->setInvisible(true);
-				foreach ($particle->encode(new Vector3((int) $coordinates[0], (int) $coordinates[1], (int) $coordinates[2])) as $packet) {
+				foreach ($particle->encode($vector) as $packet) {
 					foreach (self::$main->getServer()->getOnlinePlayers() as $player) {
 						$player->getNetworkSession()->sendDataPacket($packet);
 					}
 				}
 			}
+
 			unset(self::$session[join("|", $coordinates)]);
 		}
 	}
@@ -132,6 +135,7 @@ class LeaderboardManager {
 			if ($leaderboard["active"] == true) {
 				LeaderboardManager::dispawnLeaderboard($leaderboard["position"]);
 				$entity = new Leaderboard($leaderboard["slug"], $leaderboard["position"]);
+				(new LeaderboardUpdateEvent($entity))->call();
 				LeaderboardManager::placeScoreboard($entity);
 			}
 		}

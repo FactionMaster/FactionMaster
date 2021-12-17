@@ -36,8 +36,9 @@ use pocketmine\command\CommandSender;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\world\Position;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
+use ShockedPlot7560\FactionMaster\Event\LeaderboardRemoveEvent;
 use ShockedPlot7560\FactionMaster\FactionMaster as Main;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -86,6 +87,7 @@ class RemoveNearLeaderboardCommand extends BaseSubCommand {
 				foreach ($leaderboards as $index => $data) {
 					$pos = explode("|", $data["position"]);
 					if (floor((int) $pos[0]) == $prec->getFloorX() && floor((int) $pos[1]) == $prec->getFloorY() && floor((int) $pos[2]) == $prec->getFloorZ() && $pos[3] == $prec->getWorld()->getDisplayName()) {
+						(new LeaderboardRemoveEvent(new Vector3($pos[0], $pos[1], $pos[2])))->call();
 						unset($leaderboards[$index]);
 					}
 				}
