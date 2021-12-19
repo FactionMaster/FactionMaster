@@ -35,7 +35,7 @@ namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
+use CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\HomesViewRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
