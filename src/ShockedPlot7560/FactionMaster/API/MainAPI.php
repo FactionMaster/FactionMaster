@@ -302,7 +302,7 @@ class MainAPI {
 		$user->setRank($rankId);
 		self::submitDatabaseTask(
 			new DatabaseTask(
-				"UPDATE " . FactionTable::TABLE_NAME . " SET " . FactionTable::TABLE_NAME . ".members = :members WHERE " . FactionTable::TABLE_NAME . ".name = :name",
+				"UPDATE " . FactionTable::TABLE_NAME . " SET members = :members WHERE name = :name",
 				[
 					'members' => json_encode($faction->getMembers()),
 					'name' => $factionName,
@@ -314,7 +314,7 @@ class MainAPI {
 		);
 		self::submitDatabaseTask(
 			new DatabaseTask(
-				"UPDATE " . UserTable::TABLE_NAME . " SET " . UserTable::TABLE_NAME . ".faction = :faction, " . UserTable::TABLE_NAME . ".rank = :rank WHERE " . UserTable::TABLE_NAME . ".name = :name",
+				"UPDATE " . UserTable::TABLE_NAME . " SET faction = :faction, rank = :rank WHERE name = :name",
 				[
 					'faction' => $factionName,
 					'rank' => $rankId,
