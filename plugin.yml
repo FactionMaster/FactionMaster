@@ -1,11 +1,11 @@
 name: FactionMaster
 author: ShockedPlot7560
-version: 3.1.4
+version: 3.1.5
 api: 3.0.0
 main: ShockedPlot7560\FactionMaster\Main
 description: "Full configurable and modulable faction plugin with a lot of configuration"
 softdepend: ["ScoreHud"]
-virions: ["Commando", "libFormAPI"]
+virions: ["Commando", "libFormAPI", "UpdateNotifier", "ConfigUpdater"]
 
 permissions:
   factionmaster.scoreboard.place:

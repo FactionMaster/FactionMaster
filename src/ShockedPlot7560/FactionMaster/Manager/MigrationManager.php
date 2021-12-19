@@ -93,7 +93,8 @@ class MigrationManager {
 			"3.1.4" => function () {
 				self::$main->getLogger()->notice("This version include some minor bug fix");
 				self::$main->getLogger()->notice("To stay informed about the progress of the plugin and participate in discussions, join our discord :)");
-			}
+			},
+			"3.1.5" => function () {}
 		];
 		self::$configDbToCheck = [
 			[
