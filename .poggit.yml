@@ -23,5 +23,5 @@ projects:
     - src: muqsit/simplepackethandler/SimplePacketHandler
       version: ^0.0.1
     lint:
-    -phpstan: false
+    - phpstan: false
 ...
