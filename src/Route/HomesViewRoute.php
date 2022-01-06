@@ -39,7 +39,7 @@ use ShockedPlot7560\FactionMaster\Button\Collection\HomesViewCollection;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use Vecnavium\FormsUI\SimpleForm;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use function count;
 use function is_string;
 

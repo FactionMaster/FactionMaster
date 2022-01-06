@@ -46,7 +46,7 @@ use ShockedPlot7560\FactionMaster\Manager\PermissionManager;
 use ShockedPlot7560\FactionMaster\Manager\TranslationManager;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
-use Vecnavium\FormsUI\SimpleForm;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use function compact;
 use function is_array;
 use function is_string;

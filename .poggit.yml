@@ -22,4 +22,5 @@ projects:
       branch: PM4
     - src: muqsit/simplepackethandler/SimplePacketHandler
       version: ^0.0.1
+    lint: false
 ...

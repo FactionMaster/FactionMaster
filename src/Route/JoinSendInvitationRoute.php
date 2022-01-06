@@ -43,7 +43,7 @@ use ShockedPlot7560\FactionMaster\Event\InvitationSendEvent;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use Vecnavium\FormsUI\CustomForm;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\CustomForm;
 use function count;
 use function is_string;
 

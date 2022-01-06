@@ -40,7 +40,7 @@ use ShockedPlot7560\FactionMaster\Event\FactionCreateEvent;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use Vecnavium\FormsUI\CustomForm;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\CustomForm;
 use function in_array;
 use function is_string;
 use function strlen;
