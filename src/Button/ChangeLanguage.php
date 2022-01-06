@@ -37,10 +37,8 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeLanguage extends Button {
-	const SLUG = "cchangeLanguage";
-
 	public function __construct() {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::CHANGE_LANGUAGE)
 			->setContent(function ($player) {
 				return Utils::getText($player, "BUTTON_CHANGE_LANGUAGE");
 			})

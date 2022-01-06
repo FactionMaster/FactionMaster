@@ -45,10 +45,8 @@ use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class BreakAlly extends Button {
-	const SLUG = "breakAlly";
-
 	public function __construct(FactionEntity $ally) {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::BREAK_ALLY)
 			->setContent(function (string $player) {
 				return Utils::getText($player, "BUTTON_BREAK_ALLIANCE");
 			})

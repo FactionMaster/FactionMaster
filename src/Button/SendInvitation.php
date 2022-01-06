@@ -37,10 +37,8 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class SendInvitation extends Button {
-	const SLUG = "sendInvitation";
-
 	public function __construct(string $panelSlug, array $permissions) {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::SEND_INVITATION)
 			->setContent(function (string $player) {
 				return Utils::getText($player, "BUTTON_SEND_INVITATION");
 			})

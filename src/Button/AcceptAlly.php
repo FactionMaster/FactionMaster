@@ -45,10 +45,8 @@ use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class AcceptAlly extends Button {
-	const SLUG = "acceptAlly";
-
 	public function __construct(InvitationEntity $request) {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::ACCEPT_ALLY)
 			->setContent(function (string $player) {
 				return Utils::getText($player, "BUTTON_ACCEPT_REQUEST");
 			})

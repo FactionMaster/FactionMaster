@@ -39,10 +39,8 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageMembersMain extends Button {
-	const SLUG = "manageMembersMain";
-
 	public function __construct() {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::MANAGE_MEMBERS_MAIN)
 			->setContent(function (string $player) {
 				return Utils::getText($player, "BUTTON_MANAGE_MEMBERS");
 			})

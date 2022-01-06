@@ -42,10 +42,8 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Home extends Button {
-	const SLUG = "home";
-
 	public function __construct(string $name, HomeEntity $home) {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::HOME)
 			->setContent(function (string $player) use ($name, $home) {
 				return Utils::getText($player, "BUTTON_LISTING_HOME", [
 					'name' => $name,

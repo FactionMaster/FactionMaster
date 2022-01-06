@@ -37,10 +37,8 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class InvitationPending extends Button {
-	const SLUG = "invitationPending";
-
 	public function __construct(string $panelSlug, array $permissions) {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::INVITATION_PENDING)
 			->setContent(function (string $player) {
 				return Utils::getText($player, "BUTTON_INVITATION_PENDING");
 			})

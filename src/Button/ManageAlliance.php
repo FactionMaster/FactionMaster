@@ -39,10 +39,8 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageAlliance extends Button {
-	const SLUG = "manageAlliance";
-
 	public function __construct() {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::MANAGE_ALLIANCE)
 			->setContent(function ($player) {
 				return Utils::getText($player, "BUTTON_MANAGE_ALLIANCE");
 			})

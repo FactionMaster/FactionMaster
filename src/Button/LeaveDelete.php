@@ -45,10 +45,8 @@ use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class LeaveDelete extends Button {
-	const SLUG = "leavingButton";
-
 	public function __construct() {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::LEAVE_DELETE)
 			->setContent(function ($player) {
 				return Utils::getText($player, "BUTTON_LEAVE_DELETE_FACTION");
 			})

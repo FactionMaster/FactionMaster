@@ -37,10 +37,8 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ViewMembers extends Button {
-	const SLUG = "factionMembers";
-
 	public function __construct() {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::FACTION_MEMBERS)
 			->setContent(function ($player) {
 				return Utils::getText($player, "BUTTON_VIEW_FACTION_MEMBERS");
 			})

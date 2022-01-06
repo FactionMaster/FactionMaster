@@ -48,10 +48,8 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 
 class AcceptMemberRequest extends Button {
-	const SLUG = "acceptRequest";
-
 	public function __construct(InvitationEntity $request) {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::ACCEPT_MEMBER_REQUEST)
 			->setContent(function (string $player) {
 				return Utils::getText($player, "BUTTON_ACCEPT_REQUEST");
 			})

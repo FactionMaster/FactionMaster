@@ -40,10 +40,8 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeRank extends Button {
-	const SLUG = "changeRank";
-
 	public function __construct(UserEntity $member) {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::CHANGE_RANK)
 			->setContent(function (string $player) {
 				return Utils::getText($player, "BUTTON_CHANGE_RANK");
 			})

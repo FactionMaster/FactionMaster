@@ -38,10 +38,8 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ViewHomes extends Button {
-	const SLUG = "factionHome";
-
 	public function __construct() {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::FACTION_HOME)
 			->setContent(function ($player) {
 				return Utils::getText($player, "BUTTON_VIEW_FACTION_HOME");
 			})

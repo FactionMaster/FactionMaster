@@ -39,10 +39,8 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class LevelUp extends Button {
-	const SLUG = "levelUp";
-
 	public function __construct() {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::LEVEL_UP)
 			->setContent(function ($player) {
 				return Utils::getText($player, "BUTTON_LEVEL_UP");
 			})

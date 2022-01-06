@@ -39,10 +39,8 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeMessage extends Button {
-	const SLUG = "changeMessage";
-
 	public function __construct() {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::CHANGE_MESSAGE)
 			->setContent(function ($player) {
 				return Utils::getText($player, "BUTTON_CHANGE_MESSAGE");
 			})

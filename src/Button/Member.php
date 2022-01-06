@@ -39,10 +39,8 @@ use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Member extends Button {
-	const SLUG = "member";
-
 	public function __construct(string $name, int $rank) {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::MEMBER)
 			->setContent(function (string $player) use ($name, $rank) {
 				$text = $name . "\n";
 				switch ($rank) {

@@ -38,7 +38,7 @@ class Quit extends Button {
 	const SLUG = "quit";
 
 	public function __construct() {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::QUIT)
 			->setContent(function ($player) {
 				return Utils::getText($player, "BUTTON_QUIT");
 			})

@@ -37,10 +37,8 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class CreateFaction extends Button {
-	const SLUG = "createFaction";
-
 	public function __construct() {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::CREATE_FACTION)
 			->setContent(function ($player) {
 				return Utils::getText($player, "BUTTON_CREATE_FACTION");
 			})

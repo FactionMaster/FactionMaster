@@ -37,10 +37,8 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class JoinFaction extends Button {
-	const SLUG = "joinFaction";
-
 	public function __construct() {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::JOIN_FACTION)
 			->setContent(function ($player) {
 				return Utils::getText($player, "BUTTON_JOIN_FACTION");
 			})

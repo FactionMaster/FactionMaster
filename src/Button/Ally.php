@@ -40,10 +40,8 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Ally extends Button {
-	const SLUG = "ally";
-
 	public function __construct(FactionEntity $ally) {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::ALLY)
 			->setContent(function (string $player) use ($ally) {
 				return $ally->getName();
 			})

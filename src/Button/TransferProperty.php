@@ -50,10 +50,8 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function json_encode;
 
 class TransferProperty extends Button {
-	const SLUG = "transferProperty";
-
 	public function __construct(UserEntity $member) {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::TRANSFER_PROPERTY)
 			->setContent(function (string $player) {
 				return Utils::getText($player, "BUTTON_TRANSFER_PROPERTY");
 			})

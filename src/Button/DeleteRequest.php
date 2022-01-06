@@ -42,10 +42,8 @@ use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class DeleteRequest extends Button {
-	const SLUG = "deleteRequest";
-
 	public function __construct(InvitationEntity $request, string $panelSlug, string $backPanelSlug, array $permissions = []) {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::DELETE_REQUEST)
 			->setContent(function (string $player) {
 				return Utils::getText($player, "BUTTON_REFUSE_REQUEST");
 			})

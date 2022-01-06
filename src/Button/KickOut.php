@@ -45,10 +45,8 @@ use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class KickOut extends Button {
-	const SLUG = "kickOut";
-
 	public function __construct(UserEntity $member) {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::KICK_OUT)
 			->setContent(function (string $player) {
 				return Utils::getText($player, "BUTTON_KICK_OUT");
 			})

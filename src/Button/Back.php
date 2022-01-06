@@ -37,10 +37,8 @@ use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Back extends Button {
-	const SLUG = "back";
-
 	public function __construct(Route $backPanel) {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::BACK)
 			->setContent(function (string $player) {
 				return Utils::getText($player, "BUTTON_BACK");
 			})

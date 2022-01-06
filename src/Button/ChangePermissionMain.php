@@ -39,10 +39,8 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangePermissionMain extends Button {
-	const SLUG = "changePermissionMain";
-
 	public function __construct() {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::CHANGE_PERMISSIONS_MAIN)
 			->setContent(function ($player) {
 				return Utils::getText($player, "BUTTON_CHANGE_PERMISSION");
 			})
