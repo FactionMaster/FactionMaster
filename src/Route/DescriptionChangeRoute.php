@@ -39,7 +39,7 @@ use ShockedPlot7560\FactionMaster\Event\DescriptionChangeEvent;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use Vecnavium\FormsUI\CustomForm;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\CustomForm;
 use function is_string;
 
 class DescriptionChangeRoute extends RouteBase implements Route {

@@ -36,7 +36,7 @@ use InvalidArgumentException;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use Vecnavium\FormsUI\ModalForm;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\ModalForm;
 
 class ConfirmationRoute extends RouteBase implements Route {
 	const SLUG = "confirmationRoute";

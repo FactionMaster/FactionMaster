@@ -35,6 +35,7 @@ namespace ShockedPlot7560\FactionMaster\Manager;
 use JackMD\ConfigUpdater\ConfigUpdater;
 use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\FactionMaster as Main;
+use ShockedPlot7560\FactionMaster\libs\JackMD\ConfigUpdater\ConfigUpdater;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 use function is_countable;

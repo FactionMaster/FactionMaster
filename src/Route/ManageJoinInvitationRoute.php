@@ -39,7 +39,7 @@ use ShockedPlot7560\FactionMaster\Button\Collection\ManageJoinInvitationCollecti
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use Vecnavium\FormsUI\SimpleForm;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 
 class ManageJoinInvitationRoute extends InvitationBase implements Route {
 	const SLUG = "manageJoinInvitationRoute";
