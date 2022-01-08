@@ -32,7 +32,9 @@
 
 namespace ShockedPlot7560\FactionMaster\Manager;
 
+use PDO;
 use pocketmine\utils\Config;
+use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\FactionMaster as Main;
 use ShockedPlot7560\FactionMaster\Utils\QueryBuildeur;
@@ -105,6 +107,66 @@ class MigrationManager {
 				"TABLE_NAME" => UserTable::TABLE_NAME,
 				"COLUMN_NAME" => "language",
 				"TABLE_CLASS" => UserTable::class
+			],[
+				"CONFIG_INST" => ConfigManager::getConfig(),
+				"CONFIG_NAME" => "default-claim-limit",
+				"TABLE_NAME" => FactionTable::TABLE_NAME,
+				"COLUMN_NAME" => "maxClaim",
+				"TABLE_CLASS" => FactionTable::class
+			],[
+				"CONFIG_INST" => ConfigManager::getConfig(),
+				"CONFIG_NAME" => "default-home-limit",
+				"TABLE_NAME" => FactionTable::TABLE_NAME,
+				"COLUMN_NAME" => "maxHome",
+				"TABLE_CLASS" => FactionTable::class
+			],[
+				"CONFIG_INST" => ConfigManager::getConfig(),
+				"CONFIG_NAME" => "default-player-limit",
+				"TABLE_NAME" => FactionTable::TABLE_NAME,
+				"COLUMN_NAME" => "maxPlayer",
+				"TABLE_CLASS" => FactionTable::class
+			],[
+				"CONFIG_INST" => ConfigManager::getConfig(),
+				"CONFIG_NAME" => "default-ally-limit",
+				"TABLE_NAME" => FactionTable::TABLE_NAME,
+				"COLUMN_NAME" => "maxAlly",
+				"TABLE_CLASS" => FactionTable::class
+			],[
+				"CONFIG_INST" => ConfigManager::getConfig(),
+				"CONFIG_NAME" => "default-faction-visibility",
+				"TABLE_NAME" => FactionTable::TABLE_NAME,
+				"COLUMN_NAME" => "visibility",
+				"TABLE_CLASS" => FactionTable::class
+			],[
+				"CONFIG_INST" => ConfigManager::getConfig(),
+				"CONFIG_NAME" => "default-faction-xp",
+				"TABLE_NAME" => FactionTable::TABLE_NAME,
+				"COLUMN_NAME" => "xp",
+				"TABLE_CLASS" => FactionTable::class
+			],[
+				"CONFIG_INST" => ConfigManager::getConfig(),
+				"CONFIG_NAME" => "default-faction-level",
+				"TABLE_NAME" => FactionTable::TABLE_NAME,
+				"COLUMN_NAME" => "level",
+				"TABLE_CLASS" => FactionTable::class
+			],[
+				"CONFIG_INST" => ConfigManager::getConfig(),
+				"CONFIG_NAME" => "default-faction-description",
+				"TABLE_NAME" => FactionTable::TABLE_NAME,
+				"COLUMN_NAME" => "description",
+				"TABLE_CLASS" => FactionTable::class
+			],[
+				"CONFIG_INST" => ConfigManager::getConfig(),
+				"CONFIG_NAME" => "default-faction-message",
+				"TABLE_NAME" => FactionTable::TABLE_NAME,
+				"COLUMN_NAME" => "message",
+				"TABLE_CLASS" => FactionTable::class
+			],[
+				"CONFIG_INST" => ConfigManager::getConfig(),
+				"CONFIG_NAME" => "default-power",
+				"TABLE_NAME" => FactionTable::TABLE_NAME,
+				"COLUMN_NAME" => "power",
+				"TABLE_CLASS" => FactionTable::class
 			]
 		];
 	}
@@ -169,13 +231,9 @@ class MigrationManager {
 							$value = $conf["CONFIG_INST"]->get($conf["CONFIG_NAME"]);
 							if ($columnData["name"] == $conf["COLUMN_NAME"] && $dflt_value != $value) {
 								self::$main->getLogger()->notice("Changing the configuration of '" . $conf["CONFIG_NAME"] . "' detected, change the value for $value");
-							}
-						}
-						if ($columnData["name"] == $configDB["COLUMN_NAME"]) {
-							if ($dflt_value != $configValue) {
 								$query = $pdo->prepare("SELECT * FROM " . $configDB["TABLE_NAME"]);
 								$query->execute();
-								$result = $query->fetchAll();
+								$result = $query->fetchAll(PDO::FETCH_ASSOC );
 								$query = $pdo->prepare("DROP TABLE " . $configDB["TABLE_NAME"]);
 								$query->execute();
 								(new $configDB["TABLE_CLASS"]($pdo))->init();
