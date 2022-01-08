@@ -233,7 +233,7 @@ class MigrationManager {
 								self::$main->getLogger()->notice("Changing the configuration of '" . $conf["CONFIG_NAME"] . "' detected, change the value for $value");
 								$query = $pdo->prepare("SELECT * FROM " . $configDB["TABLE_NAME"]);
 								$query->execute();
-								$result = $query->fetchAll(PDO::FETCH_ASSOC );
+								$result = $query->fetchAll(PDO::FETCH_ASSOC);
 								$query = $pdo->prepare("DROP TABLE " . $configDB["TABLE_NAME"]);
 								$query->execute();
 								(new $configDB["TABLE_CLASS"]($pdo))->init();
