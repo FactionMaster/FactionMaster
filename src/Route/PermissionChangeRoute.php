@@ -134,7 +134,7 @@ class PermissionChangeRoute extends RouteBase implements Route {
 
 	protected function getForm() : CustomForm {
 		$menu = new CustomForm($this->call());
-		$menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MANAGE_PERMISSIONS_MAIN_TITLE"));
+		$menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MANAGE_PERMISSION_MAIN_TITLE"));
 		$rankFactionPermission = $this->getFaction()->getPermissions()[$this->getRank()];
 		foreach ($this->getAllPermissions() as $permission) {
 			$menu->addToggle($permission->getName($this->getUserEntity()->getName()), $rankFactionPermission[$permission->getId()] ?? false);
