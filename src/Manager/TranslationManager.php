@@ -40,9 +40,9 @@ class TranslationManager {
 
 	public static function getTranslation(string $slug, string $lang): string {
 		if (isset(self::$translations[$lang])) {
-			return self::$translations[$lang][$slug];
+			return self::$translations[$lang][$slug] ?? self::$translations["EN"][$slug];
 		} else {
-			return self::$translations[self::$default][$slug];
+			return self::$translations[self::$default][$slug] ?? self::$translations["EN"][$slug];
 		}
 	}
 }

@@ -33,31 +33,21 @@
 namespace ShockedPlot7560\FactionMaster\Button\Collection;
 
 use pocketmine\player\Player;
-use ShockedPlot7560\FactionMaster\Button\ChangeLanguage;
-use ShockedPlot7560\FactionMaster\Button\Leaderboard;
-use ShockedPlot7560\FactionMaster\Button\LeaveDelete;
-use ShockedPlot7560\FactionMaster\Button\ManageFaction;
-use ShockedPlot7560\FactionMaster\Button\ManageMembers;
-use ShockedPlot7560\FactionMaster\Button\Quit;
-use ShockedPlot7560\FactionMaster\Button\ViewHomes;
-use ShockedPlot7560\FactionMaster\Button\ViewMembers;
+use ShockedPlot7560\FactionMaster\Button\Back;
+use ShockedPlot7560\FactionMaster\Button\LeaderboardItem;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
+use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 
-class MainFacCollection extends Collection {
-	/** @deprecated */
-	const SLUG = "mainFacCollection";
-
+class LeaderboardCollection extends Collection {
 	public function __construct() {
-		parent::__construct(self::MAIN_FAC_COLLECTION);
-		$this->registerCallable(self::MAIN_FAC_COLLECTION, function (Player $player, UserEntity $user) {
-			$this->register(new ViewMembers());
-			$this->register(new ViewHomes());
-			$this->register(new ManageMembers());
-			$this->register(new ManageFaction());
-			$this->register(new Leaderboard());
-			$this->register(new ChangeLanguage());
-			$this->register(new LeaveDelete());
-			$this->register(new Quit());
+		parent::__construct(self::LEADERBOARD_COLLECTION);
+		$this->registerCallable(self::LEADERBOARD_COLLECTION, function (Player $player, UserEntity $user) {
+			foreach (LeaderboardManager::getAll() as $leaderboard) {
+				$this->register(new LeaderboardItem($leaderboard));
+			}
+			$this->register(new Back(RouterFactory::get(RouteSlug::LEADERBOARD_ROUTE)->getBackRoute()));
 		});
 	}
 }

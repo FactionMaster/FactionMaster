@@ -1,5 +1,5 @@
 # DO NOT EDIT THIS LINE
-file-version: 6
+file-version: 7
 # DO NOT EDIT THIS LINE
 
 
@@ -36,6 +36,9 @@ BUTTON_LEVEL_UP: "Level up"
 BUTTON_LEVEL_UP_READY: "§l§eReady to level up!\n§r§lLevel {{level}}"
 BUTTON_LEVEL_UP_ADVANCE: "{{advance}}\n§r§lLevel {{level}}"
 BUTTON_LEVEL_UP_MAX: "§cLevel max"
+BUTTON_LEADERBOARD: "Leaderboard"
+BUTTON_LEADERBOARD_FACTIONLEVEL: "Ranking by level"
+BUTTON_LEADERBOARD_FACTIONPOWER: "Ranking by power"
 
 LEVEL_UP_TITLE_MAIN: "Level up"
 LEVEL_UP_CONTENT_MAIN_MAX: "§r§4You have reached the level limit"
@@ -82,6 +85,7 @@ MAIN_PANEL_TITLE_NO_FACTION: "Main menu"
 MAIN_PANEL_TITLE_HAVE_FACTION: "Main menu - {{factionName}}"
 TOP_FACTION_TITLE: "Top faction"
 TOP_FACTION_LINE: "§r §6> §7[§e{{rank}}§7]§f {{factionName}}  §o§7Level {{level}} \n"
+LEADERBOARD_TITLE: "Leaderboards"
 
 CONFIRMATION_TITLE_DELETE_FACTION: "Confirmation of suppression - {{factionName}}"
 CONFIRMATION_CONTENT_DELETE_FACTION: "§fAre you sure you want to delete your faction? You won't be able to go back"

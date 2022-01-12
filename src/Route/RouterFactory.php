@@ -75,6 +75,8 @@ class RouterFactory {
 		self::registerRoute(new JoinRequestReceiveRoute());
 		self::registerRoute(new ManageMemberRequestRoute());
 		self::registerRoute(new AllianceInvitationSendRoute());
+		self::registerRoute(new LeaderboardRoute());
+		self::registerRoute(new LeaderboardShowRoute());
 	}
 
 	/**

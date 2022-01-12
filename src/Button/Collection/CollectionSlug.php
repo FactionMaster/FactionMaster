@@ -58,4 +58,6 @@ interface CollectionSlug {
 	public const CHANGE_LANGUE_COLLECTION = "changeLangueCollection";
 	public const ALLIANCE_REQUEST_RECEIVE_COLLECTION = "allianceRequestReceiveCollection";
 	public const ALLIANCE_OPTION_COLLECTION = "allianceOptionCollection";
+	public const LEADERBOARD_COLLECTION = "leaderboardCollection";
+	public const LEADERBOARD_SHOW_COLLECTION = "leaderboardShowCollection";
 }

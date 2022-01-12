@@ -69,4 +69,6 @@ interface ButtonSlug {
 	public const ALLY = "ally";
 	public const ACCEPT_MEMBER_TO_FAC_REQUEST = "acceptMemberRequest";
 	public const ACCEPT_MEMBER_REQUEST = "acceptRequest";
+	public const LEADERBOARD_ITEM = "leaderboardItem";
+	public const LEADERBOARD = "leaderboard";
 }
