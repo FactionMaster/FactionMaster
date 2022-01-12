@@ -36,8 +36,8 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\ChangePermission;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\ManagePermissionRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 
 class ManagePermissionCollection extends Collection {
@@ -59,7 +59,7 @@ class ManagePermissionCollection extends Collection {
 				$this->register(new ChangePermission("COOWNER_RANK_NAME", Ids::COOWNER_ID));
 			}
 
-			$this->register(new Back(RouterFactory::get(ManagePermissionRoute::SLUG)->getBackRoute()));
+			$this->register(new Back(RouterFactory::get(RouteSlug::MANAGE_PERMISSION_ROUTE)->getBackRoute()));
 		});
 	}
 }

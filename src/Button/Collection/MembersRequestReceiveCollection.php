@@ -37,9 +37,8 @@ use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\RequestListItem;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\ManageMemberRequestRoute;
-use ShockedPlot7560\FactionMaster\Route\MembersRequestReceiveRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 
 class MembersRequestReceiveCollection extends Collection {
 	/** @deprecated */
@@ -51,14 +50,14 @@ class MembersRequestReceiveCollection extends Collection {
 			foreach ($requests as $request) {
 				$this->register(new RequestListItem(
 					$request,
-					ManageMemberRequestRoute::SLUG,
+					RouteSlug::MANAGE_MEMBER_REQUEST_ROUTE,
 					[
 						PermissionIds::PERMISSION_ACCEPT_MEMBER_DEMAND,
 						PermissionIds::PERMISSION_REFUSE_MEMBER_DEMAND
 					]
 				));
 			}
-			$this->register(new Back(RouterFactory::get(MembersRequestReceiveRoute::SLUG)->getBackRoute()));
+			$this->register(new Back(RouterFactory::get(RouteSlug::MEMBERS_REQUEST_RECEIVE_ROUTE)->getBackRoute()));
 		});
 	}
 }

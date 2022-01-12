@@ -36,8 +36,8 @@ use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
-use ShockedPlot7560\FactionMaster\Route\CreateFactionRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class FactionCreateCommand extends BaseSubCommand {
@@ -51,7 +51,7 @@ class FactionCreateCommand extends BaseSubCommand {
 
 		$userEntity = MainAPI::getUser($sender->getName());
 		if ($userEntity->getFactionName() === null) {
-			Utils::processMenu(RouterFactory::get(CreateFactionRoute::SLUG), $sender);
+			Utils::processMenu(RouterFactory::get(RouteSlug::CREAFT_FACTION_ROUTE), $sender);
 		} else {
 			$sender->sendMessage(Utils::getText($sender->getName(), "ALREADY_IN_FACTION"));
 		}

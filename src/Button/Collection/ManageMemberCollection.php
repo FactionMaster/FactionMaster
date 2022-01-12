@@ -38,8 +38,8 @@ use ShockedPlot7560\FactionMaster\Button\ChangeRank;
 use ShockedPlot7560\FactionMaster\Button\KickOut;
 use ShockedPlot7560\FactionMaster\Button\TransferProperty;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\ManageMemberRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 
 class ManageMemberCollection extends Collection {
@@ -55,7 +55,7 @@ class ManageMemberCollection extends Collection {
 				$this->register(new TransferProperty($member));
 			}
 
-			$this->register(new Back(RouterFactory::get(ManageMemberRoute::SLUG)->getBackRoute()));
+			$this->register(new Back(RouterFactory::get(RouteSlug::MANAGE_MEMBER_ROUTE)->getBackRoute()));
 		});
 	}
 }

@@ -41,8 +41,8 @@ use ShockedPlot7560\FactionMaster\Button\ChangeVisibility;
 use ShockedPlot7560\FactionMaster\Button\LevelUp;
 use ShockedPlot7560\FactionMaster\Button\ManageAlliance;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\FactionOptionRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 
 class FactionOptionCollection extends Collection {
 	/** @deprecated */
@@ -57,7 +57,7 @@ class FactionOptionCollection extends Collection {
 			$this->register(new LevelUp());
 			$this->register(new ChangePermissionMain());
 			$this->register(new ManageAlliance());
-			$this->register(new Back(RouterFactory::get(FactionOptionRoute::SLUG)->getBackRoute()));
+			$this->register(new Back(RouterFactory::get(RouteSlug::FACTION_OPTION_ROUTE)->getBackRoute()));
 		});
 	}
 }

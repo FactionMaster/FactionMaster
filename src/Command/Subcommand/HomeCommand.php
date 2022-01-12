@@ -37,8 +37,8 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\HomesViewRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class HomeCommand extends BaseSubCommand {
@@ -53,7 +53,7 @@ class HomeCommand extends BaseSubCommand {
 		$permissions = MainAPI::getMemberPermission($sender->getName());
 		$userEntity = MainAPI::getUser($sender->getName());
 		if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_TP_FACTION_HOME)) {
-			Utils::processMenu(RouterFactory::get(HomesViewRoute::SLUG), $sender);
+			Utils::processMenu(RouterFactory::get(RouteSlug::HOMES_VIEW_ROUTE), $sender);
 		} else {
 			$sender->sendMessage(Utils::getText($sender->getName(), "DONT_PERMISSION"));
 		}

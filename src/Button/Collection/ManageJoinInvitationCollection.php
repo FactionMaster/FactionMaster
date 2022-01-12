@@ -37,9 +37,8 @@ use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\DeleteInvitation;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\JoinInvitationSendRoute;
-use ShockedPlot7560\FactionMaster\Route\ManageJoinInvitationRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 
 class ManageJoinInvitationCollection extends Collection {
 	/** @deprecated */
@@ -48,8 +47,8 @@ class ManageJoinInvitationCollection extends Collection {
 	public function __construct() {
 		parent::__construct(self::MANAGE_JOIN_INVITATION_COLLECTION);
 		$this->registerCallable(self::MANAGE_JOIN_INVITATION_COLLECTION, function (Player $player, UserEntity $user, InvitationEntity $invitationEntity) {
-			$this->register(new DeleteInvitation($invitationEntity, JoinInvitationSendRoute::SLUG));
-			$this->register(new Back(RouterFactory::get(ManageJoinInvitationRoute::SLUG)));
+			$this->register(new DeleteInvitation($invitationEntity, RouteSlug::JOIN_INVITATION_SEND_ROUTE));
+			$this->register(new Back(RouterFactory::get(RouteSlug::MANAGE_JOIN_INVITATION_ROUTE)));
 		});
 	}
 }

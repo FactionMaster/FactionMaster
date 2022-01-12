@@ -37,8 +37,8 @@ use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\Member;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\MembersViewRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 
 class MembersViewCollection extends Collection {
 	/** @deprecated */
@@ -50,7 +50,7 @@ class MembersViewCollection extends Collection {
 			foreach ($faction->getMembers() as $name => $rank) {
 				$this->register(new Member($name, $rank));
 			}
-			$this->register(new Back(RouterFactory::get(MembersViewRoute::SLUG)->getBackRoute()));
+			$this->register(new Back(RouterFactory::get(RouteSlug::MEMBERS_VIEW_ROUTE)->getBackRoute()));
 		});
 	}
 }

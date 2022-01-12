@@ -37,9 +37,8 @@ use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\InvitationListItem;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\AllianceInvitationSendRoute;
-use ShockedPlot7560\FactionMaster\Route\ManageAllianceInvitationRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 
 class AllianceInvitationSendCollection extends Collection {
 	/** @deprecated */
@@ -51,11 +50,11 @@ class AllianceInvitationSendCollection extends Collection {
 			foreach ($invitations as $invitation) {
 				$this->register(new InvitationListItem(
 					$invitation,
-					ManageAllianceInvitationRoute::SLUG,
+					RouteSlug::MANAGE_ALLIANCE_INVITATION_ROUTE,
 					[PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION]
 				));
 			}
-			$this->register(new Back(RouterFactory::get(AllianceInvitationSendRoute::SLUG)->getBackRoute()));
+			$this->register(new Back(RouterFactory::get(RouteSlug::ALLIANCE_INVITATION_SEND_ROUTE)->getBackRoute()));
 		});
 	}
 }

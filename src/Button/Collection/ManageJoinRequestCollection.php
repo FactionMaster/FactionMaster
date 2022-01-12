@@ -38,9 +38,8 @@ use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\DeleteRequest;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\JoinRequestReceiveRoute;
-use ShockedPlot7560\FactionMaster\Route\ManageJoinRequestRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 
 class ManageJoinRequestCollection extends Collection {
 	/** @deprecated */
@@ -50,8 +49,8 @@ class ManageJoinRequestCollection extends Collection {
 		parent::__construct(self::MANAGE_JOIN_REQUEST_COLLECTION);
 		$this->registerCallable(self::MANAGE_JOIN_REQUEST_COLLECTION, function (Player $player, UserEntity $user, InvitationEntity $invitation) {
 			$this->register(new AcceptMemberRequest($invitation));
-			$this->register(new DeleteRequest($invitation, JoinRequestReceiveRoute::SLUG, ManageJoinRequestRoute::SLUG));
-			$this->register(new Back(RouterFactory::get(ManageJoinRequestRoute::SLUG)->getBackRoute()));
+			$this->register(new DeleteRequest($invitation, RouteSlug::JOIN_REQUEST_RECEIVE_ROUTE, RouteSlug::MANAGE_JOIN_REQUEST_ROUTE));
+			$this->register(new Back(RouterFactory::get(RouteSlug::MANAGE_JOIN_REQUEST_ROUTE)->getBackRoute()));
 		});
 	}
 }

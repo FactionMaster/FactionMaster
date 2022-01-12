@@ -38,8 +38,8 @@ use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\ManageMember;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\MembersManageRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 
 class MembersManageCollection extends Collection {
 	/** @deprecated */
@@ -57,7 +57,7 @@ class MembersManageCollection extends Collection {
 					$this->register(new ManageMember(MainAPI::getUser($name)));
 				}
 			}
-			$this->register(new Back(RouterFactory::get(MembersManageRoute::SLUG)->getBackRoute()));
+			$this->register(new Back(RouterFactory::get(RouteSlug::MEMBERS_MANAGE_ROUTE)->getBackRoute()));
 		});
 	}
 }

@@ -37,8 +37,8 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\Home;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\HomesViewRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 
 class HomesViewCollection extends Collection {
 	/** @deprecated */
@@ -51,7 +51,7 @@ class HomesViewCollection extends Collection {
 			foreach ($homes as $name => $home) {
 				$this->register(new Home($name, $home));
 			}
-			$this->register(new Back(RouterFactory::get(HomesViewRoute::SLUG)->getBackRoute()));
+			$this->register(new Back(RouterFactory::get(RouteSlug::HOMES_VIEW_ROUTE)->getBackRoute()));
 		});
 	}
 }

@@ -39,9 +39,8 @@ use ShockedPlot7560\FactionMaster\Button\DeleteRequest;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\ManageMemberRequestRoute;
-use ShockedPlot7560\FactionMaster\Route\MembersRequestReceiveRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 
 class ManageMemberRequestCollection extends Collection {
 	/** @deprecated */
@@ -53,11 +52,11 @@ class ManageMemberRequestCollection extends Collection {
 			$this->register(new AcceptMemberToFac($request));
 			$this->register(new DeleteRequest(
 				$request,
-				MembersRequestReceiveRoute::SLUG,
-				ManageMemberRequestRoute::SLUG,
+				RouteSlug::MEMBERS_REQUEST_RECEIVE_ROUTE,
+				RouteSlug::MANAGE_MEMBER_REQUEST_ROUTE,
 				[PermissionIds::PERMISSION_REFUSE_MEMBER_DEMAND]
 			));
-			$this->register(new Back(RouterFactory::get(ManageMemberRequestRoute::SLUG)->getBackRoute()));
+			$this->register(new Back(RouterFactory::get(RouteSlug::MANAGE_MEMBER_REQUEST_ROUTE)->getBackRoute()));
 		});
 	}
 }
