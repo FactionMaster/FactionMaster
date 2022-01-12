@@ -35,12 +35,12 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
-use ShockedPlot7560\FactionMaster\Button\Collection\MembersRequestReceiveCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionSlug;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use function count;
 
 class MembersRequestReceiveRoute extends RouteBase implements Route {
@@ -73,7 +73,7 @@ class MembersRequestReceiveRoute extends RouteBase implements Route {
 		$this->init($player, $userEntity, $userPermissions, $params);
 
 		$this->requests = MainAPI::getInvitationsByReceiver(MainAPI::getFactionOfPlayer($this->getPlayer()->getName())->getName(), InvitationEntity::MEMBER_INVITATION);
-		$this->setCollection(CollectionFactory::get(MembersRequestReceiveCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getRequests()));
+		$this->setCollection(CollectionFactory::get(CollectionSlug::MEMBERS_REQUEST_RECEIVE_COLLECTION)->init($this->getPlayer(), $this->getUserEntity(), $this->getRequests()));
 
 		$message = "";
 		if (isset($params[0])) {

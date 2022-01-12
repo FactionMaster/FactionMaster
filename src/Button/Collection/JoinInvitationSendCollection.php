@@ -41,11 +41,12 @@ use ShockedPlot7560\FactionMaster\Route\ManageJoinInvitationRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class JoinInvitationSendCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "joinInvitationSendCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, array $invitations) {
+		parent::__construct(self::JOIN_INVITATION_SEND_COLLECTION);
+		$this->registerCallable(self::JOIN_INVITATION_SEND_COLLECTION, function (Player $player, UserEntity $user, array $invitations) {
 			foreach ($invitations as $invitation) {
 				$this->register(new InvitationListItem($invitation, ManageJoinInvitationRoute::SLUG));
 			}

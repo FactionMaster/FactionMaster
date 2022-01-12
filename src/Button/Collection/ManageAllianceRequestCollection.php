@@ -44,11 +44,12 @@ use ShockedPlot7560\FactionMaster\Route\ManageAllianceRequestRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class ManageAllianceRequestCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "manageAllianceRequestCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, InvitationEntity $request) {
+		parent::__construct(self::MANAGE_ALLIANCE_REQUEST_COLLECTION);
+		$this->registerCallable(self::MANAGE_ALLIANCE_REQUEST_COLLECTION, function (Player $player, UserEntity $user, InvitationEntity $request) {
 			$this->register(new AcceptAlly($request));
 			$this->register(new DeleteRequest(
 				$request,

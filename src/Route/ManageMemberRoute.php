@@ -35,11 +35,11 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use InvalidArgumentException;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
-use ShockedPlot7560\FactionMaster\Button\Collection\ManageMemberCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionSlug;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 
 class ManageMemberRoute extends VictimBase implements Route {
 	const SLUG = "manageMemberRoute";
@@ -68,7 +68,7 @@ class ManageMemberRoute extends VictimBase implements Route {
 
 		$this->setVictim($params[0]);
 
-		$this->setCollection(CollectionFactory::get(ManageMemberCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getVictim()));
+		$this->setCollection(CollectionFactory::get(CollectionSlug::MANAGE_MEMBER_COLLECTION)->init($this->getPlayer(), $this->getUserEntity(), $this->getVictim()));
 		$player->sendForm($this->getForm());
 	}
 

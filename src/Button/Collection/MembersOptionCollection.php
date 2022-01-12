@@ -47,11 +47,12 @@ use ShockedPlot7560\FactionMaster\Route\MembersSendInvitationRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class MembersOptionCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "membersOptionCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
+		parent::__construct(self::MEMBERS_OPTION_COLLECTION);
+		$this->registerCallable(self::MEMBERS_OPTION_COLLECTION, function (Player $player, UserEntity $user) {
 			$this->register(new SendInvitation(
 				MembersSendInvitationRoute::SLUG,
 				[PermissionIds::PERMISSION_SEND_MEMBER_INVITATION]

@@ -34,12 +34,12 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
-use ShockedPlot7560\FactionMaster\Button\Collection\ManagePermissionCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionSlug;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use function is_string;
 
 class ManagePermissionRoute extends RouteBase implements Route {
@@ -67,7 +67,7 @@ class ManagePermissionRoute extends RouteBase implements Route {
 			$message = $params[0];
 		}
 
-		$this->setCollection(CollectionFactory::get(ManagePermissionCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity()));
+		$this->setCollection(CollectionFactory::get(CollectionSlug::MANAGE_PERMISSION_COLLECTION)->init($this->getPlayer(), $this->getUserEntity()));
 		$player->sendForm($this->getForm($message));
 	}
 

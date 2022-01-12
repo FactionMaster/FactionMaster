@@ -45,11 +45,12 @@ use ShockedPlot7560\FactionMaster\Route\FactionOptionRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class FactionOptionCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "factionOptionCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
+		parent::__construct(self::FACTION_OPTION_COLLECTION);
+		$this->registerCallable(self::FACTION_OPTION_COLLECTION, function (Player $player, UserEntity $user) {
 			$this->register(new ChangeDescription());
 			$this->register(new ChangeMessage());
 			$this->register(New ChangeVisibility());

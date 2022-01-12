@@ -34,12 +34,11 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
-use ShockedPlot7560\FactionMaster\Button\Collection\MainFacCollection;
-use ShockedPlot7560\FactionMaster\Button\Collection\MainNoFacCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionSlug;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
 use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function is_string;
 
 class MainRoute extends RouteBase implements Route {
@@ -76,10 +75,10 @@ class MainRoute extends RouteBase implements Route {
 		}
 
 		if ($this->getUserEntity()->getFactionEntity() instanceof FactionEntity) {
-			$this->setCollection(CollectionFactory::get(MainFacCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity()));
+			$this->setCollection(CollectionFactory::get(CollectionSlug::MAIN_FAC_COLLECTION)->init($this->getPlayer(), $this->getUserEntity()));
 			$this->menuType = self::FACTION_TYPE;
 		} else {
-			$this->setCollection(CollectionFactory::get(MainNoFacCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity()));
+			$this->setCollection(CollectionFactory::get(CollectionSlug::MAIN_NO_FAC_COLLECTION)->init($this->getPlayer(), $this->getUserEntity()));
 			$this->menuType = self::NO_FACTION_TYPE;
 		}
 		$this->getPlayer()->sendForm($this->getForm($message));

@@ -41,11 +41,12 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 
 class ManagePermissionCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "managePermissionCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
+		parent::__construct(self::MANAGE_PERMISSION_COLLECTION);
+		$this->registerCallable(self::MANAGE_PERMISSION_COLLECTION, function (Player $player, UserEntity $user) {
 			if ($user->getRank() > Ids::RECRUIT_ID) {
 				$this->register(new ChangePermission("RECRUIT_RANK_NAME", Ids::RECRUIT_ID));
 			}

@@ -42,11 +42,12 @@ use ShockedPlot7560\FactionMaster\Route\MembersRequestReceiveRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class MembersRequestReceiveCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "membersRequestReceiveCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, array $requests) {
+		parent::__construct(self::MEMBERS_REQUEST_RECEIVE_COLLECTION);
+		$this->registerCallable(self::MEMBERS_REQUEST_RECEIVE_COLLECTION, function (Player $player, UserEntity $user, array $requests) {
 			foreach ($requests as $request) {
 				$this->register(new RequestListItem(
 					$request,

@@ -42,11 +42,12 @@ use ShockedPlot7560\FactionMaster\Route\ManageAllianceInvitationRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class AllianceInvitationSendCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "allianceInvitationSendCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, array $invitations) {
+		parent::__construct(self::ALLIANCE_INVITATION_SEND_COLLECTION);
+		$this->registerCallable(self::ALLIANCE_INVITATION_SEND_COLLECTION, function (Player $player, UserEntity $user, array $invitations) {
 			foreach ($invitations as $invitation) {
 				$this->register(new InvitationListItem(
 					$invitation,

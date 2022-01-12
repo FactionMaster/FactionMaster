@@ -41,11 +41,12 @@ use ShockedPlot7560\FactionMaster\Route\ManageAllianceRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class ManageAllianceCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "manageAllianceCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, FactionEntity $ally) {
+		parent::__construct(self::MANAGE_ALLIANCE_COLLECTION);
+		$this->registerCallable(self::MANAGE_ALLIANCE_COLLECTION, function (Player $player, UserEntity $user, FactionEntity $ally) {
 			$this->register(new BreakAlly($ally));
 			$this->register(new Back(RouterFactory::get(ManageAllianceRoute::SLUG)->getBackRoute()));
 		});

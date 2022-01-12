@@ -41,11 +41,12 @@ use ShockedPlot7560\FactionMaster\Route\AllianceInvitationSendRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class ManageAllianceInvitationCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "manageAllianceInvitationCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, InvitationEntity $invitation) {
+		parent::__construct(self::MANAGE_ALLIANCE_INVITATION_COLLECTION);
+		$this->registerCallable(self::MANAGE_ALLIANCE_INVITATION_COLLECTION, function (Player $player, UserEntity $user, InvitationEntity $invitation) {
 			$this->register(new DeleteInvitation($invitation, AllianceInvitationSendRoute::SLUG));
 			$this->register(new Back(RouterFactory::get(AllianceInvitationSendRoute::SLUG)->getBackRoute()));
 		});

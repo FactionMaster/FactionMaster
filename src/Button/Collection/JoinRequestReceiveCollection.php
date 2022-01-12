@@ -41,11 +41,12 @@ use ShockedPlot7560\FactionMaster\Route\ManageJoinRequestRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class JoinRequestReceiveCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "joinRequestReceiveCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, array $requests) {
+		parent::__construct(self::JOIN_REQUEST_RECEIVE_COLLECTION);
+		$this->registerCallable(self::JOIN_REQUEST_RECEIVE_COLLECTION, function (Player $player, UserEntity $user, array $requests) {
 			foreach ($requests as $request) {
 				$this->register(new RequestListItem($request, ManageJoinRequestRoute::SLUG));
 			}

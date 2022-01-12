@@ -34,11 +34,11 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
-use ShockedPlot7560\FactionMaster\Button\Collection\MembersManageCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionSlug;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use function count;
 use function is_string;
 
@@ -62,7 +62,7 @@ class MembersManageRoute extends RouteBase implements Route {
 
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
 		$this->init($player, $userEntity, $userPermissions, $params);
-		$this->setCollection(CollectionFactory::get(MembersManageCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getFaction()));
+		$this->setCollection(CollectionFactory::get(CollectionSlug::MEMBERS_MANAGE_COLLECTION)->init($this->getPlayer(), $this->getUserEntity(), $this->getFaction()));
 
 		$message = "";
 		if (isset($params[0]) && is_string($params[0])) {

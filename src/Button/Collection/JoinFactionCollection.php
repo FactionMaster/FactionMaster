@@ -45,11 +45,12 @@ use ShockedPlot7560\FactionMaster\Route\JoinSendInvitationRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class JoinFactionCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "joinFactionCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
+		parent::__construct(self::JOIN_FACTION_COLLECTION);
+		$this->registerCallable(self::JOIN_FACTION_COLLECTION, function (Player $player, UserEntity $user) {
 			$this->register(new SendInvitation(JoinSendInvitationRoute::SLUG, []));
 			$this->register(new InvitationPending(JoinInvitationSendRoute::SLUG, []));
 			$this->register(new RequestPending(JoinRequestReceiveRoute::SLUG, []));

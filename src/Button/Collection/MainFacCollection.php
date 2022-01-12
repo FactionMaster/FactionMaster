@@ -43,11 +43,12 @@ use ShockedPlot7560\FactionMaster\Button\ViewMembers;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 
 class MainFacCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "mainFacCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
+		parent::__construct(self::MAIN_FAC_COLLECTION);
+		$this->registerCallable(self::MAIN_FAC_COLLECTION, function (Player $player, UserEntity $user) {
 			$this->register(new ViewMembers());
 			$this->register(new ViewHomes());
 			$this->register(new ManageMembers());

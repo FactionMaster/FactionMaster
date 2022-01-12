@@ -42,11 +42,12 @@ use ShockedPlot7560\FactionMaster\Route\MembersManageRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class MembersManageCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "membersManageCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, FactionEntity $faction) {
+		parent::__construct(self::MEMBERS_MANAGE_COLLECTION);
+		$this->registerCallable(self::MEMBERS_MANAGE_COLLECTION, function (Player $player, UserEntity $user, FactionEntity $faction) {
 			foreach ($faction->getMembers() as $name => $rank) {
 				if ($name === $user->getName()) {
 					continue;

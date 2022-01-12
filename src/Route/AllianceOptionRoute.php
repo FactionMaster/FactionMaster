@@ -33,12 +33,12 @@
 namespace ShockedPlot7560\FactionMaster\Route;
 
 use pocketmine\player\Player;
-use ShockedPlot7560\FactionMaster\Button\Collection\AllianceOptionCollection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionSlug;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use function count;
 
 class AllianceOptionRoute extends RouteBase implements Route {
@@ -65,7 +65,7 @@ class AllianceOptionRoute extends RouteBase implements Route {
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
 		$this->init($player, $userEntity, $userPermissions, $params);
 
-		$this->setCollection(CollectionFactory::get(AllianceOptionCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getFaction()));
+		$this->setCollection(CollectionFactory::get(CollectionSlug::ALLIANCE_OPTION_COLLECTION)->init($this->getPlayer(), $this->getUserEntity(), $this->getFaction()));
 
 		$message = isset($params[0]) ? $params[0] : "";
 		if (count($this->getFaction()->getAlly()) == 0) {

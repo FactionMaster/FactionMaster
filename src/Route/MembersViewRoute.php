@@ -35,10 +35,10 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
-use ShockedPlot7560\FactionMaster\Button\Collection\MembersViewCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionSlug;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
 use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 
 class MembersViewRoute extends RouteBase implements Route {
@@ -60,7 +60,7 @@ class MembersViewRoute extends RouteBase implements Route {
 		$this->init($player, $userEntity, $userPermissions, $params);
 
 		$faction = MainAPI::getFactionOfPlayer($this->getPlayer()->getName());
-		$this->setCollection(CollectionFactory::get(MembersViewCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $faction));
+		$this->setCollection(CollectionFactory::get(CollectionSlug::MEMBERS_VIEW_COLLECTION)->init($this->getPlayer(), $this->getUserEntity(), $faction));
 
 		$message = "";
 		if (isset($this->getParams()[0])) {

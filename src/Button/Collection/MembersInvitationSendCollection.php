@@ -42,11 +42,12 @@ use ShockedPlot7560\FactionMaster\Route\MembersInvitationSendRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class MembersInvitationSendCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "membersInvitationSendCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, array $invitations) {
+		parent::__construct(self::MEMBERS_INVITATION_SEND_COLLECTION);
+		$this->registerCallable(self::MEMBERS_INVITATION_SEND_COLLECTION, function (Player $player, UserEntity $user, array $invitations) {
 			foreach ($invitations as $invitation) {
 				$this->register(new InvitationListItem(
 					$invitation,

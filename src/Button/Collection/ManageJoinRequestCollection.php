@@ -43,11 +43,12 @@ use ShockedPlot7560\FactionMaster\Route\ManageJoinRequestRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class ManageJoinRequestCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "manageJoinRequestCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, InvitationEntity $invitation) {
+		parent::__construct(self::MANAGE_JOIN_REQUEST_COLLECTION);
+		$this->registerCallable(self::MANAGE_JOIN_REQUEST_COLLECTION, function (Player $player, UserEntity $user, InvitationEntity $invitation) {
 			$this->register(new AcceptMemberRequest($invitation));
 			$this->register(new DeleteRequest($invitation, JoinRequestReceiveRoute::SLUG, ManageJoinRequestRoute::SLUG));
 			$this->register(new Back(RouterFactory::get(ManageJoinRequestRoute::SLUG)->getBackRoute()));

@@ -34,10 +34,10 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
-use ShockedPlot7560\FactionMaster\Button\Collection\JoinFactionCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionSlug;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
 use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function is_string;
 
 class JoinFactionRoute extends RouteBase implements Route {
@@ -57,7 +57,7 @@ class JoinFactionRoute extends RouteBase implements Route {
 
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
 		$this->init($player, $userEntity, $userPermissions, $params);
-		$this->setCollection(CollectionFactory::get(JoinFactionCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity()));
+		$this->setCollection(CollectionFactory::get(CollectionSlug::JOIN_FACTION_COLLECTION)->init($this->getPlayer(), $this->getUserEntity()));
 
 		$message = "";
 		if (isset($params[0]) && is_string($params[0])) {

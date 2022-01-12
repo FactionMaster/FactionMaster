@@ -34,13 +34,13 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\Button\Collection\AllianceInvitationSendCollection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionSlug;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use function count;
 use function is_string;
 
@@ -73,7 +73,7 @@ class AllianceInvitationSendRoute extends RouteBase implements Route {
 		$this->init($player, $userEntity, $userPermissions, $params);
 
 		$this->invitations = MainAPI::getInvitationsBySender($this->getFaction()->getName(), InvitationEntity::ALLIANCE_INVITATION);
-		$this->setCollection(CollectionFactory::get(AllianceInvitationSendCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getInvitations()));
+		$this->setCollection(CollectionFactory::get(CollectionSlug::ALLIANCE_INVITATION_SEND_COLLECTION)->init($this->getPlayer(), $this->getUserEntity(), $this->getInvitations()));
 
 		$message = "";
 		if (isset($params[0]) && is_string($params[0])) {

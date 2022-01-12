@@ -41,11 +41,12 @@ use ShockedPlot7560\FactionMaster\Route\HomesViewRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class HomesViewCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "homesViewCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
+		parent::__construct(self::HOMES_VIEW_COLLECTION);
+		$this->registerCallable(self::HOMES_VIEW_COLLECTION, function (Player $player, UserEntity $user) {
 			$homes = MainAPI::getFactionHomes($user->getFactionName());
 			foreach ($homes as $name => $home) {
 				$this->register(new Home($name, $home));

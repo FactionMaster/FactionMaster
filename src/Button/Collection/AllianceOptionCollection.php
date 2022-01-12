@@ -49,11 +49,12 @@ use ShockedPlot7560\FactionMaster\Route\AllianceSendInvitationRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 
 class AllianceOptionCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "allianceOptionCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, FactionEntity $faction) {
+		parent::__construct(self::ALLIANCE_OPTION_COLLECTION);
+		$this->registerCallable(self::ALLIANCE_OPTION_COLLECTION, function (Player $player, UserEntity $user, FactionEntity $faction) {
 			foreach ($faction->getAlly() as $name) {
 				$this->register(new Ally(MainAPI::getFaction($name)));
 			}
