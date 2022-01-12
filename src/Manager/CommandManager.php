@@ -32,7 +32,6 @@
 
 namespace ShockedPlot7560\FactionMaster\Manager;
 
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\AddFlagCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\ClaimCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\ClaimInfoCommand;
@@ -40,6 +39,7 @@ use ShockedPlot7560\FactionMaster\Command\Subcommand\DelhomeCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\ExtensionCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\FactionCreateCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\FactionManageCommand;
+use ShockedPlot7560\FactionMaster\Command\Subcommand\FactionTopCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\HelpCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\HomeCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\HomeTpCommand;
@@ -52,6 +52,7 @@ use ShockedPlot7560\FactionMaster\Command\Subcommand\SethomeCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\SettingsCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\SynchroCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\UnclaimCommand;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class CommandManager {
@@ -79,6 +80,7 @@ class CommandManager {
 		self::registerCommand(new RemoveFlagCommand("removeflag", Utils::getText("", "COMMAND_REMOVE_FLAG")));
 		self::registerCommand(new SynchroCommand("synchro", Utils::getText("", "COMMAND_SYNCHRO")));
 		self::registerCommand(new SettingsCommand("settings", "Give all the FactionMaster settings"));
+		self::registerCommand(new FactionTopCommand("top", "Give all the FactionMaster settings"));
 	}
 
 	public static function registerCommand(BaseSubCommand $command): void {
