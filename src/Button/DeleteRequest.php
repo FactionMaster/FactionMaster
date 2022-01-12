@@ -36,8 +36,8 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Event\InvitationRefuseEvent;
-use ShockedPlot7560\FactionMaster\Route\ConfirmationRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -48,7 +48,7 @@ class DeleteRequest extends Button {
 				return Utils::getText($player, "BUTTON_REFUSE_REQUEST");
 			})
 			->setCallable(function (Player $player) use ($request, $panelSlug, $backPanelSlug) {
-				Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
+				Utils::processMenu(RouterFactory::get(RouteSlug::CONFIRMATION_ROUTE), $player, [
 					function (Player $player, $data) use ($request, $panelSlug, $backPanelSlug) {
 						if ($data === null) {
 							return;

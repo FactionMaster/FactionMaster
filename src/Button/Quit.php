@@ -35,8 +35,6 @@ namespace ShockedPlot7560\FactionMaster\Button;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Quit extends Button {
-	const SLUG = "quit";
-
 	public function __construct() {
 		$this->setSlug(self::QUIT)
 			->setContent(function ($player) {

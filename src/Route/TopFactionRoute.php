@@ -34,14 +34,15 @@ namespace ShockedPlot7560\FactionMaster\Route;
 
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
 use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class TopFactionRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "topFactionRoute";
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::TOP_FACTION_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -49,7 +50,7 @@ class TopFactionRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(MainRoute::SLUG);
+		return RouterFactory::get(self::MAIN_ROUTE);
 	}
 
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {

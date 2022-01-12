@@ -34,8 +34,8 @@ namespace ShockedPlot7560\FactionMaster\Button;
 
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\ManageLevelRoute as RouteLevelUp;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class LevelUp extends Button {
@@ -45,7 +45,7 @@ class LevelUp extends Button {
 				return Utils::getText($player, "BUTTON_LEVEL_UP");
 			})
 			->setCallable(function (Player $player) {
-				Utils::processMenu(RouterFactory::get(RouteLevelUp::SLUG), $player);
+				Utils::processMenu(RouterFactory::get(RouteSlug::MANAGE_LEVEL_ROUTE), $player);
 			})
 			->setPermissions([
 				PermissionIds::PERMISSION_LEVEL_UP

@@ -42,10 +42,11 @@ use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageMemberRoute extends VictimBase implements Route {
+	/** @deprecated */
 	const SLUG = "manageMemberRoute";
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::MANAGE_MEMBER_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -56,7 +57,7 @@ class ManageMemberRoute extends VictimBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(MembersOptionRoute::SLUG);
+		return RouterFactory::get(self::MEMBERS_OPTION_ROUTE);
 	}
 
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {

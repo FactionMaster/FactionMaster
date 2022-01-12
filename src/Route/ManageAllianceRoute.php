@@ -43,13 +43,14 @@ use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageAllianceRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "manageAllianceRoute";
 
 	/** @var FactionEntity */
 	private $alliance;
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::MANAGE_ALLIANCE_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -59,7 +60,7 @@ class ManageAllianceRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(AllianceOptionRoute::SLUG);
+		return RouterFactory::get(self::ALLIANCE_OPTION_ROUTE);
 	}
 
 	protected function getAlliance(): FactionEntity {

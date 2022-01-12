@@ -43,10 +43,11 @@ use function count;
 use function is_string;
 
 class MembersManageRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "membersManageRoute";
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::MEMBERS_MANAGE_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -57,7 +58,7 @@ class MembersManageRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(MembersOptionRoute::SLUG);
+		return RouterFactory::get(self::MEMBERS_OPTION_ROUTE);
 	}
 
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {

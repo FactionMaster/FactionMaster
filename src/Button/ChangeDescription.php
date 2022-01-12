@@ -34,8 +34,8 @@ namespace ShockedPlot7560\FactionMaster\Button;
 
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\DescriptionChangeRoute as RouteChangeDescription;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeDescription extends Button {
@@ -45,7 +45,7 @@ class ChangeDescription extends Button {
 				return Utils::getText($player, "BUTTON_CHANGE_DESCRIPTION");
 			})
 			->setCallable(function (Player $player) {
-				Utils::processMenu(RouterFactory::get(RouteChangeDescription::SLUG), $player);
+				Utils::processMenu(RouterFactory::get(RouteSlug::DESCRIPTION_CHANGE_ROUTE), $player);
 			})
 			->setPermissions([
 				PermissionIds::PERMISSION_CHANGE_FACTION_DESCRIPTION

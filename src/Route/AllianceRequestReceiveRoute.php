@@ -45,13 +45,14 @@ use function count;
 use function is_string;
 
 class AllianceRequestReceiveRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "allianceRequestReceiveRoute";
 
 	/** @var InvitationEntity[] */
 	private $invitations;
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::ALLIANCE_REQUEST_RECEIVE_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -62,7 +63,7 @@ class AllianceRequestReceiveRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(AllianceOptionRoute::SLUG);
+		return RouterFactory::get(self::ALLIANCE_OPTION_ROUTE);
 	}
 
 	/** @return InvitationEntity[] */

@@ -38,9 +38,8 @@ use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Event\AllianceCreateEvent;
 use ShockedPlot7560\FactionMaster\Event\InvitationAcceptEvent;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\AllianceRequestReceiveRoute;
-use ShockedPlot7560\FactionMaster\Route\ConfirmationRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -51,7 +50,7 @@ class AcceptAlly extends Button {
 				return Utils::getText($player, "BUTTON_ACCEPT_REQUEST");
 			})
 			->setCallable(function (Player $player) use ($request) {
-				Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
+				Utils::processMenu(RouterFactory::get(RouteSlug::CONFIRMATION_ROUTE), $player, [
 					function (Player $player, $data) use ($request) {
 						if ($data === null) {
 							return;
@@ -77,27 +76,27 @@ class AcceptAlly extends Button {
 												},
 												function () use ($request, $player, $message) {
 													(new InvitationAcceptEvent($player, $request))->call();
-													Utils::processMenu(RouterFactory::get(AllianceRequestReceiveRoute::SLUG), $player, [$message]);
+													Utils::processMenu(RouterFactory::get(RouteSlug::ALLIANCE_REQUEST_RECEIVE_ROUTE), $player, [$message]);
 												},
 												function () use ($player) {
-													Utils::processMenu(RouterFactory::get(AllianceRequestReceiveRoute::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+													Utils::processMenu(RouterFactory::get(RouteSlug::ALLIANCE_REQUEST_RECEIVE_ROUTE), $player, [Utils::getText($player->getName(), "ERROR")]);
 												}
 											));
 										},
 										function () use ($player) {
-											Utils::processMenu(RouterFactory::get(AllianceRequestReceiveRoute::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+											Utils::processMenu(RouterFactory::get(RouteSlug::ALLIANCE_REQUEST_RECEIVE_ROUTE), $player, [Utils::getText($player->getName(), "ERROR")]);
 										}
 									));
 								} else {
 									$message = Utils::getText($player->getName(), "MAX_ALLY_REACH_OTHER");
-									Utils::processMenu(RouterFactory::get(AllianceRequestReceiveRoute::SLUG), $player, [$message]);
+									Utils::processMenu(RouterFactory::get(RouteSlug::ALLIANCE_REQUEST_RECEIVE_ROUTE), $player, [$message]);
 								}
 							} else {
 								$message = Utils::getText($player->getName(), "MAX_ALLY_REACH");
-								Utils::processMenu(RouterFactory::get(AllianceRequestReceiveRoute::SLUG), $player, [$message]);
+								Utils::processMenu(RouterFactory::get(RouteSlug::ALLIANCE_REQUEST_RECEIVE_ROUTE), $player, [$message]);
 							}
 						} else {
-							Utils::processMenu(RouterFactory::get(AllianceRequestReceiveRoute::SLUG), $player, [$request]);
+							Utils::processMenu(RouterFactory::get(RouteSlug::ALLIANCE_REQUEST_RECEIVE_ROUTE), $player, [$request]);
 						}
 					},
 					Utils::getText($player->getName(), "CONFIRMATION_TITLE_ACCEPT_REQUEST"),

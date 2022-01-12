@@ -33,8 +33,8 @@
 namespace ShockedPlot7560\FactionMaster\Button;
 
 use pocketmine\player\Player;
-use ShockedPlot7560\FactionMaster\Route\MembersViewRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
@@ -60,7 +60,7 @@ class Member extends Button {
 				return $text;
 			})
 			->setCallable(function (Player $player) {
-				Utils::processMenu(RouterFactory::get(MembersViewRoute::SLUG), $player);
+				Utils::processMenu(RouterFactory::get(RouteSlug::MEMBERS_VIEW_ROUTE), $player);
 			});
 	}
 }

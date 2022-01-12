@@ -35,7 +35,7 @@ namespace ShockedPlot7560\FactionMaster\Button;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
-use ShockedPlot7560\FactionMaster\Route\VisibilityChangeRoute as RouteChangeVisibility;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeVisibility extends Button {
@@ -45,7 +45,7 @@ class ChangeVisibility extends Button {
 				return Utils::getText($player, "BUTTON_CHANGE_VISIBILITY");
 			})
 			->setCallable(function (Player $player) {
-				Utils::processMenu(RouterFactory::get(RouteChangeVisibility::SLUG), $player);
+				Utils::processMenu(RouterFactory::get(RouteSlug::VISIBILITY_CHANGE_ROUTE), $player);
 			})
 			->setPermissions([
 				PermissionIds::PERMISSION_CHANGE_FACTION_VISIBILITY

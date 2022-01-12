@@ -43,10 +43,11 @@ use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageMemberInvitationRoute extends InvitationBase implements Route {
+	/** @deprecated */
 	const SLUG = "manageMemberInvitationRoute";
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::MANAGE_MEMBER_INVITATION_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -56,7 +57,7 @@ class ManageMemberInvitationRoute extends InvitationBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(MembersInvitationSendRoute::SLUG);
+		return RouterFactory::get(self::MEMBERS_INVITATION_SEND_ROUTE);
 	}
 
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {

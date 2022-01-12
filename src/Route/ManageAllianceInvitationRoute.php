@@ -43,10 +43,11 @@ use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageAllianceInvitationRoute extends InvitationBase implements Route {
+	/** @deprecated */
 	const SLUG = "manageAllianceInvitationRoute";
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::MANAGE_ALLIANCE_INVITATION_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -56,7 +57,7 @@ class ManageAllianceInvitationRoute extends InvitationBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(AllianceRequestReceiveRoute::SLUG);
+		return RouterFactory::get(self::ALLIANCE_REQUEST_RECEIVE_ROUTE);
 	}
 
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {

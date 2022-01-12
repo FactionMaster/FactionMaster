@@ -42,10 +42,11 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 
 class AllianceOptionRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "allianceOptionRoute";
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::ALLIANCE_OPTION_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -59,7 +60,7 @@ class AllianceOptionRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(FactionOptionRoute::SLUG);
+		return RouterFactory::get(self::FACTION_OPTION_ROUTE);
 	}
 
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {

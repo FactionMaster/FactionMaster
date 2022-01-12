@@ -34,8 +34,8 @@ namespace ShockedPlot7560\FactionMaster\Button;
 
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\MessageChangeRoute as RouteChangeMessage;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeMessage extends Button {
@@ -45,7 +45,7 @@ class ChangeMessage extends Button {
 				return Utils::getText($player, "BUTTON_CHANGE_MESSAGE");
 			})
 			->setCallable(function (Player $player) {
-				Utils::processMenu(RouterFactory::get(RouteChangeMessage::SLUG), $player);
+				Utils::processMenu(RouterFactory::get(RouteSlug::MESSAGE_CHANGE_ROUTE), $player);
 			})
 			->setPermissions([
 				PermissionIds::PERMISSION_CHANGE_FACTION_MESSAGE

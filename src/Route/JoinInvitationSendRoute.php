@@ -43,10 +43,11 @@ use function count;
 use function is_string;
 
 class JoinInvitationSendRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "joinInvitationSendRoute";
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::JOIN_INVITATION_SEND_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -54,7 +55,7 @@ class JoinInvitationSendRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(JoinFactionRoute::SLUG);
+		return RouterFactory::get(self::JOIN_FACTION_ROUTE);
 	}
 
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {

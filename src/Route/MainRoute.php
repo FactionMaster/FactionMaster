@@ -42,6 +42,7 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function is_string;
 
 class MainRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "mainRoute";
 
 	const NO_FACTION_TYPE = 0;
@@ -51,7 +52,7 @@ class MainRoute extends RouteBase implements Route {
 	private $menuType;
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::MAIN_ROUTE;
 	}
 
 	public function getPermissions(): array {

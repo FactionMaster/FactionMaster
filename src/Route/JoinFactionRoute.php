@@ -41,10 +41,11 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function is_string;
 
 class JoinFactionRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "joinFactionRoute";
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::JOIN_FACTION_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -52,7 +53,7 @@ class JoinFactionRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(MainRoute::SLUG);
+		return RouterFactory::get(self::MAIN_ROUTE);
 	}
 
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {

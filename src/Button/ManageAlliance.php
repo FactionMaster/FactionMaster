@@ -34,8 +34,8 @@ namespace ShockedPlot7560\FactionMaster\Button;
 
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\AllianceOptionRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageAlliance extends Button {
@@ -45,7 +45,7 @@ class ManageAlliance extends Button {
 				return Utils::getText($player, "BUTTON_MANAGE_ALLIANCE");
 			})
 			->setCallable(function (Player $player) {
-				Utils::processMenu(RouterFactory::get(AllianceOptionRoute::SLUG), $player);
+				Utils::processMenu(RouterFactory::get(RouteSlug::ALLIANCE_OPTION_ROUTE), $player);
 			})
 			->setPermissions([
 				PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION,

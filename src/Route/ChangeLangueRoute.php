@@ -40,10 +40,11 @@ use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeLangueRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "changeLangueRoute";
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::CHANGE_LANGUE_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -51,7 +52,7 @@ class ChangeLangueRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(MainRoute::SLUG);
+		return RouterFactory::get(self::MAIN_ROUTE);
 	}
 
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {

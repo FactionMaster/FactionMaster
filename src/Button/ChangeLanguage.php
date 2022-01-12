@@ -32,8 +32,8 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
-use ShockedPlot7560\FactionMaster\Route\ChangeLangueRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeLanguage extends Button {
@@ -43,7 +43,7 @@ class ChangeLanguage extends Button {
 				return Utils::getText($player, "BUTTON_CHANGE_LANGUAGE");
 			})
 			->setCallable(function ($player) {
-				Utils::processMenu(RouterFactory::get(ChangeLangueRoute::SLUG), $player);
+				Utils::processMenu(RouterFactory::get(RouteSlug::CHANGE_LANGUE_ROUTE), $player);
 			})
 			->setImgPack("textures/img/translate");
 	}

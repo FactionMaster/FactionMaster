@@ -37,8 +37,8 @@ use pocketmine\world\Position;
 use pocketmine\world\World;
 use ShockedPlot7560\FactionMaster\Database\Entity\HomeEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\MainRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class Home extends Button {
@@ -58,7 +58,7 @@ class Home extends Button {
 					$position = new Position($home->getX(), $home->getY(), $home->getZ(), $level);
 					$player->teleport($position);
 					$player->sendMessage(Utils::getText($player->getName(), "SUCCESS_TELEPORT_HOME"));
-					Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player);
+					Utils::processMenu(RouterFactory::get(RouteSlug::MAIN_ROUTE), $player);
 				}
 			})
 			->setPermissions([

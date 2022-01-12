@@ -44,13 +44,14 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 
 class MembersRequestReceiveRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "membersRequestReceiveRoute";
 
 	/** @var InvitationEntity[] */
 	private $requests;
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::MEMBERS_REQUEST_RECEIVE_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -61,7 +62,7 @@ class MembersRequestReceiveRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(MembersOptionRoute::SLUG);
+		return RouterFactory::get(self::MEMBERS_OPTION_ROUTE);
 	}
 
 	/** @return InvitationEntity[] */

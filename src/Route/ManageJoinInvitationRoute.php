@@ -42,10 +42,11 @@ use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageJoinInvitationRoute extends InvitationBase implements Route {
+	/** @deprecated */
 	const SLUG = "manageJoinInvitationRoute";
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::MANAGE_JOIN_INVITATION_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -53,7 +54,7 @@ class ManageJoinInvitationRoute extends InvitationBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(JoinInvitationSendRoute::SLUG);
+		return RouterFactory::get(self::JOIN_INVITATION_SEND_ROUTE);
 	}
 
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {

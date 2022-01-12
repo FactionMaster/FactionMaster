@@ -45,13 +45,14 @@ use function count;
 use function is_string;
 
 class MembersInvitationSendRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "membersInvitationSendRoute";
 
 	/** @var InvitationEntity[] */
 	private $invitations;
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::MEMBERS_INVITATION_SEND_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -61,7 +62,7 @@ class MembersInvitationSendRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(MembersOptionRoute::SLUG);
+		return RouterFactory::get(self::MEMBERS_OPTION_ROUTE);
 	}
 
 	/** @return InvitationEntity[] */

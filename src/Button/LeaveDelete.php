@@ -37,9 +37,8 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionDeleteEvent;
 use ShockedPlot7560\FactionMaster\Event\FactionLeaveEvent;
-use ShockedPlot7560\FactionMaster\Route\ConfirmationRoute;
-use ShockedPlot7560\FactionMaster\Route\MainRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
@@ -60,7 +59,7 @@ class LeaveDelete extends Button {
 			$faction = MainAPI::getFactionOfPlayer($player->getName());
 			if ($userEntity->getRank() == Ids::OWNER_ID) {
 				Utils::processMenu(
-					RouterFactory::get(ConfirmationRoute::SLUG),
+					RouterFactory::get(RouteSlug::CONFIRMATION_ROUTE),
 					$player,
 					[
 						$this->callConfirmDelete($faction),
@@ -71,7 +70,7 @@ class LeaveDelete extends Button {
 			} else {
 				$faction = MainAPI::getFactionOfPlayer($player->getName());
 				Utils::processMenu(
-					RouterFactory::get(ConfirmationRoute::SLUG),
+					RouterFactory::get(RouteSlug::CONFIRMATION_ROUTE),
 					$player,
 					[
 						$this->callConfirmLeave($faction),
@@ -93,9 +92,9 @@ class LeaveDelete extends Button {
 				$message = Utils::getText($player->getName(), "SUCCESS_LEAVE_FACTION");
 				MainAPI::removeMember($faction->getName(), $player->getName());
 				(new FactionLeaveEvent($player, $faction))->call();
-				Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player, [$message]);
+				Utils::processMenu(RouterFactory::get(RouteSlug::MAIN_ROUTE), $player, [$message]);
 			} else {
-				Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player);
+				Utils::processMenu(RouterFactory::get(RouteSlug::MAIN_ROUTE), $player);
 			}
 		};
 	}
@@ -115,14 +114,14 @@ class LeaveDelete extends Button {
 					},
 					function () use ($player, $faction, $message) {
 						(new FactionDeleteEvent($player, $faction))->call();
-						Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player, [$message]);
+						Utils::processMenu(RouterFactory::get(RouteSlug::MAIN_ROUTE), $player, [$message]);
 					},
 					function () use ($player) {
-						Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+						Utils::processMenu(RouterFactory::get(RouteSlug::MAIN_ROUTE), $player, [Utils::getText($player->getName(), "ERROR")]);
 					}
 				));
 			} else {
-				Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player);
+				Utils::processMenu(RouterFactory::get(RouteSlug::MAIN_ROUTE), $player);
 			}
 		};
 	}

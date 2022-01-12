@@ -42,10 +42,11 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 
 class MembersViewRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "membersViewRoute";
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::MEMBERS_VIEW_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -53,7 +54,7 @@ class MembersViewRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(MainRoute::SLUG);
+		return RouterFactory::get(self::MAIN_ROUTE);
 	}
 
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
