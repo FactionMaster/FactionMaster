@@ -27,7 +27,7 @@
  #
 
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
-file-version: 13
+file-version: 14
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
 
 # --------------------- DATABASE --------------------------
@@ -46,6 +46,9 @@ SQLITE_database:
   name: "FactionMasterv3"
 
 # --------------------- GLOBAL CONFIGURATION --------------------------
+
+# low mode
+low-mode: false
 
 # If you want to disable this feature, empty this array and reload your server
 banned-faction-name: ["op", "staff", "admin", "fuck", "shit"]
