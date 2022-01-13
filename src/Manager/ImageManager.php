@@ -75,7 +75,7 @@ class ImageManager {
 				$main->getLogger()->warning("The resource_pack given for FactionMaster image doesn't exists");
 			}
 			$uuid = [
-				"dbcac694-6cc7-4c68-8798-bd114218ba16", //official
+				"3bfb2d06-efe2-4346-95a4-81bcf9fb6fb5", //official
 				"dc84ba0e-f0f1-4beb-a0da-be2b1115c613" //xAliTura01
 			];
 			foreach ($uuid as $id) {
