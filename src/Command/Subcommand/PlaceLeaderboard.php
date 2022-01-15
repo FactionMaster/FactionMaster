@@ -34,8 +34,8 @@ namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
+use ShockedPlot7560\FactionMaster\Command\Argument\EnumArgument;
 use ShockedPlot7560\FactionMaster\Event\LeaderboardCreateEvent;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
@@ -48,13 +48,14 @@ use function join;
 class PlaceLeaderboard extends BaseSubCommand {
 	protected function prepare(): void {
 		$this->setPermission("factionmaster.leaderboard.place");
-		$this->registerArgument(0, new RawStringArgument("slug"));
+		$this->registerArgument(0, new EnumArgument("slug", array_keys(LeaderboardManager::getAll())));
 	}
 
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
 		if ($sender instanceof Player) {
 			if ($sender->hasPermission("factionmaster.leaderboard.place")) {
-				if (!LeaderboardManager::isRegister($args["slug"])) {
+				$leaderboard = LeaderboardManager::getLeaderboard($args["slug"]);
+				if ($leaderboard === null) {
 					$sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_SCOREBOARD_INVALID_SLUG", ["list" => implode(",", array_keys(LeaderboardManager::getAll()))]));
 					return;
 				}
@@ -65,12 +66,12 @@ class PlaceLeaderboard extends BaseSubCommand {
 					$position->getFloorZ(),
 					$position->getWorld()->getDisplayName()
 				]);
-				$entity = new Leaderboard($args["slug"], $coord);
+				$entity = new Leaderboard($leaderboard->getSlug(), $coord);
 				LeaderboardManager::placeScoreboard($entity);
 				$config = ConfigManager::getLeaderboardConfig();
 				$leaderboards = $config->get('leaderboards');
 				$leaderboards[] = [
-					"slug" => $args["slug"],
+					"slug" => $leaderboard->getSlug(),
 					"position" => $coord,
 					"active" => true
 				];

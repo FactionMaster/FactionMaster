@@ -34,10 +34,10 @@ namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
+use ShockedPlot7560\FactionMaster\Command\Argument\EnumArgument;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\FactionMaster;
 use ShockedPlot7560\FactionMaster\Leaderboard\EntityLeaderboard;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
@@ -53,7 +53,7 @@ use function str_replace;
 
 class FactionTopCommand extends BaseSubCommand {
 	protected function prepare(): void {
-		$this->registerArgument(0, new RawStringArgument("slug", true));
+		$this->registerArgument(0, new EnumArgument("slug", array_keys(LeaderboardManager::getAll())));
 	}
 
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {

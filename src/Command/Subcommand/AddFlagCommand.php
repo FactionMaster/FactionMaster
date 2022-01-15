@@ -35,6 +35,7 @@ namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Command\Argument\EnumArgument;
 use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
@@ -47,7 +48,7 @@ use function floor;
 class AddFlagCommand extends BaseSubCommand {
 	protected function prepare(): void {
 		$this->registerArgument(0, new RawStringArgument("areaName"));
-		$this->registerArgument(1, new RawStringArgument("type"));
+		$this->registerArgument(1, new EnumArgument("type", ["warzone", "spawn"]));
 		$this->setPermission("factionmaster.flag.add");
 	}
 

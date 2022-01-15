@@ -83,7 +83,6 @@ class FactionMaster extends PluginBase implements Listener {
 		ConfigManager::init($this);
 		self::$light = ConfigManager::getConfig()->get("low-mode") ?? false;
 		TranslationManager::init($this);
-		CommandManager::init(self::$light);
 		SyncServerManager::init($this);
 		DatabaseManager::init();
 		MainAPI::init(DatabaseManager::getPDO(), $this);
@@ -95,6 +94,7 @@ class FactionMaster extends PluginBase implements Listener {
 			RewardFactory::init();
 			CollectionFactory::init();
 		}
+		CommandManager::init(self::$light);
 
 		MigrationManager::init($this);
 		if (version_compare($this->getDescription()->getVersion(), Utils::getConfigFile("version")->get("migrate-version")) == 1) {

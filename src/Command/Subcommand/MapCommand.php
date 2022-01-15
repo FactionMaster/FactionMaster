@@ -35,9 +35,9 @@ namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Command\Argument\EnumArgument;
 use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Manager\MapManager;
@@ -69,7 +69,7 @@ class MapCommand extends BaseSubCommand {
 
 	protected function prepare(): void {
 		if (Utils::getConfig("f-map-task") !== false) {
-			$this->registerArgument(0, new RawStringArgument("statement", true));
+			$this->registerArgument(0, new EnumArgument("statement", ["on", "off"]));
 		}
 	}
 
