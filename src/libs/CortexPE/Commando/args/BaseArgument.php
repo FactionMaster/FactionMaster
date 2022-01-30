@@ -32,7 +32,6 @@ namespace ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args;
 use pocketmine\command\CommandSender;
 use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
 use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
-use function var_dump;
 
 abstract class BaseArgument {
 	/** @var string */
@@ -67,8 +66,6 @@ abstract class BaseArgument {
 	}
 
 	public function isOptional(): bool {
-		var_dump($this->name);
-		var_dump($this->optional);
 		return $this->optional;
 	}
 
