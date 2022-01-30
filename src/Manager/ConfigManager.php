@@ -32,9 +32,9 @@
 
 namespace ShockedPlot7560\FactionMaster\Manager;
 
-use JackMD\ConfigUpdater\ConfigUpdater;
 use pocketmine\utils\Config;
 use ShockedPlot7560\FactionMaster\FactionMaster as Main;
+use ShockedPlot7560\FactionMaster\libs\JackMD\ConfigUpdater\ConfigUpdater;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 use function is_countable;
@@ -46,10 +46,11 @@ class ConfigManager {
 	const TRANSLATION_VERSION = 2;
 	const LANG_FILE_VERSION = [
 		"en_EN" => 7,
-		"fr_FR" => 4,
+		"fr_FR" => 5,
 		"es_SPA" => 2,
 		"tr_TR" => 1,
-		"pt_BR" => 1
+		"pt_BR" => 1,
+		"tr_TR" => 1
 	];
 
 	/** @var Config */
