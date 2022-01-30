@@ -1,5 +1,5 @@
 # DO NOT EDIT THIS LINE
-file-version: 1
+file-version: 2
 # DO NOT EDIT THIS LINE
 
 default-language: EN
@@ -9,9 +9,11 @@ languages:
   "EN": "en_EN"
   "SPA": "es_SPA"
   "TR": "tr_TR"
+  "BR": "pt_BR"
 
 languages-name:
   "FR": "Français"
   "EN": "English"
   "SPA": "Español"
   "TR": "Türkçe"
+  "BR": "Português"
