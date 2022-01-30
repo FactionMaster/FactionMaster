@@ -35,17 +35,18 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use InvalidArgumentException;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
-use ShockedPlot7560\FactionMaster\Button\Collection\ManageJoinInvitationCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionSlug;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
 use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageJoinInvitationRoute extends InvitationBase implements Route {
+	/** @deprecated */
 	const SLUG = "manageJoinInvitationRoute";
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::MANAGE_JOIN_INVITATION_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -53,7 +54,7 @@ class ManageJoinInvitationRoute extends InvitationBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(JoinInvitationSendRoute::SLUG);
+		return RouterFactory::get(self::JOIN_INVITATION_SEND_ROUTE);
 	}
 
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
@@ -64,7 +65,7 @@ class ManageJoinInvitationRoute extends InvitationBase implements Route {
 		}
 
 		$this->setInvitation($params[0]);
-		$this->setCollection(CollectionFactory::get(ManageJoinInvitationCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getInvitation()));
+		$this->setCollection(CollectionFactory::get(CollectionSlug::MANAGE_JOIN_INVITATION_COLLECTION)->init($this->getPlayer(), $this->getUserEntity(), $this->getInvitation()));
 
 		$player->sendForm($this->getForm());
 	}

@@ -36,20 +36,20 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\RequestListItem;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\JoinRequestReceiveRoute;
-use ShockedPlot7560\FactionMaster\Route\ManageJoinRequestRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 
 class JoinRequestReceiveCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "joinRequestReceiveCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, array $requests) {
+		parent::__construct(self::JOIN_REQUEST_RECEIVE_COLLECTION);
+		$this->registerCallable(self::JOIN_REQUEST_RECEIVE_COLLECTION, function (Player $player, UserEntity $user, array $requests) {
 			foreach ($requests as $request) {
-				$this->register(new RequestListItem($request, ManageJoinRequestRoute::SLUG));
+				$this->register(new RequestListItem($request, RouteSlug::MANAGE_JOIN_REQUEST_ROUTE));
 			}
-			$this->register(new Back(RouterFactory::get(JoinRequestReceiveRoute::SLUG)->getBackRoute()));
+			$this->register(new Back(RouterFactory::get(RouteSlug::JOIN_REQUEST_RECEIVE_ROUTE)->getBackRoute()));
 		});
 	}
 }

@@ -75,22 +75,27 @@ class FactionMaster extends PluginBase implements Listener {
 	/** @var array */
 	private static $tableQuery;
 
+	public static $light = false;
+
 	public function onLoad(): void {
 		self::$instance = $this;
 
 		ConfigManager::init($this);
+		self::$light = ConfigManager::getConfig()->get("low-mode") ?? false;
 		TranslationManager::init($this);
-		CommandManager::init();
 		SyncServerManager::init($this);
 		DatabaseManager::init();
 		MainAPI::init(DatabaseManager::getPDO(), $this);
-		PermissionManager::init();
-		ImageManager::init($this);
-		LeaderboardManager::init($this);
+		if (!self::$light) {
+			PermissionManager::init();
+			ImageManager::init($this);
+			LeaderboardManager::init($this);
+			RouterFactory::init();
+			RewardFactory::init();
+			CollectionFactory::init();
+		}
+		CommandManager::init(self::$light);
 
-		RouterFactory::init();
-		RewardFactory::init();
-		CollectionFactory::init();
 		MigrationManager::init($this);
 		if (version_compare($this->getDescription()->getVersion(), Utils::getConfigFile("version")->get("migrate-version")) == 1) {
 			MigrationManager::migrate(Utils::getConfigFile("version")->get("migrate-version"));

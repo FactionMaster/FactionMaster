@@ -40,18 +40,19 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\AllianceCreateEvent;
 use ShockedPlot7560\FactionMaster\Event\InvitationAcceptEvent;
 use ShockedPlot7560\FactionMaster\Event\InvitationSendEvent;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\CustomForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\CustomForm;
 use function count;
 use function is_string;
 
 class AllianceSendInvitationRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "allianceSendInvitationRoute";
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::ALLIANCE_SEND_INVITATION_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -61,7 +62,7 @@ class AllianceSendInvitationRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(AllianceOptionRoute::SLUG);
+		return RouterFactory::get(self::ALLIANCE_OPTION_ROUTE);
 	}
 
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
@@ -110,12 +111,12 @@ class AllianceSendInvitationRoute extends RouteBase implements Route {
 												Utils::processMenu($this->getBackRoute(), $player, [Utils::getText($player->getName(), "SUCCESS_ACCEPT_REQUEST", ['name' => $invit->sender])]);
 											},
 											function () use ($player) {
-												Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+												Utils::processMenu($this, $player, [Utils::getText($player->getName(), "ERROR")]);
 											}
 										));
 									},
 									function () use ($player) {
-										Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+										Utils::processMenu($this, $player, [Utils::getText($player->getName(), "ERROR")]);
 									}
 								));
 							} elseif (!MainAPI::areInInvitation($faction->getName(), $targetName, InvitationEntity::ALLIANCE_INVITATION)) {
@@ -135,20 +136,20 @@ class AllianceSendInvitationRoute extends RouteBase implements Route {
 										Utils::processMenu($this->getBackRoute(), $player, [Utils::getText($player->getName(), "SUCCESS_SEND_INVITATION", ['name' => $data[1]])]);
 									},
 									function () use ($player) {
-										Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+										Utils::processMenu($this, $player, [Utils::getText($player->getName(), "ERROR")]);
 									}
 								));
 							} else {
-								Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ALREADY_PENDING_INVITATION")]);
+								Utils::processMenu($this, $player, [Utils::getText($player->getName(), "ALREADY_PENDING_INVITATION")]);
 							}
 						} else {
-							Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "MAX_ALLY_REACH_OTHER")]);
+							Utils::processMenu($this, $player, [Utils::getText($player->getName(), "MAX_ALLY_REACH_OTHER")]);
 						}
 					} else {
-						Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "MAX_ALLY_REACH")]);
+						Utils::processMenu($this, $player, [Utils::getText($player->getName(), "MAX_ALLY_REACH")]);
 					}
 				} else {
-					Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "FACTION_DONT_EXIST")]);
+					Utils::processMenu($this, $player, [Utils::getText($player->getName(), "FACTION_DONT_EXIST")]);
 				}
 			} else {
 				Utils::processMenu($this->getBackRoute(), $player);

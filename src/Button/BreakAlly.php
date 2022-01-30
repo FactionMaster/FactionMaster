@@ -37,23 +37,19 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Event\AllianceBreakEvent;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\AllianceOptionRoute;
-use ShockedPlot7560\FactionMaster\Route\ConfirmationRoute;
-use ShockedPlot7560\FactionMaster\Route\ManageAllianceRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class BreakAlly extends Button {
-	const SLUG = "breakAlly";
-
 	public function __construct(FactionEntity $ally) {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::BREAK_ALLY)
 			->setContent(function (string $player) {
 				return Utils::getText($player, "BUTTON_BREAK_ALLIANCE");
 			})
 			->setCallable(function (Player $player) use ($ally) {
-				Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
+				Utils::processMenu(RouterFactory::get(RouteSlug::CONFIRMATION_ROUTE), $player, [
 					function (Player $player, $data) use ($ally) {
 						$faction = MainAPI::getFactionOfPlayer($player->getName());
 						if ($data === null) {
@@ -69,14 +65,14 @@ class BreakAlly extends Button {
 								function () use ($player, $faction, $ally) {
 									$event = new AllianceBreakEvent($player, $faction, $ally);
 									$event->call();
-									Utils::processMenu(RouterFactory::get(AllianceOptionRoute::SLUG), $player, [Utils::getText($player->getName(), "SUCCESS_BREAK_ALLIANCE", ['name' => $ally->name])]);
+									Utils::processMenu(RouterFactory::get(RouteSlug::ALLIANCE_OPTION_ROUTE), $player, [Utils::getText($player->getName(), "SUCCESS_BREAK_ALLIANCE", ['name' => $ally->name])]);
 								},
 								function () use ($player) {
-									Utils::processMenu(RouterFactory::get(AllianceOptionRoute::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+									Utils::processMenu(RouterFactory::get(RouteSlug::ALLIANCE_OPTION_ROUTE), $player, [Utils::getText($player->getName(), "ERROR")]);
 								}
 							));
 						} else {
-							Utils::processMenu(RouterFactory::get(ManageAllianceRoute::SLUG), $player, [$ally]);
+							Utils::processMenu(RouterFactory::get(RouteSlug::MANAGE_ALLIANCE_ROUTE), $player, [$ally]);
 						}
 					},
 					Utils::getText($player->getName(), "CONFIRMATION_TITLE_BREAK_ALLIANCE"),

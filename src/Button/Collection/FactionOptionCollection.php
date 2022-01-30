@@ -41,22 +41,23 @@ use ShockedPlot7560\FactionMaster\Button\ChangeVisibility;
 use ShockedPlot7560\FactionMaster\Button\LevelUp;
 use ShockedPlot7560\FactionMaster\Button\ManageAlliance;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\FactionOptionRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 
 class FactionOptionCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "factionOptionCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
+		parent::__construct(self::FACTION_OPTION_COLLECTION);
+		$this->registerCallable(self::FACTION_OPTION_COLLECTION, function (Player $player, UserEntity $user) {
 			$this->register(new ChangeDescription());
 			$this->register(new ChangeMessage());
 			$this->register(New ChangeVisibility());
 			$this->register(new LevelUp());
 			$this->register(new ChangePermissionMain());
 			$this->register(new ManageAlliance());
-			$this->register(new Back(RouterFactory::get(FactionOptionRoute::SLUG)->getBackRoute()));
+			$this->register(new Back(RouterFactory::get(RouteSlug::FACTION_OPTION_ROUTE)->getBackRoute()));
 		});
 	}
 }

@@ -37,19 +37,20 @@ use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\Member;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\MembersViewRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 
 class MembersViewCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "membersViewCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, FactionEntity $faction) {
+		parent::__construct(self::MEMBERS_VIEW_COLLECTION);
+		$this->registerCallable(self::MEMBERS_VIEW_COLLECTION, function (Player $player, UserEntity $user, FactionEntity $faction) {
 			foreach ($faction->getMembers() as $name => $rank) {
 				$this->register(new Member($name, $rank));
 			}
-			$this->register(new Back(RouterFactory::get(MembersViewRoute::SLUG)->getBackRoute()));
+			$this->register(new Back(RouterFactory::get(RouteSlug::MEMBERS_VIEW_ROUTE)->getBackRoute()));
 		});
 	}
 }

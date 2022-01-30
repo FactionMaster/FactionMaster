@@ -45,7 +45,7 @@ class FactionPowerLeaderboard extends EntityLeaderboard {
 	const SLUG = "factionPower";
 
 	public function getSqlQuery(): string {
-		return "SELECT * FROM " . FactionTable::TABLE_NAME . " ORDER BY power DESC, level DESC, xp DESC, power DESC LIMIT 10";
+		return "SELECT * FROM " . FactionTable::TABLE_NAME . " ORDER BY power DESC, level DESC, xp DESC, power DESC LIMIT " . $this->getLimit();
 	}
 
 	public function getSlug(): string {

@@ -39,24 +39,24 @@ use ShockedPlot7560\FactionMaster\Button\DeleteRequest;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\AllianceRequestReceiveRoute;
-use ShockedPlot7560\FactionMaster\Route\ManageAllianceRequestRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 
 class ManageAllianceRequestCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "manageAllianceRequestCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, InvitationEntity $request) {
+		parent::__construct(self::MANAGE_ALLIANCE_REQUEST_COLLECTION);
+		$this->registerCallable(self::MANAGE_ALLIANCE_REQUEST_COLLECTION, function (Player $player, UserEntity $user, InvitationEntity $request) {
 			$this->register(new AcceptAlly($request));
 			$this->register(new DeleteRequest(
 				$request,
-				AllianceRequestReceiveRoute::SLUG,
-				ManageAllianceRequestRoute::SLUG,
+				RouteSlug::ALLIANCE_REQUEST_RECEIVE_ROUTE,
+				RouteSlug::MANAGE_ALLIANCE_REQUEST_ROUTE,
 				[PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND]
 			));
-			$this->register(new Back(RouterFactory::get(ManageAllianceRequestRoute::SLUG)->getBackRoute()));
+			$this->register(new Back(RouterFactory::get(RouteSlug::MANAGE_ALLIANCE_REQUEST_ROUTE)->getBackRoute()));
 		});
 	}
 }

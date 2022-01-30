@@ -34,20 +34,18 @@ namespace ShockedPlot7560\FactionMaster\Button;
 
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\MembersManageRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ManageMembersMain extends Button {
-	const SLUG = "manageMembersMain";
-
 	public function __construct() {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::MANAGE_MEMBERS_MAIN)
 			->setContent(function (string $player) {
 				return Utils::getText($player, "BUTTON_MANAGE_MEMBERS");
 			})
 			->setCallable(function (Player $player) {
-				Utils::processMenu(RouterFactory::get(MembersManageRoute::SLUG), $player);
+				Utils::processMenu(RouterFactory::get(RouteSlug::MEMBERS_MANAGE_ROUTE), $player);
 			})
 			->setPermissions([
 				PermissionIds::PERMISSION_CHANGE_MEMBER_RANK,

@@ -33,17 +33,18 @@
 namespace ShockedPlot7560\FactionMaster\Route;
 
 use pocketmine\player\Player;
-use ShockedPlot7560\FactionMaster\Button\Collection\ChangeLangueCollection;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionSlug;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
 use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeLangueRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "changeLangueRoute";
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::CHANGE_LANGUE_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -51,13 +52,13 @@ class ChangeLangueRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(MainRoute::SLUG);
+		return RouterFactory::get(self::MAIN_ROUTE);
 	}
 
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
 		$this->init($player, $userEntity, $userPermissions, $params);
 
-		$this->setCollection(CollectionFactory::get(ChangeLangueCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity()));
+		$this->setCollection(CollectionFactory::get(CollectionSlug::CHANGE_LANGUE_COLLECTION)->init($this->getPlayer(), $this->getUserEntity()));
 
 		$player->sendForm($this->getForm());
 	}

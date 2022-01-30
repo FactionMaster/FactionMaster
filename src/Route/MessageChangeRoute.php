@@ -36,17 +36,18 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\MessageChangeEvent;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\CustomForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\CustomForm;
 use function is_string;
 
 class MessageChangeRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "messageChangeRoute";
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::MESSAGE_CHANGE_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -56,7 +57,7 @@ class MessageChangeRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(FactionOptionRoute::SLUG);
+		return RouterFactory::get(self::FACTION_OPTION_ROUTE);
 	}
 
 	/**
@@ -94,12 +95,12 @@ class MessageChangeRoute extends RouteBase implements Route {
 						Utils::processMenu($this->getBackRoute(), $player, [Utils::getText($player->getName(), "SUCCESS_MESSAGE_UPDATE")]);
 					},
 					function () use ($player) {
-						Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+						Utils::processMenu($this, $player, [Utils::getText($player->getName(), "ERROR")]);
 					}
 				));
 				return;
 			}
-			Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+			Utils::processMenu($this, $player, [Utils::getText($player->getName(), "ERROR")]);
 		};
 	}
 

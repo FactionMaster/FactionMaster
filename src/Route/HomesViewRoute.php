@@ -35,19 +35,20 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
-use ShockedPlot7560\FactionMaster\Button\Collection\HomesViewCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionSlug;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use function count;
 use function is_string;
 
 class HomesViewRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "homesViewRoute";
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::HOMES_VIEW_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -57,13 +58,13 @@ class HomesViewRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(MainRoute::SLUG);
+		return RouterFactory::get(self::MAIN_ROUTE);
 	}
 
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
 		$this->init($player, $userEntity, $userPermissions, $params);
 
-		$this->setCollection(CollectionFactory::get(HomesViewCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity()));
+		$this->setCollection(CollectionFactory::get(CollectionSlug::HOMES_VIEW_COLLECTION)->init($this->getPlayer(), $this->getUserEntity()));
 		$homes = MainAPI::getFactionHomes($this->getUserEntity()->getFactionName());
 
 		$message = "";

@@ -37,20 +37,21 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\Home;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\HomesViewRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 
 class HomesViewCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "homesViewCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
+		parent::__construct(self::HOMES_VIEW_COLLECTION);
+		$this->registerCallable(self::HOMES_VIEW_COLLECTION, function (Player $player, UserEntity $user) {
 			$homes = MainAPI::getFactionHomes($user->getFactionName());
 			foreach ($homes as $name => $home) {
 				$this->register(new Home($name, $home));
 			}
-			$this->register(new Back(RouterFactory::get(HomesViewRoute::SLUG)->getBackRoute()));
+			$this->register(new Back(RouterFactory::get(RouteSlug::HOMES_VIEW_ROUTE)->getBackRoute()));
 		});
 	}
 }

@@ -32,7 +32,6 @@
 
 namespace ShockedPlot7560\FactionMaster\Manager;
 
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\AddFlagCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\ClaimCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\ClaimInfoCommand;
@@ -40,6 +39,7 @@ use ShockedPlot7560\FactionMaster\Command\Subcommand\DelhomeCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\ExtensionCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\FactionCreateCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\FactionManageCommand;
+use ShockedPlot7560\FactionMaster\Command\Subcommand\FactionTopCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\HelpCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\HomeCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\HomeTpCommand;
@@ -52,6 +52,7 @@ use ShockedPlot7560\FactionMaster\Command\Subcommand\SethomeCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\SettingsCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\SynchroCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\UnclaimCommand;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class CommandManager {
@@ -59,19 +60,22 @@ class CommandManager {
 	/** @var BaseSubCommand[] */
 	private static $commands = [];
 
-	public static function init(): void {
-		self::registerCommand(new FactionCreateCommand("create", Utils::getText("", "COMMAND_CREATE_DESCRIPTION")));
-		self::registerCommand(new FactionManageCommand("manage", Utils::getText("", "COMMAND_MANAGE_DESCRIPTION")));
-		self::registerCommand(new ClaimCommand("claim", Utils::getText("", "COMMAND_CLAIM_DESCRIPTION")));
-		self::registerCommand(new UnclaimCommand("unclaim", Utils::getText("", "COMMAND_UNCLAIM_DESCRIPTION")));
-		self::registerCommand(new SethomeCommand("sethome", Utils::getText("", "COMMAND_SETHOME_DESCRIPTION")));
-		self::registerCommand(new DelhomeCommand("delhome", Utils::getText("", "COMMAND_DELHOME_DESCRIPTION")));
-		self::registerCommand(new HomeTpCommand("tp", Utils::getText("", "COMMAND_TP_DESCRIPTION")));
-		self::registerCommand(new HomeCommand("home", Utils::getText("", "COMMAND_HOME_DESCRIPTION")));
-		self::registerCommand(new MapCommand("map", Utils::getText("", "COMMAND_MAP_DESCRIPTION")));
+	public static function init(bool $light = false): void {
+		if (!$light) {
+			self::registerCommand(new FactionCreateCommand("create", Utils::getText("", "COMMAND_CREATE_DESCRIPTION")));
+			self::registerCommand(new FactionManageCommand("manage", Utils::getText("", "COMMAND_MANAGE_DESCRIPTION")));
+			self::registerCommand(new ClaimCommand("claim", Utils::getText("", "COMMAND_CLAIM_DESCRIPTION")));
+			self::registerCommand(new UnclaimCommand("unclaim", Utils::getText("", "COMMAND_UNCLAIM_DESCRIPTION")));
+			self::registerCommand(new SethomeCommand("sethome", Utils::getText("", "COMMAND_SETHOME_DESCRIPTION")));
+			self::registerCommand(new DelhomeCommand("delhome", Utils::getText("", "COMMAND_DELHOME_DESCRIPTION")));
+			self::registerCommand(new HomeTpCommand("tp", Utils::getText("", "COMMAND_TP_DESCRIPTION")));
+			self::registerCommand(new HomeCommand("home", Utils::getText("", "COMMAND_HOME_DESCRIPTION")));
+			self::registerCommand(new MapCommand("map", Utils::getText("", "COMMAND_MAP_DESCRIPTION")));
+			self::registerCommand(new InfoCommand("info", Utils::getText("", "COMMAND_INFO_DESCRIPTION")));
+			self::registerCommand(new ClaimInfoCommand("claiminfo", Utils::getText("", "COMMAND_CLAIM_INFO_DESCRIPTION")));
+			self::registerCommand(new FactionTopCommand("top", "Give all the FactionMaster settings"));
+		}
 		self::registerCommand(new HelpCommand("help", Utils::getText("", "COMMAND_HELP_DESCRIPTION")));
-		self::registerCommand(new InfoCommand("info", Utils::getText("", "COMMAND_INFO_DESCRIPTION")));
-		self::registerCommand(new ClaimInfoCommand("claiminfo", Utils::getText("", "COMMAND_CLAIM_INFO_DESCRIPTION")));
 		self::registerCommand(new ExtensionCommand("extension", Utils::getText("", "COMMAND_EXTENSION_DESCRIPTION")));
 		self::registerCommand(new PlaceLeaderboard("placeleaderboard", Utils::getText("", "COMMAND_SCOREBOARD_DESCRIPTION")));
 		self::registerCommand(new RemoveNearLeaderboardCommand("removeleaderboard", Utils::getText("", "COMMAND_SCOREBOARD_DESCRIPTION")));
@@ -97,6 +101,11 @@ class CommandManager {
 
 	/** @return BaseSubCommand[] */
 	public static function getCommands(): array {
+		return self::$commands;
+	}
+
+	/** @return BaseSubCommand[] */
+	public static function getAll(): array {
 		return self::$commands;
 	}
 }

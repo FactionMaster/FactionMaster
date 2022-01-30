@@ -36,20 +36,21 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\Langue;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\ChangeLangueRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangeLangueCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "changeLangueCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
+		parent::__construct(self::CHANGE_LANGUE_COLLECTION);
+		$this->registerCallable(self::CHANGE_LANGUE_COLLECTION, function (Player $player, UserEntity $user) {
 			foreach (Utils::getConfigLang("languages-name") as $langue) {
 				$this->register(new Langue($langue));
 			}
-			$this->register(new Back(RouterFactory::get(ChangeLangueRoute::SLUG)->getBackRoute()));
+			$this->register(new Back(RouterFactory::get(RouteSlug::CHANGE_LANGUE_ROUTE)->getBackRoute()));
 		});
 	}
 }

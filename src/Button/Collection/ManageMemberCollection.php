@@ -38,23 +38,24 @@ use ShockedPlot7560\FactionMaster\Button\ChangeRank;
 use ShockedPlot7560\FactionMaster\Button\KickOut;
 use ShockedPlot7560\FactionMaster\Button\TransferProperty;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\ManageMemberRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 
 class ManageMemberCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "manageMemberCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, UserEntity $member) {
+		parent::__construct(self::MANAGE_MEMBER_COLLECTION);
+		$this->registerCallable(self::MANAGE_MEMBER_COLLECTION, function (Player $player, UserEntity $user, UserEntity $member) {
 			$this->register(new ChangeRank($member));
 			$this->register(new KickOut($member));
 			if ($user->getRank() == Ids::OWNER_ID) {
 				$this->register(new TransferProperty($member));
 			}
 
-			$this->register(new Back(RouterFactory::get(ManageMemberRoute::SLUG)->getBackRoute()));
+			$this->register(new Back(RouterFactory::get(RouteSlug::MANAGE_MEMBER_ROUTE)->getBackRoute()));
 		});
 	}
 }

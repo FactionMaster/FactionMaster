@@ -63,6 +63,8 @@ class CollectionFactory {
 		self::register(new ManagePermissionCollection());
 		self::register(new HomesViewCollection());
 		self::register(new MembersViewCollection());
+		self::register(new LeaderboardCollection());
+		self::register(new LeaderboardShowCollection());
 	}
 
 	public static function register(Collection $collection, bool $override = false): void {

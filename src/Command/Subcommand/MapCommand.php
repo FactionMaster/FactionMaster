@@ -69,7 +69,7 @@ class MapCommand extends BaseSubCommand {
 
 	protected function prepare(): void {
 		if (Utils::getConfig("f-map-task") !== false) {
-			$this->registerArgument(0, new RawStringArgument("statement", true));
+			$this->registerArgument(0, new RawStringArgument("on|off", true));
 		}
 	}
 
@@ -78,10 +78,10 @@ class MapCommand extends BaseSubCommand {
 			return;
 		}
 
-		if (isset($args["statement"]) && $args["statement"] === "off") {
+		if (isset($args["on|off"]) && $args["on|off"] === "off") {
 			MapManager::remove($sender);
 		} else {
-			if (isset($args["statement"]) && $args["statement"] === "on" && !MapManager::isRegister($sender)) {
+			if (isset($args["on|off"]) && $args["on|off"] === "on" && !MapManager::isRegister($sender)) {
 				MapManager::add($sender);
 			}
 			$config = ConfigManager::getConfig();

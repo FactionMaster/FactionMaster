@@ -35,18 +35,19 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use InvalidArgumentException;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
-use ShockedPlot7560\FactionMaster\Button\Collection\ManageAllianceRequestCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionSlug;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 
 class ManageAllianceRequestRoute extends InvitationBase implements Route {
+	/** @deprecated */
 	const SLUG = "manageAllianceRequestRoute";
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::MANAGE_ALLIANCE_REQUEST_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -57,7 +58,7 @@ class ManageAllianceRequestRoute extends InvitationBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(AllianceRequestReceiveRoute::SLUG);
+		return RouterFactory::get(self::ALLIANCE_REQUEST_RECEIVE_ROUTE);
 	}
 
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
@@ -68,7 +69,7 @@ class ManageAllianceRequestRoute extends InvitationBase implements Route {
 		}
 
 		$this->setInvitation($params[0]);
-		$this->setCollection(CollectionFactory::get(ManageAllianceRequestCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getInvitation()));
+		$this->setCollection(CollectionFactory::get(CollectionSlug::MANAGE_ALLIANCE_REQUEST_COLLECTION)->init($this->getPlayer(), $this->getUserEntity(), $this->getInvitation()));
 
 		$player->sendForm($this->getForm());
 	}

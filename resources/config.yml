@@ -27,7 +27,7 @@
  #
 
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
-file-version: 12
+file-version: 14
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
 
 # --------------------- DATABASE --------------------------
@@ -46,6 +46,9 @@ SQLITE_database:
   name: "FactionMasterv3"
 
 # --------------------- GLOBAL CONFIGURATION --------------------------
+
+# low mode
+low-mode: false
 
 # If you want to disable this feature, empty this array and reload your server
 banned-faction-name: ["op", "staff", "admin", "fuck", "shit"]
@@ -174,6 +177,8 @@ message-alert-cooldown: 10
 
 message-alert-flag-enabled: false
 # -------------- TOP FACTION'S SCOREBOARD CONFIGURATION -----------------
+
+leaderboard-menu-limit: 10
 
 # This is the scoreboard header, display on the top for the factionLevel top
 factionLevel-leaderboard-header: "- Top 10 faction -"

@@ -37,24 +37,24 @@ use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\InvitationListItem;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\ManageMemberInvitationRoute;
-use ShockedPlot7560\FactionMaster\Route\MembersInvitationSendRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 
 class MembersInvitationSendCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "membersInvitationSendCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, array $invitations) {
+		parent::__construct(self::MEMBERS_INVITATION_SEND_COLLECTION);
+		$this->registerCallable(self::MEMBERS_INVITATION_SEND_COLLECTION, function (Player $player, UserEntity $user, array $invitations) {
 			foreach ($invitations as $invitation) {
 				$this->register(new InvitationListItem(
 					$invitation,
-					ManageMemberInvitationRoute::SLUG,
+					RouteSlug::MANAGE_MEMBER_INVITATION_ROUTE,
 					[PermissionIds::PERMISSION_DELETE_PENDING_MEMBER_INVITATION]
 				));
 			}
-			$this->register(new Back(RouterFactory::get(MembersInvitationSendRoute::SLUG)->getBackRoute()));
+			$this->register(new Back(RouterFactory::get(RouteSlug::MEMBERS_INVITATION_SEND_ROUTE)->getBackRoute()));
 		});
 	}
 }

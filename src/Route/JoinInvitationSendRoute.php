@@ -35,18 +35,19 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
-use ShockedPlot7560\FactionMaster\Button\Collection\JoinInvitationSendCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionSlug;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
 use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 use function is_string;
 
 class JoinInvitationSendRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "joinInvitationSendRoute";
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::JOIN_INVITATION_SEND_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -54,14 +55,14 @@ class JoinInvitationSendRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(JoinFactionRoute::SLUG);
+		return RouterFactory::get(self::JOIN_FACTION_ROUTE);
 	}
 
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
 		$this->init($player, $userEntity, $userPermissions, $params);
 
 		$invitations = MainAPI::getInvitationsBySender($player->getName(), "member");
-		$this->setCollection(CollectionFactory::get(JoinInvitationSendCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $invitations));
+		$this->setCollection(CollectionFactory::get(CollectionSlug::JOIN_INVITATION_SEND_COLLECTION)->init($this->getPlayer(), $this->getUserEntity(), $invitations));
 
 		$message = "";
 		if (isset($params[0]) && is_string($params[0])) {

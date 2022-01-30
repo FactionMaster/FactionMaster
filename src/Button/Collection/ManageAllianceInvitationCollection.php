@@ -37,17 +37,18 @@ use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\DeleteInvitation;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\AllianceInvitationSendRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 
 class ManageAllianceInvitationCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "manageAllianceInvitationCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, InvitationEntity $invitation) {
-			$this->register(new DeleteInvitation($invitation, AllianceInvitationSendRoute::SLUG));
-			$this->register(new Back(RouterFactory::get(AllianceInvitationSendRoute::SLUG)->getBackRoute()));
+		parent::__construct(self::MANAGE_ALLIANCE_INVITATION_COLLECTION);
+		$this->registerCallable(self::MANAGE_ALLIANCE_INVITATION_COLLECTION, function (Player $player, UserEntity $user, InvitationEntity $invitation) {
+			$this->register(new DeleteInvitation($invitation, RouteSlug::ALLIANCE_INVITATION_SEND_ROUTE));
+			$this->register(new Back(RouterFactory::get(RouteSlug::ALLIANCE_INVITATION_SEND_ROUTE)->getBackRoute()));
 		});
 	}
 }

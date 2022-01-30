@@ -37,27 +37,27 @@ use ShockedPlot7560\FactionMaster\Button\Back;
 use ShockedPlot7560\FactionMaster\Button\RequestListItem;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\AllianceRequestReceiveRoute;
-use ShockedPlot7560\FactionMaster\Route\ManageAllianceRequestRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 
 class AllianceRequestReceiveCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "allianceRequestReceiveCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, array $requests) {
+		parent::__construct(self::ALLIANCE_REQUEST_RECEIVE_COLLECTION);
+		$this->registerCallable(self::ALLIANCE_REQUEST_RECEIVE_COLLECTION, function (Player $player, UserEntity $user, array $requests) {
 			foreach ($requests as $request) {
 				$this->register(new RequestListItem(
 					$request,
-					ManageAllianceRequestRoute::SLUG,
+					RouteSlug::MANAGE_ALLIANCE_REQUEST_ROUTE,
 					[
 						PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
 						PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
 					]
 				));
 			}
-			$this->register(new Back(RouterFactory::get(AllianceRequestReceiveRoute::SLUG)->getBackRoute()));
+			$this->register(new Back(RouterFactory::get(RouteSlug::ALLIANCE_REQUEST_RECEIVE_ROUTE)->getBackRoute()));
 		});
 	}
 }

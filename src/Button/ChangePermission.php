@@ -34,20 +34,18 @@ namespace ShockedPlot7560\FactionMaster\Button;
 
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\PermissionChangeRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ChangePermission extends Button {
-	const SLUG = "changePermission";
-
 	public function __construct(string $nameSlug, int $rankId) {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::CHANGE_PERMISSION)
 			->setContent(function (string $player) use ($nameSlug) {
 				return Utils::getText($player, $nameSlug);
 			})
 			->setCallable(function (Player $player) use ($rankId) {
-				Utils::processMenu(RouterFactory::get(PermissionChangeRoute::SLUG), $player, [$rankId]);
+				Utils::processMenu(RouterFactory::get(RouteSlug::PERMISSION_CHANGE_ROUTE), $player, [$rankId]);
 			})
 			->setPermissions([
 				PermissionIds::PERMISSION_MANAGE_LOWER_RANK_PERMISSIONS

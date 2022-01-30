@@ -41,18 +41,19 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionJoinEvent;
 use ShockedPlot7560\FactionMaster\Event\InvitationAcceptEvent;
 use ShockedPlot7560\FactionMaster\Event\InvitationSendEvent;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\CustomForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\CustomForm;
 use function count;
 use function is_string;
 
 class MembersSendInvitationRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "membersSendInvitationRoute";
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::MEMBERS_SEND_INVITATION_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -62,7 +63,7 @@ class MembersSendInvitationRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(MembersOptionRoute::SLUG);
+		return RouterFactory::get(self::MEMBERS_OPTION_ROUTE);
 	}
 
 	public function __invoke(Player $player, UserEntity $userEntity, array $userPermissions, ?array $params = null) {
@@ -87,7 +88,7 @@ class MembersSendInvitationRoute extends RouteBase implements Route {
 				$userRequested = MainAPI::getUser($targetName);
 				$faction = $this->getFaction();
 				if (count($faction->getMembers()) >= $faction->getMaxPlayer()) {
-					Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($this->getUserEntity()->getName(), "MAX_PLAYER_REACH")]);
+					Utils::processMenu($this, $player, [Utils::getText($this->getUserEntity()->getName(), "MAX_PLAYER_REACH")]);
 					return;
 				}
 				if ($userRequested instanceof UserEntity) {
@@ -113,12 +114,12 @@ class MembersSendInvitationRoute extends RouteBase implements Route {
 												Utils::processMenu($this->getBackRoute(), $player, [Utils::getText($player->getName(), "SUCCESS_ACCEPT_REQUEST", ['name' => $userRequested->getName()])]);
 											},
 											function () use ($player) {
-												Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+												Utils::processMenu($this, $player, [Utils::getText($player->getName(), "ERROR")]);
 											}
 										));
 									},
 									function () use ($player) {
-										Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+										Utils::processMenu($this, $player, [Utils::getText($player->getName(), "ERROR")]);
 									}
 								));
 							} else {
@@ -138,18 +139,18 @@ class MembersSendInvitationRoute extends RouteBase implements Route {
 										Utils::processMenu($this->getBackRoute(), $player, [Utils::getText($player->getName(), "SUCCESS_SEND_INVITATION", ['name' => $targetName])]);
 									},
 									function () use ($player) {
-										Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+										Utils::processMenu($this, $player, [Utils::getText($player->getName(), "ERROR")]);
 									}
 								));
 							}
 						} else {
-							Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ALREADY_PENDING_INVITATION")]);
+							Utils::processMenu($this, $player, [Utils::getText($player->getName(), "ALREADY_PENDING_INVITATION")]);
 						}
 					} else {
-						Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "PLAYER_HAVE_ALREADY_FACTION")]);
+						Utils::processMenu($this, $player, [Utils::getText($player->getName(), "PLAYER_HAVE_ALREADY_FACTION")]);
 					}
 				} else {
-					Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "USER_DONT_EXIST")]);
+					Utils::processMenu($this, $player, [Utils::getText($player->getName(), "USER_DONT_EXIST")]);
 				}
 			} else {
 				Utils::processMenu($this->getBackRoute(), $player);

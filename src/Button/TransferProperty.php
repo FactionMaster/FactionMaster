@@ -40,25 +40,21 @@ use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\Event\FactionPropertyTransferEvent;
 use ShockedPlot7560\FactionMaster\Event\MemberChangeRankEvent;
 use ShockedPlot7560\FactionMaster\FactionMaster as Main;
-use ShockedPlot7560\FactionMaster\Route\ConfirmationRoute;
-use ShockedPlot7560\FactionMaster\Route\MainRoute;
-use ShockedPlot7560\FactionMaster\Route\ManageMemberRoute as MembersManageMember;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function json_encode;
 
 class TransferProperty extends Button {
-	const SLUG = "transferProperty";
-
 	public function __construct(UserEntity $member) {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::TRANSFER_PROPERTY)
 			->setContent(function (string $player) {
 				return Utils::getText($player, "BUTTON_TRANSFER_PROPERTY");
 			})
 			->setCallable(function (Player $player) use ($member) {
-				Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
+				Utils::processMenu(RouterFactory::get(RouteSlug::CONFIRMATION_ROUTE), $player, [
 					function (Player $player, $data) use ($member) {
 						if ($data === null) {
 							return;
@@ -111,12 +107,12 @@ class TransferProperty extends Button {
 										MainAPI::$users[$user->getName()] = $user;
 										(new MemberChangeRankEvent($faction, $userj, $oldRank))->call();
 										(new FactionPropertyTransferEvent($player, $faction, $member))->call();
-										Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $player, [$message]);
+										Utils::processMenu(RouterFactory::get(RouteSlug::MAIN_ROUTE), $player, [$message]);
 									}
 								)
 							);
 						} else {
-							Utils::processMenu(RouterFactory::get(MembersManageMember::SLUG), $player, [$member]);
+							Utils::processMenu(RouterFactory::get(RouteSlug::MANAGE_MEMBER_ROUTE), $player, [$member]);
 						}
 					},
 					Utils::getText($player->getName(), "CONFIRMATION_TITLE_TRANSFER_PROPERTY"),

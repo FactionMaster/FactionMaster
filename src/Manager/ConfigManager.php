@@ -41,13 +41,15 @@ use function is_countable;
 use function mkdir;
 
 class ConfigManager {
-	const CONFIG_VERSION = 12;
+	const CONFIG_VERSION = 14;
 	const LEVEL_VERSION = 0;
-	const TRANSLATION_VERSION = 1;
+	const TRANSLATION_VERSION = 2;
 	const LANG_FILE_VERSION = [
-		"en_EN" => 6,
-		"fr_FR" => 4,
+		"en_EN" => 7,
+		"fr_FR" => 5,
 		"es_SPA" => 2,
+		"tr_TR" => 1,
+		"pt_BR" => 1,
 		"tr_TR" => 1
 	];
 

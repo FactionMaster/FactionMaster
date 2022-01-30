@@ -38,9 +38,18 @@ use ShockedPlot7560\FactionMaster\Utils\Leaderboard;
 
 abstract class EntityLeaderboard {
 	protected $main;
+	protected $limit = 10;
 
 	public function __construct(Main $main) {
 		$this->main = $main;
+	}
+
+	public function setLimit(int $limit): void {
+		$this->limit = $limit;
+	}
+
+	public function getLimit(): int {
+		return $this->limit;
 	}
 
 	abstract public function getSlug(): string;

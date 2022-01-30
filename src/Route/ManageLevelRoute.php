@@ -36,17 +36,18 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionLevelUpEvent;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Reward\RewardInterface;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use function floor;
 use function is_array;
 use function is_string;
 
 class ManageLevelRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "manageLevelRoute";
 
 	/** @var array */
@@ -59,7 +60,7 @@ class ManageLevelRoute extends RouteBase implements Route {
 	private $levelUpReady;
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::MANAGE_LEVEL_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -69,7 +70,7 @@ class ManageLevelRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(FactionOptionRoute::SLUG);
+		return RouterFactory::get(self::FACTION_OPTION_ROUTE);
 	}
 
 	protected function getReward(): ?RewardInterface {
@@ -165,13 +166,13 @@ class ManageLevelRoute extends RouteBase implements Route {
 					$content .= "\n §5>> §f" . Utils::getText($player->getName(), $reward->getName($player->getName())) . " x" . $cost['value'];
 				}
 				if ($levelReady === true) {
-					Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
+					Utils::processMenu(RouterFactory::get(self::CONFIRMATION_ROUTE), $player, [
 						$this->callLevelUp($faction->getName()),
 						Utils::getText($player->getName(), "CONFIRMATION_TITLE_LEVEL_UP"),
 						Utils::getText($player->getName(), "CONFIRMATION_CONTENT_LEVEL_UP", ['cost' => $content]),
 					]);
 				} else {
-					Utils::processMenu(RouterFactory::get(self::SLUG), $player);
+					Utils::processMenu($this, $player);
 				}
 				break;
 			case 1:
@@ -219,7 +220,7 @@ class ManageLevelRoute extends RouteBase implements Route {
 					return;
 				}
 				if ($continue !== true) {
-					Utils::processMenu(RouterFactory::get(self::SLUG), $player, [$continue]);
+					Utils::processMenu($this, $player, [$continue]);
 				} else {
 					$faction = $this->getFaction();
 					$reward = $this->getReward();
@@ -233,18 +234,18 @@ class ManageLevelRoute extends RouteBase implements Route {
 							$result = $reward->executeGet($faction->getName(), $rewardData['value']);
 							if ($result === true) {
 								(new FactionLevelUpEvent($player, $faction, $costItem, $reward))->call();
-								Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "SUCCESS_LEVEL_UP")]);
+								Utils::processMenu($this, $player, [Utils::getText($player->getName(), "SUCCESS_LEVEL_UP")]);
 							} else {
-								Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+								Utils::processMenu($this, $player, [Utils::getText($player->getName(), "ERROR")]);
 							}
 						},
 						function () use ($player) {
-							Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+							Utils::processMenu($this, $player, [Utils::getText($player->getName(), "ERROR")]);
 						}
 					));
 				}
 			} else {
-				Utils::processMenu(RouterFactory::get(self::SLUG), $player);
+				Utils::processMenu($this, $player);
 			}
 		};
 	}

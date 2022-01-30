@@ -36,21 +36,19 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\InvitationEntity;
 use ShockedPlot7560\FactionMaster\Event\InvitationDeleteEvent;
-use ShockedPlot7560\FactionMaster\Route\ConfirmationRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class DeleteInvitation extends Button {
-	const SLUG = "deleteInvitation";
-
 	public function __construct(InvitationEntity $invitation, string $panelSlug, array $permissions = []) {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::DELETE_INVITATION)
 			->setContent(function (string $player) {
 				return Utils::getText($player, "BUTTON_DELETE_INVITATION");
 			})
 			->setCallable(function (Player $player) use ($invitation, $panelSlug) {
-				Utils::processMenu(RouterFactory::get(ConfirmationRoute::SLUG), $player, [
+				Utils::processMenu(RouterFactory::get(RouteSlug::CONFIRMATION_ROUTE), $player, [
 					function (Player $player, $data) use ($invitation, $panelSlug) {
 						if ($data === null) {
 							return;

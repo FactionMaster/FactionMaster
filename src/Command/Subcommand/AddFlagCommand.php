@@ -35,6 +35,7 @@ namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
+use ShockedPlot7560\FactionMaster\Command\Argument\EnumArgument;
 use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
@@ -42,12 +43,11 @@ use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
-use function floor;
 
 class AddFlagCommand extends BaseSubCommand {
 	protected function prepare(): void {
 		$this->registerArgument(0, new RawStringArgument("areaName"));
-		$this->registerArgument(1, new RawStringArgument("type"));
+		$this->registerArgument(1, new EnumArgument("type", ["warzone", "spawn"]));
 		$this->setPermission("factionmaster.flag.add");
 	}
 
@@ -56,8 +56,8 @@ class AddFlagCommand extends BaseSubCommand {
 			if (count($args) > 0) {
 				if ($sender->hasPermission("factionmaster.flag.add")) {
 					$player = $sender;
-					$chunkX = floor($player->getPosition()->getFloorX()/16);
-					$chunkZ = floor($player->getPosition()->getFloorZ()/16);
+					$chunkX = $player->getPosition()->getFloorX() >> 4;
+					$chunkZ = $player->getPosition()->getFloorZ() >> 4;
 					$chunk = $player->getWorld()->getChunk($chunkX, $chunkZ);
 					$world = $player->getWorld()->getDisplayName();
 					if (MainAPI::getFactionClaim($world, $chunkX, $chunkZ) !== null) {

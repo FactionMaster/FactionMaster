@@ -32,20 +32,18 @@
 
 namespace ShockedPlot7560\FactionMaster\Button;
 
-use ShockedPlot7560\FactionMaster\Route\JoinFactionRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class JoinFaction extends Button {
-	const SLUG = "joinFaction";
-
 	public function __construct() {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::JOIN_FACTION)
 			->setContent(function ($player) {
 				return Utils::getText($player, "BUTTON_JOIN_FACTION");
 			})
 			->setCallable(function ($player) {
-				Utils::processMenu(RouterFactory::get(JoinFactionRoute::SLUG), $player);
+				Utils::processMenu(RouterFactory::get(RouteSlug::JOIN_FACTION_ROUTE), $player);
 			})
 			->setImgPack("textures/img/join_fac");
 	}

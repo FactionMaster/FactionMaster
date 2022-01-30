@@ -34,10 +34,11 @@ namespace ShockedPlot7560\FactionMaster\Command;
 
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
+use ShockedPlot7560\FactionMaster\FactionMaster;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseCommand;
 use ShockedPlot7560\FactionMaster\Manager\CommandManager;
-use ShockedPlot7560\FactionMaster\Route\MainRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 
@@ -52,8 +53,8 @@ class FactionCommand extends BaseCommand {
 		if (!$sender instanceof Player) {
 			return;
 		}
-		if (count($args) == 0) {
-			Utils::processMenu(RouterFactory::get(MainRoute::SLUG), $sender);
+		if (count($args) == 0 && !FactionMaster::$light) {
+			Utils::processMenu(RouterFactory::get(RouteSlug::MAIN_ROUTE), $sender);
 			return;
 		}
 	}

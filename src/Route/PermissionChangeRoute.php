@@ -37,16 +37,17 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\PermissionChangeEvent;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\CustomForm;
 use ShockedPlot7560\FactionMaster\Manager\PermissionManager;
 use ShockedPlot7560\FactionMaster\Permission\Permission;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\CustomForm;
 use function is_int;
 
 class PermissionChangeRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "permissionChangeRoute";
 
 	/** @var Permission[] */
@@ -55,7 +56,7 @@ class PermissionChangeRoute extends RouteBase implements Route {
 	private $rank;
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::PERMISSION_CHANGE_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -65,7 +66,7 @@ class PermissionChangeRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(ManagePermissionRoute::SLUG);
+		return RouterFactory::get(self::MANAGE_PERMISSION_ROUTE);
 	}
 
 	protected function getRank(): int {
@@ -126,7 +127,7 @@ class PermissionChangeRoute extends RouteBase implements Route {
 					Utils::processMenu($this->getBackRoute(), $player, [Utils::getText($player->getName(), "SUCCESS_PERMISSION_UPDATE")]);
 				},
 				function () use ($player) {
-					Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+					Utils::processMenu($this, $player, [Utils::getText($player->getName(), "ERROR")]);
 				}
 			));
 		};

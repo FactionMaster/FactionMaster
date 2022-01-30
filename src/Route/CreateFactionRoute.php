@@ -37,19 +37,20 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionCreateEvent;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\CustomForm;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\CustomForm;
 use function in_array;
 use function is_string;
 use function strlen;
 
 class CreateFactionRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "createFactionRoute";
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::CREAFT_FACTION_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -57,7 +58,7 @@ class CreateFactionRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): Route {
-		return RouterFactory::get(MainRoute::SLUG);
+		return RouterFactory::get(self::MAIN_ROUTE);
 	}
 
 	/**
@@ -98,17 +99,17 @@ class CreateFactionRoute extends RouteBase implements Route {
 									Utils::processMenu($this->getBackRoute(), $player, [Utils::getText($player->getName(), "SUCCESS_CREATE_FACTION")]);
 								},
 								function () use ($player) {
-									Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "ERROR")]);
+									Utils::processMenu($this, $player, [Utils::getText($player->getName(), "ERROR")]);
 								}
 							));
 						} else {
-							Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "CREATE_FACTION_PANEL_CONTENT_BANNED")]);
+							Utils::processMenu($this, $player, [Utils::getText($player->getName(), "CREATE_FACTION_PANEL_CONTENT_BANNED")]);
 						}
 					} else {
-						Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "MAX_MIN_REACH_NAME", ["min" => Utils::getConfig("min-faction-name-length"), "max" => Utils::getConfig("max-faction-name-length")])]);
+						Utils::processMenu($this, $player, [Utils::getText($player->getName(), "MAX_MIN_REACH_NAME", ["min" => Utils::getConfig("min-faction-name-length"), "max" => Utils::getConfig("max-faction-name-length")])]);
 					}
 				} else {
-					Utils::processMenu(RouterFactory::get(self::SLUG), $player, [Utils::getText($player->getName(), "FACTION_NAME_ALREADY_EXIST")]);
+					Utils::processMenu($this, $player, [Utils::getText($player->getName(), "FACTION_NAME_ALREADY_EXIST")]);
 				}
 			} else {
 				Utils::processMenu($this->getBackRoute(), $player);

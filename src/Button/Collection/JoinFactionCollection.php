@@ -38,22 +38,20 @@ use ShockedPlot7560\FactionMaster\Button\InvitationPending;
 use ShockedPlot7560\FactionMaster\Button\RequestPending;
 use ShockedPlot7560\FactionMaster\Button\SendInvitation;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Route\JoinFactionRoute;
-use ShockedPlot7560\FactionMaster\Route\JoinInvitationSendRoute;
-use ShockedPlot7560\FactionMaster\Route\JoinRequestReceiveRoute;
-use ShockedPlot7560\FactionMaster\Route\JoinSendInvitationRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 
 class JoinFactionCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "joinFactionCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
-			$this->register(new SendInvitation(JoinSendInvitationRoute::SLUG, []));
-			$this->register(new InvitationPending(JoinInvitationSendRoute::SLUG, []));
-			$this->register(new RequestPending(JoinRequestReceiveRoute::SLUG, []));
-			$this->register(new Back(RouterFactory::get(JoinFactionRoute::SLUG)->getBackRoute()));
+		parent::__construct(self::JOIN_FACTION_COLLECTION);
+		$this->registerCallable(self::JOIN_FACTION_COLLECTION, function (Player $player, UserEntity $user) {
+			$this->register(new SendInvitation(RouteSlug::JOIN_SEND_INVITATION_ROUTE, []));
+			$this->register(new InvitationPending(RouteSlug::JOIN_INVITATION_SEND_ROUTE, []));
+			$this->register(new RequestPending(RouteSlug::JOIN_REQUEST_RECEIVE_ROUTE, []));
+			$this->register(new Back(RouterFactory::get(RouteSlug::JOIN_FACTION_ROUTE)->getBackRoute()));
 		});
 	}
 }

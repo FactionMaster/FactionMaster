@@ -35,8 +35,8 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use InvalidArgumentException;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
 use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\ModalForm;
+use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ConfirmationRoute extends RouteBase implements Route {
 	const SLUG = "confirmationRoute";
@@ -45,7 +45,7 @@ class ConfirmationRoute extends RouteBase implements Route {
 	public $backMenu;
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::CONFIRMATION_ROUTE;
 	}
 
 	public function getPermissions(): array {

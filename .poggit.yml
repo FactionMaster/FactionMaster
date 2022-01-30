@@ -4,6 +4,7 @@ branches:
 - stable
 - dev
 - pmmp4
+- next-minor
 projects:
   FactionMaster:
     path: ""

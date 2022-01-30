@@ -36,17 +36,20 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\ChangeLanguage;
 use ShockedPlot7560\FactionMaster\Button\CreateFaction;
 use ShockedPlot7560\FactionMaster\Button\JoinFaction;
+use ShockedPlot7560\FactionMaster\Button\Leaderboard;
 use ShockedPlot7560\FactionMaster\Button\Quit;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 
 class MainNoFacCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "mainNoFacCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user) {
+		parent::__construct(self::MAIN_NO_FAC_COLLECTION);
+		$this->registerCallable(self::MAIN_NO_FAC_COLLECTION, function (Player $player, UserEntity $user) {
 			$this->register(new CreateFaction());
 			$this->register(new JoinFaction());
+			$this->register(new Leaderboard());
 			$this->register(new ChangeLanguage());
 			$this->register(new Quit());
 		});

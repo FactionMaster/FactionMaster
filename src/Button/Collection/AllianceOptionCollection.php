@@ -42,37 +42,35 @@ use ShockedPlot7560\FactionMaster\Button\SendInvitation;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
-use ShockedPlot7560\FactionMaster\Route\AllianceInvitationSendRoute;
-use ShockedPlot7560\FactionMaster\Route\AllianceOptionRoute;
-use ShockedPlot7560\FactionMaster\Route\AllianceRequestReceiveRoute;
-use ShockedPlot7560\FactionMaster\Route\AllianceSendInvitationRoute;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
+use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 
 class AllianceOptionCollection extends Collection {
+	/** @deprecated */
 	const SLUG = "allianceOptionCollection";
 
 	public function __construct() {
-		parent::__construct(self::SLUG);
-		$this->registerCallable(self::SLUG, function (Player $player, UserEntity $user, FactionEntity $faction) {
+		parent::__construct(self::ALLIANCE_OPTION_COLLECTION);
+		$this->registerCallable(self::ALLIANCE_OPTION_COLLECTION, function (Player $player, UserEntity $user, FactionEntity $faction) {
 			foreach ($faction->getAlly() as $name) {
 				$this->register(new Ally(MainAPI::getFaction($name)));
 			}
 			$this->register(new SendInvitation(
-				AllianceSendInvitationRoute::SLUG,
+				RouteSlug::ALLIANCE_SEND_INVITATION_ROUTE,
 				[PermissionIds::PERMISSION_SEND_ALLIANCE_INVITATION]
 			));
 			$this->register(new InvitationPending(
-				AllianceInvitationSendRoute::SLUG,
+				RouteSlug::ALLIANCE_INVITATION_SEND_ROUTE,
 				[PermissionIds::PERMISSION_DELETE_PENDING_ALLIANCE_INVITATION]
 			));
 			$this->register(new RequestPending(
-				AllianceRequestReceiveRoute::SLUG,
+				RouteSlug::ALLIANCE_REQUEST_RECEIVE_ROUTE,
 				[
 					PermissionIds::PERMISSION_ACCEPT_ALLIANCE_DEMAND,
 					PermissionIds::PERMISSION_REFUSE_ALLIANCE_DEMAND,
 				]
 			));
-			$this->register(new Back(RouterFactory::get(AllianceOptionRoute::SLUG)->getBackRoute()));
+			$this->register(new Back(RouterFactory::get(RouteSlug::ALLIANCE_OPTION_ROUTE)->getBackRoute()));
 		});
 	}
 }

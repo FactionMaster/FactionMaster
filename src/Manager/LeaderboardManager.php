@@ -42,6 +42,7 @@ use ShockedPlot7560\FactionMaster\Leaderboard\FactionPowerLeaderboard;
 use ShockedPlot7560\FactionMaster\Utils\Leaderboard;
 use function explode;
 use function join;
+use function strtolower;
 
 class LeaderboardManager {
 
@@ -63,21 +64,24 @@ class LeaderboardManager {
 		if (self::isRegister($leaderboard->getSlug()) && !$override) {
 			throw new Exception("Leaderboard id already register, conflicts detected");
 		}
-
-		self::$leaderboards[$leaderboard->getSlug()] = $leaderboard;
+		$slug = strtolower($leaderboard->getSlug());
+		self::$leaderboards[$slug] = $leaderboard;
 	}
 
 	public static function removeLeaderboard(string $slug): void {
+		$slug = strtolower($slug);
 		if (isset(self::$leaderboards[$slug])) {
 			unset(self::$leaderboards[$slug]);
 		}
 	}
 
 	public static function isRegister(string $slug): bool {
+		$slug = strtolower($slug);
 		return isset(self::$leaderboards[$slug]);
 	}
 
 	public static function getLeaderboard(string $slug): ?EntityLeaderboard {
+		$slug = strtolower($slug);
 		return self::$leaderboards[$slug] ?? null;
 	}
 
@@ -134,9 +138,12 @@ class LeaderboardManager {
 		foreach ($leaderboards as $leaderboard) {
 			if ($leaderboard["active"] == true) {
 				LeaderboardManager::dispawnLeaderboard($leaderboard["position"]);
-				$entity = new Leaderboard($leaderboard["slug"], $leaderboard["position"]);
-				(new LeaderboardUpdateEvent($entity))->call();
-				LeaderboardManager::placeScoreboard($entity);
+				$class = self::getLeaderboard($leaderboard["slug"]);
+				if ($class instanceof EntityLeaderboard) {
+					$entity = new Leaderboard($class->getSlug(), $leaderboard["position"]);
+					(new LeaderboardUpdateEvent($entity))->call();
+					LeaderboardManager::placeScoreboard($entity);
+				}
 			}
 		}
 	}

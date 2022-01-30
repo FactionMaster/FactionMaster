@@ -38,10 +38,8 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class InvitationListItem extends Button {
-	const SLUG = "invitationItem";
-
 	public function __construct(InvitationEntity $invitation, string $panelSlug, array $permissions = []) {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::INVITATION_ITEM)
 			->setContent(function (string $player) use ($invitation) {
 				return $invitation->getReceiverString();
 			})

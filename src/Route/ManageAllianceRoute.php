@@ -35,21 +35,22 @@ namespace ShockedPlot7560\FactionMaster\Route;
 use InvalidArgumentException;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Button\Collection\CollectionFactory;
-use ShockedPlot7560\FactionMaster\Button\Collection\ManageAllianceCollection;
+use ShockedPlot7560\FactionMaster\Button\Collection\CollectionSlug;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
-use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 
 class ManageAllianceRoute extends RouteBase implements Route {
+	/** @deprecated */
 	const SLUG = "manageAllianceRoute";
 
 	/** @var FactionEntity */
 	private $alliance;
 
 	public function getSlug(): string {
-		return self::SLUG;
+		return self::MANAGE_ALLIANCE_ROUTE;
 	}
 
 	public function getPermissions(): array {
@@ -59,7 +60,7 @@ class ManageAllianceRoute extends RouteBase implements Route {
 	}
 
 	public function getBackRoute(): ?Route {
-		return RouterFactory::get(AllianceOptionRoute::SLUG);
+		return RouterFactory::get(self::ALLIANCE_OPTION_ROUTE);
 	}
 
 	protected function getAlliance(): FactionEntity {
@@ -74,7 +75,7 @@ class ManageAllianceRoute extends RouteBase implements Route {
 		}
 
 		$this->alliance = $params[0];
-		$this->setCollection(CollectionFactory::get(ManageAllianceCollection::SLUG)->init($this->getPlayer(), $this->getUserEntity(), $this->getAlliance()));
+		$this->setCollection(CollectionFactory::get(CollectionSlug::MANAGE_ALLIANCE_COLLECTION)->init($this->getPlayer(), $this->getUserEntity(), $this->getAlliance()));
 
 		$player->sendForm($this->getForm());
 	}

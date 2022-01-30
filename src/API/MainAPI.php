@@ -823,8 +823,8 @@ class MainAPI {
 	}
 
 	public static function addClaim(Player $player, string $factionName, ?int $flag = null): void {
-		$z = floor($player->getPosition()->getFloorX()/16);
-		$x = floor($player->getPosition()->getFloorZ()/16);
+		$z = $player->getPosition()->getFloorZ() >> 4;
+		$x = $player->getPosition()->getFloorX() >> 4;
 		$chunk = $player->getWorld()->getChunk($x, $z);
 		$world = $player->getWorld()->getDisplayName();
 		self::submitDatabaseTask(

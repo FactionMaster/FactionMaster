@@ -144,7 +144,7 @@ class ClaimEntity extends EntityDatabase {
 	}
 
 	public function getFlag(): ?int {
-		return $this->flag;
+		return $this->flags;
 	}
 
 	public function toString(): string {

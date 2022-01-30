@@ -37,10 +37,8 @@ use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class RequestPending extends Button {
-	const SLUG = "requestPending";
-
 	public function __construct(string $panelSlug, array $permissions) {
-		$this->setSlug(self::SLUG)
+		$this->setSlug(self::REQUEST_PENDING)
 			->setContent(function (string $player) {
 				return Utils::getText($player, "BUTTON_REQUEST_PENDING");
 			})
