@@ -45,7 +45,6 @@ use ShockedPlot7560\FactionMaster\Task\DatabaseTask;
 use ShockedPlot7560\FactionMaster\Utils\Leaderboard;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function str_replace;
-use function strtoupper;
 
 class LeaderboardItem extends Button {
 	public function __construct(string|EntityLeaderboard $slug) {
@@ -54,7 +53,7 @@ class LeaderboardItem extends Button {
 		}
 		$this->setSlug(self::LEADERBOARD_ITEM)
 			->setContent(function (string $player) use ($slug) {
-				return Utils::getText($player, "BUTTON_LEADERBOARD_" . strtoupper($slug));
+				return $slug;
 			})
 			->setCallable(function (Player $player) use ($slug) {
 				$leadEntity = LeaderboardManager::getLeaderboard($slug);
