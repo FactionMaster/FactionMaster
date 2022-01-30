@@ -43,7 +43,6 @@ use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
-use function floor;
 
 class AddFlagCommand extends BaseSubCommand {
 	protected function prepare(): void {
@@ -57,8 +56,8 @@ class AddFlagCommand extends BaseSubCommand {
 			if (count($args) > 0) {
 				if ($sender->hasPermission("factionmaster.flag.add")) {
 					$player = $sender;
-					$chunkX = floor($player->getPosition()->getFloorX()/16);
-					$chunkZ = floor($player->getPosition()->getFloorZ()/16);
+					$chunkX = $player->getPosition()->getFloorX() >> 4;
+					$chunkZ = $player->getPosition()->getFloorZ() >> 4;
 					$chunk = $player->getWorld()->getChunk($chunkX, $chunkZ);
 					$world = $player->getWorld()->getDisplayName();
 					if (MainAPI::getFactionClaim($world, $chunkX, $chunkZ) !== null) {

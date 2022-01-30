@@ -51,6 +51,7 @@ use function round;
 use function str_replace;
 use function strlen;
 use function substr;
+use function var_dump;
 
 class MapCommand extends BaseSubCommand {
 	const DIRECTION = [
@@ -69,7 +70,8 @@ class MapCommand extends BaseSubCommand {
 
 	protected function prepare(): void {
 		if (Utils::getConfig("f-map-task") !== false) {
-			$this->registerArgument(0, new EnumArgument("statement", ["on", "off"]));
+			var_dump("map");
+			$this->registerArgument(0, new EnumArgument("statement", ["on", "off"], true));
 		}
 	}
 

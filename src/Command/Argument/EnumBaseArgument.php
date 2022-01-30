@@ -3,6 +3,7 @@
 namespace ShockedPlot7560\FactionMaster\Command\Argument;
 
 use pocketmine\command\CommandSender;
+use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
 use pocketmine\network\mcpe\protocol\types\command\CommandEnum;
 use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\BaseArgument;
@@ -15,11 +16,17 @@ abstract class EnumBaseArgument extends BaseArgument {
 	/** @var CommandParameter */
 	protected $parameterData;
 
-	public function __construct(string $name, array $enumValues) {
+	public function __construct(string $name, array $enumValues, bool $optionnal = false) {
 		$this->name = $name;
 		$this->enumValues = $enumValues;
+		$this->optionnal = $optionnal;
 
-		$this->parameterData = CommandParameter::enum($name, new CommandEnum($name, $enumValues), 1);
+		$this->parameterData = new CommandParameter();
+		$this->parameterData->paramName = $name;
+		$this->parameterData->flags = 1;
+		$this->parameterData->paramType = AvailableCommandsPacket::ARG_FLAG_ENUM | AvailableCommandsPacket::ARG_FLAG_VALID;
+		$this->parameterData->enum = new CommandEnum($name, $enumValues);
+		$this->parameterData->isOptional = $optionnal;
 	}
 
 	abstract public function canParse(string $testString, CommandSender $sender): bool;
@@ -31,10 +38,6 @@ abstract class EnumBaseArgument extends BaseArgument {
 
 	public function getName(): string {
 		return $this->name;
-	}
-
-	public function isOptional(): bool {
-		return false;
 	}
 
 	/**
