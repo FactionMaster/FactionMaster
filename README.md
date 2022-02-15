@@ -2,7 +2,7 @@
 
 # FactionMaster
 
-### For using PureChat with FactionMaster, you must use my PureChat fork and download the last release : https://github.com/ShockedPlot7560/PureChat/releases/tag/v1.4.1
+### For using PureChat with FactionMaster, you must use my PureChat fork and download the last release : https://github.com/FactionMaster/PureChat/releases/tag/v2.0.0
 
 FactionMaster is a new faction plugin that aims at flexibility and customization of the plugin by the user and the developers. It includes all the basic functionality of a faction plugin and data storage in MySQL or SQLITE. This is done by adding an extension system and a translation system. FactionMaster has a will of accessibility to the players and especially not to have to remember a lot of commands to play, all is done via interface.
 
@@ -36,6 +36,8 @@ FactionMaster have multiple server support, see the Installation section for mor
 | ``Scoreboard faction top`` | ✔ | ❌ | ❌ | ✔ |
 | ``Banned faction name`` | ✔ | ✔ | ✔ | ✔ |
 
+**See more by using it**
+
 ## Additionnal plugins
 * ``ScoreHUD v6.0.0``: FactionMaster support this plugin and implements all this tags :
   - *factionmaster.faction.name*
@@ -46,6 +48,14 @@ FactionMaster have multiple server support, see the Installation section for mor
   - *factionmaster.faction.description*
   - *factionmaster.faction.visibility*
   - *factionmaster.player.rank*
+  - *factionmaster.faction.max.player*
+  - *factionmaster.faction.max.claim*
+  - *factionmaster.faction.max.home*
+  - *factionmaster.faction.max.ally*
+  - *factionmaster.faction.number.player*
+  - *factionmaster.faction.number.claim*
+  - *factionmaster.faction.number.home*
+  - *factionmaster.faction.number.ally*
 * ``PureChat``: To use PureChat tags, download our fork of it [here](https://github.com/ShockedPlot7560/PureChat/releases/tag/v1.4.1)
 
 ## Installation
@@ -99,6 +109,7 @@ To participate in the translation of FactionMaster and probably see yourself her
 * **English** (en_EN): @ShockedPlot7560
 * **Spanish** (es_SPA): @MrBlasyMSK
 * **Turkish** (tr_TR): @xAliTura01
+* **Portuguese** (pt_BR)! @RaidoxxMPH
 
 ## Developers
 Adding and modifying extensions is rather simple and explained on the README.md of the [GitHub](https://github.com/ShockedPlot7560/FactionMaster/) repository with a documentation for the handling of the API.
@@ -123,6 +134,9 @@ SQLITE_database:
   name: "FactionMasterv3"
 
 # --------------------- GLOBAL CONFIGURATION --------------------------
+
+# low mode
+low-mode: false
 
 # If you want to disable this feature, empty this array and reload your server
 banned-faction-name: ["op", "staff", "admin", "fuck", "shit"]
@@ -251,6 +265,8 @@ message-alert-cooldown: 10
 
 message-alert-flag-enabled: false
 # -------------- TOP FACTION'S SCOREBOARD CONFIGURATION -----------------
+
+leaderboard-menu-limit: 10
 
 # This is the scoreboard header, display on the top for the factionLevel top
 factionLevel-leaderboard-header: "- Top 10 faction -"
