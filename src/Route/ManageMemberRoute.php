@@ -82,10 +82,13 @@ class ManageMemberRoute extends VictimBase implements Route {
 		};
 	}
 
-	protected function getForm(): SimpleForm {
+	protected function getForm(string $message = ""): SimpleForm {
 		$menu = new SimpleForm($this->call());
 		$menu = $this->getCollection()->generateButtons($menu, $this->getUserEntity()->getName());
 		$menu->setTitle(Utils::getText($this->getUserEntity()->getName(), "MANAGE_MEMBER_PANEL_TITLE", ['playerName' => $this->getVictim()->getName()]));
+		if ($message !== "") {
+			$menu->setContent($message);
+		}
 		return $menu;
 	}
 }

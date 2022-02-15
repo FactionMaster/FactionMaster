@@ -67,10 +67,10 @@ class KickOut extends Button {
 								},
 								function () use ($player, $faction, $message, $member) {
 									(new MemberKickOutEvent($player, $faction, $member))->call();
-									Utils::processMenu(RouterFactory::get(RouteSlug::MANAGE_MEMBER_ROUTE), $player, [$message]);
+									Utils::processMenu(RouterFactory::get(RouteSlug::MEMBERS_MANAGE_ROUTE), $player, [$message]);
 								},
-								function () use ($player) {
-									Utils::processMenu(RouterFactory::get(RouteSlug::MANAGE_MEMBER_ROUTE), $player, [Utils::getText($player->getName(), "ERROR")]);
+								function () use ($player, $member) {
+									Utils::processMenu(RouterFactory::get(RouteSlug::MANAGE_MEMBER_ROUTE), $player, [$member, Utils::getText($player->getName(), "ERROR")]);
 								}
 							));
 						} else {
