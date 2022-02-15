@@ -33,6 +33,7 @@
 namespace ShockedPlot7560\FactionMaster\Manager;
 
 use pocketmine\utils\Config;
+use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\FactionMaster as Main;
 use ShockedPlot7560\FactionMaster\Utils\QueryBuildeur;
@@ -97,7 +98,10 @@ class MigrationManager {
 				self::$main->getLogger()->notice("FactionMaster4.0.0 include some new feature and PocketMine 4.0 support");
 				self::$main->getLogger()->notice("You can now make multiple leaderboard, Image resource_pack can now be autoload in the plugin data");
 			},
-			"4.1.0" => function () {}
+			"4.1.0" => function () {
+				MainAPI::$PDO->query("ALTER TABLE " . UserTable::TABLE_NAME . " MODIFY COLUMN `rank` INT DEFAULT NULL");
+				self::$main->getLogger()->notice("Update your database format");
+			}
 		];
 		self::$configDbToCheck = [
 			[

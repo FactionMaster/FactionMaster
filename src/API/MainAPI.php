@@ -315,10 +315,10 @@ class MainAPI {
 		);
 		self::submitDatabaseTask(
 			new DatabaseTask(
-				"UPDATE " . UserTable::TABLE_NAME . " SET faction = :faction, rank = :rank WHERE name = :name",
+				"UPDATE " . UserTable::TABLE_NAME . " SET `faction` = :faction, `rank` = :rank WHERE `name` = :name",
 				[
 					'faction' => $factionName,
-					'rank' => $rankId,
+					'rank' => (int) $rankId,
 					'name' => $playerName,
 				],
 				function () use ($playerName, $user, $faction) {
@@ -596,7 +596,7 @@ class MainAPI {
 		$user->setRank(null);
 		self::submitDatabaseTask(
 			new DatabaseTask(
-				"UPDATE " . UserTable::TABLE_NAME . " SET rank = :rank WHERE name = :name",
+				"UPDATE " . UserTable::TABLE_NAME . " SET `rank` = :rank WHERE `name` = :name",
 				[
 					'rank' => $rank,
 					'name' => $playerName,
