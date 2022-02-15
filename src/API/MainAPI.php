@@ -45,6 +45,7 @@ use ShockedPlot7560\FactionMaster\Database\Table\HomeTable;
 use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\Event\FactionLevelChangeEvent;
+use ShockedPlot7560\FactionMaster\Event\FactionOptionUpdateEvent;
 use ShockedPlot7560\FactionMaster\Event\FactionPowerEvent;
 use ShockedPlot7560\FactionMaster\Event\FactionXPChangeEvent;
 use ShockedPlot7560\FactionMaster\Event\MemberChangeRankEvent;
@@ -1012,6 +1013,7 @@ class MainAPI {
 
 	public static function updateFactionOption(string $factionName, string $option, int $value) {
 		$faction = self::getFaction($factionName);
+		$oldFac = clone $faction;
 		if (!$faction instanceof FactionEntity) {
 			return false;
 		}
@@ -1024,8 +1026,9 @@ class MainAPI {
 					'option' => $value,
 					'name' => $factionName,
 				],
-				function () use ($faction) {
+				function () use ($faction, $oldFac, $option, $value) {
 					MainAPI::$factions[$faction->getName()] = $faction;
+					(new FactionOptionUpdateEvent($oldFac, $value, $option))->call();
 				}
 			)
 		);
