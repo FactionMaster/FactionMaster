@@ -44,6 +44,7 @@ use function call_user_func;
 use function in_array;
 use function strlen;
 use function substr;
+use function uniqid;
 use function version_compare;
 
 class MigrationManager {
@@ -107,11 +108,12 @@ class MigrationManager {
 						MainAPI::$PDO->query("ALTER TABLE " . UserTable::TABLE_NAME . " MODIFY COLUMN `rank` INT DEFAULT NULL");
 						break;
 					case "SQLITE":
+						$uniqId = uniqid();
 						MainAPI::$PDO->query("BEGIN TRANSACTION");
-						MainAPI::$PDO->query("ALTER TABLE factionmaster_user RENAME TO factionmaster_user_old40");
+						MainAPI::$PDO->query("ALTER TABLE factionmaster_user RENAME TO factionmaster_user_old$uniqId");
 						$table = new UserTable(MainAPI::$PDO);
 						$table->init();
-						MainAPI::$PDO->query("INSERT INTO factionmaster_user SELECT * FROM factionmaster_user_old40");
+						MainAPI::$PDO->query("INSERT INTO factionmaster_user SELECT * FROM factionmaster_user_old$uniqId");
 						MainAPI::$PDO->query("COMMIT");
 						break;
 					default:
