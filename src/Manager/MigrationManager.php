@@ -99,8 +99,23 @@ class MigrationManager {
 				self::$main->getLogger()->notice("You can now make multiple leaderboard, Image resource_pack can now be autoload in the plugin data");
 			},
 			"4.1.0" => function () {
-				MainAPI::$PDO->query("ALTER TABLE " . UserTable::TABLE_NAME . " MODIFY COLUMN `rank` INT DEFAULT NULL");
 				self::$main->getLogger()->notice("Update your database format");
+				switch (ConfigManager::getConfig()->get("PROVIDER")) {
+					case 'MYSQL':
+						MainAPI::$PDO->query("ALTER TABLE " . UserTable::TABLE_NAME . " MODIFY COLUMN `rank` INT DEFAULT NULL");
+						break;
+					case "SQLITE":
+						MainAPI::$PDO->query("BEGIN TRANSACTION");
+						MainAPI::$PDO->query("ALTER TABLE factionmaster_user RENAME TO factionmaster_user_old40");
+						$table = new UserTable(MainAPI::$PDO);
+						$table->init();
+						MainAPI::$PDO->query("INSERT INTO factionmaster_user SELECT * FROM factionmaster_user_old40");
+						MainAPI::$PDO->query("COMMIT");
+						break;
+					default:
+						self::$main->getLogger()->emergency("Invalid provider given");
+						break;
+				}
 			}
 		];
 		self::$configDbToCheck = [
