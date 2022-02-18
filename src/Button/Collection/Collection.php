@@ -93,7 +93,9 @@ class Collection implements CollectionSlug {
 	}
 
 	public function process(int $keyButtonPress, Player $player): void {
-		$this->buttonsList[$keyButtonPress]->call($player);
+		if (isset($this->buttonsList[$keyButtonPress])) {
+			$this->buttonsList[$keyButtonPress]->call($player);
+		}
 	}
 
 	public function getSlug(): string {
