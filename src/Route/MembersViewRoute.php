@@ -61,7 +61,11 @@ class MembersViewRoute extends RouteBase implements Route {
 		$this->init($player, $userEntity, $userPermissions, $params);
 
 		$faction = MainAPI::getFactionOfPlayer($this->getPlayer()->getName());
-		$this->setCollection(CollectionFactory::get(CollectionSlug::MEMBERS_VIEW_COLLECTION)->init($this->getPlayer(), $this->getUserEntity(), $faction));
+		if ($faction === null) {
+			return Utils::processMenu(RouterFactory::get(RouteSlug::MAIN_ROUTE), $player, null);
+		} else {
+			$this->setCollection(CollectionFactory::get(CollectionSlug::MEMBERS_VIEW_COLLECTION)->init($this->getPlayer(), $this->getUserEntity(), $faction));
+		}
 
 		$message = "";
 		if (isset($this->getParams()[0])) {

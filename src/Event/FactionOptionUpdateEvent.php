@@ -30,35 +30,25 @@
  *
  */
 
-namespace ShockedPlot7560\FactionMaster\Database\Table;
+namespace ShockedPlot7560\FactionMaster\Event;
 
-use PDO;
-use ShockedPlot7560\FactionMaster\Manager\DatabaseManager;
-use ShockedPlot7560\FactionMaster\Utils\Utils;
+use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 
-class UserTable implements TableInterface {
+class FactionOptionUpdateEvent extends FactionEvent implements Forcable {
+	protected $value;
+	protected $option;
 
-	/** @var PDO */
-	private $PDO;
-
-	const TABLE_NAME = "factionmaster_user";
-	const SLUG = "factionmaster_user";
-
-	public function init(): self {
-		$tableName = self::TABLE_NAME;
-		$auto_increment = Utils::getConfig("PROVIDER") === DatabaseManager::MYSQL_PROVIDER ? "AUTO_INCREMENT" : "AUTOINCREMENT";
-		$dftLang = Utils::getConfigLang("default-language");
-		$this->PDO->query("CREATE TABLE IF NOT EXISTS `$tableName` ( 
-            `id` INTEGER PRIMARY KEY $auto_increment, 
-            `name` VARCHAR(255) NOT NULL, 
-            `faction` TEXT DEFAULT NULL,
-            `rank` INT DEFAULT NULL, 
-            `language` VARCHAR(255) NOT NULL DEFAULT '$dftLang'
-        )");
-		return $this;
+	public function __construct(FactionEntity $factionEntity, mixed $value, string $option, bool $isForce = false) {
+		parent::__construct($factionEntity, $isForce);
+		$this->value = $value;
+		$this->option = $option;
 	}
 
-	public function __construct(PDO $PDO) {
-		$this->PDO = $PDO;
+	public function getValue(): mixed {
+		return $this->value;
+	}
+
+	public function getOption(): string {
+		return $this->option;
 	}
 }

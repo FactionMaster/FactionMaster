@@ -41,14 +41,21 @@ use pocketmine\Server;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
+use ShockedPlot7560\FactionMaster\Event\AllianceBreakEvent;
+use ShockedPlot7560\FactionMaster\Event\AllianceCreateEvent;
 use ShockedPlot7560\FactionMaster\Event\DescriptionChangeEvent;
+use ShockedPlot7560\FactionMaster\Event\FactionClaimEvent;
 use ShockedPlot7560\FactionMaster\Event\FactionCreateEvent;
 use ShockedPlot7560\FactionMaster\Event\FactionDeleteEvent;
+use ShockedPlot7560\FactionMaster\Event\FactionHomeCreateEvent;
+use ShockedPlot7560\FactionMaster\Event\FactionHomeDeleteEvent;
 use ShockedPlot7560\FactionMaster\Event\FactionJoinEvent;
 use ShockedPlot7560\FactionMaster\Event\FactionLeaveEvent;
 use ShockedPlot7560\FactionMaster\Event\FactionLevelChangeEvent;
+use ShockedPlot7560\FactionMaster\Event\FactionOptionUpdateEvent;
 use ShockedPlot7560\FactionMaster\Event\FactionPowerEvent;
 use ShockedPlot7560\FactionMaster\Event\FactionPropertyTransferEvent;
+use ShockedPlot7560\FactionMaster\Event\FactionUnclaimEvent;
 use ShockedPlot7560\FactionMaster\Event\FactionXPChangeEvent;
 use ShockedPlot7560\FactionMaster\Event\MemberChangeRankEvent;
 use ShockedPlot7560\FactionMaster\Event\MessageChangeEvent;
@@ -56,6 +63,8 @@ use ShockedPlot7560\FactionMaster\Event\VisibilityChangeEvent;
 use ShockedPlot7560\FactionMaster\FactionMaster as Main;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use function count;
+use function is_string;
 
 class ScoreHudListener implements Listener {
 
@@ -169,6 +178,79 @@ class ScoreHudListener implements Listener {
 					$tag->setValue(Utils::getText($player->getName(), "NO_FACTION_TAG"));
 				}
 				break;
+			case Ids::HUD_FACTIONMASTER_FACTION_MAX_ALLY:
+			case Ids::HUD_FACTIONMASTER_FACTION_MAX_CLAIM:
+			case Ids::HUD_FACTIONMASTER_FACTION_MAX_HOME:
+			case Ids::HUD_FACTIONMASTER_FACTION_MAX_PLAYER:
+			case Ids::HUD_FACTIONMASTER_FACTION_NUMBER_ALLY:
+			case Ids::HUD_FACTIONMASTER_FACTION_NUMBER_CLAIM:
+			case Ids::HUD_FACTIONMASTER_FACTION_NUMBER_HOME:
+			case Ids::HUD_FACTIONMASTER_FACTION_NUMBER_PLAYER:
+				$faction = MainAPI::getFactionOfPlayer($player->getName());
+				$value = 0;
+				if ($faction instanceof FactionEntity) {
+					switch ($tag->getName()) {
+						case Ids::HUD_FACTIONMASTER_FACTION_MAX_ALLY:
+							$value = $faction->getMaxAlly();
+							break;
+						case Ids::HUD_FACTIONMASTER_FACTION_MAX_CLAIM:
+							$value = $faction->getMaxClaim();
+							break;
+						case Ids::HUD_FACTIONMASTER_FACTION_MAX_HOME:
+							$value = $faction->getMaxHome();
+							break;
+						case Ids::HUD_FACTIONMASTER_FACTION_MAX_PLAYER:
+							$value = $faction->getMaxPlayer();
+							break;
+						case Ids::HUD_FACTIONMASTER_FACTION_NUMBER_ALLY:
+							$value = count($faction->getAlly());
+							break;
+						case Ids::HUD_FACTIONMASTER_FACTION_NUMBER_CLAIM:
+							$value = count(MainAPI::getClaimsFaction($faction->getName()));
+							break;
+						case Ids::HUD_FACTIONMASTER_FACTION_NUMBER_HOME:
+							$value = count(MainAPI::getFactionHomes($faction->getName()));
+							break;
+						case Ids::HUD_FACTIONMASTER_FACTION_NUMBER_PLAYER:
+							$value = count($faction->getMembers());
+							break;
+					}
+				}
+				$tag->setValue($value);
+				break;
+		}
+	}
+
+	public function onFactionOptionUpdate(FactionOptionUpdateEvent $event): void {
+		$faction = $event->getFaction();
+		if ($faction instanceof FactionEntity) {
+			foreach ($faction->getMembers() as $name => $rank) {
+				$player = $this->server->getPlayerExact($name);
+				$optionSlug = null;
+				switch ($event->getOption()) {
+					case "maxAlly":
+						$optionSlug = Ids::HUD_FACTIONMASTER_FACTION_MAX_ALLY;
+						break;
+					case "maxHome":
+						$optionSlug = Ids::HUD_FACTIONMASTER_FACTION_MAX_HOME;
+						break;
+					case "maxClaim":
+						$optionSlug = Ids::HUD_FACTIONMASTER_FACTION_MAX_CLAIM;
+						break;
+					case "maxPlayer":
+						$optionSlug = Ids::HUD_FACTIONMASTER_FACTION_MAX_PLAYER;
+						break;
+				}
+				if ($optionSlug !== null) {
+					if ($player instanceof Player) {
+						$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+							$optionSlug,
+							$event->getValue()
+						));
+						$ev->call();
+					}
+				}
+			}
 		}
 	}
 
@@ -223,6 +305,46 @@ class ScoreHudListener implements Listener {
 			$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
 				Ids::HUD_FACTIONMASTER_FACTION_VISIBILITY,
 				$visibility
+			));
+			$ev->call();
+			$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+				Ids::HUD_FACTIONMASTER_FACTION_MAX_HOME,
+				$faction->getMaxHome()
+			));
+			$ev->call();
+			$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+				Ids::HUD_FACTIONMASTER_FACTION_MAX_ALLY,
+				$faction->getMaxAlly()
+			));
+			$ev->call();
+			$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+				Ids::HUD_FACTIONMASTER_FACTION_MAX_CLAIM,
+				$faction->getMaxClaim()
+			));
+			$ev->call();
+			$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+				Ids::HUD_FACTIONMASTER_FACTION_MAX_PLAYER,
+				$faction->getMaxPlayer()
+			));
+			$ev->call();
+			$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+				Ids::HUD_FACTIONMASTER_FACTION_NUMBER_CLAIM,
+				count(MainAPI::getClaimsFaction($faction->getName()))
+			));
+			$ev->call();
+			$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+				Ids::HUD_FACTIONMASTER_FACTION_NUMBER_ALLY,
+				count($faction->getAlly())
+			));
+			$ev->call();
+			$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+				Ids::HUD_FACTIONMASTER_FACTION_NUMBER_HOME,
+				count(MainAPI::getFactionHomes($faction->getName()))
+			));
+			$ev->call();
+			$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+				Ids::HUD_FACTIONMASTER_FACTION_NUMBER_PLAYER,
+				count($faction->getMembers())
 			));
 			$ev->call();
 		}
@@ -372,6 +494,51 @@ class ScoreHudListener implements Listener {
 			$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
 				Ids::HUD_FACTIONMASTER_FACTION_VISIBILITY,
 				$visibility
+			));
+			$ev->call();
+			foreach ($faction->getMembers() as $name => $rank) {
+				$player = $this->server->getPlayerExact($name);
+				if ($player instanceof Player) {
+					$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+						Ids::HUD_FACTIONMASTER_FACTION_NUMBER_PLAYER,
+						count($faction->getMembers())
+					));
+					$ev->call();
+				}
+			}
+			$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+				Ids::HUD_FACTIONMASTER_FACTION_MAX_HOME,
+				$faction->getMaxHome()
+			));
+			$ev->call();
+			$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+				Ids::HUD_FACTIONMASTER_FACTION_MAX_ALLY,
+				$faction->getMaxAlly()
+			));
+			$ev->call();
+			$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+				Ids::HUD_FACTIONMASTER_FACTION_MAX_CLAIM,
+				$faction->getMaxClaim()
+			));
+			$ev->call();
+			$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+				Ids::HUD_FACTIONMASTER_FACTION_MAX_PLAYER,
+				$faction->getMaxPlayer()
+			));
+			$ev->call();
+			$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+				Ids::HUD_FACTIONMASTER_FACTION_NUMBER_CLAIM,
+				count(MainAPI::getClaimsFaction($faction->getName()))
+			));
+			$ev->call();
+			$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+				Ids::HUD_FACTIONMASTER_FACTION_NUMBER_ALLY,
+				count($faction->getAlly())
+			));
+			$ev->call();
+			$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+				Ids::HUD_FACTIONMASTER_FACTION_NUMBER_HOME,
+				count(MainAPI::getFactionHomes($faction->getName()))
 			));
 			$ev->call();
 		}
@@ -585,6 +752,62 @@ class ScoreHudListener implements Listener {
 			Utils::getText($player->getName(), "NO_FACTION_TAG")
 		));
 		$ev->call();
+		$faction = $event->getFaction();
+		if (is_string($faction)) {
+			$faction = MainAPI::getFaction($faction);
+		}
+		if ($faction instanceof FactionEntity) {
+			foreach ($faction->getMembers() as $name => $rank) {
+				$player = $this->server->getPlayerExact($name);
+				if ($player instanceof Player) {
+					$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+						Ids::HUD_FACTIONMASTER_FACTION_NUMBER_PLAYER,
+						count($faction->getMembers())
+					));
+					$ev->call();
+				}
+			}
+		}
+		$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+			Ids::HUD_FACTIONMASTER_FACTION_MAX_PLAYER,
+			0
+		));
+		$ev->call();
+		$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+			Ids::HUD_FACTIONMASTER_FACTION_MAX_HOME,
+			0
+		));
+		$ev->call();
+		$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+			Ids::HUD_FACTIONMASTER_FACTION_MAX_ALLY,
+			0
+		));
+		$ev->call();
+		$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+			Ids::HUD_FACTIONMASTER_FACTION_MAX_CLAIM,
+			0
+		));
+		$ev->call();
+		$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+			Ids::HUD_FACTIONMASTER_FACTION_NUMBER_CLAIM,
+			0
+		));
+		$ev->call();
+		$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+			Ids::HUD_FACTIONMASTER_FACTION_NUMBER_PLAYER,
+			0
+		));
+		$ev->call();
+		$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+			Ids::HUD_FACTIONMASTER_FACTION_NUMBER_ALLY,
+			0
+		));
+		$ev->call();
+		$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+			Ids::HUD_FACTIONMASTER_FACTION_NUMBER_HOME,
+			0
+		));
+		$ev->call();
 	}
 
 	public function onFactionDelete(FactionDeleteEvent $event): void {
@@ -631,6 +854,160 @@ class ScoreHudListener implements Listener {
 					Utils::getText($player->getName(), "NO_FACTION_TAG")
 				));
 				$ev->call();
+				$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+					Ids::HUD_FACTIONMASTER_FACTION_MAX_PLAYER,
+					0
+				));
+				$ev->call();
+				$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+					Ids::HUD_FACTIONMASTER_FACTION_MAX_HOME,
+					0
+				));
+				$ev->call();
+				$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+					Ids::HUD_FACTIONMASTER_FACTION_MAX_ALLY,
+					0
+				));
+				$ev->call();
+				$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+					Ids::HUD_FACTIONMASTER_FACTION_MAX_CLAIM,
+					0
+				));
+				$ev->call();
+				$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+					Ids::HUD_FACTIONMASTER_FACTION_NUMBER_CLAIM,
+					0
+				));
+				$ev->call();
+				$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+					Ids::HUD_FACTIONMASTER_FACTION_NUMBER_PLAYER,
+					0
+				));
+				$ev->call();
+				$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+					Ids::HUD_FACTIONMASTER_FACTION_NUMBER_ALLY,
+					0
+				));
+				$ev->call();
+				$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+					Ids::HUD_FACTIONMASTER_FACTION_NUMBER_HOME,
+					0
+				));
+				$ev->call();
+			}
+		}
+	}
+
+	public function onClaim(FactionClaimEvent $event) {
+		$faction = $event->getFaction();
+		if (is_string($faction)) {
+			$faction = MainAPI::getFaction($faction);
+		}
+		if ($faction instanceof FactionEntity) {
+			foreach ($faction->getMembers() as $name => $rank) {
+				$player = $this->server->getPlayerExact($name);
+				if ($player instanceof Player) {
+					$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+						Ids::HUD_FACTIONMASTER_FACTION_NUMBER_CLAIM,
+						count(MainAPI::getClaimsFaction($faction->getName()))
+					));
+					$ev->call();
+				}
+			}
+		}
+	}
+
+	public function onUnclaim(FactionUnclaimEvent $event) {
+		$faction = $event->getFaction();
+		if (is_string($faction)) {
+			$faction = MainAPI::getFaction($faction);
+		}
+		if ($faction instanceof FactionEntity) {
+			foreach ($faction->getMembers() as $name => $rank) {
+				$player = $this->server->getPlayerExact($name);
+				if ($player instanceof Player) {
+					$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+						Ids::HUD_FACTIONMASTER_FACTION_NUMBER_CLAIM,
+						count(MainAPI::getClaimsFaction($faction->getName()))
+					));
+					$ev->call();
+				}
+			}
+		}
+	}
+
+	public function onAllianceCreate(AllianceCreateEvent $event) {
+		$faction = $event->getFaction();
+		if (is_string($faction)) {
+			$faction = MainAPI::getFaction($faction);
+		}
+		if ($faction instanceof FactionEntity) {
+			foreach ($faction->getMembers() as $name => $rank) {
+				$player = $this->server->getPlayerExact($name);
+				if ($player instanceof Player) {
+					$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+						Ids::HUD_FACTIONMASTER_FACTION_NUMBER_ALLY,
+						count($faction->getAlly())
+					));
+					$ev->call();
+				}
+			}
+		}
+	}
+
+	public function onAllianceBreak(AllianceBreakEvent $event) {
+		$faction = $event->getFaction();
+		if (is_string($faction)) {
+			$faction = MainAPI::getFaction($faction);
+		}
+		if ($faction instanceof FactionEntity) {
+			foreach ($faction->getMembers() as $name => $rank) {
+				$player = $this->server->getPlayerExact($name);
+				if ($player instanceof Player) {
+					$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+						Ids::HUD_FACTIONMASTER_FACTION_NUMBER_ALLY,
+						count($faction->getAlly())
+					));
+					$ev->call();
+				}
+			}
+		}
+	}
+
+	public function onCreateHome(FactionHomeCreateEvent $event) {
+		$faction = $event->getFaction();
+		if (is_string($faction)) {
+			$faction = MainAPI::getFaction($faction);
+		}
+		if ($faction instanceof FactionEntity) {
+			foreach ($faction->getMembers() as $name => $rank) {
+				$player = $this->server->getPlayerExact($name);
+				if ($player instanceof Player) {
+					$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+						Ids::HUD_FACTIONMASTER_FACTION_NUMBER_HOME,
+						count(MainAPI::getFactionHomes($faction->getName()))
+					));
+					$ev->call();
+				}
+			}
+		}
+	}
+
+	public function onDeleteHome(FactionHomeDeleteEvent $event) {
+		$faction = $event->getFaction();
+		if (is_string($faction)) {
+			$faction = MainAPI::getFaction($faction);
+		}
+		if ($faction instanceof FactionEntity) {
+			foreach ($faction->getMembers() as $name => $rank) {
+				$player = $this->server->getPlayerExact($name);
+				if ($player instanceof Player) {
+					$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+						Ids::HUD_FACTIONMASTER_FACTION_NUMBER_HOME,
+						count(MainAPI::getFactionHomes($faction->getName()))
+					));
+					$ev->call();
+				}
 			}
 		}
 	}

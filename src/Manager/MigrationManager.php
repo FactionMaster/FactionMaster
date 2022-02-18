@@ -34,6 +34,7 @@ namespace ShockedPlot7560\FactionMaster\Manager;
 
 use PDO;
 use pocketmine\utils\Config;
+use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Table\FactionTable;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\FactionMaster as Main;
@@ -98,6 +99,25 @@ class MigrationManager {
 			"4.0.0" => function () {
 				self::$main->getLogger()->notice("FactionMaster4.0.0 include some new feature and PocketMine 4.0 support");
 				self::$main->getLogger()->notice("You can now make multiple leaderboard, Image resource_pack can now be autoload in the plugin data");
+			},
+			"4.1.1" => function () {
+				self::$main->getLogger()->notice("Update your database format");
+				switch (ConfigManager::getConfig()->get("PROVIDER")) {
+					case 'MYSQL':
+						MainAPI::$PDO->query("ALTER TABLE " . UserTable::TABLE_NAME . " MODIFY COLUMN `rank` INT DEFAULT NULL");
+						break;
+					case "SQLITE":
+						MainAPI::$PDO->query("BEGIN TRANSACTION");
+						MainAPI::$PDO->query("ALTER TABLE factionmaster_user RENAME TO factionmaster_user_old40");
+						$table = new UserTable(MainAPI::$PDO);
+						$table->init();
+						MainAPI::$PDO->query("INSERT INTO factionmaster_user SELECT * FROM factionmaster_user_old40");
+						MainAPI::$PDO->query("COMMIT");
+						break;
+					default:
+						self::$main->getLogger()->emergency("Invalid provider given");
+						break;
+				}
 			}
 		];
 		self::$configDbToCheck = [

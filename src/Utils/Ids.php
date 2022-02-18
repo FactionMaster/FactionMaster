@@ -50,6 +50,14 @@ interface Ids {
 	const HUD_FACTIONMASTER_FACTION_DESCRIPTION = "factionmaster.faction.description";
 	const HUD_FACTIONMASTER_FACTION_VISIBILITY = "factionmaster.faction.visibility";
 	const HUD_FACTIONMASTER_PLAYER_RANK = "factionmaster.player.rank";
+	const HUD_FACTIONMASTER_FACTION_MAX_PLAYER = "factionmaster.faction.max.player";
+	const HUD_FACTIONMASTER_FACTION_MAX_CLAIM = "factionmaster.faction.max.claim";
+	const HUD_FACTIONMASTER_FACTION_MAX_HOME = "factionmaster.faction.max.home";
+	const HUD_FACTIONMASTER_FACTION_MAX_ALLY = "factionmaster.faction.max.ally";
+	const HUD_FACTIONMASTER_FACTION_NUMBER_PLAYER = "factionmaster.faction.number.player";
+	const HUD_FACTIONMASTER_FACTION_NUMBER_CLAIM = "factionmaster.faction.number.claim";
+	const HUD_FACTIONMASTER_FACTION_NUMBER_HOME = "factionmaster.faction.number.home";
+	const HUD_FACTIONMASTER_FACTION_NUMBER_ALLY = "factionmaster.faction.number.ally";
 
 	const FLAG_WARZONE = 0;
 	const FLAG_SPAWN = 1;

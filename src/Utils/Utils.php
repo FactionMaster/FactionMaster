@@ -42,11 +42,11 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\Event\MenuOpenEvent;
 use ShockedPlot7560\FactionMaster\FactionMaster as Main;
+use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Manager\PermissionManager;
 use ShockedPlot7560\FactionMaster\Manager\TranslationManager;
 use ShockedPlot7560\FactionMaster\Route\Route;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
-use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use function compact;
 use function is_array;
 use function is_string;
@@ -69,10 +69,7 @@ class Utils {
 			@throw new Exception("player given must be of type Player", 1);
 		}
 		$userEntity = MainAPI::getUser($player->getName());
-		$userPermissions = MainAPI::getMemberPermission($player->getName());
-		if ($userPermissions === null) {
-			$userPermissions = [];
-		}
+		$userPermissions = MainAPI::getMemberPermission($player->getName()) ?? [];
 		if ($userEntity instanceof UserEntity) {
 			$good = $route->getPermissions() === [];
 			if ($userEntity->getRank() === Ids::OWNER_ID) {
@@ -172,7 +169,7 @@ class Utils {
 			return true;
 		}
 
-		if (!PermissionManager::isRegister($id)) {
+		if (!PermissionManager::isRegister($id) || $userEntity->faction === null) {
 			return false;
 		}
 

@@ -45,6 +45,7 @@ use ShockedPlot7560\FactionMaster\Database\Table\HomeTable;
 use ShockedPlot7560\FactionMaster\Database\Table\InvitationTable;
 use ShockedPlot7560\FactionMaster\Database\Table\UserTable;
 use ShockedPlot7560\FactionMaster\Event\FactionLevelChangeEvent;
+use ShockedPlot7560\FactionMaster\Event\FactionOptionUpdateEvent;
 use ShockedPlot7560\FactionMaster\Event\FactionPowerEvent;
 use ShockedPlot7560\FactionMaster\Event\FactionXPChangeEvent;
 use ShockedPlot7560\FactionMaster\Event\MemberChangeRankEvent;
@@ -314,10 +315,10 @@ class MainAPI {
 		);
 		self::submitDatabaseTask(
 			new DatabaseTask(
-				"UPDATE " . UserTable::TABLE_NAME . " SET faction = :faction, rank = :rank WHERE name = :name",
+				"UPDATE " . UserTable::TABLE_NAME . " SET `faction` = :faction, `rank` = :rank WHERE `name` = :name",
 				[
 					'faction' => $factionName,
-					'rank' => $rankId,
+					'rank' => (int) $rankId,
 					'name' => $playerName,
 				],
 				function () use ($playerName, $user, $faction) {
@@ -595,7 +596,7 @@ class MainAPI {
 		$user->setRank(null);
 		self::submitDatabaseTask(
 			new DatabaseTask(
-				"UPDATE " . UserTable::TABLE_NAME . " SET rank = :rank WHERE name = :name",
+				"UPDATE " . UserTable::TABLE_NAME . " SET `rank` = :rank WHERE `name` = :name",
 				[
 					'rank' => $rank,
 					'name' => $playerName,
@@ -1012,6 +1013,7 @@ class MainAPI {
 
 	public static function updateFactionOption(string $factionName, string $option, int $value) {
 		$faction = self::getFaction($factionName);
+		$oldFac = clone $faction;
 		if (!$faction instanceof FactionEntity) {
 			return false;
 		}
@@ -1024,8 +1026,9 @@ class MainAPI {
 					'option' => $value,
 					'name' => $factionName,
 				],
-				function () use ($faction) {
+				function () use ($faction, $oldFac, $option, $value) {
 					MainAPI::$factions[$faction->getName()] = $faction;
+					(new FactionOptionUpdateEvent($oldFac, $value, $option))->call();
 				}
 			)
 		);

@@ -2,6 +2,7 @@
 
 namespace ShockedPlot7560\FactionMaster\Manager;
 
+use ShockedPlot7560\FactionMaster\FactionMaster;
 use ShockedPlot7560\FactionMaster\FactionMaster as Main;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function array_keys;
@@ -39,10 +40,15 @@ class TranslationManager {
 	}
 
 	public static function getTranslation(string $slug, string $lang): string {
-		if (isset(self::$translations[$lang])) {
-			return self::$translations[$lang][$slug] ?? self::$translations["EN"][$slug];
+		if (isset(self::$translations[$lang][$slug])) {
+			return self::$translations[$lang][$slug];
+		} elseif (isset(self::$translations[self::$default][$slug])) {
+			return self::$translations[self::$default][$slug];
+		} elseif (isset(self::$translations["EN"][$slug])) {
+			return self::$translations["EN"][$slug];
 		} else {
-			return self::$translations[self::$default][$slug] ?? self::$translations["EN"][$slug];
+			FactionMaster::getInstance()->getLogger()->error("Translation: $slug unknown, please create an issue on the FactionMaster github to resolve.");
+			return $slug;
 		}
 	}
 }
