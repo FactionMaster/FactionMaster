@@ -41,7 +41,7 @@ abstract class FactionSubCommand extends BaseSubCommand {
 	/**
 	 * @return string
 	 */
-	public $id = "COMMAND_UNKNOW_DESCRIPTION";
+	private $id = "COMMAND_UNKNOW_DESCRIPTION";
 
 	public function __construct(string $name, string $description = "", array $aliases = []) {
 		if($description === "") {
