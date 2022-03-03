@@ -41,9 +41,9 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function floor;
 
 class RemoveFlagCommand extends FactionSubCommand {
-  
-  public $id = "COMMAND_REMOVE_FLAG";
-  
+
+	private $id = "COMMAND_REMOVE_FLAG";
+
 	protected function prepare(): void {
 		$this->setPermission("factionmaster.flag.remove");
 	}

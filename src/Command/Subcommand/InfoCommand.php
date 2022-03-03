@@ -43,9 +43,9 @@ use function floor;
 use function strlen;
 
 class InfoCommand extends FactionSubCommand {
-  
-  public $id = "COMMAND_INFO_DESCRIPTION_GLOBAL";
-  
+
+	private $id = "COMMAND_INFO_DESCRIPTION_GLOBAL";
+
 	protected function prepare(): void {
 		$this->registerArgument(0, new RawStringArgument("name", true));
 	}

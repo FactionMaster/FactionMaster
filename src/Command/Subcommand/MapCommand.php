@@ -52,9 +52,9 @@ use function strlen;
 use function substr;
 
 class MapCommand extends FactionSubCommand {
-  
-  public $id = "COMMAND_MAP_DESCRIPTION";
-  
+
+	private $id = "COMMAND_MAP_DESCRIPTION";
+
 	const DIRECTION = [
 		"N" => 'N',
 		"NE" => '/',

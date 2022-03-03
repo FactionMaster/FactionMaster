@@ -47,9 +47,9 @@ use function floor;
 use function join;
 
 class RemoveNearLeaderboardCommand extends FactionSubCommand {
-  
-  public $id = "COMMAND_SCOREBOARD_REMOVE_DESCRIPTION";
-  
+
+	private $id = "COMMAND_SCOREBOARD_REMOVE_DESCRIPTION";
+
 	protected function prepare(): void {
 		$this->setPermission("factionmaster.leaderboard.place");
 	}

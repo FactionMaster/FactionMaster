@@ -51,9 +51,9 @@ use function implode;
 use function str_replace;
 
 class FactionTopCommand extends FactionSubCommand {
-  
-  public $id = "COMMAND_TOP_DESCRIPTION";
-  
+
+	private $id = "COMMAND_TOP_DESCRIPTION";
+
 	protected function prepare(): void {
 		$this->registerArgument(0, new EnumArgument("slug", array_keys(LeaderboardManager::getAll())));
 	}

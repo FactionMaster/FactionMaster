@@ -43,9 +43,9 @@ use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class DelhomeCommand extends FactionSubCommand {
-  
-  public $id = "COMMAND_DELHOME_DESCRIPTION";
-  
+
+	public $id = "COMMAND_DELHOME_DESCRIPTION";
+
 	protected function prepare(): void {
 		$this->registerArgument(0, new RawStringArgument("name", false));
 	}

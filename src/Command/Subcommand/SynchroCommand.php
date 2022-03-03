@@ -38,9 +38,9 @@ use ShockedPlot7560\FactionMaster\Task\SyncServerTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class SynchroCommand extends FactionSubCommand {
-  
-  public $id = "COMMAND_SYNCHRO";
-  
+
+	private $id = "COMMAND_SYNCHRO";
+
 	protected function prepare(): void {
 		$this->setPermission("factionmaster.synchro.launch");
 	}

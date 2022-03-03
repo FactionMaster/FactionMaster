@@ -37,16 +37,22 @@ use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 abstract class FactionSubCommand extends BaseSubCommand {
-  
-  public $id = "COMMAND_UNKNOW_DESCRIPTION";
-  
-  public function __construct(string $name, string $description = "", array $aliases = []) {
-    if($description === "") {
-      $description = Utils::getText("", $this->id);
-    }
-    parent::__construct($name, $description, $aliases);
-  }
-  
-  protected function prepare(): void { }
-  
+
+	/**
+	 * @return string
+	 */
+	public $id = "COMMAND_UNKNOW_DESCRIPTION";
+
+	public function __construct(string $name, string $description = "", array $aliases = []) {
+		if($description === "") {
+			$description = Utils::getText("", $this->id);
+		}
+		parent::__construct($name, $description, $aliases);
+	}
+	
+	protected function prepare(): void { }
+	
+	public function getId(): string {
+		return $this->id;
+	}
 }

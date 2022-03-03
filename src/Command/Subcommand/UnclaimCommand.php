@@ -43,9 +43,9 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function floor;
 
 class UnclaimCommand extends FactionSubCommand {
-  
-  public $id = "COMMAND_UNCLAIM_DESCRIPTION";
-  
+
+	private $id = "COMMAND_UNCLAIM_DESCRIPTION";
+
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
 		if (!$sender instanceof Player) {
 			return;

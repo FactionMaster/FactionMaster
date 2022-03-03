@@ -41,9 +41,9 @@ use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class FactionCreateCommand extends FactionSubCommand {
-  
-  public $id = "COMMAND_CREATE_DESCRIPTION";
-  
+
+	private $id = "COMMAND_CREATE_DESCRIPTION";
+
 	protected function prepare(): void {
 		$this->registerArgument(0, new RawStringArgument("name", true));
 	}
@@ -55,13 +55,13 @@ class FactionCreateCommand extends FactionSubCommand {
 
 		$userEntity = MainAPI::getUser($sender->getName());
 		if ($userEntity->getFactionName() === null) {
-		  if(!isset($args['name'])) {
-			  Utils::processMenu(RouterFactory::get(RouteSlug::CREAFT_FACTION_ROUTE), $sender);
-		  } else {
-		    $route = RouterFactory::get(RouteSlug::CREAFT_FACTION_ROUTE);
-		    $callable = $route->call();
-		    $callable($sender, [null, $args['name']]);
-		  }
+			if (!isset($args['name'])) {
+				Utils::processMenu(RouterFactory::get(RouteSlug::CREAFT_FACTION_ROUTE), $sender);
+			} else {
+				$route = RouterFactory::get(RouteSlug::CREAFT_FACTION_ROUTE);
+				$callable = $route->call();
+				$callable($sender, [null, $args['name']]);
+			}
 		} else {
 			$sender->sendMessage(Utils::getText($sender->getName(), "ALREADY_IN_FACTION"));
 		}

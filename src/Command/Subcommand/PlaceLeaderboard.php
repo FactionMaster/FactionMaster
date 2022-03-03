@@ -45,9 +45,9 @@ use function implode;
 use function join;
 
 class PlaceLeaderboard extends FactionSubCommand {
-  
-  public $id = "COMMAND_SCOREBOARD_DESCRIPTION";
-  
+
+	private $id = "COMMAND_SCOREBOARD_DESCRIPTION";
+
 	protected function prepare(): void {
 		$this->setPermission("factionmaster.leaderboard.place");
 		$this->registerArgument(0, new EnumArgument("slug", array_keys(LeaderboardManager::getAll())));

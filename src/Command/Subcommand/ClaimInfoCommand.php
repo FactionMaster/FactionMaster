@@ -41,9 +41,9 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function floor;
 
 class ClaimInfoCommand extends FactionSubCommand {
-  
-  public $id = "COMMAND_CLAIM_INFO_DESCRIPTION";
-  
+
+	private $id = "COMMAND_CLAIM_INFO_DESCRIPTION";
+
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
 		if (!$sender instanceof Player) {
 			return;

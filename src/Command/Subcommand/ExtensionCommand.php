@@ -38,9 +38,9 @@ use ShockedPlot7560\FactionMaster\Manager\ExtensionManager;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class ExtensionCommand extends FactionSubCommand {
-  
-  public $id = "COMMAND_EXTENSION_DESCRIPTION";
-  
+
+	private $id = "COMMAND_EXTENSION_DESCRIPTION";
+
 	protected function prepare(): void {
 		$this->setPermission("factionmaster.extension.list");
 	}

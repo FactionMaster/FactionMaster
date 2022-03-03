@@ -41,9 +41,9 @@ use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class HomeCommand extends FactionSubCommand {
-  
-  public $id = "COMMAND_HOME_DESCRIPTION";
-  
+
+	private $id = "COMMAND_HOME_DESCRIPTION";
+
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
 		if (!$sender instanceof Player) {
 			return;

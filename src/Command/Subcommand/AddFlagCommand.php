@@ -44,9 +44,9 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 
 class AddFlagCommand extends FactionSubCommand {
-  
-  public $id = "COMMAND_ADD_FLAG";
-  
+
+	private $id = "COMMAND_ADD_FLAG";
+
 	protected function prepare(): void {
 		$this->registerArgument(0, new RawStringArgument("areaName"));
 		$this->registerArgument(1, new EnumArgument("type", ["warzone", "spawn"]));

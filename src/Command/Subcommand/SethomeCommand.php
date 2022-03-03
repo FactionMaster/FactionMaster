@@ -46,9 +46,9 @@ use function count;
 use function floor;
 
 class SethomeCommand extends FactionSubCommand {
-  
-  public $id = "COMMAND_SETHOME_DESCRIPTION";
-  
+
+	private $id = "COMMAND_SETHOME_DESCRIPTION";
+
 	protected function prepare(): void {
 		$this->registerArgument(0, new RawStringArgument("name", false));
 	}
