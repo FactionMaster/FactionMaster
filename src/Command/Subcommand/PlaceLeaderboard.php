@@ -46,7 +46,7 @@ use function join;
 
 class PlaceLeaderboard extends FactionSubCommand {
   
-  public const ID = "COMMAND_SCOREBOARD_DESCRIPTION";
+  public $id = "COMMAND_SCOREBOARD_DESCRIPTION";
   
 	protected function prepare(): void {
 		$this->setPermission("factionmaster.leaderboard.place");

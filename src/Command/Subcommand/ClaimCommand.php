@@ -48,7 +48,7 @@ use function floor;
 
 class ClaimCommand extends FactionSubCommand {
   
-  public const ID = "COMMAND_CLAIM_DESCRIPTION";
+  public $id = "COMMAND_CLAIM_DESCRIPTION";
   
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
 		if (!$sender instanceof Player) {

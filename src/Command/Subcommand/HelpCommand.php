@@ -39,7 +39,7 @@ use function str_replace;
 
 class HelpCommand extends BaseSubCommand {
   
-  public const ID = "COMMAND_HELP_DESCRIPTION";
+  public $id = "COMMAND_HELP_DESCRIPTION";
   
 	private $player;
 	

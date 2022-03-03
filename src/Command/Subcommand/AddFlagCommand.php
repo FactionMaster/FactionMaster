@@ -45,7 +45,7 @@ use function count;
 
 class AddFlagCommand extends FactionSubCommand {
   
-  public const ID = "COMMAND_ADD_FLAG";
+  public $id = "COMMAND_ADD_FLAG";
   
 	protected function prepare(): void {
 		$this->registerArgument(0, new RawStringArgument("areaName"));

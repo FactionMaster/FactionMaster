@@ -38,16 +38,14 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 abstract class FactionSubCommand extends BaseSubCommand {
   
-  public const ID = "COMMAND_UNKNOW_DESCRIPTION";
+  public $id = "COMMAND_UNKNOW_DESCRIPTION";
   
   public function __construct(string $name, string $description = "", array $aliases = []) {
     if($description === "") {
-      $description = Utils::getText("", static::ID);
+      $description = Utils::getText("", $this->id);
     }
     parent::__construct($name, $description, $aliases);
   }
-  
-  abstract public function onRun(CommandSender $sender, string $aliasUsed, array $args): void;
   
   protected function prepare(): void { }
   

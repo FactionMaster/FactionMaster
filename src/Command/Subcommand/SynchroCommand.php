@@ -39,7 +39,7 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class SynchroCommand extends FactionSubCommand {
   
-  public const ID = "COMMAND_SYNCHRO";
+  public $id = "COMMAND_SYNCHRO";
   
 	protected function prepare(): void {
 		$this->setPermission("factionmaster.synchro.launch");

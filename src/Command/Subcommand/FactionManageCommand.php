@@ -41,7 +41,7 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class FactionManageCommand extends FactionSubCommand {
   
-  public const ID = "COMMAND_MANAGE_DESCRIPTION";
+  public $id = "COMMAND_MANAGE_DESCRIPTION";
   
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
 		if (!$sender instanceof Player) {

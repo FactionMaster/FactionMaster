@@ -52,7 +52,7 @@ use function str_replace;
 
 class FactionTopCommand extends FactionSubCommand {
   
-  public const ID = "COMMAND_TOP_DESCRIPTION";
+  public $id = "COMMAND_TOP_DESCRIPTION";
   
 	protected function prepare(): void {
 		$this->registerArgument(0, new EnumArgument("slug", array_keys(LeaderboardManager::getAll())));
