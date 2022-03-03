@@ -37,16 +37,15 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionUnclaimEvent;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function floor;
 
-class UnclaimCommand extends BaseSubCommand {
-	protected function prepare(): void {
-	}
-
+class UnclaimCommand extends FactionSubCommand {
+  
+  public const ID = "COMMAND_UNCLAIM_DESCRIPTION";
+  
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
 		if (!$sender instanceof Player) {
 			return;

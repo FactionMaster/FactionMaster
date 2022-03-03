@@ -35,13 +35,14 @@ namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Route\RouteSlug;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class FactionCreateCommand extends BaseSubCommand {
+class FactionCreateCommand extends FactionSubCommand {
+  
+  public const ID = "COMMAND_CREATE_DESCRIPTION";
   
 	protected function prepare(): void {
 		$this->registerArgument(0, new RawStringArgument("name", true));
@@ -59,7 +60,7 @@ class FactionCreateCommand extends BaseSubCommand {
 		  } else {
 		    $route = RouterFactory::get(RouteSlug::CREAFT_FACTION_ROUTE);
 		    $callable = $route->call();
-		    $callable($sender, $args['name']);
+		    $callable($sender, [null, $args['name']]);
 		  }
 		} else {
 			$sender->sendMessage(Utils::getText($sender->getName(), "ALREADY_IN_FACTION"));

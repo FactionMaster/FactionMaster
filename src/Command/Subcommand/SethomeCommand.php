@@ -38,7 +38,6 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\HomeEntity;
 use ShockedPlot7560\FactionMaster\Event\FactionHomeCreateEvent;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
@@ -46,7 +45,10 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 use function floor;
 
-class SethomeCommand extends BaseSubCommand {
+class SethomeCommand extends FactionSubCommand {
+  
+  public const ID = "COMMAND_SETHOME_DESCRIPTION";
+  
 	protected function prepare(): void {
 		$this->registerArgument(0, new RawStringArgument("name", false));
 	}

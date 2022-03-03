@@ -38,7 +38,6 @@ use ShockedPlot7560\FactionMaster\Command\Argument\EnumArgument;
 use ShockedPlot7560\FactionMaster\Database\Entity\FactionEntity;
 use ShockedPlot7560\FactionMaster\FactionMaster;
 use ShockedPlot7560\FactionMaster\Leaderboard\EntityLeaderboard;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
@@ -51,7 +50,10 @@ use function count;
 use function implode;
 use function str_replace;
 
-class FactionTopCommand extends BaseSubCommand {
+class FactionTopCommand extends FactionSubCommand {
+  
+  public const ID = "COMMAND_TOP_DESCRIPTION";
+  
 	protected function prepare(): void {
 		$this->registerArgument(0, new EnumArgument("slug", array_keys(LeaderboardManager::getAll())));
 	}

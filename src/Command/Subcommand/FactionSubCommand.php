@@ -33,26 +33,22 @@
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
 use pocketmine\command\CommandSender;
-use pocketmine\player\Player;
-use ShockedPlot7560\FactionMaster\API\MainAPI;
-use ShockedPlot7560\FactionMaster\Route\RouterFactory;
-use ShockedPlot7560\FactionMaster\Route\RouteSlug;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class FactionManageCommand extends FactionSubCommand {
+abstract class FactionSubCommand extends BaseSubCommand {
   
-  public const ID = "COMMAND_MANAGE_DESCRIPTION";
+  public const ID = "COMMAND_UNKNOW_DESCRIPTION";
   
-	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-		if (!$sender instanceof Player) {
-			return;
-		}
-
-		$userEntity = MainAPI::getUser($sender->getName());
-		if ($userEntity->getFactionName() !== null) {
-			Utils::processMenu(RouterFactory::get(RouteSlug::FACTION_OPTION_ROUTE), $sender);
-		} else {
-			$sender->sendMessage(Utils::getText($sender->getName(), "NEED_FACTION"));
-		}
-	}
+  public function __construct(string $name, string $description = "", array $aliases = []) {
+    if($description === "") {
+      $description = Utils::getText("", static::ID);
+    }
+    parent::__construct($name, $description, $aliases);
+  }
+  
+  abstract public function onRun(CommandSender $sender, string $aliasUsed, array $args): void;
+  
+  protected function prepare(): void { }
+  
 }

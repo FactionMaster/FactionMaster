@@ -38,19 +38,19 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function str_replace;
 
 class HelpCommand extends BaseSubCommand {
+  
+  public const ID = "COMMAND_HELP_DESCRIPTION";
+  
 	private $player;
-
-	protected function prepare(): void {
-	}
-
+	
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
 		$this->player = $sender;
 		
 		$sender->sendMessage(Utils::getConfig("help-command-header"));
-		$sender->sendMessage($this->getString("/f", "COMMAND_FACTION"));
+		$sender->sendMessage($this->getString("/f", "COMMAND_FACTION_DESCRIPTION"));
 		foreach (CommandManager::getCommands() as $command) {
 		  if ($command->testPermissionSilent($sender)) {
-			  $sender->sendMessage($this->getString("/f " .$command->getName(). " " .$command->getUsageMessage(), "COMMAND_" .strtoupper($command->getName())));
+			  $sender->sendMessage($this->getString("/f " .$command->getName(). " " .$command->getUsageMessage(), $command->id));
 		  }
 		}
 	}

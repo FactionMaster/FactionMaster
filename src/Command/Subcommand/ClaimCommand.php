@@ -37,7 +37,6 @@ use pocketmine\player\Player;
 use pocketmine\world\format\Chunk;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Event\FactionClaimEvent;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
@@ -47,10 +46,10 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 use function floor;
 
-class ClaimCommand extends BaseSubCommand {
-	protected function prepare(): void {
-	}
-
+class ClaimCommand extends FactionSubCommand {
+  
+  public const ID = "COMMAND_CLAIM_DESCRIPTION";
+  
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
 		if (!$sender instanceof Player) {
 			return;
