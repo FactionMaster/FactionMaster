@@ -1,5 +1,5 @@
 # DO NOT EDIT THIS LINE
-file-version: 7
+file-version: 8
 # DO NOT EDIT THIS LINE
 
 
@@ -176,26 +176,25 @@ CANT_INTERACT_SPAWN: " §c>> §4You can't interact with that in the spawn"
 
 ERROR_DATA_SAVING: "§6An error has occurred in the backup of your data. Please contact an administrator"
 
-COMMAND_FACTION_DESCRIPTION: "Opens the main menu of FactionMaster"
-COMMAND_TOP_DESCRIPTION: "Open the faction ranking"
-COMMAND_MANAGE_DESCRIPTION: "Opens the faction management interface"
-COMMAND_CLAIM_DESCRIPTION: "Claim the current chunk"
-COMMAND_UNCLAIM_DESCRIPTION: "Remove the current claim"
-COMMAND_SETHOME_DESCRIPTION: "Place a home at the player's location"
-COMMAND_DELHOME_DESCRIPTION: "Remove the faction home"
-COMMAND_TP_DESCRIPTION: "TP at the faction home"
-COMMAND_HOME_DESCRIPTION: "Opens the home menu"
-COMMAND_CREATE_DESCRIPTION: "Opens the menu to create a faction"
-COMMAND_MAP_DESCRIPTION: "Displays the map listing all claims"
-COMMAND_HELP_DESCRIPTION: "Displays the orders"
-COMMAND_INFO_DESCRIPTION_GLOBAL: "Displays information about a faction"
-COMMAND_CLAIM_INFO_DESCRIPTION: "Displays information about a chunk"
-COMMAND_EXTENSION_DESCRIPTION: "Display extensions enabled"
-COMMAND_SCOREBOARD_DESCRIPTION: "Place a leaderboard to your location"
-COMMAND_SCOREBOARD_REMOVE_DESCRIPTION: "Remove the nearest leaderboard around you"
-COMMAND_TOP_DESCRIPTION: "Open the correct menu for the leaderboard"
-COMMAND_ADD_FLAG: "Add a claim considered like an area"
-COMMAND_REMOVE_FLAG: "Remove a claim considered like an area"
+COMMAND_FACTION: "Opens the main menu of FactionMaster"
+COMMAND_TOP: "Open the faction ranking"
+COMMAND_MANAGE: "Opens the faction management interface"
+COMMAND_CLAIM: "Claim the current chunk"
+COMMAND_UNCLAIM: "Remove the current claim"
+COMMAND_SETHOME: "Place a home at the player's location"
+COMMAND_DELHOME: "Remove the faction home"
+COMMAND_TP: "TP at the faction home"
+COMMAND_HOME: "Opens the home menu"
+COMMAND_CREATE: "Opens the menu to create a faction"
+COMMAND_MAP: "Displays the map listing all claims"
+COMMAND_HELP: "Displays the orders"
+COMMAND_INFO: "Displays information about a faction"
+COMMAND_CLAIMINFO: "Displays information about a chunk"
+COMMAND_EXTENSION: "Display extensions enabled"
+COMMAND_PLACELEADERBOARD: "Place a leaderboard to your location"
+COMMAND_REMOVELEADERBOARD: "Remove the nearest leaderboard around you"
+COMMAND_ADDFLAG: "Add a claim considered like an area"
+COMMAND_REMOVEFLAG: "Remove a claim considered like an area"
 COMMAND_SYNCHRO: "Submit task to make synchronisation manually of the database"
 
 NEED_FACTION: " §c>> §4You need a faction to use this"

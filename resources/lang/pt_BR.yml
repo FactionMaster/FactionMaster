@@ -1,5 +1,5 @@
 # DO NOT EDIT THIS LINE
-file-version: 1
+file-version: 2
 # DO NOT EDIT THIS LINE
 
 
@@ -172,25 +172,25 @@ CANT_INTERACT_SPAWN: " §c>> §4Você não pode interagir com isso no spawn"
 
 ERROR_DATA_SAVING: "§6Ocorreu um erro no backup dos seus dados. Entre em contato com um administrador"
 
-COMMAND_FACTION_DESCRIPTION: "Abre o menu principal do FactionMaster"
-COMMAND_TOP_DESCRIPTION: "Abra a classificação da facção"
-COMMAND_MANAGE_DESCRIPTION: "Abra a interface de gerenciamento de facção"
-COMMAND_CLAIM_DESCRIPTION: "Reivindique o terreno atual"
-COMMAND_UNCLAIM_DESCRIPTION: "Remova a reivindicação atual"
-COMMAND_SETHOME_DESCRIPTION: "Coloque uma casa no local do jogador"
-COMMAND_DELHOME_DESCRIPTION: "Remova a facção inicial"
-COMMAND_TP_DESCRIPTION: "TP na casa da facção"
-COMMAND_HOME_DESCRIPTION: "Abre o menu da casa inicial"
-COMMAND_CREATE_DESCRIPTION: "Abre o menu para criar uma facção"
-COMMAND_MAP_DESCRIPTION: "Exibe o mapa listando todas as reivindicações"
-COMMAND_HELP_DESCRIPTION: "Mostra os pedidos"
-COMMAND_INFO_DESCRIPTION_GLOBAL: "Exibe informações sobre uma facção"
-COMMAND_CLAIM_INFO_DESCRIPTION: "Exibe informações sobre um terreno"
-COMMAND_EXTENSION_DESCRIPTION: "Extensões de exibição ativadas"
-COMMAND_SCOREBOARD_DESCRIPTION: "Coloque uma tabela de classificação para a sua localização"
-COMMAND_SCOREBOARD_REMOVE_DESCRIPTION: "Remova a tabela de classificação mais próxima ao seu redor"
-COMMAND_ADD_FLAG: "Remova a tabela de classificação mais próxima ao seu redor"
-COMMAND_REMOVE_FLAG: "Remova uma reivindicação considerada como uma área"
+COMMAND_FACTION: "Abre o menu principal do FactionMaster"
+COMMAND_TOP: "Abra a classificação da facção"
+COMMAND_MANAGE: "Abra a interface de gerenciamento de facção"
+COMMAND_CLAIM: "Reivindique o terreno atual"
+COMMAND_UNCLAIM: "Remova a reivindicação atual"
+COMMAND_SETHOME: "Coloque uma casa no local do jogador"
+COMMAND_DELHOME: "Remova a facção inicial"
+COMMAND_TP: "TP na casa da facção"
+COMMAND_HOME: "Abre o menu da casa inicial"
+COMMAND_CREATE: "Abre o menu para criar uma facção"
+COMMAND_MAP: "Exibe o mapa listando todas as reivindicações"
+COMMAND_HELP: "Mostra os pedidos"
+COMMAND_INFO: "Exibe informações sobre uma facção"
+COMMAND_CLAIMINFO: "Exibe informações sobre um terreno"
+COMMAND_EXTENSION: "Extensões de exibição ativadas"
+COMMAND_PLACELEADERBOARD: "Coloque uma tabela de classificação para a sua localização"
+COMMAND_REMOVELEADERBOARD: "Remova a tabela de classificação mais próxima ao seu redor"
+COMMAND_ADDFLAG: "Remova a tabela de classificação mais próxima ao seu redor"
+COMMAND_REMOVEFLAG: "Remova uma reivindicação considerada como uma área"
 COMMAND_SYNCHRO: "Enviar tarefa para fazer a sincronização manualmente do banco de dados"
 
 NEED_FACTION: " §c>> §4Você precisa de uma facção para usar este"

@@ -1,5 +1,5 @@
 # DO NOT EDIT THIS LINE
-file-version: 2
+file-version: 3
 # DO NOT EDIT THIS LINE
 
 
@@ -166,22 +166,22 @@ CANT_INTERACT_CLAIM: " §c>> §4No puedes interactuar con eso en territorio enem
 
 ERROR_DATA_SAVING: "§6Se ha producido un error en la copia de seguridad de sus datos. Por favor contacte a un administrador"
 
-COMMAND_FACTION_DESCRIPTION: "Abre el menú principal de FactionMaster"
-COMMAND_TOP_DESCRIPTION: "Abre el ranking de facciones"
-COMMAND_MANAGE_DESCRIPTION: "Abre la interfaz de gestión de facciones"
-COMMAND_CLAIM_DESCRIPTION: "Reclamar el territorio actual"
-COMMAND_UNCLAIM_DESCRIPTION: "Remover el territorio actual"
-COMMAND_SETHOME_DESCRIPTION: "Coloca una casa en la ubicación del jugador"
-COMMAND_DELHOME_DESCRIPTION: "Elimina la casa de la facción"
-COMMAND_TP_DESCRIPTION: "Teletransportarse en la casa de la facción"
-COMMAND_HOME_DESCRIPTION: "Abre el menú de inicio"
-COMMAND_CREATE_DESCRIPTION: "Abre el menú para crear una facción"
-COMMAND_MAP_DESCRIPTION: "Muestra el mapa que enumera todos los reclamos"
-COMMAND_HELP_DESCRIPTION: "Muestra los pedidos"
-COMMAND_INFO_DESCRIPTION_GLOBAL: "Muestra información sobre una facción."
-COMMAND_CLAIM_INFO_DESCRIPTION: "Muestra información sobre un territorio"
-COMMAND_EXTENSION_DESCRIPTION: "Extensiones de display habilitadas"
-COMMAND_SCOREBOARD_DESCRIPTION: "Mueve/habilita la tabla de clasificación y da los datos que se deben ingresar para guardarlos"
+COMMAND_FACTION: "Abre el menú principal de FactionMaster"
+COMMAND_TOP: "Abre el ranking de facciones"
+COMMAND_MANAGE: "Abre la interfaz de gestión de facciones"
+COMMAND_CLAIM: "Reclamar el territorio actual"
+COMMAND_UNCLAIM: "Remover el territorio actual"
+COMMAND_SETHOME: "Coloca una casa en la ubicación del jugador"
+COMMAND_DELHOME: "Elimina la casa de la facción"
+COMMAND_TP: "Teletransportarse en la casa de la facción"
+COMMAND_HOME: "Abre el menú de inicio"
+COMMAND_CREATE: "Abre el menú para crear una facción"
+COMMAND_MAP: "Muestra el mapa que enumera todos los reclamos"
+COMMAND_HELP: "Muestra los pedidos"
+COMMAND_INFO: "Muestra información sobre una facción."
+COMMAND_CLAIMINFO: "Muestra información sobre un territorio"
+COMMAND_EXTENSION: "Extensiones de display habilitadas"
+COMMAND_PLACELEADERBOARD: "Mueve/habilita la tabla de clasificación y da los datos que se deben ingresar para guardarlos"
 
 NEED_FACTION: " §c>> §4Necesitas una facción para usar esto"
 SUCCESS_CLAIM: " §a>> §2Reclamación de territorio completado con éxito"
