@@ -1,6 +1,6 @@
 ---
 # DO NOT EDIT THIS LINE
-file-version: 6
+file-version: 5
 # DO NOT EDIT THIS LINE
 
 
@@ -178,25 +178,26 @@ CANT_INTERACT_SPAWN: " §c>> §4Tu ne peux pas intéragir avec ça dans le spawn
 
 ERROR_DATA_SAVING: "§6Une erreur est survenue dans la sauvegarde de vos données\nVeuillez contacter un administrateur"
 
-COMMAND_FACTION: "Ouvre le menu principal de FactionMaster"
-COMMAND_TOP: "Ouvre le classement des factions"
-COMMAND_MANAGE: "Ouvre l'interface de gestion de la faction"
-COMMAND_CLAIM: "Claim le chunk actuel"
-COMMAND_UNCLAIM: "Retire le claim actuel"
-COMMAND_SETHOME: "Place un home à l'endroit du joueur"
-COMMAND_DELHOME: "Retire le home de faction"
-COMMAND_TP: "TP au home de faction"
-COMMAND_HOME: "Ouvre le menu des homes"
-COMMAND_CREATE: "Ouvre le menu pour créer une faction"
-COMMAND_MAP: "Affiche la carte listant tout les claim"
-COMMAND_HELP: "Affiche les commandes"
-COMMAND_INFO: "Affiche les informations sur une faction"
-COMMAND_CLAIMINFO: "Affiche les informations sur un chunk"
-COMMAND_EXTENSION: "Affiche la liste des extensions actives"
-COMMAND_PLACELEADERBOARD: "Ajoute un panneaux des scores à vos pieds"
-COMMAND_REMOVELEADERBOARD: "Retire le panneau des scores le plus près de vous"
-COMMAND_ADDFLAG: "Ajoute un claim considéré comme une zone"
-COMMAND_REMOVEFLAG: "Retire un claim considéré comme une zone"
+COMMAND_FACTION_DESCRIPTION: "Ouvre le menu principal de FactionMaster"
+COMMAND_TOP_DESCRIPTION: "Ouvre le classement des factions"
+COMMAND_MANAGE_DESCRIPTION: "Ouvre l'interface de gestion de la faction"
+COMMAND_CLAIM_DESCRIPTION: "Claim le chunk actuel"
+COMMAND_UNCLAIM_DESCRIPTION: "Retire le claim actuel"
+COMMAND_SETHOME_DESCRIPTION: "Place un home à l'endroit du joueur"
+COMMAND_DELHOME_DESCRIPTION: "Retire le home de faction"
+COMMAND_TP_DESCRIPTION: "TP au home de faction"
+COMMAND_HOME_DESCRIPTION: "Ouvre le menu des homes"
+COMMAND_CREATE_DESCRIPTION: "Ouvre le menu pour créer une faction"
+COMMAND_MAP_DESCRIPTION: "Affiche la carte listant tout les claim"
+COMMAND_HELP_DESCRIPTION: "Affiche les commandes"
+COMMAND_INFO_DESCRIPTION_GLOBAL: "Affiche les informations sur une faction"
+COMMAND_CLAIM_INFO_DESCRIPTION: "Affiche les informations sur un chunk"
+COMMAND_EXTENSION_DESCRIPTION: "Affiche la liste des extensions actives"
+COMMAND_SCOREBOARD_DESCRIPTION: "Ajoute un panneaux des scores à vos pieds"
+COMMAND_SCOREBOARD_REMOVE_DESCRIPTION: "Retire le panneau des scores le plus près de vous"
+COMMAND_TOP_DESCRIPTION: "Ouvre le menu du tableau des scores correspondant"
+COMMAND_ADD_FLAG: "Ajoute un claim considéré comme une zone"
+COMMAND_REMOVE_FLAG: "Retire un claim considéré comme une zone"
 COMMAND_SYNCHRO: "Lance une procédure de synchronisation de la base de donnée"
 
 NEED_FACTION: " §c>> §4Tu as besoin d'une faction pour utiliser cela"

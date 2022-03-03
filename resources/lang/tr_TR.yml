@@ -1,5 +1,5 @@
 # DO NOT EDIT THIS LINE
-file-version: 2
+file-version: 1
 # DO NOT EDIT THIS LINE
 
 
@@ -172,24 +172,24 @@ CANT_INTERACT_SPAWN: " §c>> §4Bir spawn bölgesinde bununla etkileşime gireme
 
 ERROR_DATA_SAVING: "§6Verilerinizin yedeklenmesinde bir hata oluştu. Lütfen bir yetki sahibi ile iletişime geçin"
 
-COMMAND_FACTION: "Klanın ana menüsünü açar"
-COMMAND_TOP: "Klan sıralamasını açar"
-COMMAND_MANAGE: "Klan yönetimi arayüzünü açar"
-COMMAND_CLAIM: "Mevcut chunkı talep eder"
-COMMAND_UNCLAIM: "Mevcut araziyi kaldırır"
-COMMAND_SETHOME: "Oyuncunun bulunduğu yere bir ev yerleştirir"
-COMMAND_DELHOME: "Klan evini kaldırır"
-COMMAND_TP_: "Klan evine ışınlar"
-COMMAND_HOME: "Ev menüyü açar"
-COMMAND_CREATE: "Bir klan oluşturmak için menüyü açar"
-COMMAND_MAP: "Tüm talepleri listeleyen haritayı görüntüler"
-COMMAND_HELP: "Yardım sayfasını açar"
-COMMAND_INFO: "Bir klan hakkında bilgi görüntüler"
-COMMAND_CLAIM: "Bir chunk hakkında bilgi görüntüler"
-COMMAND_EXTENSION: "Görüntü uzantıları etkinleştirir"
-COMMAND_PLACELEADERBOARD: "Lider tablonuzu taşıyın/etkinleştirin ve kaydetmek için girilecek verileri verir"
-COMMAND_ADDFLAG: "Bölge olarak kabul edilen araziyi ekler"
-COMMAND_REMOVEFLAG: "Bölge olarak kabul edilen bir araziyi kaldırır"
+COMMAND_FACTION_DESCRIPTION: "Klanın ana menüsünü açar"
+COMMAND_TOP_DESCRIPTION: "Klan sıralamasını açar"
+COMMAND_MANAGE_DESCRIPTION: "Klan yönetimi arayüzünü açar"
+COMMAND_CLAIM_DESCRIPTION: "Mevcut chunkı talep eder"
+COMMAND_UNCLAIM_DESCRIPTION: "Mevcut araziyi kaldırır"
+COMMAND_SETHOME_DESCRIPTION: "Oyuncunun bulunduğu yere bir ev yerleştirir"
+COMMAND_DELHOME_DESCRIPTION: "Klan evini kaldırır"
+COMMAND_TP_DESCRIPTION: "Klan evine ışınlar"
+COMMAND_HOME_DESCRIPTION: "Ev menüyü açar"
+COMMAND_CREATE_DESCRIPTION: "Bir klan oluşturmak için menüyü açar"
+COMMAND_MAP_DESCRIPTION: "Tüm talepleri listeleyen haritayı görüntüler"
+COMMAND_HELP_DESCRIPTION: "Yardım sayfasını açar"
+COMMAND_INFO_DESCRIPTION_GLOBAL: "Bir klan hakkında bilgi görüntüler"
+COMMAND_CLAIM_INFO_DESCRIPTION: "Bir chunk hakkında bilgi görüntüler"
+COMMAND_EXTENSION_DESCRIPTION: "Görüntü uzantıları etkinleştirir"
+COMMAND_SCOREBOARD_DESCRIPTION: "Lider tablonuzu taşıyın/etkinleştirin ve kaydetmek için girilecek verileri verir"
+COMMAND_ADD_FLAG: "Bölge olarak kabul edilen araziyi ekler"
+COMMAND_REMOVE_FLAG: "Bölge olarak kabul edilen bir araziyi kaldırır"
 COMMAND_SYNCHRO: "Veritabanının manuel olarak senkronizasyonunu yapmak için görevi gönderir"
 
 NEED_FACTION: " §c>> §4Bunu kullanmak için bir klana ihtiyacınız var"
