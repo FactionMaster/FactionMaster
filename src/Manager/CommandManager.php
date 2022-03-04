@@ -82,7 +82,7 @@ class CommandManager {
 		self::registerCommand(new AddFlagCommand("addflag"));
 		self::registerCommand(new RemoveFlagCommand("removeflag"));
 		self::registerCommand(new SynchroCommand("synchro"));
-		self::registerCommand(new SettingsCommand("settings", "Give all the FactionMaster settings"));
+		self::registerCommand(new SettingsCommand("settings"));
 	}
 
 	public static function registerCommand(FactionSubCommand $command): void {
