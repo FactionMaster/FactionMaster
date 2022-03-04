@@ -38,8 +38,6 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class SettingsCommand extends FactionSubCommand {
 
-	protected $id = "COMMAND_SETTINGS_DESCRIPTION";
-
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
 		$sender->sendMessage("§2FactionMaster settings:");
 		$sender->sendMessage("  §8>> §7Database Provider: " . Utils::getConfig("PROVIDER"));

@@ -33,8 +33,8 @@
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
 use pocketmine\command\CommandSender;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+namespace ShockedPlot7560\FactionMaster\Manager\CommandManager;
 use function str_replace;
 
 class HelpCommand extends FactionSubCommand {
