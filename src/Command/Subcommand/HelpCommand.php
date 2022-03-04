@@ -39,7 +39,9 @@ use function str_replace;
 
 class HelpCommand extends FactionSubCommand {
 
-	protected $id = "COMMAND_HELP_DESCRIPTION";
+	public function getId(): string {
+		return "COMMAND_HELP_DESCRIPTION";
+	}
 
 	private $player;
 

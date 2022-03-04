@@ -43,7 +43,9 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class HomeTpCommand extends FactionSubCommand {
 
-	protected $id = "COMMAND_TP_DESCRIPTION";
+	public function getId(): string {
+		return "COMMAND_TP_DESCRIPTION";
+	}
 
 	protected function prepare(): void {
 		$this->registerArgument(0, new RawStringArgument("name", false));
