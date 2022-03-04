@@ -73,7 +73,7 @@ class CommandManager {
 			self::registerCommand(new MapCommand("map"));
 			self::registerCommand(new InfoCommand("info"));
 			self::registerCommand(new ClaimInfoCommand("claiminfo"));
-			self::registerCommand(new FactionTopCommand("top", "Give all the FactionMaster settings"));
+			self::registerCommand(new FactionTopCommand("top"));
 		}
 		self::registerCommand(new HelpCommand("help"));
 		self::registerCommand(new ExtensionCommand("extension"));

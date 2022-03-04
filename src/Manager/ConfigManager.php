@@ -45,11 +45,11 @@ class ConfigManager {
 	const LEVEL_VERSION = 0;
 	const TRANSLATION_VERSION = 2;
 	const LANG_FILE_VERSION = [
-		"en_EN" => 8,
-		"fr_FR" => 6,
-		"es_SPA" => 3,
-		"tr_TR" => 2,
-		"pt_BR" => 2,
+		"en_EN" => 7,
+		"fr_FR" => 5,
+		"es_SPA" => 2,
+		"tr_TR" => 1,
+		"pt_BR" => 1,
 	];
 
 	/** @var Config */
