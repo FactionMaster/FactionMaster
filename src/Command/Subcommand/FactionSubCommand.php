@@ -38,9 +38,6 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 abstract class FactionSubCommand extends BaseSubCommand {
 
-	/**
-	 * @return string
-	 */
 	protected $id = "COMMAND_UNKNOW_DESCRIPTION";
 
 	public function __construct(string $name, string $description = "", array $aliases = []) {
