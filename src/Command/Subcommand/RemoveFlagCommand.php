@@ -42,7 +42,7 @@ use function floor;
 
 class RemoveFlagCommand extends FactionSubCommand {
 
-	private $id = "COMMAND_REMOVE_FLAG";
+	protected $id = "COMMAND_REMOVE_FLAG";
 
 	protected function prepare(): void {
 		$this->setPermission("factionmaster.flag.remove");

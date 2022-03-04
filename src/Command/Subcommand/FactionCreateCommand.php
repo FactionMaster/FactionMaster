@@ -42,7 +42,7 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class FactionCreateCommand extends FactionSubCommand {
 
-	private $id = "COMMAND_CREATE_DESCRIPTION";
+	protected $id = "COMMAND_CREATE_DESCRIPTION";
 
 	protected function prepare(): void {
 		$this->registerArgument(0, new RawStringArgument("name", true));

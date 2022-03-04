@@ -43,7 +43,7 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class HomeTpCommand extends FactionSubCommand {
 
-	private $id = "COMMAND_TP_DESCRIPTION";
+	protected $id = "COMMAND_TP_DESCRIPTION";
 
 	protected function prepare(): void {
 		$this->registerArgument(0, new RawStringArgument("name", false));
@@ -63,7 +63,7 @@ class HomeTpCommand extends FactionSubCommand {
 		if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_TP_FACTION_HOME)) {
 			$home = MainAPI::getFactionHome($userEntity->getFactionName(), $args["name"]);
 			if ($home !== null) {
-				$sender->teleport($home->getVector());
+				$sender->teleport(new Vector3($home->getX(), $home->getY(), $home->getZ()));
 				(new FactionHomeTpEvent($sender, $userEntity->getFactionName(), $args['name'], $home))->call();
 				$sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_TELEPORT"));
 			} else {

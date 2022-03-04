@@ -44,7 +44,7 @@ use function floor;
 
 class UnclaimCommand extends FactionSubCommand {
 
-	private $id = "COMMAND_UNCLAIM_DESCRIPTION";
+	protected $id = "COMMAND_UNCLAIM_DESCRIPTION";
 
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
 		if (!$sender instanceof Player) {

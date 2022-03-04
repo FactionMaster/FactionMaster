@@ -53,7 +53,7 @@ use function substr;
 
 class MapCommand extends FactionSubCommand {
 
-	private $id = "COMMAND_MAP_DESCRIPTION";
+	protected $id = "COMMAND_MAP_DESCRIPTION";
 
 	const DIRECTION = [
 		"N" => 'N',

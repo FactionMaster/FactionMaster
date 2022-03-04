@@ -38,7 +38,7 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class SettingsCommand extends FactionSubCommand {
 
-	private $id = "COMMAND_SETTINGS_DESCRIPTION";
+	protected $id = "COMMAND_SETTINGS_DESCRIPTION";
 
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
 		$sender->sendMessage("§2FactionMaster settings:");

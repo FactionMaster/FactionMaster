@@ -41,17 +41,17 @@ abstract class FactionSubCommand extends BaseSubCommand {
 	/**
 	 * @return string
 	 */
-	private $id = "COMMAND_UNKNOW_DESCRIPTION";
+	protected $id = "COMMAND_UNKNOW_DESCRIPTION";
 
 	public function __construct(string $name, string $description = "", array $aliases = []) {
-		if($description === "") {
-			$description = Utils::getText("", $this->id);
+		if($description === "" && $this->getId() !== "COMMAND_UNKNOW_DESCRIPTION") {
+			$description = Utils::getText("", $this->getId());
 		}
 		parent::__construct($name, $description, $aliases);
 	}
-	
+
 	protected function prepare(): void { }
-	
+
 	public function getId(): string {
 		return $this->id;
 	}

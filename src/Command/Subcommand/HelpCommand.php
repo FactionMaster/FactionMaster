@@ -37,9 +37,9 @@ use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function str_replace;
 
-class HelpCommand extends BaseSubCommand {
+class HelpCommand extends FactionSubCommand {
 
-	private $id = "COMMAND_HELP_DESCRIPTION";
+	protected $id = "COMMAND_HELP_DESCRIPTION";
 
 	private $player;
 
@@ -50,7 +50,7 @@ class HelpCommand extends BaseSubCommand {
 		$sender->sendMessage($this->getString("/f", "COMMAND_FACTION_DESCRIPTION"));
 		foreach (CommandManager::getCommands() as $command) {
 			if ($command->testPermissionSilent($sender)) {
-				$sender->sendMessage($this->getString("/f " .$command->getName(). " " .$command->getUsageMessage(), $command->id));
+				$sender->sendMessage($this->getString("/f " .$command->getName(). " " .$command->getUsageMessage(), $command->getId()));
 			}
 		}
 	}

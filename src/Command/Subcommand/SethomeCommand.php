@@ -47,7 +47,7 @@ use function floor;
 
 class SethomeCommand extends FactionSubCommand {
 
-	private $id = "COMMAND_SETHOME_DESCRIPTION";
+	protected $id = "COMMAND_SETHOME_DESCRIPTION";
 
 	protected function prepare(): void {
 		$this->registerArgument(0, new RawStringArgument("name", false));
