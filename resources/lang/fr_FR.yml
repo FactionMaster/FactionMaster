@@ -1,6 +1,6 @@
 ---
 # DO NOT EDIT THIS LINE
-file-version: 5
+file-version: 6
 # DO NOT EDIT THIS LINE
 
 
@@ -199,6 +199,7 @@ COMMAND_TOP_DESCRIPTION: "Ouvre le menu du tableau des scores correspondant"
 COMMAND_ADD_FLAG: "Ajoute un claim considéré comme une zone"
 COMMAND_REMOVE_FLAG: "Retire un claim considéré comme une zone"
 COMMAND_SYNCHRO: "Lance une procédure de synchronisation de la base de donnée"
+COMMAND_SETTINGS_DESCRIPTION: "Affiche la liste des paramètres disponible"
 
 NEED_FACTION: " §c>> §4Tu as besoin d'une faction pour utiliser cela"
 SUCCESS_CLAIM: " §a>> §2Chunk claim avec succès"
