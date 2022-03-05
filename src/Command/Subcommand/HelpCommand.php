@@ -52,7 +52,7 @@ class HelpCommand extends FactionSubCommand {
 		$sender->sendMessage($this->getString("/f", "COMMAND_FACTION_DESCRIPTION"));
 		foreach (CommandManager::getCommands() as $command) {
 			if ($command->testPermissionSilent($sender)) {
-				$sender->sendMessage($this->getString("/f " .$command->getName(). " " .$command->getUsageMessage(), $command->getId()));
+				$sender->sendMessage($this->getString("/f " .$command->getUsageMessage(), $command->getId()));
 			}
 		}
 	}
