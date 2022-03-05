@@ -42,32 +42,26 @@ class FactionHomeTpEvent extends FactionEvent implements Forcable {
 
 	protected $player;
 	private $home;
-	private $name;
 
 	/**
 	 * @param string|FactionEntity $faction
 	 */
-	public function __construct(Player $player, $faction, string $name, HomeEntity $home, bool $isForce = false) {
+	public function __construct(Player $player, $faction, HomeEntity $home, bool $isForce = false) {
 		parent::__construct($faction, $isForce);
 		$this->player = $player;
 		$this->home = $home;
-		$this->name = $name;
-	}
-
-	public function getPlayer(): Player {
-		return $this->player;
-	}
-
-	public function getName(): string {
-		return $this->name;
-	}
-
-	public function getVector(): Vector3 {
-		return new Vector3($this->getHome()->getX(), $this->getHome()->getY(), $this->getHome()->getZ());
 	}
 
 	public function getHome(): HomeEntity {
 		return $this->home;
+	}
+
+	public function getName(): string {
+		return $this->home->getName();
+	}
+
+	public function getVector(): Vector3 {
+		return $this->home->getVector();
 	}
 
 	public function getWorldName(): string {
