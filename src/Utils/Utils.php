@@ -119,14 +119,14 @@ class Utils {
 	}
 
 	/**
-	 * @return string The formated string like x|y|z|world
+	 * @return string The formated string like x|y|z|world|yaw|pitch
 	 */
-	public static function homeToString($x, $y, $z, $world): string {
-		return join("|", [$x, $y, $z, $world]);
+	public static function homeToString($x, $y, $z, $world, $yaw, $pitch): string {
+		return join("|", [$x, $y, $z, $world, $yaw, $pitch]);
 	}
 
-	public static function homeToArray($x, $y, $z, $world): array {
-		return compact([$x, $y, $z, $world]);
+	public static function homeToArray($x, $y, $z, $world, $yaw, $pitch): array {
+		return compact([$x, $y, $z, $world, $yaw, $pitch]);
 	}
 
 	/**
