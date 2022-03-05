@@ -945,7 +945,7 @@ class MainAPI {
 	public static function addHome(Player $player, string $factionName, string $name): void {
 		self::submitDatabaseTask(
 			new DatabaseTask(
-				"INSERT INTO " . HomeTable::TABLE_NAME . " (x, y, z, world, yaw, pitch, faction, name, server) VALUES (:x, :y, :z, :world, :pitch, :yaw, :faction, :name, :server)",
+				"INSERT INTO " . HomeTable::TABLE_NAME . " (x, y, z, world, faction, name, server) VALUES (:x, :y, :z, :world, :pitch, :yaw, :faction, :name, :server)",
 				[
 					"x" => $player->getPosition()->getX(),
 					"z" => $player->getPosition()->getZ(),
