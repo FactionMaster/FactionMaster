@@ -47,7 +47,7 @@ use function join;
 class PlaceLeaderboard extends FactionSubCommand {
 
 	public function getId(): string {
-		return = "COMMAND_SCOREBOARD_DESCRIPTION";
+		return "COMMAND_SCOREBOARD_DESCRIPTION";
 	}
 
 	protected function prepare(): void {
