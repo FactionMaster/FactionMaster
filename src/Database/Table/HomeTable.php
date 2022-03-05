@@ -51,10 +51,12 @@ class HomeTable implements TableInterface {
             `id` INTEGER PRIMARY KEY $auto_increment, 
             `faction` TEXT NOT NULL, 
             `name` TEXT NOT NULL, 
-            `x` INT NOT NULL, 
-            `y` INT NOT NULL, 
-            `z` INT NOT NULL, 
+            `x` FLOAT NOT NULL, 
+            `y` FLOAT NOT NULL, 
+            `z` FLOAT NOT NULL, 
             `world` VARCHAR(255) NOT NULL, 
+            `yaw` FLOAT NOT NULL DEFAULT '0.0'
+            `pitch` FLOAT NOT NULL DEFAULT '0.0'
             `server` VARCHAR(255) NOT NULL)");
 		return $this;
 	}
