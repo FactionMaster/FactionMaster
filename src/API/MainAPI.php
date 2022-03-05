@@ -945,11 +945,13 @@ class MainAPI {
 	public static function addHome(Player $player, string $factionName, string $name): void {
 		self::submitDatabaseTask(
 			new DatabaseTask(
-				"INSERT INTO " . HomeTable::TABLE_NAME . " (x, y, z, world, faction, name, server) VALUES (:x, :y, :z, :world, :faction, :name, :server)",
+				"INSERT INTO " . HomeTable::TABLE_NAME . " (x, y, z, world, yaw, pitch, faction, name, server) VALUES (:x, :y, :z, :world, :pitch, :yaw, :faction, :name, :server)",
 				[
-					"x" => floor($player->getPosition()->getX()),
-					"z" => floor($player->getPosition()->getZ()),
-					"y" => floor($player->getPosition()->getY()),
+					"x" => $player->getPosition()->getX(),
+					"z" => $player->getPosition()->getZ(),
+					"y" => $player->getPosition()->getY(),
+					"pitch" => $player->getLocation()->getPitch(),
+					"yaw" => $player->getLocation()->getYaw(),
 					"world" => $player->getWorld()->getDisplayName(),
 					"faction" => $factionName,
 					"name" => $name,
@@ -958,11 +960,13 @@ class MainAPI {
 				function () use ($player, $factionName, $name) {
 					self::submitDatabaseTask(
 						new DatabaseTask(
-							"SELECT * FROM " . HomeTable::TABLE_NAME . " WHERE x = :x AND z = :z AND y = :y AND world = :world AND faction = :faction AND name = :name",
+							"SELECT * FROM " . HomeTable::TABLE_NAME . " WHERE x = :x AND z = :z AND y = :y AND world = :world AND yaw = :yaw AND pitch = :pitch AND faction = :faction AND name = :name",
 							[
-								"x" => floor($player->getPosition()->getX()),
-								"z" => floor($player->getPosition()->getZ()),
-								"y" => floor($player->getPosition()->getY()),
+								"x" => $player->getPosition()->getX(),
+								"z" => $player->getPosition()->getZ(),
+								"y" => $player->getPosition()->getY(),
+								"yaw" => $player->getLocation()->getYaw(),
+								"pitch" => $player->getLocation()->getPitch(),
 								"world" => $player->getWorld()->getDisplayName(),
 								"faction" => $factionName,
 								"name" => $name,
