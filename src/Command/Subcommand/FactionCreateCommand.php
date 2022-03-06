@@ -58,9 +58,9 @@ class FactionCreateCommand extends FactionSubCommand {
 		$userEntity = MainAPI::getUser($sender->getName());
 		if ($userEntity->getFactionName() === null) {
 			if (!isset($args['name'])) {
-				Utils::processMenu(RouterFactory::get(RouteSlug::CREAFT_FACTION_ROUTE), $sender);
+				Utils::processMenu(RouterFactory::get(RouteSlug::CREATE_FACTION_ROUTE), $sender);
 			} else {
-				$route = RouterFactory::get(RouteSlug::CREAFT_FACTION_ROUTE);
+				$route = RouterFactory::get(RouteSlug::CREATE_FACTION_ROUTE);
 				$callable = $route->call();
 				$callable($sender, [null, $args['name']]);
 			}

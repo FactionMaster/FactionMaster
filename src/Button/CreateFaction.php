@@ -43,7 +43,7 @@ class CreateFaction extends Button {
 				return Utils::getText($player, "BUTTON_CREATE_FACTION");
 			})
 			->setCallable(function ($player) {
-				Utils::processMenu(RouterFactory::get(RouteSlug::CREAFT_FACTION_ROUTE), $player);
+				Utils::processMenu(RouterFactory::get(RouteSlug::CREATE_FACTION_ROUTE), $player);
 			})
 			->setImgPack("textures/img/create_fac");
 	}

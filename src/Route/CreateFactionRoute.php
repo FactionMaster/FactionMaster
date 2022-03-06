@@ -50,7 +50,7 @@ class CreateFactionRoute extends RouteBase implements Route {
 	const SLUG = "createFactionRoute";
 
 	public function getSlug(): string {
-		return self::CREAFT_FACTION_ROUTE;
+		return self::CREATE_FACTION_ROUTE;
 	}
 
 	public function getPermissions(): array {

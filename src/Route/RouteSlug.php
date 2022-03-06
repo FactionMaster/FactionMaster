@@ -59,7 +59,7 @@ interface RouteSlug {
 	public const ALLIANCE_REQUEST_RECEIVE_ROUTE = "allianceRequestReceiveRoute";
 	public const ALLIANCE_OPTION_ROUTE = "allianceOptionRoute";
 	public const CONFIRMATION_ROUTE = "confirmationRoute";
-	public const CREAFT_FACTION_ROUTE = "createFactionRoute";
+	public const CREATE_FACTION_ROUTE = "createFactionRoute";
 	public const DESCRIPTION_CHANGE_ROUTE = "descriptionChangeRoute";
 	public const JOIN_SEND_INVITATION_ROUTE = "joinSendInvitationRoute";
 	public const MANAGE_LEVEL_ROUTE = "manageLevelRoute";
