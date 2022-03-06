@@ -38,13 +38,17 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Command\Argument\EnumArgument;
 use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 
-class AddFlagCommand extends BaseSubCommand {
+class AddFlagCommand extends FactionSubCommand {
+
+	public function getId(): string {
+		return "COMMAND_ADD_FLAG";
+	}
+
 	protected function prepare(): void {
 		$this->registerArgument(0, new RawStringArgument("areaName"));
 		$this->registerArgument(1, new EnumArgument("type", ["warzone", "spawn"]));

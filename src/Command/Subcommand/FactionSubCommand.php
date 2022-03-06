@@ -33,34 +33,20 @@
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
 use pocketmine\command\CommandSender;
-use pocketmine\permission\DefaultPermissions;
-use ShockedPlot7560\FactionMaster\Manager\ExtensionManager;
+use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class ExtensionCommand extends FactionSubCommand {
+abstract class FactionSubCommand extends BaseSubCommand {
 
-	public function getId(): string {
-		return "COMMAND_EXTENSION_DESCRIPTION";
+	public function __construct(string $name, string $description = "", array $aliases = []) {
+		if($description === "") {
+			$description = Utils::getText("", $this->getId());
+		}
+		parent::__construct($name, $description, $aliases);
 	}
 
-	protected function prepare(): void {
-		$this->setPermission("factionmaster.extension.list");
-	}
+	protected function prepare(): void { }
 
-	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-		if (!$sender->hasPermission(DefaultPermissions::ROOT_OPERATOR)) {
-			$sender->sendMessage(Utils::getText($sender->getName(), "NO_PERMISSION"));
-			return;
-		}
-		$extensions = ExtensionManager::getExtensions();
-		$string = "";
-		foreach ($extensions as $extension) {
-			$string .= "§a" . $extension->getExtensionName() . "§f, ";
-		}
-		if ($string !== "") {
-			$sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_EXTENSION_BASE", ["extensionList" => $string]));
-		} else {
-			$sender->sendMessage(Utils::getText($sender->getName(), "COMMAND_EXTENSION_NO"));
-		}
-	}
+	abstract public function getId(): string;
+
 }

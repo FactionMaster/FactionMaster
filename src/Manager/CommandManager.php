@@ -52,40 +52,40 @@ use ShockedPlot7560\FactionMaster\Command\Subcommand\SethomeCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\SettingsCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\SynchroCommand;
 use ShockedPlot7560\FactionMaster\Command\Subcommand\UnclaimCommand;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
+use ShockedPlot7560\FactionMaster\Command\Subcommand\FactionSubCommand;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class CommandManager {
 
-	/** @var BaseSubCommand[] */
+	/** @var FactionSubCommand[] */
 	private static $commands = [];
 
 	public static function init(bool $light = false): void {
 		if (!$light) {
-			self::registerCommand(new FactionCreateCommand("create", Utils::getText("", "COMMAND_CREATE_DESCRIPTION")));
-			self::registerCommand(new FactionManageCommand("manage", Utils::getText("", "COMMAND_MANAGE_DESCRIPTION")));
-			self::registerCommand(new ClaimCommand("claim", Utils::getText("", "COMMAND_CLAIM_DESCRIPTION")));
-			self::registerCommand(new UnclaimCommand("unclaim", Utils::getText("", "COMMAND_UNCLAIM_DESCRIPTION")));
-			self::registerCommand(new SethomeCommand("sethome", Utils::getText("", "COMMAND_SETHOME_DESCRIPTION")));
-			self::registerCommand(new DelhomeCommand("delhome", Utils::getText("", "COMMAND_DELHOME_DESCRIPTION")));
-			self::registerCommand(new HomeTpCommand("tp", Utils::getText("", "COMMAND_TP_DESCRIPTION")));
-			self::registerCommand(new HomeCommand("home", Utils::getText("", "COMMAND_HOME_DESCRIPTION")));
-			self::registerCommand(new MapCommand("map", Utils::getText("", "COMMAND_MAP_DESCRIPTION")));
-			self::registerCommand(new InfoCommand("info", Utils::getText("", "COMMAND_INFO_DESCRIPTION")));
-			self::registerCommand(new ClaimInfoCommand("claiminfo", Utils::getText("", "COMMAND_CLAIM_INFO_DESCRIPTION")));
-			self::registerCommand(new FactionTopCommand("top", "Give all the FactionMaster settings"));
+			self::registerCommand(new FactionCreateCommand("create"));
+			self::registerCommand(new FactionManageCommand("manage"));
+			self::registerCommand(new ClaimCommand("claim"));
+			self::registerCommand(new UnclaimCommand("unclaim"));
+			self::registerCommand(new SethomeCommand("sethome"));
+			self::registerCommand(new DelhomeCommand("delhome"));
+			self::registerCommand(new HomeTpCommand("tp"));
+			self::registerCommand(new HomeCommand("home"));
+			self::registerCommand(new MapCommand("map"));
+			self::registerCommand(new InfoCommand("info"));
+			self::registerCommand(new ClaimInfoCommand("claiminfo"));
+			self::registerCommand(new FactionTopCommand("top"));
 		}
-		self::registerCommand(new HelpCommand("help", Utils::getText("", "COMMAND_HELP_DESCRIPTION")));
-		self::registerCommand(new ExtensionCommand("extension", Utils::getText("", "COMMAND_EXTENSION_DESCRIPTION")));
-		self::registerCommand(new PlaceLeaderboard("placeleaderboard", Utils::getText("", "COMMAND_SCOREBOARD_DESCRIPTION")));
-		self::registerCommand(new RemoveNearLeaderboardCommand("removeleaderboard", Utils::getText("", "COMMAND_SCOREBOARD_DESCRIPTION")));
-		self::registerCommand(new AddFlagCommand("addflag", Utils::getText("", "COMMAND_ADD_FLAG")));
-		self::registerCommand(new RemoveFlagCommand("removeflag", Utils::getText("", "COMMAND_REMOVE_FLAG")));
-		self::registerCommand(new SynchroCommand("synchro", Utils::getText("", "COMMAND_SYNCHRO")));
-		self::registerCommand(new SettingsCommand("settings", "Give all the FactionMaster settings"));
+		self::registerCommand(new HelpCommand("help"));
+		self::registerCommand(new ExtensionCommand("extension"));
+		self::registerCommand(new PlaceLeaderboard("placeleaderboard"));
+		self::registerCommand(new RemoveNearLeaderboardCommand("removeleaderboard"));
+		self::registerCommand(new AddFlagCommand("addflag"));
+		self::registerCommand(new RemoveFlagCommand("removeflag"));
+		self::registerCommand(new SynchroCommand("synchro"));
+		self::registerCommand(new SettingsCommand("settings"));
 	}
 
-	public static function registerCommand(BaseSubCommand $command): void {
+	public static function registerCommand(FactionSubCommand $command): void {
 		self::$commands[$command->getName()] = $command;
 	}
 
@@ -99,12 +99,12 @@ class CommandManager {
 		return isset(self::$commands[$name]);
 	}
 
-	/** @return BaseSubCommand[] */
+	/** @return FactionSubCommand[] */
 	public static function getCommands(): array {
 		return self::$commands;
 	}
 
-	/** @return BaseSubCommand[] */
+	/** @return FactionSubCommand[] */
 	public static function getAll(): array {
 		return self::$commands;
 	}

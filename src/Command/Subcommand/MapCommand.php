@@ -38,7 +38,6 @@ use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Database\Entity\ClaimEntity;
 use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Manager\MapManager;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
@@ -52,7 +51,12 @@ use function str_replace;
 use function strlen;
 use function substr;
 
-class MapCommand extends BaseSubCommand {
+class MapCommand extends FactionSubCommand {
+
+	public function getId(): string {
+		return "COMMAND_MAP_DESCRIPTION";
+	}
+
 	const DIRECTION = [
 		"N" => 'N',
 		"NE" => '/',

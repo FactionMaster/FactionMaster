@@ -33,12 +33,13 @@
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
 use pocketmine\command\CommandSender;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Manager\ImageManager;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class SettingsCommand extends BaseSubCommand {
-	protected function prepare(): void {
+class SettingsCommand extends FactionSubCommand {
+
+	public function getId(): string {
+		return "COMMAND_SETTINGS_DESCRIPTION";
 	}
 
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {

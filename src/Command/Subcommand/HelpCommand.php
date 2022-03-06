@@ -33,49 +33,27 @@
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
 use pocketmine\command\CommandSender;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
+use ShockedPlot7560\FactionMaster\Manager\CommandManager;
 use function str_replace;
 
-class HelpCommand extends BaseSubCommand {
-	private $player;
+class HelpCommand extends FactionSubCommand {
 
-	protected function prepare(): void {
+	public function getId(): string {
+		return "COMMAND_HELP_DESCRIPTION";
 	}
+
+	private $player;
 
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
 		$this->player = $sender;
+
 		$sender->sendMessage(Utils::getConfig("help-command-header"));
 		$sender->sendMessage($this->getString("/f", "COMMAND_FACTION_DESCRIPTION"));
-		$sender->sendMessage($this->getString("/f manage", "COMMAND_MANAGE_DESCRIPTION"));
-		$sender->sendMessage($this->getString("/f claim", "COMMAND_CLAIM_DESCRIPTION"));
-		$sender->sendMessage($this->getString("/f unclaim", "COMMAND_UNCLAIM_DESCRIPTION"));
-		$sender->sendMessage($this->getString("/f sethome <:name>", "COMMAND_SETHOME_DESCRIPTION"));
-		$sender->sendMessage($this->getString("/f delhome <:name>", "COMMAND_DELHOME_DESCRIPTION"));
-		$sender->sendMessage($this->getString("/f tp <:name>", "COMMAND_TP_DESCRIPTION"));
-		$sender->sendMessage($this->getString("/f home", "COMMAND_HOME_DESCRIPTION"));
-		$sender->sendMessage($this->getString("/f create", "COMMAND_CREATE_DESCRIPTION"));
-		$sender->sendMessage($this->getString("/f map [on|off]", "COMMAND_MAP_DESCRIPTION"));
-		$sender->sendMessage($this->getString("/f help", "COMMAND_HELP_DESCRIPTION"));
-		$sender->sendMessage($this->getString("/f info <:name>", "COMMAND_INFO_DESCRIPTION_GLOBAL"));
-		$sender->sendMessage($this->getString("/f claiminfo", "COMMAND_CLAIM_INFO_DESCRIPTION"));
-		if ($sender->hasPermission("factionmaster.flag.add")) {
-			$sender->sendMessage($this->getString("/f addflag <areaName> <type>", "COMMAND_ADD_FLAG"));
-		}
-		if ($sender->hasPermission("factionmaster.flag.remove")) {
-			$sender->sendMessage($this->getString("/f removeflag", "COMMAND_REMOVE_FLAG"));
-		}
-		if ($sender->hasPermission("factionmaster.extension.list")) {
-			$sender->sendMessage($this->getString("/f extension", "COMMAND_EXTENSION_DESCRIPTION"));
-		}
-		if ($sender->hasPermission("factionmaster.leaderboard.place")) {
-			$sender->sendMessage($this->getString("/f placeleaderboard <:slug>", "COMMAND_SCOREBOARD_DESCRIPTION"));
-		}
-		if ($sender->hasPermission("factionmaster.leaderboard.place")) {
-			$sender->sendMessage($this->getString("/f removeleaderboard", "COMMAND_SCOREBOARD_REMOVE_DESCRIPTION"));
-		}
-		if ($sender->hasPermission("factionmaster.synchro.launch")) {
-			$sender->sendMessage($this->getString("/f synchro", "COMMAND_SYNCHRO"));
+		foreach (CommandManager::getCommands() as $command) {
+			if ($command->testPermissionSilent($sender)) {
+				$sender->sendMessage($this->getString("/f " .$command->getUsageMessage(), $command->getId()));
+			}
 		}
 	}
 

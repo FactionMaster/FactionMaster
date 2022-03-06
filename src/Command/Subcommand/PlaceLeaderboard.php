@@ -36,7 +36,6 @@ use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\Command\Argument\EnumArgument;
 use ShockedPlot7560\FactionMaster\Event\LeaderboardCreateEvent;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Manager\ConfigManager;
 use ShockedPlot7560\FactionMaster\Manager\LeaderboardManager;
 use ShockedPlot7560\FactionMaster\Utils\Leaderboard;
@@ -45,7 +44,12 @@ use function array_keys;
 use function implode;
 use function join;
 
-class PlaceLeaderboard extends BaseSubCommand {
+class PlaceLeaderboard extends FactionSubCommand {
+
+	public function getId(): string {
+		return "COMMAND_SCOREBOARD_DESCRIPTION";
+	}
+
 	protected function prepare(): void {
 		$this->setPermission("factionmaster.leaderboard.place");
 		$this->registerArgument(0, new EnumArgument("slug", array_keys(LeaderboardManager::getAll())));

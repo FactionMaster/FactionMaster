@@ -38,11 +38,15 @@ use pocketmine\player\Player;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Event\FactionHomeTpEvent;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
-use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\BaseSubCommand;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class HomeTpCommand extends BaseSubCommand {
+class HomeTpCommand extends FactionSubCommand {
+
+	public function getId(): string {
+		return "COMMAND_TP_DESCRIPTION";
+	}
+
 	protected function prepare(): void {
 		$this->registerArgument(0, new RawStringArgument("name", false));
 	}
