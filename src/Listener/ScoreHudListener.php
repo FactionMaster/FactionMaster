@@ -497,9 +497,9 @@ class ScoreHudListener implements Listener {
 			));
 			$ev->call();
 			foreach ($faction->getMembers() as $name => $rank) {
-				$player = $this->server->getPlayerExact($name);
-				if ($player instanceof Player) {
-					$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+				$playerNew = $this->server->getPlayerExact($name);
+				if ($playerNew instanceof Player) {
+					$ev = new PlayerTagUpdateEvent($playerNew, new ScoreTag(
 						Ids::HUD_FACTIONMASTER_FACTION_NUMBER_PLAYER,
 						count($faction->getMembers())
 					));
@@ -758,9 +758,9 @@ class ScoreHudListener implements Listener {
 		}
 		if ($faction instanceof FactionEntity) {
 			foreach ($faction->getMembers() as $name => $rank) {
-				$player = $this->server->getPlayerExact($name);
-				if ($player instanceof Player) {
-					$ev = new PlayerTagUpdateEvent($player, new ScoreTag(
+				$playerNew = $this->server->getPlayerExact($name);
+				if ($playerNew instanceof Player) {
+					$ev = new PlayerTagUpdateEvent($playerNew, new ScoreTag(
 						Ids::HUD_FACTIONMASTER_FACTION_NUMBER_PLAYER,
 						count($faction->getMembers())
 					));
