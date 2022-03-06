@@ -27,3 +27,6 @@ permissions:
   factionmaster.extension.list:
     description: "Allow the player to remove flag of area"
     default: "op"
+  factionmaster.settings:
+    description: "Allow the player to view the current settings"
+    default: "op"

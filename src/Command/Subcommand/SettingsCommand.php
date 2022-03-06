@@ -37,9 +37,12 @@ use ShockedPlot7560\FactionMaster\Manager\ImageManager;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class SettingsCommand extends FactionSubCommand {
-
 	public function getId(): string {
 		return "COMMAND_SETTINGS_DESCRIPTION";
+	}
+
+	public function prepare(): void {
+		$this->setPermission("factionmaster.settings");
 	}
 
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
