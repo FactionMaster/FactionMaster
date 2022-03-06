@@ -120,6 +120,9 @@ class MigrationManager {
 						self::$main->getLogger()->emergency("Invalid provider given");
 						break;
 				}
+			},
+			"4.2.0" => function () {
+				self::$main->getLogger()->notice("The API has undergone a change in the commands, make sure that the extensions used are up to date");
 			}
 		];
 		self::$configDbToCheck = [
