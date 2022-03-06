@@ -1,6 +1,6 @@
 ---
 # DO NOT EDIT THIS LINE
-file-version: 6
+file-version: 7
 # DO NOT EDIT THIS LINE
 
 
@@ -179,7 +179,6 @@ CANT_INTERACT_SPAWN: " §c>> §4Tu ne peux pas intéragir avec ça dans le spawn
 ERROR_DATA_SAVING: "§6Une erreur est survenue dans la sauvegarde de vos données\nVeuillez contacter un administrateur"
 
 COMMAND_FACTION_DESCRIPTION: "Ouvre le menu principal de FactionMaster"
-COMMAND_TOP_DESCRIPTION: "Ouvre le classement des factions"
 COMMAND_MANAGE_DESCRIPTION: "Ouvre l'interface de gestion de la faction"
 COMMAND_CLAIM_DESCRIPTION: "Claim le chunk actuel"
 COMMAND_UNCLAIM_DESCRIPTION: "Retire le claim actuel"

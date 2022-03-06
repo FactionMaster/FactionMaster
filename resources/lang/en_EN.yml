@@ -1,5 +1,5 @@
 # DO NOT EDIT THIS LINE
-file-version: 8
+file-version: 9
 # DO NOT EDIT THIS LINE
 
 
@@ -177,7 +177,6 @@ CANT_INTERACT_SPAWN: " §c>> §4You can't interact with that in the spawn"
 ERROR_DATA_SAVING: "§6An error has occurred in the backup of your data. Please contact an administrator"
 
 COMMAND_FACTION_DESCRIPTION: "Opens the main menu of FactionMaster"
-COMMAND_TOP_DESCRIPTION: "Open the faction ranking"
 COMMAND_MANAGE_DESCRIPTION: "Opens the faction management interface"
 COMMAND_CLAIM_DESCRIPTION: "Claim the current chunk"
 COMMAND_UNCLAIM_DESCRIPTION: "Remove the current claim"
