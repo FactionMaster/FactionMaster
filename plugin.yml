@@ -1,6 +1,6 @@
 name: FactionMaster 
 author: ShockedPlot7560
-version: 4.1.2
+version: 4.2.0
 api: 4.0.0 
 main: ShockedPlot7560\FactionMaster\FactionMaster
 src-namespace-prefix: ShockedPlot7560\FactionMaster
