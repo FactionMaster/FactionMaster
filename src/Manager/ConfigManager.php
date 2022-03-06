@@ -46,7 +46,7 @@ class ConfigManager {
 	const TRANSLATION_VERSION = 2;
 	const LANG_FILE_VERSION = [
 		"en_EN" => 9,
-		"fr_FR" => 7,
+		"fr_FR" => 8,
 		"es_SPA" => 2,
 		"tr_TR" => 1,
 		"pt_BR" => 1,
@@ -99,8 +99,8 @@ class ConfigManager {
 		if (is_countable(self::getTranslationConfig()->get("languages"))) {
 			if (count(self::getTranslationConfig()->get("languages")) > 0) {
 				foreach (self::getTranslationConfig()->get("languages") as $language) {
-					$main->saveResource("lang/$language.yml");
 					ConfigUpdater::checkUpdate($main, Utils::getConfigLangFile($language), "file-version", self::LANG_FILE_VERSION[$language]);
+					$main->saveResource("lang/$language.yml");
 					self::$lang[$language] = Utils::getConfigLangFile($language);
 				}
 			}
