@@ -10,6 +10,7 @@ languages:
   "SPA": "es_SPA"
   "TR": "tr_TR"
   "BR": "pt_BR"
+  "RU": "ru_RU"
 
 languages-name:
   "FR": "Français"
@@ -17,3 +18,4 @@ languages-name:
   "SPA": "Español"
   "TR": "Türkçe"
   "BR": "Português"
+  "RU": "Русский"
