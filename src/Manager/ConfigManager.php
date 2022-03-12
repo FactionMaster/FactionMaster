@@ -50,7 +50,8 @@ class ConfigManager {
 		"es_SPA" => 2,
 		"tr_TR" => 1,
 		"pt_BR" => 1,
-		"tr_TR" => 1
+		"tr_TR" => 1,
+		"ru_RU" => 1
 	];
 
 	/** @var Config */
