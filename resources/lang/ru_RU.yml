@@ -1,4 +1,3 @@
-# Translate by @udachin26
 # НЕ ТРОГАТЬ!
 file-version: 1
 # НЕ ТРОГАТЬ!
@@ -54,7 +53,7 @@ CHANGE_MESSAGE_INPUT_CONTENT: "Введите сообщение здесь"
 CHANGE_PERMISSION_TITLE: "Управление разрешениями"
 CHANGE_VISIBILITY_TITLE: "Изменить видимость"
 CHANGE_VISIBILITY_STEP: "Выбрать видимость"
-CHANGE_VISIBILITY_EXPLICATION: "§n§7Public :§r\n  The faction will be free to all and everyone can come and go as they please\n \n§n§7Private :§r\n  The faction will be closed to invitations and players will have to be invited by a member\n \n§n§7By invitation :§r\n  Players will be able to send invitations to the faction and the faction will be able to invite players"
+CHANGE_VISIBILITY_EXPLICATION: "§n§7Публичный :§r\n  Фракция будет доступна для всех, и каждый может приходить и уходить, когда захочет.\n \n§n§7Частный :§r\n  Фракция будет закрыта для приглашений и игроков, должен будет пригласить участник.\n \n§n§7По приглашению :§r\n  Игроки смогут отправлять приглашения во фракцию, а фракция сможет приглашать игроков"
 MANAGE_FACTION_MAIN_TITLE: "Управление фракцией"
 MANAGE_PERMISSION_MAIN_TITLE: "Управление разрешениями"
 MEMBERS_LIST_TITLE: "Список участников"
@@ -93,7 +92,7 @@ CONFIRMATION_CONTENT_DELETE_FACTION: "§fВы уверены, что хотит�
 CONFIRMATION_TITLE_LEAVE_FACTION: "Подтверждение выхода - {{factionName}}"
 CONFIRMATION_CONTENT_LEAVE_FACTION: "Вы уверены, что хотите покинуть эту фракцию? Ты не сможешь вернуться"
 CONFIRMATION_TITLE_TRANSFER_PROPERTY: "Подтверждение передачи права собственности"
-CONFIRMATION_CONTENT_TRANSFER_PROPERTY: "§fВы уверены, что хотите передать право собственности на эту фракцию? Вы не сможете вернуться, и вас назначат Co-Leader"
+CONFIRMATION_CONTENT_TRANSFER_PROPERTY: "§fВы уверены, что хотите передать право собственности на эту фракцию? Вы не сможете вернуться, и вас назначат Зам.Лидера"
 CONFIRMATION_TITLE_KICK_OUT: "Подтверждения исключения"
 CONFIRMATION_CONTENT_KICK_OUT: "Вы уверены, что хотите вышвырнуть его из своей фракции? Он не сможет вернуться"
 CONFIRMATION_TITLE_DELETE_INVITATION: "Подтверждение удаления приглашения"
@@ -156,10 +155,10 @@ MAX_ALLY_REACH: " §c>> §4Вы достигли лимита союзов"
 MAX_ALLY_REACH_OTHER: " §c>> §4Запрашиваемая фракция уже достигла предела своих союзов"
 MAX_MIN_REACH_NAME: " §c>> §4Вы должны войти в название фракции между {{min}} и {{max}}"
 
-RECRUIT_RANK_NAME: "Recruit"
-MEMBER_RANK_NAME: "Member"
-COOWNER_RANK_NAME: "Co-Leader"
-OWNER_RANK_NAME: "Leader"
+RECRUIT_RANK_NAME: "Рекрут"
+MEMBER_RANK_NAME: "Участник"
+COOWNER_RANK_NAME: "Зам.Лидера"
+OWNER_RANK_NAME: "Лидер"
 
 PUBLIC_VISIBILITY_NAME: "Публичный"
 PRIVATE_VISIBILITY_NAME: "Частный"
@@ -242,11 +241,11 @@ COMMAND_INFO_LEVEL: " §8> §eУровень: §7{{level}}§e | §eСила: §7
 COMMAND_NO_ALLY: "Никакого союзника"
 COMMAND_NO_DESCRIPTION: "Без описания"
 COMMAND_INFO_ALLY: " §8> §eСоюзник: §7{{ally}}"
-COMMAND_INFO_MEMBER: " §8> §eMember(s): §7{{members}}"
-COMMAND_INFO_MEMBER_OWNER: "§7***§oLeader {{name}}"
-COMMAND_INFO_MEMBER_COOWNER: "§7**§oCo-Leader {{name}}"
-COMMAND_INFO_MEMBER_MEMBER: "§7*§oMember {{name}}"
-COMMAND_INFO_MEMBER_RECRUIT: "§7§oRecruit {{name}}"
+COMMAND_INFO_MEMBER: " §8> §eУчастники: §7{{members}}"
+COMMAND_INFO_MEMBER_OWNER: "§7***§oЛидер {{name}}"
+COMMAND_INFO_MEMBER_COOWNER: "§7**§oЗам.Лидера {{name}}"
+COMMAND_INFO_MEMBER_MEMBER: "§7*§oУчастник {{name}}"
+COMMAND_INFO_MEMBER_RECRUIT: "§7§oРекрут {{name}}"
 COMMAND_INFO_DATE: "§eСоздан {{date}}"
 
 COMMAND_SCOREBOARD_SUCCESS: " §a>> §2Размещение scoreboard успешно!"
