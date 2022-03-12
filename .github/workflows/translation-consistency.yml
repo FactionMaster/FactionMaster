@@ -8,8 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: pmmp/setup-php-action@aa636a4fe0c1c035fd9a3f05e360eadd86e06440
+        with:
+          php-version: 8.0.16
+          install-path: "./bin"
+      - name: Install Composer
+        run: curl -sS https://getcomposer.org/installer | php
       - name: Install Composer dependencies
-        run: |
-          cd build && composer require pocketmine/pocketmine-mp && cd ../
+        run: cd build && php composer.phar require pocketmine/pocketmine-mp --prefer-dist --no-interaction && cd ../
       - name: Generate interface
         run: php build/generate-translation-interface.php
