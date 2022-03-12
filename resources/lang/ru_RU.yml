@@ -184,7 +184,7 @@ COMMAND_UNCLAIM_DESCRIPTION: "Удалить текущий приват"
 COMMAND_SETHOME_DESCRIPTION: "Поместите дом в расположение игрока"
 COMMAND_DELHOME_DESCRIPTION: "Удалить дом фракции"
 COMMAND_TP_DESCRIPTION: "ТП на дом фракции"
-COMMAND_HOME_DESCRIPTION: "Открывает меню домов
+COMMAND_HOME_DESCRIPTION: "Открывает меню домов"
 COMMAND_CREATE_DESCRIPTION: "Открывает меню для создания фракции"
 COMMAND_MAP_DESCRIPTION: "Отображает карту, перечисленных всех приватов"
 COMMAND_HELP_DESCRIPTION: "Отображает порядки"
