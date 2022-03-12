@@ -43,7 +43,7 @@ use function mkdir;
 class ConfigManager {
 	const CONFIG_VERSION = 14;
 	const LEVEL_VERSION = 0;
-	const TRANSLATION_VERSION = 2;
+	const TRANSLATION_VERSION = 3;
 	const LANG_FILE_VERSION = [
 		"en_EN" => 9,
 		"fr_FR" => 8,
