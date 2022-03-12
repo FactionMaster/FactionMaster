@@ -19,3 +19,7 @@ jobs:
         run: cd build && php ../composer.phar require pocketmine/pocketmine-mp --prefer-dist --no-interaction && cd ../
       - name: Generate interface
         run: php build/generate-translation-interface.php
+      - name: Verify code is unchanged
+        run: |
+          git diff
+          git diff --quiet
