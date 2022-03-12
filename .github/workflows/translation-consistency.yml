@@ -1,0 +1,16 @@
+name: Generation translation interface
+on: 
+  push:
+  pull_request:
+
+jobs:
+  translation-interface:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install composer
+        run: curl -sS https://getcomposer.org/installer | php
+      - name: Install Composer dependencies
+        run: cd build && php composer.phar install
+      - name: Generate interface
+        run: php generate-translation-interface.php
