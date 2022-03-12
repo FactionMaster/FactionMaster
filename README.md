@@ -99,6 +99,7 @@ Extensions, a new way to customize your plugin to your liking. You just have to 
 All extensions made by the FactionMaster team and those approved by the FactionMaster team, which are accessible via poggit will be listed here.
 * **Bank system** : [here](https://poggit.pmmp.io/p/FactionMasterBank) *by FactionMaster*
 * **Invitation system improve** : [here](https://poggit.pmmp.io/p/FactionMasterInvitationImprove) *by FactionMaster*
+* **Admin Tool** : [here](https://poggit.pmmp.io/p/FactionMasterAdminTools) *by FactionMaster*
 
 *To submit your extension ideas, create an issue on our [GitHub](https://github.com/FactionMaster/FactionMaster/issues/new/choose) and select the corresponding category*
 
@@ -110,6 +111,7 @@ To participate in the translation of FactionMaster and probably see yourself her
 * **Spanish** (es_SPA): @MrBlasyMSK
 * **Turkish** (tr_TR): @xAliTura01
 * **Portuguese** (pt_BR)! @RaidoxxMPH
+* **Russian** (ru_RU)! @udachin26
 
 ## Developers
 Adding and modifying extensions is rather simple and explained on the README.md of the [GitHub](https://github.com/ShockedPlot7560/FactionMaster/) repository with a documentation for the handling of the API.
