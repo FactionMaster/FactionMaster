@@ -8,9 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install composer
-        run: curl -sS https://getcomposer.org/installer | php
       - name: Install Composer dependencies
-        run: cd build && php composer.phar install
+        run: |
+          cd build && composer require shockedplot7560/craft-generator && cd ../
       - name: Generate interface
-        run: php generate-translation-interface.php
+        run: php build/generate-translation-interface.php
