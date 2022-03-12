@@ -16,6 +16,6 @@ jobs:
       - name: Install Composer
         run: curl -sS https://getcomposer.org/installer | php
       - name: Install Composer dependencies
-        run: cd build && php composer.phar require pocketmine/pocketmine-mp --prefer-dist --no-interaction && cd ../
+        run: cd build && php ../composer.phar require pocketmine/pocketmine-mp --prefer-dist --no-interaction && cd ../
       - name: Generate interface
         run: php build/generate-translation-interface.php
