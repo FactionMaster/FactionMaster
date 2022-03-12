@@ -123,6 +123,10 @@ class MigrationManager {
 			},
 			"4.2.0" => function () {
 				self::$main->getLogger()->notice("The API has undergone a change in the commands, make sure that the extensions used are up to date");
+			},
+			"4.2.1" => function () {
+				self::$main->saveResource("resource_pack/official/FactionMaster-official.zip", true);
+				self::$main->getLogger()->notice("Updated your old resource_pack to include russian flag");
 			}
 		];
 		self::$configDbToCheck = [
