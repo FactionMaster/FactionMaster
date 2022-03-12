@@ -42,7 +42,7 @@ use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class ManageAllianceRoute extends RouteBase implements Route {
+class ManageAllianceRoute extends RouteBase {
 	/** @deprecated */
 	const SLUG = "manageAllianceRoute";
 

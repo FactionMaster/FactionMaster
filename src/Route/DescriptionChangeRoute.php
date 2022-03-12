@@ -42,7 +42,7 @@ use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function is_string;
 
-class DescriptionChangeRoute extends RouteBase implements Route {
+class DescriptionChangeRoute extends RouteBase {
 	/** @deprecated */
 	const SLUG = "descriptionChangeRoute";
 

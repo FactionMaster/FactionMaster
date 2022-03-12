@@ -37,7 +37,7 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class TopFactionRoute extends RouteBase implements Route {
+class TopFactionRoute extends RouteBase {
 	/** @deprecated */
 	const SLUG = "topFactionRoute";
 

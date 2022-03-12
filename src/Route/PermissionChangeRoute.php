@@ -46,7 +46,7 @@ use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function is_int;
 
-class PermissionChangeRoute extends RouteBase implements Route {
+class PermissionChangeRoute extends RouteBase {
 	/** @deprecated */
 	const SLUG = "permissionChangeRoute";
 

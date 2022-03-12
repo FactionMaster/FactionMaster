@@ -46,7 +46,7 @@ use function floor;
 use function is_array;
 use function is_string;
 
-class ManageLevelRoute extends RouteBase implements Route {
+class ManageLevelRoute extends RouteBase {
 	/** @deprecated */
 	const SLUG = "manageLevelRoute";
 

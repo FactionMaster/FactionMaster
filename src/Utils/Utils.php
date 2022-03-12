@@ -150,6 +150,9 @@ class Utils {
 		return self::getConfigFile("translation")->get($key);
 	}
 
+	/**
+	 * @param string $slug @see {Utils/TranslationSlug}
+	 */
 	public static function getText(string $playerName, string $slug, array $args = []): string {
 		$playerLang = MainAPI::getPlayerLang($playerName);
 		$textNoReplace = TranslationManager::getTranslation($slug, $playerLang);

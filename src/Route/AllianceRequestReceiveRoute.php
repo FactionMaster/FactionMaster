@@ -44,7 +44,7 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 use function is_string;
 
-class AllianceRequestReceiveRoute extends RouteBase implements Route {
+class AllianceRequestReceiveRoute extends RouteBase {
 	/** @deprecated */
 	const SLUG = "allianceRequestReceiveRoute";
 

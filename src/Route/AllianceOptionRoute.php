@@ -41,7 +41,7 @@ use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 
-class AllianceOptionRoute extends RouteBase implements Route {
+class AllianceOptionRoute extends RouteBase {
 	/** @deprecated */
 	const SLUG = "allianceOptionRoute";
 

@@ -42,7 +42,7 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 use function is_string;
 
-class JoinInvitationSendRoute extends RouteBase implements Route {
+class JoinInvitationSendRoute extends RouteBase {
 	/** @deprecated */
 	const SLUG = "joinInvitationSendRoute";
 

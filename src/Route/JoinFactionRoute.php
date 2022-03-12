@@ -40,7 +40,7 @@ use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function is_string;
 
-class JoinFactionRoute extends RouteBase implements Route {
+class JoinFactionRoute extends RouteBase {
 	/** @deprecated */
 	const SLUG = "joinFactionRoute";
 

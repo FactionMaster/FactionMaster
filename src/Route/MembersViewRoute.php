@@ -41,7 +41,7 @@ use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 
-class MembersViewRoute extends RouteBase implements Route {
+class MembersViewRoute extends RouteBase {
 	/** @deprecated */
 	const SLUG = "membersViewRoute";
 

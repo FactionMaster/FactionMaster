@@ -42,7 +42,7 @@ use ShockedPlot7560\FactionMaster\Task\MenuSendTask;
 use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class VisibilityChangeRoute extends RouteBase implements Route {
+class VisibilityChangeRoute extends RouteBase {
 	/** @deprecated */
 	const SLUG = "visibilityChangeRoute";
 

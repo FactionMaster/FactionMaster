@@ -42,7 +42,7 @@ use ShockedPlot7560\FactionMaster\Utils\Ids;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function is_string;
 
-class ManagePermissionRoute extends RouteBase implements Route {
+class ManagePermissionRoute extends RouteBase {
 	/** @deprecated */
 	const SLUG = "managePermissionRoute";
 

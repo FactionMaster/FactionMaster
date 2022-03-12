@@ -45,7 +45,7 @@ use function in_array;
 use function is_string;
 use function strlen;
 
-class CreateFactionRoute extends RouteBase implements Route {
+class CreateFactionRoute extends RouteBase {
 	/** @deprecated */
 	const SLUG = "createFactionRoute";
 

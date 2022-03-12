@@ -43,7 +43,7 @@ use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 
-class MembersRequestReceiveRoute extends RouteBase implements Route {
+class MembersRequestReceiveRoute extends RouteBase {
 	/** @deprecated */
 	const SLUG = "membersRequestReceiveRoute";
 

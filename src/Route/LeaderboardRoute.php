@@ -39,7 +39,7 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\SimpleForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class LeaderboardRoute extends RouteBase implements Route {
+class LeaderboardRoute extends RouteBase {
 	public function getSlug(): string {
 		return self::LEADERBOARD_ROUTE;
 	}

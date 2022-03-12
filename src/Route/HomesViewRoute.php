@@ -43,7 +43,7 @@ use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function count;
 use function is_string;
 
-class HomesViewRoute extends RouteBase implements Route {
+class HomesViewRoute extends RouteBase {
 	/** @deprecated */
 	const SLUG = "homesViewRoute";
 

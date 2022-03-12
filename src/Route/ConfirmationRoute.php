@@ -38,7 +38,7 @@ use ShockedPlot7560\FactionMaster\Database\Entity\UserEntity;
 use ShockedPlot7560\FactionMaster\libs\Vecnavium\FormsUI\ModalForm;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
-class ConfirmationRoute extends RouteBase implements Route {
+class ConfirmationRoute extends RouteBase {
 	const SLUG = "confirmationRoute";
 
 	/** @var Route */
