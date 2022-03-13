@@ -50,7 +50,7 @@ class ConfigManager {
 		"es_SPA" => 2,
 		"tr_TR" => 1,
 		"pt_BR" => 1,
-		"tr_TR" => 1,
+		"tr_TR" => 2,
 		"ru_RU" => 1
 	];
 
