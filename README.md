@@ -56,7 +56,7 @@ FactionMaster have multiple server support, see the Installation section for mor
   - *factionmaster.faction.number.claim*
   - *factionmaster.faction.number.home*
   - *factionmaster.faction.number.ally*
-* ``PureChat``: To use PureChat tags, download our fork of it [here](https://github.com/ShockedPlot7560/PureChat/releases/tag/v1.4.1)
+* ``PureChat``: To use PureChat tags, download our fork of it [here](https://github.com/FactionMaster/PureChat/releases/tag/v2.0.0)
 
 ## Installation
 * If you just want to use it on the same machine, no special installation is required, just download the .phar plugin and put it in the plugins folder.
