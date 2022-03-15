@@ -2,7 +2,7 @@
 
 # FactionMaster
 
-### For using PureChat with FactionMaster, you must use my PureChat fork and download the last release : https://github.com/FactionMaster/PureChat/releases/tag/v2.0.0
+### For using PureChat with FactionMaster, you must use my PureChat fork and download the last release : https://github.com/FactionMaster/PureChat/releases/tag/v2.0.1
 
 FactionMaster is a new faction plugin that aims at flexibility and customization of the plugin by the user and the developers. It includes all the basic functionality of a faction plugin and data storage in MySQL or SQLITE. This is done by adding an extension system and a translation system. FactionMaster has a will of accessibility to the players and especially not to have to remember a lot of commands to play, all is done via interface.
 
@@ -56,7 +56,7 @@ FactionMaster have multiple server support, see the Installation section for mor
   - *factionmaster.faction.number.claim*
   - *factionmaster.faction.number.home*
   - *factionmaster.faction.number.ally*
-* ``PureChat``: To use PureChat tags, download our fork of it [here](https://github.com/FactionMaster/PureChat/releases/tag/v2.0.0)
+* ``PureChat``: To use PureChat tags, download our fork of it [here](https://github.com/FactionMaster/PureChat/releases/tag/v2.0.1)
 
 ## Installation
 * If you just want to use it on the same machine, no special installation is required, just download the .phar plugin and put it in the plugins folder.
