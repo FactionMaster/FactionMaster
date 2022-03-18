@@ -33,16 +33,16 @@
 namespace ShockedPlot7560\FactionMaster\Command\Subcommand;
 
 use pocketmine\command\CommandSender;
-use pocketmine\math\Vector3;
 use pocketmine\player\Player;
+use pocketmine\Server;
 use ShockedPlot7560\FactionMaster\API\MainAPI;
 use ShockedPlot7560\FactionMaster\Event\FactionHomeTpEvent;
 use ShockedPlot7560\FactionMaster\libs\CortexPE\Commando\args\RawStringArgument;
 use ShockedPlot7560\FactionMaster\Permission\PermissionIds;
+use ShockedPlot7560\FactionMaster\Utils\TranslationSlug;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 
 class HomeTpCommand extends FactionSubCommand {
-
 	public function getId(): string {
 		return "COMMAND_TP_DESCRIPTION";
 	}
@@ -65,9 +65,14 @@ class HomeTpCommand extends FactionSubCommand {
 		if (Utils::haveAccess($permissions, $userEntity, PermissionIds::PERMISSION_TP_FACTION_HOME)) {
 			$home = MainAPI::getFactionHome($userEntity->getFactionName(), $args["name"]);
 			if ($home !== null) {
-				$sender->teleport(new Vector3($home->getX(), $home->getY(), $home->getZ()));
-				(new FactionHomeTpEvent($sender, $userEntity->getFactionName(), $args['name'], $home))->call();
-				$sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_TELEPORT"));
+				$world = Server::getInstance()->getWorldManager()->getWorldByName($home->getLevelName());
+				if ($world !== null) {
+					$sender->teleport($home->getPosition());
+					(new FactionHomeTpEvent($sender, $userEntity->getFactionName(), $args['name'], $home))->call();
+					$sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_TELEPORT"));
+				} else {
+					$sender->sendMessage(Utils::getText($sender->getName(), TranslationSlug::WORLD_NOT_LOAD_HOME));
+				}
 			} else {
 				$sender->sendMessage(Utils::getText($sender->getName(), "HOME_DONT_EXIST"));
 			}
