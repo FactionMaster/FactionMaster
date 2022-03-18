@@ -1,5 +1,5 @@
 # DO NOT EDIT THIS LINE
-file-version: 9
+file-version: 10
 # DO NOT EDIT THIS LINE
 
 
@@ -147,6 +147,7 @@ ALREADY_IN_THIS_FACTION: " §c>> §4You are already in this faction"
 PLAYER_HAVE_ALREADY_FACTION: " §c>> §4This player already has a faction"
 ERROR: " §c>> §4An error has occurred"
 SUCCESS_TELEPORT_HOME: " §a>> §2You have been teleported to the home of faction"
+WORLD_NOT_LOAD_HOME: " §a>> §cYou can't go to this home, the world is not available"
 MAX_PLAYER_REACH_FOR_PLAYER: " §c>> §4This faction has already reached its maximum number of players"
 MAX_PLAYER_REACH_FOR_FACTION: " §c>> §4You have already reached the maximum number of players in the faction"
 MAX_HOME_REACH: " §c>> §4You have reached the home limit"
