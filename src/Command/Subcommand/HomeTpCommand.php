@@ -66,7 +66,7 @@ class HomeTpCommand extends FactionSubCommand {
 			$home = MainAPI::getFactionHome($userEntity->getFactionName(), $args["name"]);
 			if ($home !== null) {
 				$world = Server::getInstance()->getWorldManager()->getWorldByName($home->getLevelName());
-				if ($world !== null) {
+				if ($world !== null && $world->isLoaded()) {
 					$sender->teleport($home->getPosition());
 					(new FactionHomeTpEvent($sender, $userEntity->getFactionName(), $args['name'], $home))->call();
 					$sender->sendMessage(Utils::getText($sender->getName(), "SUCCESS_HOME_TELEPORT"));
