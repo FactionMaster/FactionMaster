@@ -27,7 +27,7 @@
  #
 
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
-file-version: 14
+file-version: 15
 # DO NOT EDIT THIS VALUE. ONLY FOR INTERNAL USE.
 
 # --------------------- DATABASE --------------------------
@@ -60,6 +60,15 @@ power-loose-per-death: 2
 faction-multiplicator: 2
 #check if player have armor equip
 allow-no-stuff: false
+
+# These parameters are used to define a cooldown between two power additions.
+# If someone kills a player of another faction, 
+# he will have to wait x seconds to get power again.
+#
+# cooldown between two power losses when killed
+victim-cooldown: 0
+# cooldown between two power gains when killing a player
+killer-cooldown: 0
 
 default-home-limit: 2
 default-claim-limit: 2

@@ -80,6 +80,8 @@ use function time;
 use function trim;
 
 class EventListener implements Listener {
+	public static array $cooldownPowerVictim = [];
+	public static array $cooldownPowerKiller = [];
 
 	/** @var Main */
 	private $main;
@@ -210,11 +212,19 @@ class EventListener implements Listener {
 					$powerVictim = $config->get("power-loose-per-death") * -1;
 				}
 				if (isset($powerDamager) && $damagerFaction instanceof FactionEntity) {
-					MainAPI::changePower($damagerFaction->getName(), $powerDamager);
+					$cooldown = $config->get("killer-cooldown", 0);
+					if (!isset(self::$cooldownPowerKiller[$damagerFaction->getName()]) || $cooldown <= 0 || self::$cooldownPowerKiller[$damagerFaction->getName()] + $cooldown < time()) {
+						MainAPI::changePower($damagerFaction->getName(), $powerDamager);
+						self::$cooldownPowerKiller[$damagerFaction->getName()] = time();
+					}
 				}
 
 				if (isset($powerVictim) && $victimFaction instanceof FactionEntity) {
-					MainAPI::changePower($victimFaction->getName(), $powerVictim);
+					$cooldown = $config->get("victim-cooldown", 0);
+					if (!isset(self::$cooldownPowerVictim[$victimFaction->getName()]) || $cooldown <= 0 || self::$cooldownPowerVictim[$victimFaction->getName()] + $cooldown < time()) {
+						MainAPI::changePower($victimFaction->getName(), $powerVictim);
+						self::$cooldownPowerVictim[$victimFaction->getName()] = time();
+					}
 				}
 
 				if ($damagerFaction instanceof FactionEntity) {
