@@ -57,6 +57,7 @@ use ShockedPlot7560\FactionMaster\Reward\RewardFactory;
 use ShockedPlot7560\FactionMaster\Route\RouterFactory;
 use ShockedPlot7560\FactionMaster\Task\LeaderboardTask;
 use ShockedPlot7560\FactionMaster\Task\MapTask;
+use ShockedPlot7560\FactionMaster\Task\PowerTask;
 use ShockedPlot7560\FactionMaster\Task\SyncServerTask;
 use ShockedPlot7560\FactionMaster\Utils\Utils;
 use function version_compare;
@@ -123,6 +124,10 @@ class FactionMaster extends PluginBase implements Listener {
 
 			$this->getScheduler()->scheduleRepeatingTask(new SyncServerTask($this), (int) Utils::getConfig("sync-time"));
 			$this->getScheduler()->scheduleRepeatingTask(new LeaderboardTask(), 80);
+			$time = ConfigManager::getConfig()->get("power-staying-online-time", null) ?? 0;
+			if ($time > 0) {
+				$this->getScheduler()->scheduleRepeatingTask(new PowerTask(), $time * 20);
+			}
 
 			if (Utils::getConfig("f-map-task") !== false) {
 				$time = (int) Utils::getConfig("f-map-task");

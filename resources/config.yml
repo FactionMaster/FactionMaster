@@ -70,6 +70,13 @@ victim-cooldown: 0
 # cooldown between two power gains when killing a player
 killer-cooldown: 0
 
+# Defines if a faction gains power by having an online member or not.
+online-leader: false
+# time in seconds, set to 0 if you need to disable the option
+power-staying-online-time: 0
+# number of power gained every x seconds (defined by the line above)
+power-staying-online-number: 1
+
 default-home-limit: 2
 default-claim-limit: 2
 default-player-limit: 2
