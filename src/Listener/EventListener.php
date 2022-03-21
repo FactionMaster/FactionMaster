@@ -218,7 +218,7 @@ class EventListener implements Listener {
 				}
 
 				if ($damagerFaction instanceof FactionEntity) {
-					MainAPI::addXP($damagerFaction->getName(), 1);
+					MainAPI::addXP($damagerFaction->getName(), $config->get("xp-win-per-kill"));
 				}
 			}
 		}
