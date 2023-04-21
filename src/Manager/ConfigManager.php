@@ -51,7 +51,8 @@ class ConfigManager {
 		"tr_TR" => 1,
 		"pt_BR" => 1,
 		"tr_TR" => 2,
-		"ru_RU" => 1
+		"ru_RU" => 1,
+		"id_ID" => 1
 	];
 
 	/** @var Config */
